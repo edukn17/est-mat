@@ -23,18 +23,18 @@
   </header>
 
   <div class="box nota"><span class="box-title">Antes de empezar</span>
-    <p>Esta clase usa dos herramientas de las clases anteriores: la <b>FGM</b> (si dos v.a. tienen la misma FGM, tienen la misma distribución; la FGM de una suma de independientes es el producto de las FGM, ver <a href="clase-02.html">Clase 2</a>) y, en una prueba opcional, el <b>Jacobiano</b> (<a href="clase-01.html">Clase 1</a>). Recuerda también:
+    <p>Esta clase usa dos herramientas de las clases anteriores: la <b>FGM</b> (si dos v.a. tienen la misma FGM, tienen la misma distribución, y la FGM de una suma de independientes es el producto de las FGM; ver <a href="clase-02.html">Clase 2</a>) y, en una prueba opcional, el <b>Jacobiano</b> (<a href="clase-01.html">Clase 1</a>). Recuerda también:
     $$Y\sim N(\mu,\sigma^2)\ \Longrightarrow\ M_Y(t)=e^{\mu t+\sigma^2t^2/2},$$ $$X\sim G(\alpha,\beta)\ \Longrightarrow\ M_X(t)=(1-\beta t)^{-\alpha},\quad t\lt 1/\beta .$$</p>
   </div>
 
   <!-- ================================================================ -->
   <section>
     <h2 id="objetivo">1. ¿Para qué sirve todo esto?</h2>
-    <p>La <b>Estadística inferencial</b> quiere decir algo sobre una <b>población</b> completa (que no podemos observar entera) usando sólo una <b>muestra</b>, y además decir <b>qué tan seguros</b> estamos. Esa última parte es la difícil: para medir la incertidumbre necesitamos saber cómo <em>varía</em> lo que calculamos con la muestra si repitiéramos el muestreo. Eso es exactamente una <b>distribución muestral</b>, el tema de hoy.</p>
+    <p>La <b>Estadística inferencial</b> busca afirmar algo sobre una <b>población</b> completa (que no podemos observar entera) usando sólo una <b>muestra</b>, y además indicar <b>qué tan seguros</b> estamos. Esa última parte es la difícil: para medir la incertidumbre necesitamos saber cómo <em>varía</em> lo que calculamos con la muestra si repitiéramos el muestreo. Eso es exactamente una <b>distribución muestral</b>, el tema de hoy.</p>
 
     <div class="box ejercicio" id="ejemplo-1">
       <span class="box-title">Ejemplo 1 (Clase 3) — conceptual</span>
-      <p>Un tanque de peces de un criadero es arrojado a un lago. Deseamos saber la longitud media de los peces en el tanque. En lugar de medir todos los peces (lo cual en la práctica no es factible), muestreamos al azar algunos de ellos $Y_1,\dots,Y_n$ y se usa la media de la muestra $\bar Y$ para estimar la media de la población $\mu$. Sean $Y_1,\dots,Y_n$ v.a. i.i.d. (muestra aleatoria) de $f(y;\theta)$, donde $\theta\in\Theta$; $\Theta$ es el conjunto de posibles valores de $\theta$, el <b>espacio paramétrico</b>.</p>
+      <p>Un tanque de peces de un criadero es arrojado a un lago. Deseamos saber la longitud media de los peces en el tanque. En lugar de medir todos los peces (lo cual en la práctica no es factible), muestreamos al azar algunos de ellos $Y_1,\dots,Y_n$ y usamos la media de la muestra $\bar Y$ para estimar la media de la población $\mu$. Sean $Y_1,\dots,Y_n$ v.a. i.i.d. (muestra aleatoria) de $f(y;\theta)$, donde $\theta\in\Theta$; $\Theta$ es el conjunto de posibles valores de $\theta$, el <b>espacio paramétrico</b>.</p>
       <p><b>Lo que debes poder responder:</b> (a) ¿cuál es la población y cuál el parámetro? (b) ¿qué es $\Theta$ aquí? (c) ¿cuál es el estadístico, el estimador y la estimación? (d) ¿por qué $\bar Y$ es una variable aleatoria y $\mu$ no?</p>
       <details class="pista"><summary>Pista 1</summary><div><p>Un <b>parámetro</b> es un número fijo (desconocido) de la población. Algo calculado con la muestra cambia de muestra en muestra.</p></div></details>
       <details class="solucion"><summary>Solución completa</summary><div>
@@ -42,8 +42,8 @@
           <li><b>Población:</b> todas las longitudes de los peces del tanque, modeladas por una densidad $f(y;\theta)$. <b>Parámetro de interés:</b> la longitud media $\mu=\E[Y]$ (puede ser parte de $\theta$; si el modelo es normal, $\theta=(\mu,\sigma^2)$).</li>
           <li><b>Espacio paramétrico:</b> una longitud media es positiva, así que si sólo interesa $\mu$, $\Theta=(0,\infty)$; si el modelo es $N(\mu,\sigma^2)$, $\Theta=\{(\mu,\sigma^2):\mu\gt 0,\ \sigma^2\gt 0\}$.</li>
           <li><b>Estadístico / estimador:</b> $\bar Y=\frac1n\sum_{i=1}^n Y_i$. Es un estadístico porque sólo usa los datos (no usa $\mu$), y es un estimador porque lo proponemos para aproximar $\mu$.</li>
-          <li><b>Estimación:</b> el número que sale al medir los peces atrapados, p. ej. $\bar y=23.4$ cm. Con mayúscula $\bar Y$ = la regla (v.a.); con minúscula $\bar y$ = el resultado de aplicarla a <em>estos</em> datos.</li>
-          <li><b>¿Por qué $\bar Y$ es aleatoria?</b> Si otro día atrapas otros $n$ peces, obtienes otro $\bar y$. $\mu$ en cambio es una sola cifra fija del tanque: no cambia aunque cambie la muestra. La pregunta de la inferencia es: ¿qué tan lejos puede caer $\bar Y$ de $\mu$? Para responderla necesitamos la distribución de $\bar Y$ (sección 4).</li>
+          <li><b>Estimación:</b> el número que sale al medir los peces atrapados, p. ej. $\bar y=23.4$ cm. $\bar Y$ con mayúscula es la regla (v.a.); $\bar y$ con minúscula es el resultado de aplicarla a <em>estos</em> datos.</li>
+          <li><b>¿Por qué $\bar Y$ es aleatoria?</b> Si otro día atrapas otros $n$ peces, obtienes otro $\bar y$. $\mu$ en cambio es una sola cifra fija del tanque: no cambia aunque cambie la muestra. La pregunta de la inferencia es: ¿qué tan lejos puede caer $\bar Y$ de $\mu$? Para responderla necesitamos la distribución de $\bar Y$ (sección 3).</li>
         </ol>
       </div></details>
     </div>
