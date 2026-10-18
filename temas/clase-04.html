@@ -45,18 +45,9 @@
 
     <div class="box definicion"><span class="box-title">Definición (distribución F de Fisher–Snedecor)</span>
       <p>Se dice que $X\sim F_{(\nu_1,\nu_2)}$ si su fdp es</p>
-      $$f_X(x)=\frac{\left(\frac{\nu_1}{\nu_2}\right)^{\nu_2/2}}{\mathrm{B}(\nu_1/2,\;\nu_2/2)}\;x^{\nu_1/2-1}\left(1+\frac{\nu_1}{\nu_2}\,x\right)^{-\frac{\nu_1+\nu_2}{2}},\qquad x>0,$$
+      $$f_X(x)=\frac{\left(\frac{\nu_1}{\nu_2}\right)^{\nu_1/2}}{\mathrm{B}(\nu_1/2,\;\nu_2/2)}\;x^{\nu_1/2-1}\left(1+\frac{\nu_1}{\nu_2}\,x\right)^{-\frac{\nu_1+\nu_2}{2}},\qquad x>0,$$
       <p>donde $\nu_1,\nu_2$ son enteros positivos: <b>$\nu_1$ = grados de libertad del numerador</b>, <b>$\nu_2$ = grados de libertad del denominador</b>.
         El orden importa: $F_{(5,9)}$ y $F_{(9,5)}$ son distribuciones distintas.</p>
-    </div>
-
-    <div class="box cuidado" id="errata-fdp"><span class="box-title">Cuidado: errata en el exponente del PDF</span>
-      <p>En el PDF de la clase el primer factor aparece como $\left(\frac{\nu_1}{\nu_2}\right)^{\nu_2/2}$. Lo correcto es
-        $\left(\frac{\nu_1}{\nu_2}\right)^{\nu_1/2}$ (exponente con $\nu_1$, el del <em>numerador</em>):</p>
-      $$f_X(x)=\frac{\left(\frac{\nu_1}{\nu_2}\right)^{\nu_1/2}}{\mathrm{B}(\nu_1/2,\;\nu_2/2)}\;x^{\nu_1/2-1}\left(1+\frac{\nu_1}{\nu_2}\,x\right)^{-\frac{\nu_1+\nu_2}{2}},\qquad x>0.$$
-      <p>Lo puedes comprobar de dos formas: (1) la deducción del <a href="#teorema-4">Teorema 4</a> (más abajo) produce $\nu_1/2$; (2) con $\nu_2/2$ la función
-        no integra 1 cuando $\nu_1\ne\nu_2$. Por ejemplo, para $\nu_1=5,\ \nu_2=9$ la versión del PDF integra $(5/9)^{9/2-5/2}=(5/9)^2\approx 0.309$ en lugar de 1.
-        Cuando $\nu_1=\nu_2$ las dos versiones coinciden, por eso el error pasa desapercibido. Desde aquí usamos la versión corregida.</p>
     </div>
 
     <h3>¿Y qué es esa $\mathrm{B}$? La función Beta</h3>
@@ -147,7 +138,7 @@
       <div class="box definicion"><span class="box-title">En clase: α = área a la DERECHA</span>
         <p>$F_{(\nu_1,\nu_2,\alpha)}$ es el valor que deja <b>área $\alpha$ a su derecha</b>:</p>
         $$\P\big(F&gt;F_{(\nu_1,\nu_2,\alpha)}\big)=\alpha .$$
-        <p>Es la figura del PDF de la clase: $1-\alpha$ a la izquierda (sombreado), $\alpha$ en la cola blanca.</p>
+        <p>Es la figura de la clase: $1-\alpha$ a la izquierda (sombreado), $\alpha$ en la cola blanca.</p>
       </div>
       <div class="box nota"><span class="box-title">En la tabla ESPOL: q = área a la IZQUIERDA</span>
         <p>La columna "$q$" es la probabilidad <b>acumulada</b> (el área sombreada del dibujito de la tabla):</p>
@@ -181,11 +172,11 @@
         <li>En los bloques $\nu_2=1$ y $\nu_2=2$ algunas casillas dicen "∞" o "999.": <b>no son infinito</b>, son valores enormes que no caben (p.&nbsp;ej. $x_{0.975}$ de $F_{(30,1)}$ es $\approx1001$).</li>
       </ul>
     </div>
-    <div class="box cuidado" id="erratas-tabla"><span class="box-title">Erratas tipográficas en la tabla F (página 7)</span>
+    <div class="box cuidado" id="erratas-tabla"><span class="box-title">Celdas de la tabla F cuya impresión no es clara</span>
       <ul>
-        <li>Bloque $\nu_2=27$, fila $q=0.500$, columna $\nu_1=15$: dice "0.ga" → debe ser <b>0.98</b> (exacto 0.980).</li>
-        <li>Bloque $\nu_2=27$, fila $q=0.800$, columna $\nu_1=30$: dice "1.3a" → debe ser <b>1.38</b> (exacto 1.381).</li>
-        <li>Bloque $\nu_2=30$, fila $q=0.500$, columna $\nu_1=3$: dice "0.al" → debe ser <b>0.81</b> (exacto 0.807).</li>
+        <li>Bloque $\nu_2=27$, fila $q=0.500$, columna $\nu_1=15$: usa <b>0.98</b> (exacto 0.980).</li>
+        <li>Bloque $\nu_2=27$, fila $q=0.800$, columna $\nu_1=30$: usa <b>1.38</b> (exacto 1.381).</li>
+        <li>Bloque $\nu_2=30$, fila $q=0.500$, columna $\nu_1=3$: usa <b>0.81</b> (exacto 0.807).</li>
       </ul>
     </div>
 
@@ -323,7 +314,7 @@
   <!-- ===================================================================== -->
   <section>
     <h2 id="ejemplos">Ejemplos de la clase</h2>
-    <p class="small muted">La numeración (Ejemplos 3 y 4) es la del PDF de la Clase 4.</p>
+    <p class="small muted">La numeración (Ejemplos 3 y 4) es la de la clase.</p>
 
     <div class="box ejercicio" id="ejemplo-3">
       <span class="box-title">Ejemplo 3 (Clase 4)</span>
@@ -425,7 +416,7 @@
         <p class="small"><b>Con la tabla F:</b> bloque $\nu_2=8$ (página 2), fila $q=0.950$, columna $\nu_1=3$ → 4.07 (exacto 4.066): $\P(4S_X^2/S_Y^2\le4.07)=0.95$.</p>
 
         <div class="box cuidado" id="ej4-ambiguedad"><span class="box-title">¿Falta un cuadrado en d) y e)? Discusión de la ambigüedad</span>
-          <p>Es muy común en este tipo de ejercicio (aparece así en Wackerly) que se pregunte por $\sum Z_i^2$. Como está escrito en el PDF, <b>no hay cuadrado</b>, y la lectura literal es la que resolvimos arriba. Por si acaso, estas son las otras lecturas posibles:</p>
+          <p>En este tipo de ejercicio (aparece así en Wackerly) es común que se pregunte por $\sum Z_i^2$. Tal como está planteado el enunciado, <b>no hay cuadrado</b>, y la lectura literal es la que resolvimos arriba. Por si acaso, estas son las otras lecturas posibles:</p>
           <div class="table-wrap"><table class="tabla text-left">
             <thead><tr><th>Lectura</th><th>d) (…)/9</th><th>e) (…)/3</th></tr></thead>
             <tbody>

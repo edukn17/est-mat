@@ -342,7 +342,7 @@
         <li>Evalúe $\dfrac{dh^{-1}}{du}=\dfrac{d[h^{-1}(u)]}{du}$.</li>
         <li>Encuentre $f_U(u)=f_Y[h^{-1}(u)]\left|\dfrac{dh^{-1}}{du}\right|$.</li>
       </ol>
-      <p>Y un paso 4 que el resumen no dice pero el profesor sí evalúa: <b>escribe el soporte de $U$</b>, que es la imagen por $h$ del soporte de $Y$.</p>
+      <p>Y un paso 4 que conviene no olvidar: <b>escribe el soporte de $U$</b>, que es la imagen por $h$ del soporte de $Y$.</p>
     </div>
 
     <div class="box ejemplo" id="ejemplo-2">
@@ -377,8 +377,8 @@
       </div></details>
     </div>
 
-    <div class="box cuidado"><span class="box-title">Detalle de notación en el PDF</span>
-      <p>El enunciado del teorema en la clase dice "entonces $U=h(y)$ tiene una función de densidad…". Debe leerse $U=h(Y)$ (mayúscula: la variable aleatoria, no un número).</p>
+    <div class="box nota"><span class="box-title">Notación</span>
+      <p>En el teorema, $U=h(Y)$ se escribe con $Y$ mayúscula: es la variable aleatoria (no un número). Distinguirlo ayuda a sustituir con cuidado en la densidad.</p>
     </div>
     <div id="q-jac1"></div>
   </section>
@@ -399,9 +399,9 @@
       $$J=\frac{\partial(y_1,y_2)}{\partial(u_1,u_2)}=\det\begin{bmatrix}\dfrac{\partial y_1}{\partial u_1}&\dfrac{\partial y_1}{\partial u_2}\\[8pt]\dfrac{\partial y_2}{\partial u_1}&\dfrac{\partial y_2}{\partial u_2}\end{bmatrix}\neq0.$$
     </div>
 
-    <div class="box nota"><span class="box-title">Tres aclaraciones que el PDF da por obvias</span>
+    <div class="box nota"><span class="box-title">Tres aclaraciones útiles</span>
       <ul>
-        <li><b>$J$ es el jacobiano de la inversa</b> (las $y$ derivadas respecto de las $u$), y al final debe quedar escrito en función de $(u_1,u_2)$. El PDF lo nota $J(y_1,y_2)$ para recordar que son las derivadas de $y$; no significa que dependa de $y$.</li>
+        <li><b>$J$ es el jacobiano de la inversa</b> (las $y$ derivadas respecto de las $u$), y al final debe quedar escrito en función de $(u_1,u_2)$. A veces se escribe $J(y_1,y_2)$ para recordar que son las derivadas de $y$; no significa que dependa de $y$.</li>
         <li><b>Atajo:</b> si es más fácil derivar la transformación directa, $J=\dfrac{1}{\det\big(\partial(u_1,u_2)/\partial(y_1,y_2)\big)}$, evaluado en $y=y(u)$.</li>
         <li><b>¿Y si solo me piden una variable $U_1$?</b> El método necesita tantas variables nuevas como viejas (para que haya biyección). Inventa una <b>variable auxiliar</b> $U_2$ que haga la inversa fácil (típicamente $U_2=Y_1$, $Y_2$ o $Y_1+Y_2$), obtén la conjunta y luego <b>integra</b> $u_2$ para la marginal de $U_1$.</li>
       </ul>
@@ -506,11 +506,8 @@
       <li>Estudio del soporte de $\mathbf U$.</li>
       <li>Densidad de $\mathbf U$: $g(\mathbf u)=f(\mathbf y(\mathbf u))\,|J|$.</li>
     </ol>
-    <div class="box cuidado"><span class="box-title">Errata del PDF</span>
-      <p>El paso 4 de la clase dice "Densidad de $\mathbf Y$: $g(\mathbf u)=\dots$". Debe decir <b>densidad de $\mathbf U$</b>: $g$ es la densidad del vector nuevo. Además el PDF escribe "$J(\mathbf y)=\frac{\partial\mathbf y}{\partial\mathbf u}$": se refiere al <b>determinante</b> de esa matriz, y en $g$ va su <b>valor absoluto</b>.</p>
-    </div>
     <div class="box nota"><span class="box-title">Numeración</span>
-      <p>En el PDF de la clase los ejercicios saltan del <b>7 al 10</b>: no existen Ejercicios 8 y 9. No es que falten en esta guía.</p>
+      <p>La numeración de los ejercicios salta del <b>7 al 10</b>: no hay Ejercicios 8 y 9 en esta lista.</p>
     </div>
 
     <div class="box ejercicio" id="ej-10">

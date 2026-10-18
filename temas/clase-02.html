@@ -62,9 +62,8 @@
       <p>El único paso no trivial es el tercero: la esperanza de un producto de funciones de v.a. <b>independientes</b> es el producto de las esperanzas. Sin independencia, este paso falla.</p>
     </div></details>
 
-    <div class="box teorema"><span class="box-title">Teorema de unicidad (la "Obs" del PDF)</span>
+    <div class="box teorema"><span class="box-title">Teorema de unicidad</span>
       <p>Si $M_X(t)$ y $M_Y(t)$ existen y $M_X(t)=M_Y(t)$ para todo $t$ en un intervalo abierto que contiene a $0$, entonces $X$ e $Y$ tienen <b>la misma distribución</b>.</p>
-      <p class="small">(En el PDF aparece escrito $m_X(t)$, $m_Y(t)$ con minúscula y luego $M_X$, $M_Y$: es la misma FGM.)</p>
     </div>
 
     <p><b>Esto es lo que hace que el método funcione.</b> El primer teorema te da $M_U(t)$ fácilmente; el segundo te garantiza que, si $M_U(t)$ coincide con la FGM de un modelo conocido, entonces $U$ <em>tiene</em> ese modelo. No es una aproximación ni una coincidencia: la FGM determina la distribución.</p>
@@ -323,12 +322,6 @@
     <p>Si además las $Y_i$ son continuas con densidad $f=F'$, derivamos (regla de la cadena: la derivada de $[\,\text{algo}\,]^n$ es $n[\,\text{algo}\,]^{n-1}\cdot(\text{algo})'$):</p>
     $$g_{(n)}(y)=\frac{d}{dy}F_{Y_{(n)}}(y)=\frac{d}{dy}\big[F(y)\big]^n=n\big[F(y)\big]^{n-1}f(y),$$
     $$g_{(1)}(y)=\frac{d}{dy}F_{Y_{(1)}}(y)=\frac{d}{dy}\Big\{1-\big[1-F(y)\big]^n\Big\}=-n\big[1-F(y)\big]^{n-1}\cdot\big(-f(y)\big)=n\big[1-F(y)\big]^{n-1}f(y).$$
-
-    <div class="box cuidado"><span class="box-title">Errata en el PDF de la Clase 2</span>
-      <p>En el PDF la primera línea de cada derivación aparece como $g_{(n)}(y)=\frac{d}{dy}[F_{Y_{(n)}}(y)]^n$ y $g_{(1)}(y)=\frac{d}{dy}[F_{Y_{(1)}}(y)]^n$ (además con el corchete sin cerrar). Así escrito estaría elevando a la $n$ <b>la acumulada del máximo, que ya es</b> $[F(y)]^n$ (daría $[F(y)]^{n^2}$). Lo correcto es derivar la acumulada <b>tal cual</b>:</p>
-      $$g_{(n)}(y)=\frac{d}{dy}F_{Y_{(n)}}(y)=\frac{d}{dy}[F(y)]^n,\qquad g_{(1)}(y)=\frac{d}{dy}F_{Y_{(1)}}(y)=\frac{d}{dy}\{1-[1-F(y)]^n\}.$$
-      <p>Las líneas siguientes y los resultados finales del PDF sí son correctos.</p>
-    </div>
 
     <div class="box ejemplo" id="ejemplo-a"><span class="box-title">Ejemplo rápido</span>
       <p>Tres números $U(0,1)$ independientes. ¿Probabilidad de que el más grande sea menor que $0.5$? Por el patrón: los tres deben ser menores que $0.5$, así que $\P(Y_{(3)}\le 0.5)=0.5^3=0.125$. ¿Y de que el más pequeño supere $0.5$? Los tres deben superarlo: $\P(Y_{(1)} > 0.5)=(1-0.5)^3=0.125$.</p>

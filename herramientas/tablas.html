@@ -48,7 +48,7 @@
   </header>
 
   <div class="box nota"><span class="box-title">De dónde salen estas tablas</span>
-    <p>Son transcripciones de las tablas del curso (carpeta <code>Tablas/</code>): t de Student (1 pág.), χ² (2 págs.), F (8 págs.), normal estándar (1 pág.) y Kolmogorov–Smirnov (1 pág.). Comparé <b>cada celda</b> con su valor exacto calculado por computadora. Las celdas con problemas están marcadas en las tablas y explicadas en <a href="#erratas">Erratas</a>.</p>
+    <p>Son transcripciones de las tablas del curso (carpeta <code>Tablas/</code>): t de Student (1 pág.), χ² (2 págs.), F (8 págs.), normal estándar (1 pág.) y Kolmogorov–Smirnov (1 pág.). Comparé <b>cada celda</b> con su valor exacto calculado por computadora. Las celdas cuya impresión no es clara están señaladas en las tablas, con su valor correcto a un clic (ver <a href="#erratas">Valores a verificar</a>).</p>
   </div>
 
   <!-- ============================================================ -->
@@ -186,7 +186,7 @@
     $$F_{(1,\nu,\alpha)}=\big(t_{(\nu),\,\alpha/2}\big)^2.\qquad\text{Ej.: } F_{(1,9,0.05)}=t_{(9),0.025}^2=2.262^2=5.117.$$</p>
 
     <div class="box cuidado"><span class="box-title">El “∞” de la tabla F no siempre es infinito</span>
-      <p>En el bloque $\nu_2=1$ (filas 0.975, 0.990 y 0.999) muchas celdas dicen “∞”, pero los valores son finitos: sólo que pasan de 999 y no cupieron en la celda. Por ejemplo, $F_{(2,1)}$ con $q=0.99$ vale <b>4999.5</b>. En el bloque $\nu_2=2$, fila 0.999, el “∞” debería decir 999. La única celda donde 1.00 y ∞ son lo correcto es la columna $\nu_1=\infty$ del bloque $\nu_2=\infty$. Más detalles en <a href="#erratas">Erratas</a>.</p>
+      <p>En el bloque $\nu_2=1$ (filas 0.975, 0.990 y 0.999) muchas celdas dicen “∞”, pero los valores son finitos: sólo que pasan de 999 y no cupieron en la celda. Por ejemplo, $F_{(2,1)}$ con $q=0.99$ vale <b>4999.5</b>. En el bloque $\nu_2=2$, fila 0.999, el “∞” debería decir 999. La única celda donde 1.00 y ∞ son lo correcto es la columna $\nu_1=\infty$ del bloque $\nu_2=\infty$. Más detalles en <a href="#erratas">Valores a verificar</a>.</p>
     </div>
 
     <h3 id="f-interactiva">Tabla F interactiva</h3>
@@ -223,7 +223,7 @@
         <li>prueba bilateral al 5% → columna <b>0.025</b> (para $n>40$, $1.36/\sqrt n$, la constante que aparece en todos los libros);</li>
         <li>prueba bilateral al 10% → columna 0.05; al 1% → columna 0.005.</li>
       </ul>
-      <p>Si usas la columna 0.05 para una prueba bilateral al 5%, en realidad estás trabajando al 10%. Confirma en clase qué convención usa el profesor.</p>
+      <p>Si usas la columna 0.05 para una prueba bilateral al 5%, en realidad estás trabajando al 10%. Confirma en clase qué convención se sigue.</p>
     </div>
 
     <div class="sim" id="sim-ks">
@@ -367,9 +367,9 @@
 
   <!-- ============================================================ -->
   <section>
-    <h2 id="erratas">Erratas de las tablas impresas</h2>
-    <p>Resultado de comparar cada celda con el valor exacto. Las <b>tablas t, Z y K-S</b> están correctas (en la K-S, ojo con la convención de α explicada <a href="#tabla-ks">arriba</a>). La <b>χ²</b> también: sólo una celda difiere en la última cifra. Los problemas están en la <b>F</b>:</p>
-    <div class="box cuidado"><span class="box-title">Erratas en la tabla F</span>
+    <h2 id="erratas">Valores de las tablas impresas que conviene verificar</h2>
+    <p>Resultado de comparar cada celda con el valor exacto. En las <b>tablas t, Z y K-S</b> todo coincide (en la K-S, ojo con la convención de α explicada <a href="#tabla-ks">arriba</a>). La <b>χ²</b> también: sólo una celda difiere en la última cifra. Las celdas a vigilar están en la <b>F</b>:</p>
+    <div class="box cuidado"><span class="box-title">Celdas a vigilar en la tabla F</span>
       <ul>
         <li><b>3 celdas ilegibles</b> (pág. 7): bloque $\nu_2=27$, fila 0.500, columna 15 dice “0.ga” → <b>0.98</b>. Bloque 27, fila 0.800, columna 30 dice “1.3a” → <b>1.38</b>. Bloque 30, fila 0.500, columna 3 dice “0.al” → <b>0.81</b>.</li>
         <li><b>Bloque $\nu_2=1$, fila 0.900, columnas 7 a 50</b> (pág. 2): están corridas 0.2–0.3 hacia arriba. Impreso: 59.1, 59.7, 60.5, 61.0, 61.5, 62.0, 62.6, 63.0. Correcto: <b>58.9, 59.4, 60.2, 60.7, 61.2, 61.7, 62.3, 62.7</b>.</li>
@@ -379,7 +379,7 @@
       </ul>
     </div>
     <details><summary>Diferencias de una unidad en la última cifra (no importan en la práctica)</summary><div id="lista-cifra"></div></details>
-    <div class="leyenda"><span class="l-err">0.ga</span><span>ilegible o errata</span><span class="l-fuera">∞</span><span>“no cupo” (&gt; 999)</span><span class="l-cifra">4.29</span><span>difiere en la última cifra</span><span>· Pasa el mouse o haz clic sobre la celda para ver el valor correcto.</span></div>
+    <div class="leyenda"><span class="l-err">0.ga</span><span>ilegible o dudosa</span><span class="l-fuera">∞</span><span>“no cupo” (&gt; 999)</span><span class="l-cifra">4.29</span><span>difiere en la última cifra</span><span>· Pasa el mouse o haz clic sobre la celda para ver el valor correcto.</span></div>
   </section>
 
   <!-- ============================================================ -->
@@ -1048,8 +1048,8 @@ const FLAGS = {"chi|8|0.999":{"t":"cifra","ex":26.1245},"F|1|0.667|20":{"t":"cif
   function flagNote(cell) {
     const f = cell && cell.flag; if (!f) return '';
     const ex = f4(f.ex);
-    if (f.t === 'corrupto') return ` <span class="warn">⚠ En el PDF esta celda está ilegible («${cell.str}»); el valor correcto es ${ex}.</span>`;
-    if (f.t === 'error') return ` <span class="warn">⚠ Errata del PDF: dice ${cell.str}, pero el valor correcto es ${ex}.</span>`;
+    if (f.t === 'corrupto') return ` <span class="warn">⚠ La celda impresa es ilegible («${cell.str}»); usa ${ex}.</span>`;
+    if (f.t === 'error') return ` <span class="warn">⚠ La celda impresa pone ${cell.str}; usa ${ex}.</span>`;
     if (f.t === 'fuera') return ` <span class="warn">⚠ Aquí «∞» no significa infinito: el valor es ${ex}, demasiado grande para la tabla.</span>`;
     return ` <span class="muted">(Difiere en la última cifra: exacto ${ex}.)</span>`;
   }
@@ -1339,7 +1339,7 @@ const FLAGS = {"chi|8|0.999":{"t":"cifra","ex":26.1245},"F|1|0.667|20":{"t":"cif
   }
   function flagTitle(f, str) {
     if (!f) return null;
-    return { corrupto: `Ilegible en el PDF; correcto: ${f4(f.ex)}`, error: `Errata: correcto ${f4(f.ex)}`, fuera: `No es infinito: vale ${f4(f.ex)}`, cifra: `Exacto: ${f4(f.ex)}` }[f.t];
+    return { corrupto: `Impresión dudosa; usa: ${f4(f.ex)}`, error: `Conviene usar: ${f4(f.ex)}`, fuera: `No es infinito: vale ${f4(f.ex)}`, cifra: `Exacto: ${f4(f.ex)}` }[f.t];
   }
   // tabla completa clicable
   function bigTable(host, tab, onPick) {

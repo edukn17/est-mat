@@ -46,7 +46,7 @@
 
     <div class="sim" id="sim-motiv">
       <p class="sim-title">Simulación (a): histograma de $M$ medias muestrales</p>
-      <p class="sim-desc">Por defecto verás exactamente el experimento del PDF: población $\text{Exp}(\beta=1)$, $n=25$, $M=1000$.
+      <p class="sim-desc">Por defecto verás exactamente el experimento de la clase: población $\text{Exp}(\beta=1)$, $n=25$, $M=1000$.
         Luego cambia la población, $n$ y $M$, o pasa a la escala estandarizada $W_n=(\bar X-\mu)/(\sigma/\sqrt n)$ para comparar con $N(0,1)$.</p>
       <div class="controls c-a"></div>
       <div class="controls c-b"></div>
@@ -166,9 +166,9 @@
     $$\P(\bar Y\le y)=\P\Big(W_n\le \tfrac{y-\mu}{\sigma/\sqrt n}\Big)\approx\Phi\Big(\tfrac{y-\mu}{\sigma/\sqrt n}\Big),\qquad
       \P(S_n\le s)=\P\Big(W_n\le \tfrac{s-n\mu}{\sigma\sqrt n}\Big)\approx\Phi\Big(\tfrac{s-n\mu}{\sigma\sqrt n}\Big).$$
 
-    <div class="box cuidado"><span class="box-title">Sobre la notación del PDF</span>
-      <p>En las observaciones el PDF escribe "$W_n\sim N(0,1)$" y "$\bar Y\sim N(\mu,\sigma^2/n)$ cuando $n$ es suficientemente grande".
-        Léelo como <b>aproximadamente</b> ($\overset{a}{\sim}$, como en el Formulario 2). Para $n$ fijo, $W_n$ casi nunca es exactamente normal
+    <div class="box cuidado"><span class="box-title">Sobre la notación</span>
+      <p>Las observaciones escriben "$W_n\sim N(0,1)$" y "$\bar Y\sim N(\mu,\sigma^2/n)$ cuando $n$ es suficientemente grande".
+        Léelos como <b>aproximadamente</b> ($\overset{a}{\sim}$, como en el Formulario 2). Para $n$ fijo, $W_n$ casi nunca es exactamente normal
         (solo lo es si las $Y_i$ ya eran normales, Clase 3).</p>
     </div>
 
@@ -607,9 +607,6 @@
   <!-- ============================================================ -->
   <section>
     <h2 id="ej-7">Ejemplo 7: de Poisson a la fórmula de Stirling</h2>
-    <div class="box cuidado"><span class="box-title">Errata del PDF</span>
-      <p>En el Ejemplo 7 la primera parte está marcada "a)" pero la segunda aparece como una viñeta sin letra. Aquí la llamamos <b>b)</b>.</p>
-    </div>
     <div class="box ejercicio" id="ejemplo-7">
       <span class="box-title">Ejemplo 7 (Clase 5) <span class="badge star">★ reto</span></span>
       <p>Sean $X_1,X_2,\dots$ variables aleatorias independientes con distribución Poisson de media y varianza igual a 1. Para todo $n>0$, sea $S_n:=\sum_{i=1}^n X_i$.</p>
@@ -644,7 +641,7 @@
           <li><b>Despejar $n!$:</b>
             $$e^{-n}\frac{n^n}{n!}\approx\frac{1}{\sqrt{2\pi n}}\quad\Longrightarrow\quad n!\approx\sqrt{2\pi n}\;n^n e^{-n}=\sqrt{2\pi n}\left(\frac ne\right)^n .\qquad\blacksquare$$</li>
         </ol>
-        <div class="box nota"><span class="box-title">¿Por qué el PDF dice "sugiere" y no "demuestra"?</span>
+        <div class="box nota"><span class="box-title">¿Por qué decimos «sugiere» y no «demuestra»?</span>
           <p>El TLC garantiza $\P(a&lt;W_n\le b)\to\Phi(b)-\Phi(a)$ para $a,b$ <b>fijos</b>. Aquí el intervalo $(-\frac{1}{2\sqrt n},\frac{1}{2\sqrt n}]$ se encoge con $n$
             y ambas probabilidades tienden a 0; el TLC solo dice que su diferencia tiende a 0, no que su <b>cociente</b> tienda a 1. Para eso hace falta el
             <em>teorema del límite local</em> (una versión del TLC para la función de probabilidad puntual). La fórmula de Stirling sí es cierta:
@@ -786,7 +783,7 @@
       { value: 'cauchy', label: 'Cauchy (varianza infinita)' }],
       onChange: v => { st.pop = v; show(labelOf(spP), v === 'bern'); simulate(); } });
     ui.select(cA, { label: 'Graficar', value: 'xbar', options: [
-      { value: 'xbar', label: 'las medias X̄ (como pide el PDF)' }, { value: 'w', label: 'W = (X̄ − μ)/(σ/√n)' }],
+      { value: 'xbar', label: 'las medias X̄ (como pide la clase)' }, { value: 'w', label: 'W = (X̄ − μ)/(σ/√n)' }],
       onChange: v => { st.scale = v; render(); } });
     const spP = ui.slider(cB, { tex: 'p', min: 0.02, max: 0.98, step: 0.01, value: 0.2, fmt: v => v.toFixed(2), onInput: v => { st.p = v; simulate(); } });
     ui.slider(cB, { tex: 'n', min: 1, max: 100, step: 1, value: 25, onInput: v => { st.n = v; simulate(); } });

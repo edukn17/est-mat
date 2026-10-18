@@ -67,7 +67,7 @@
     </div>
     <div id="quiz-estadistico"></div>
 
-    <h3 id="dist-muestral">¿Qué es una distribución muestral? (la idea que el profe no dibuja)</h3>
+    <h3 id="dist-muestral">¿Qué es una distribución muestral?</h3>
     <div class="box idea"><span class="box-title">Intuición</span>
       <p>Imagina que repites el experimento miles de veces: cada vez sacas una muestra nueva de tamaño $n$ y calculas $\bar y$. Obtienes miles de valores $\bar y^{(1)},\bar y^{(2)},\dots$ Su histograma se parece a una curva: esa curva es la <b>distribución muestral de $\bar Y$</b>. Las simulaciones de esta página hacen exactamente eso. Las dos distribuciones muestrales más usadas son la de $\bar Y$ y la de $S^2$, y bajo el <b>supuesto de normalidad</b> (datos normales i.i.d., razonable en muchos problemas aplicados) se pueden calcular de forma exacta.</p>
     </div>
@@ -188,10 +188,11 @@
     <div class="box idea"><span class="box-title">Compara con el Lema 1</span>
       <p>Lema 1: $\sum (Y_i-\mu)^2/\sigma^2\sim\chi^2_{(n)}$. Teorema 2: si cambias la $\mu$ (desconocida) por $\bar Y$ (calculable), la suma sigue siendo $\chi^2$ pero <b>pierde un grado de libertad</b>. Entender ese "−1" es entender la clase.</p>
     </div>
-    <div class="box cuidado"><span class="box-title">Cuidado: la pista del PDF tiene un error</span>
-      <p>El PDF dice "<em>Use el hecho que $Y_i\perp(Y_i-\bar Y)$</em>". Eso es <b>falso</b>: $\Cov(Y_i,\,Y_i-\bar Y)=\Var(Y_i)-\Cov(Y_i,\bar Y)=\sigma^2-\frac{\sigma^2}{n}=\frac{n-1}{n}\sigma^2\neq 0$. Lo correcto (y lo que se usa en la prueba) es
+    <div class="box nota"><span class="box-title">Un detalle clave: qué es independiente de qué</span>
+      <p>Conviene no confundir dos afirmaciones. La cierta —y la que se usa en la prueba— es que la media y los desvíos son independientes:
       $$\bar Y\ \ind\ (Y_i-\bar Y),\quad i=1,\dots,n .$$
-      La otra pista, "sume y reste $\mu$ dentro del binomio", es correcta: $Y_i-\bar Y=(Y_i-\mu)-(\bar Y-\mu)$; es lo mismo que sumar y restar $\bar Y$ dentro de $(Y_i-\mu)$, que es lo que hacemos abajo.</p>
+      En cambio, $Y_i$ y $Y_i-\bar Y$ <b>no</b> son independientes: $\Cov(Y_i,\,Y_i-\bar Y)=\Var(Y_i)-\Cov(Y_i,\bar Y)=\sigma^2-\frac{\sigma^2}{n}=\frac{n-1}{n}\sigma^2\neq 0$.</p>
+      <p>Para la prueba también es útil escribir $Y_i-\bar Y=(Y_i-\mu)-(\bar Y-\mu)$: sumar y restar $\mu$ dentro del binomio, que es lo que hacemos abajo.</p>
     </div>
 
     <details class="prueba"><summary>Prueba de 1): $\bar Y\ \ind\ S^2$ (FGM conjunta)</summary><div>
@@ -379,7 +380,7 @@
       <span class="box-title">Ejemplo 4 (Clase 3)</span>
       <p>Suponga v.a. independientes $Z\sim N(0,1)$ y $W\sim\chi^2_{(\nu)}$. Se conoce que bajo estas condiciones $T=\dfrac{Z}{\sqrt{W/\nu}}\sim t_{(\nu)}$.</p>
       <p>a) Pruebe que $\E[T]=0$, si $\nu\gt 1$.<br>b) Pruebe que $\Var[T]=\dfrac{\nu}{\nu-2}$, si $\nu\gt 2$.</p>
-      <p><em>Pista (del PDF):</em> use la independencia.</p>
+      <p><em>Pista:</em> use la independencia.</p>
       <details class="pista"><summary>Pista 1</summary><div><p>Escribe $T=\sqrt\nu\;Z\cdot W^{-1/2}$. Si $Z\ind W$, entonces $\E[g(Z)h(W)]=\E[g(Z)]\,\E[h(W)]$: no hace falta la fdp de la $t$.</p></div></details>
       <details class="pista"><summary>Pista 2</summary><div><p>Calcula un momento general de la χ²: $\E[W^k]=\int_0^\infty w^k f_W(w)\,dw$, usando $\int_0^\infty w^{a-1}e^{-w/\beta}dw=\Gamma(a)\beta^a$ (válida sólo si $a\gt 0$).</p></div></details>
       <details class="solucion"><summary>Solución completa</summary><div>
@@ -470,30 +471,26 @@
     <div class="box ejercicio" id="ejemplo-6">
       <span class="box-title">Ejemplo 6 (Clase 3) <span class="badge star">★ reto</span></span>
       <p>Suponga que muestras independientes (de tamaño $n_i$) se toman de cada una de $k$ poblaciones y que la población $i$ está normalmente distribuida con media $\mu_i$ y varianza $\sigma^2$, $i=1,2,\dots,k$. Esto es, todas las poblaciones están distribuidas normalmente con la misma varianza pero con (posiblemente) medias diferentes. Sean $\bar X_i$ y $S_i^2$, $i=1,\dots,k$ las respectivas medias muestrales y varianzas. Sea
-      $$\theta=\sum_{i=1}^k c_i\mu_k ,$$
+      $$\theta=\sum_{i=1}^k c_i\mu_i ,$$
       donde $c_1,c_2,\dots,c_k$ son constantes dadas.</p>
-      <p>a) Calcule la distribución de $\bar\theta=\sum_{i=1}^k c_i\bar X_i$. Además, proporcione razones para cualesquiera afirmaciones que haga.</p>
+      <p>a) Calcule la distribución de $\hat\theta=\sum_{i=1}^k c_i\bar X_i$. Además, proporcione razones para cualesquiera afirmaciones que haga.</p>
       <p>b) Proporcione la distribución de $\dfrac{\mathrm{SSE}}{\sigma^2}$, donde $\mathrm{SSE}=\sum_{i=1}^k (n_i-1)S_i^2$. Justifique las afirmaciones que haga.</p>
       <p>c) Proporcione la distribución de
       $$\frac{\hat\theta-\theta}{\sqrt{\left(\frac{c_1^2}{n_1}+\frac{c_2^2}{n_2}+\dots+\frac{c_k^2}{n_k}\right)\mathrm{MSE}}},\qquad\text{donde }\ \mathrm{MSE}=\frac{\mathrm{SSE}}{n_1+n_2+\dots+n_k-k}.$$</p>
-
-      <div class="box cuidado"><span class="box-title">Erratas del enunciado</span>
-        <p>1) Dice $\theta=\sum c_i\mu_k$: debe ser $\theta=\sum_{i=1}^k c_i\mu_i$ (el subíndice de la suma es $i$). 2) En (a) se escribe $\bar\theta$ y en (c) $\hat\theta$: son <b>el mismo</b> estimador, $\hat\theta=\bar\theta=\sum c_i\bar X_i$.</p>
-      </div>
 
       <details class="pista"><summary>Pista 1</summary><div><p>(a) Cada $\bar X_i\sim N(\mu_i,\sigma^2/n_i)$ por el Teorema 1, y son independientes entre sí. Una combinación lineal de normales independientes es normal (pruébalo con la FGM).</p></div></details>
       <details class="pista"><summary>Pista 2</summary><div><p>(b) Teorema 2 en cada muestra + aditividad de la χ².</p></div></details>
       <details class="pista"><summary>Pista 3</summary><div><p>(c) Arma $Z$ con (a), $W$ con (b), demuestra que son independientes y usa el Teorema 3. La $\sigma$ se cancela.</p></div></details>
       <details class="solucion"><summary>Solución completa</summary><div>
         <p>Notación: $N=n_1+\dots+n_k$ (tamaño total).</p>
-        <h4>a) Distribución de $\bar\theta$</h4>
+        <h4>a) Distribución de $\hat\theta$</h4>
         <ol class="pasos">
           <li>Por el Teorema 1 aplicado a la muestra $i$: $\bar X_i\sim N(\mu_i,\sigma^2/n_i)$.</li>
           <li>Las $k$ muestras son independientes, y $\bar X_i$ sólo usa la muestra $i$, luego $\bar X_1,\dots,\bar X_k$ son independientes.</li>
-          <li>FGM de $\bar\theta$, usando independencia y $M_{\bar X_i}(s)=e^{\mu_i s+\sigma^2s^2/(2n_i)}$:
-          $$M_{\bar\theta}(s)=\prod_{i=1}^k M_{\bar X_i}(c_is)=\prod_{i=1}^k e^{c_i\mu_i s+\frac{\sigma^2c_i^2}{n_i}\frac{s^2}{2}}=\exp\Big\{\Big(\sum c_i\mu_i\Big)s+\sigma^2\Big(\sum\frac{c_i^2}{n_i}\Big)\frac{s^2}{2}\Big\}.$$</li>
+          <li>FGM de $\hat\theta$, usando independencia y $M_{\bar X_i}(s)=e^{\mu_i s+\sigma^2s^2/(2n_i)}$:
+          $$M_{\hat\theta}(s)=\prod_{i=1}^k M_{\bar X_i}(c_is)=\prod_{i=1}^k e^{c_i\mu_i s+\frac{\sigma^2c_i^2}{n_i}\frac{s^2}{2}}=\exp\Big\{\Big(\sum c_i\mu_i\Big)s+\sigma^2\Big(\sum\frac{c_i^2}{n_i}\Big)\frac{s^2}{2}\Big\}.$$</li>
           <li>Por unicidad de la FGM:
-          $$\boxed{\ \bar\theta\sim N\Big(\theta,\ \sigma^2\sum_{i=1}^k\frac{c_i^2}{n_i}\Big)\ }\qquad\Longleftrightarrow\qquad Z=\frac{\bar\theta-\theta}{\sigma\sqrt{\sum c_i^2/n_i}}\sim N(0,1).$$</li>
+          $$\boxed{\ \hat\theta\sim N\Big(\theta,\ \sigma^2\sum_{i=1}^k\frac{c_i^2}{n_i}\Big)\ }\qquad\Longleftrightarrow\qquad Z=\frac{\hat\theta-\theta}{\sigma\sqrt{\sum c_i^2/n_i}}\sim N(0,1).$$</li>
         </ol>
         <h4>b) Distribución de $\mathrm{SSE}/\sigma^2$</h4>
         <ol class="pasos">
@@ -514,7 +511,7 @@
           $$\boxed{\ \frac{\hat\theta-\theta}{\sqrt{\left(\frac{c_1^2}{n_1}+\dots+\frac{c_k^2}{n_k}\right)\mathrm{MSE}}}\sim t_{(n_1+\dots+n_k-k)}\ }.$$</li>
           <li><b>Para qué sirve:</b> con $k=2$, $c_1=1$, $c_2=-1$ obtienes $\theta=\mu_1-\mu_2$ y $\dfrac{(\bar X_1-\bar X_2)-(\mu_1-\mu_2)}{\sqrt{\mathrm{MSE}\,(1/n_1+1/n_2)}}\sim t_{(n_1+n_2-2)}$: la famosa prueba $t$ de dos muestras con varianza combinada ($\mathrm{MSE}=S_p^2$). Con $k$ general es la base del ANOVA.</li>
         </ol>
-        <p class="small muted">Verificado por Monte Carlo (10⁵ réplicas, $k=3$, $n=(4,6,5)$, $c=(1,-0.5,2)$, $\sigma=2$): media y varianza de $\bar\theta$, de $\mathrm{SSE}/\sigma^2$ (≈12 y ≈24 = $N-k$ y $2(N-k)$), y prueba K-S del cociente contra $t_{(12)}$ sin rechazo.</p>
+        <p class="small muted">Verificado por Monte Carlo (10⁵ réplicas, $k=3$, $n=(4,6,5)$, $c=(1,-0.5,2)$, $\sigma=2$): media y varianza de $\hat\theta$, de $\mathrm{SSE}/\sigma^2$ (≈12 y ≈24 = $N-k$ y $2(N-k)$), y prueba K-S del cociente contra $t_{(12)}$ sin rechazo.</p>
       </div></details>
     </div>
   </section>
