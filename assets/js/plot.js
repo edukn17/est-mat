@@ -24,7 +24,7 @@
     return v || fallback;
   }
   function resolveColor(c) {
-    if (!c) return cssVar('--plot-c1', '#2563eb');
+    if (!c) return cssVar('--plot-c1', '#55247A');
     const map = { c1: '--plot-c1', c2: '--plot-c2', c3: '--plot-c3', c4: '--plot-c4', c5: '--plot-c5', c6: '--plot-c6',
       accent: '--accent', muted: '--muted', ink: '--ink', good: '--good', bad: '--bad', grid: '--plot-grid', bg: '--surface' };
     return map[c] ? cssVar(map[c], '#888') : c;
