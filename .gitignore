@@ -15,3 +15,9 @@ Tablas/
 Formularios/
 Deberes/
 *.xopp
+
+# Presentaciones/material de identidad de la facultad
+format/
+
+# Documentación interna de trabajo (no se publica)
+PROCESO.md
