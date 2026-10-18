@@ -1,0 +1,1089 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clase 2 · Método FGM y estadísticos de orden</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/theme.js"></script>
+<style>
+  /* figuras SVG propias de esta página (colores desde los tokens del tema) */
+  .fig { margin: 18px 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+  .fig svg { display: block; width: 100%; height: auto; }
+  .fig figcaption { font-family: var(--font-ui); font-size: 14px; color: var(--muted); margin-top: 6px; }
+  .fig .ax { stroke: var(--ink); stroke-width: 2; }
+  .fig .tk { stroke: var(--ink); stroke-width: 1.5; }
+  .fig .lb { fill: var(--ink); font: 600 15px var(--font-ui); }
+  .fig .lbm { fill: var(--muted); font: 500 14px var(--font-ui); }
+  .fig .p1 { fill: var(--plot-c1); } .fig .p2 { fill: var(--plot-c3); } .fig .p3 { fill: var(--plot-c2); } .fig .p4 { fill: var(--plot-c4); } .fig .p5 { fill: var(--plot-c5); }
+  .fig .band { fill: var(--plot-c3); opacity: .18; }
+  .fig .band2 { fill: var(--plot-c4); opacity: .18; }
+  .leyenda-clases { list-style: none; padding-left: 0; font-size: 16px; }
+  .leyenda-clases li { display: flex; gap: 10px; align-items: baseline; }
+  .dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; flex: 0 0 12px; transform: translateY(1px); }
+  .dot.c1 { background: var(--plot-c1); } .dot.c2 { background: var(--plot-c3); } .dot.c3 { background: var(--plot-c2); } .dot.c4 { background: var(--plot-c4); } .dot.c5 { background: var(--plot-c5); }
+</style>
+</head>
+<body data-page="clase-02" data-root="../">
+<main id="contenido">
+
+  <header class="page-head">
+    <p class="kicker">Clase 2</p>
+    <h1>Método de la FGM y estadísticos de orden</h1>
+    <p class="lead">Al terminar podrás (1) encontrar la distribución de una suma de v.a. independientes multiplicando FGMs y reconociendo el resultado, y (2) obtener la distribución del mínimo, del máximo y de cualquier valor ordenado $Y_{(i)}$ de una muestra.</p>
+  </header>
+
+  <p>Esta clase tiene dos herramientas que no se parecen entre sí, pero que responden a la misma pregunta de la Clase 1: <em>si conozco la distribución de $Y_1,\dots,Y_n$, ¿cuál es la distribución de una función de ellas?</em></p>
+  <ul>
+    <li><b>Método FGM</b>: para <b>sumas</b> (y combinaciones lineales) de v.a. <b>independientes</b>.</li>
+    <li><b>Estadísticos de orden</b>: para el <b>mínimo</b>, el <b>máximo</b> y, en general, el valor que queda en la posición $i$ cuando ordenas la muestra.</li>
+  </ul>
+  <p class="small muted">¿No recuerdas qué es una FGM o cómo era la Gamma? Repásalo primero en <a href="repaso.html">Repaso exprés de Estadística I</a>. El método de la acumulada y el Jacobiano están en la <a href="clase-01.html">Clase 1</a>.</p>
+
+  <!-- =============================================================== -->
+  <section>
+    <h2 id="fgm">1. El método de la FGM</h2>
+
+    <div class="box idea"><span class="box-title">Intuición: la FGM es una "huella digital"</span>
+      <p>Sumar v.a. independientes es incómodo con densidades: la densidad de $Y_1+Y_2$ es una convolución $\int f_1(u-y)\,f_2(y)\,dy$, y con $n$ sumandos tendrías $n-1$ integrales anidadas. Con las FGM, en cambio, <b>sumar v.a. independientes se convierte en multiplicar funciones</b>. Y como cada distribución tiene una FGM propia (su huella digital), basta mirar el producto y preguntar: <em>"¿de quién es esta huella?"</em></p>
+    </div>
+
+    <p>Recordatorio: la función generadora de momentos de $X$ es</p>
+    $$M_X(t)=\E\big[e^{tX}\big],$$
+    <p>definida para los $t$ en un intervalo alrededor de $0$ donde esa esperanza es finita. Se llama "generadora de momentos" porque $M_X^{(k)}(0)=\E(X^k)$, pero en esta clase la usamos para otra cosa: <b>identificar distribuciones</b>.</p>
+
+    <div class="box teorema"><span class="box-title">Teorema (FGM de una suma)</span>
+      <p>Sean $Y_1,\dots,Y_n$ v.a. <b>independientes</b> con FGM $M_{Y_1}(t),\dots,M_{Y_n}(t)$. Si $U=Y_1+\cdots+Y_n$, entonces</p>
+      $$M_U(t)=M_{Y_1}(t)\times M_{Y_2}(t)\times\cdots\times M_{Y_n}(t).$$
+    </div>
+    <details class="prueba"><summary>¿Por qué? (prueba en una línea)</summary><div>
+      $$M_U(t)=\E\big[e^{t(Y_1+\cdots+Y_n)}\big]=\E\Big[\prod_{i=1}^n e^{tY_i}\Big]\overset{\text{indep.}}{=}\prod_{i=1}^n\E\big[e^{tY_i}\big]=\prod_{i=1}^n M_{Y_i}(t).$$
+      <p>El único paso no trivial es el tercero: la esperanza de un producto de funciones de v.a. <b>independientes</b> es el producto de las esperanzas. Sin independencia, este paso falla.</p>
+    </div></details>
+
+    <div class="box teorema"><span class="box-title">Teorema de unicidad (la "Obs" del PDF)</span>
+      <p>Si $M_X(t)$ y $M_Y(t)$ existen y $M_X(t)=M_Y(t)$ para todo $t$ en un intervalo abierto que contiene a $0$, entonces $X$ e $Y$ tienen <b>la misma distribución</b>.</p>
+      <p class="small">(En el PDF aparece escrito $m_X(t)$, $m_Y(t)$ con minúscula y luego $M_X$, $M_Y$: es la misma cosa, la FGM.)</p>
+    </div>
+
+    <p><b>Esto es lo que hace que el método funcione.</b> El primer teorema te da $M_U(t)$ fácilmente; el segundo te garantiza que, si $M_U(t)$ coincide con la FGM de un modelo conocido, entonces $U$ <em>tiene</em> ese modelo. No es una aproximación ni una coincidencia: la FGM determina la distribución.</p>
+
+    <h3 id="receta">La receta en 4 pasos</h3>
+    <ol class="pasos">
+      <li><b>Escribe la FGM de cada sumando</b> (sácala de la tabla de abajo, que es la del Formulario 2).</li>
+      <li><b>Multiplícalas</b> (si son independientes). Si hay constantes, usa también la regla
+        $$M_{a+bX}(t)=\E\big[e^{t(a+bX)}\big]=e^{at}\,\E\big[e^{(bt)X}\big]=e^{at}M_X(bt).$$</li>
+      <li><b>Simplifica</b> hasta que el resultado tenga la <em>forma</em> de alguna FGM de la tabla: junta exponentes ($e^{A}e^{B}=e^{A+B}$), junta potencias de la misma base ($(1-\beta t)^{-a}(1-\beta t)^{-b}=(1-\beta t)^{-(a+b)}$).</li>
+      <li><b>Identifica los parámetros</b> comparando término a término con la forma de la tabla, y concluye por unicidad.</li>
+    </ol>
+
+    <div class="table-wrap">
+      <table class="tabla text-left">
+        <thead><tr><th>Modelo (notación del Formulario 2)</th><th>FGM $M_X(t)$</th><th>Forma que debes reconocer</th></tr></thead>
+        <tbody>
+          <tr><td>$\text{Bin}(n,p)$</td><td>$(pe^t+1-p)^n$</td><td>(algo con $e^t$)$^{\text{entero}}$</td></tr>
+          <tr><td>$\text{Poisson}(\lambda)$</td><td>$e^{\lambda(e^t-1)}$</td><td>$\exp\{\text{constante}\cdot(e^t-1)\}$</td></tr>
+          <tr><td>$N(\mu,\sigma^2)$</td><td>$e^{\mu t+\sigma^2t^2/2}$</td><td>$\exp\{\text{lineal en }t+\text{cuadrático en }t\}$: lo que multiplica a $t$ es la media, lo que multiplica a $t^2/2$ es la varianza</td></tr>
+          <tr><td>$\text{Exp}(\beta)$ (media $\beta$)</td><td>$(1-\beta t)^{-1},\ t &lt; 1/\beta$</td><td>$(1-\beta t)^{-1}$</td></tr>
+          <tr><td>$G(\alpha,\beta)$ ($\beta$ escala, $\E=\alpha\beta$)</td><td>$(1-\beta t)^{-\alpha},\ t &lt; 1/\beta$</td><td>$(1-\beta t)^{-\text{algo}}$</td></tr>
+          <tr><td>$\chi^2_{(\nu)}=G(\nu/2,\,2)$</td><td>$(1-2t)^{-\nu/2},\ t &lt; 1/2$</td><td>$(1-2t)^{-\text{algo}}$</td></tr>
+          <tr><td>$U(a,b)$</td><td>$\dfrac{e^{tb}-e^{ta}}{t(b-a)}$</td><td>(su producto no es de ninguna familia de la tabla)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="box cuidado"><span class="box-title">Cuidado: cuándo NO sirve</span>
+      <ul>
+        <li><b>Sin independencia</b> no puedes multiplicar las FGM.</li>
+        <li>El método sólo funciona si el producto <b>resulta reconocible</b>. Por ejemplo, la suma de dos $U(0,1)$ tiene FGM $\big(\tfrac{e^t-1}{t}\big)^2$, que no es de ninguna familia conocida: ahí hay que usar la acumulada o el Jacobiano de la <a href="clase-01.html">Clase 1</a> (sale una densidad triangular).</li>
+        <li>Algunas distribuciones no tienen FGM (Cauchy, $t$ de Student): para ellas este método no aplica.</li>
+        <li>Fíjate en los parámetros: la Gamma del Formulario usa $\beta$ <b>de escala</b>; si un ejercicio dice "parámetro $\lambda$" (tasa), entonces $\beta=1/\lambda$.</li>
+      </ul>
+    </div>
+
+    <div id="quiz-fgm"></div>
+  </section>
+
+  <!-- =============================================================== -->
+  <section>
+    <h2 id="ejercicios-fgm">2. Ejercicios 1–5 resueltos (método FGM)</h2>
+
+    <!-- ---------------- Ejercicio 1 ---------------- -->
+    <div class="box ejercicio" id="ej-1">
+      <span class="box-title">Ejercicio 1 (Clase 2)</span>
+      <p>Dadas dos variables aleatorias independientes, $Y_1$ e $Y_2$, que están distribuidas normalmente como $Y_1\sim N(\mu_1,\sigma_1^2)$ e $Y_2\sim N(\mu_2,\sigma_2^2)$, ¿cuál sería la distribución de $W=aY_1+bY_2+c$?</p>
+      <details class="pista"><summary>Pista 1</summary><div>
+        <p>$e^{tW}=e^{ct}\,e^{(at)Y_1}\,e^{(bt)Y_2}$. Toma esperanza y usa independencia.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 2</summary><div>
+        <p>$\E[e^{(at)Y_1}]$ es $M_{Y_1}$ evaluada en $at$ (no en $t$). Luego junta todo en una sola exponencial y busca la forma $e^{\mu t+\sigma^2t^2/2}$.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>FGM de cada pieza.</b> Por la tabla, $M_{Y_k}(t)=\exp\{\mu_k t+\sigma_k^2t^2/2\}$, $k=1,2$.</li>
+          <li><b>FGM de $W$.</b> Como $Y_1$ e $Y_2$ son independientes, también lo son $e^{atY_1}$ y $e^{btY_2}$:
+            $$M_W(t)=\E\big[e^{ct}e^{atY_1}e^{btY_2}\big]=e^{ct}\,M_{Y_1}(at)\,M_{Y_2}(bt).$$</li>
+          <li><b>Sustituye y junta exponentes.</b>
+            $$M_W(t)=e^{ct}\,e^{\mu_1 at+\sigma_1^2a^2t^2/2}\,e^{\mu_2 bt+\sigma_2^2b^2t^2/2}=\exp\Big\{\underbrace{(a\mu_1+b\mu_2+c)}_{\text{media}}\,t+\underbrace{(a^2\sigma_1^2+b^2\sigma_2^2)}_{\text{varianza}}\,\frac{t^2}{2}\Big\}.$$</li>
+          <li><b>Reconoce.</b> Es la FGM de una normal con esa media y esa varianza. Por unicidad:
+            $$\boxed{W=aY_1+bY_2+c\sim N\big(a\mu_1+b\mu_2+c,\;a^2\sigma_1^2+b^2\sigma_2^2\big)}$$
+            (suponiendo que $a$ y $b$ no son ambos $0$; si lo fueran, $W=c$ sería una constante).</li>
+        </ol>
+        <div class="box cuidado"><span class="box-title">Error típico</span>
+          <p>En la varianza los coeficientes van <b>al cuadrado</b>. Por eso $Y_1-Y_2\sim N(\mu_1-\mu_2,\ \sigma_1^2+\sigma_2^2)$: al restar, las varianzas <b>se suman</b> (restar no "cancela" incertidumbre).</p>
+        </div>
+      </div></details>
+    </div>
+
+    <!-- ---------------- Ejercicio 2 ---------------- -->
+    <div class="box ejercicio" id="ej-2">
+      <span class="box-title">Ejercicio 2 <span class="badge star">★ reto</span></span>
+      <p>Sea $X\sim N(\mu,\sigma^2)$. Encuentre la distribución de a) $V=a+bX$; b) $W=\left(\frac{X-\mu}{\sigma}\right)^2$.</p>
+      <p><b>obs:</b> $\text{Gamma}(n/2,2)$ es equivalente a $\chi^2_{(n)}$ con FGM $M_X(t)=\left(\frac{1}{1-2t}\right)^{n/2}$, $2t &lt; 1$.</p>
+      <details class="pista"><summary>Pista 1 (inciso a)</summary><div>
+        <p>Usa $M_{a+bX}(t)=e^{at}M_X(bt)$.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 2 (inciso b)</summary><div>
+        <p>Por (a), $Z=\frac{X-\mu}{\sigma}\sim N(0,1)$. Calcula $\E[e^{tZ^2}]=\int_{-\infty}^{\infty}e^{tz^2}\frac{1}{\sqrt{2\pi}}e^{-z^2/2}\,dz$ juntando los dos exponentes.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 3 (inciso b)</summary><div>
+        <p>$e^{-z^2(1-2t)/2}$ es, salvo una constante, la densidad de una normal con varianza $s^2=\frac{1}{1-2t}$. Recuerda que $\int e^{-z^2/(2s^2)}dz=\sqrt{2\pi}\,s$.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <p><b>a)</b></p>
+        <ol class="pasos">
+          <li>$M_V(t)=e^{at}M_X(bt)=e^{at}\exp\{\mu(bt)+\sigma^2(bt)^2/2\}=\exp\{(a+b\mu)t+b^2\sigma^2t^2/2\}$.</li>
+          <li>Es la FGM normal con media $a+b\mu$ y varianza $b^2\sigma^2$. Si $b\neq 0$:
+            $$\boxed{V=a+bX\sim N(a+b\mu,\ b^2\sigma^2)}.$$
+            Moraleja: <b>una transformación lineal de una normal sigue siendo normal</b>.</li>
+          <li>Caso especial importante: con $a=-\mu/\sigma$ y $b=1/\sigma$ se obtiene $Z=\frac{X-\mu}{\sigma}\sim N\big(-\tfrac{\mu}{\sigma}+\tfrac{\mu}{\sigma},\ \tfrac{\sigma^2}{\sigma^2}\big)=N(0,1)$ (la estandarización).</li>
+        </ol>
+        <p><b>b)</b> Sea $Z=\frac{X-\mu}{\sigma}\sim N(0,1)$, de modo que $W=Z^2$. Ojo: $Z^2$ <b>no</b> es una función lineal, así que no podemos usar la regla de (a); calculamos la FGM directamente.</p>
+        <ol class="pasos">
+          <li><b>Definición de FGM</b> (esperanza de una función de $Z$):
+            $$M_W(t)=\E\big[e^{tZ^2}\big]=\int_{-\infty}^{\infty}e^{tz^2}\,\frac{1}{\sqrt{2\pi}}e^{-z^2/2}\,dz=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty}e^{-\frac{z^2}{2}(1-2t)}\,dz.$$</li>
+          <li><b>Para que la integral converja</b> necesitamos $1-2t > 0$, es decir $t &lt; 1/2$ (si no, el integrando no decae).</li>
+          <li><b>Reconoce un núcleo normal.</b> Con $s^2=\frac{1}{1-2t}$, el exponente es $-\frac{z^2}{2s^2}$, y $\int e^{-z^2/(2s^2)}dz=\sqrt{2\pi}\,s$ (porque la densidad $N(0,s^2)$ integra 1). Entonces
+            $$M_W(t)=\frac{1}{\sqrt{2\pi}}\sqrt{2\pi}\,s=s=(1-2t)^{-1/2},\qquad t &lt; \tfrac12.$$</li>
+          <li><b>Identifica.</b> $(1-2t)^{-1/2}=(1-\beta t)^{-\alpha}$ con $\alpha=\tfrac12$, $\beta=2$: es la FGM de una $G(\tfrac12,2)=\chi^2_{(1)}$. Por unicidad:
+            $$\boxed{W=\Big(\frac{X-\mu}{\sigma}\Big)^2\sim\chi^2_{(1)}}.$$</li>
+        </ol>
+        <details class="prueba"><summary>Comprobación por otro camino: método de la acumulada (Clase 1)</summary><div>
+          <p>Para $w > 0$: $F_W(w)=\P(Z^2\le w)=\P(-\sqrt w\le Z\le\sqrt w)=2\Phi(\sqrt w)-1$. Derivando (regla de la cadena):</p>
+          $$f_W(w)=2\,\phi(\sqrt w)\cdot\frac{1}{2\sqrt w}=\frac{1}{\sqrt{2\pi}}\,w^{-1/2}e^{-w/2},\quad w > 0.$$
+          <p>Y la densidad $G(\tfrac12,2)$ es $\frac{1}{\Gamma(1/2)\,2^{1/2}}w^{-1/2}e^{-w/2}$ con $\Gamma(\tfrac12)\,2^{1/2}=\sqrt\pi\sqrt2=\sqrt{2\pi}$. ¡Coinciden! (verificado con sympy).</p>
+        </div></details>
+      </div></details>
+    </div>
+
+    <div class="box definicion" id="chi2"><span class="box-title">Definición: la distribución ji-cuadrado $\chi^2_{(\nu)}$ (primera aparición)</span>
+      <p>Una v.a. $W$ tiene distribución <b>ji-cuadrado con $\nu$ grados de libertad</b>, $W\sim\chi^2_{(\nu)}$, si $W\sim G(\nu/2,\,2)$ (Gamma con forma $\nu/2$ y escala $2$):</p>
+      $$f_W(w)=\frac{1}{\Gamma(\nu/2)\,2^{\nu/2}}\,w^{\nu/2-1}e^{-w/2},\ \ w > 0;\qquad \E(W)=\nu,\quad \Var(W)=2\nu,\quad M_W(t)=(1-2t)^{-\nu/2},\ t &lt; \tfrac12.$$
+      <p>No es una familia "nueva": es una Gamma con parámetros especiales. Acabas de ver de dónde sale: <b>el cuadrado de una normal estándar es $\chi^2_{(1)}$</b>, y (Ejercicio 5c) <b>la suma de $\nu$ cuadrados de normales estándar independientes es $\chi^2_{(\nu)}$</b>. Será protagonista en la <a href="clase-03.html">Clase 3</a>. Explora su forma en el <a href="../herramientas/distribuciones.html">laboratorio de distribuciones</a>.</p>
+    </div>
+
+    <!-- ---------------- Ejercicio 3 ---------------- -->
+    <div class="box ejercicio" id="ej-3">
+      <span class="box-title">Ejercicio 3 (Clase 2)</span>
+      <p>Sean $X_1,\dots,X_n$ v.a.'s independientes (i.d.) $\text{Poisson}(\lambda_i)$, $i=1,\dots,n$. ¿Cuál es la distribución de $U=X_1+X_2+\dots+X_n$?</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>$e^{a(e^t-1)}\cdot e^{b(e^t-1)}=e^{(a+b)(e^t-1)}$.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li>FGM de cada sumando: $M_{X_i}(t)=e^{\lambda_i(e^t-1)}$.</li>
+          <li>Por independencia: $M_U(t)=\prod_{i=1}^n e^{\lambda_i(e^t-1)}=\exp\Big\{\Big(\sum_{i=1}^n\lambda_i\Big)(e^t-1)\Big\}$.</li>
+          <li>Tiene la forma $e^{\lambda(e^t-1)}$ con $\lambda=\sum\lambda_i$. Por unicidad:
+            $$\boxed{U=\sum_{i=1}^nX_i\sim\text{Poisson}\Big(\sum_{i=1}^n\lambda_i\Big)}.$$</li>
+        </ol>
+        <p><b>Interpretación:</b> si por la puerta 1 llegan en promedio $\lambda_1$ clientes por hora y por la puerta 2 llegan $\lambda_2$ (de forma independiente), el total de llegadas es Poisson con media $\lambda_1+\lambda_2$.</p>
+        <div class="box nota"><span class="box-title">Sobre el "(i.d.)" del enunciado</span>
+          <p>Como los $\lambda_i$ pueden ser distintos, las $X_i$ <b>no</b> son idénticamente distribuidas; lo único que se usa es la <b>independencia</b>. (Si todas tuvieran el mismo $\lambda$, el resultado sería $\text{Poisson}(n\lambda)$.)</p>
+        </div>
+      </div></details>
+    </div>
+
+    <!-- ---------------- Ejercicio 4 ---------------- -->
+    <div class="box ejercicio" id="ej-4">
+      <span class="box-title">Ejercicio 4 (Clase 2)</span>
+      <p>Sean $X_1,\dots,X_n$ v.a's independientes $\text{Gamma}(\alpha_i,\beta)$, $i=1,\dots,n$. ¿Cuál es la distribución de $U=X_1+X_2+\dots+X_n$?</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Todas las FGM tienen la misma base $(1-\beta t)$; sólo cambia el exponente.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li>$M_{X_i}(t)=(1-\beta t)^{-\alpha_i}$, $t &lt; 1/\beta$.</li>
+          <li>$M_U(t)=\prod_{i=1}^n(1-\beta t)^{-\alpha_i}=(1-\beta t)^{-\sum_i\alpha_i}$ (misma base: se suman los exponentes).</li>
+          <li>Forma $(1-\beta t)^{-\alpha}$ con $\alpha=\sum\alpha_i$:
+            $$\boxed{U\sim G\Big(\sum_{i=1}^n\alpha_i,\ \beta\Big)}.$$</li>
+        </ol>
+        <p><b>Casos especiales que vas a usar mucho</b> (están en el Formulario):</p>
+        <ul>
+          <li>$X_i\iid\text{Exp}(\beta)=G(1,\beta)\ \Rightarrow\ \sum_{i=1}^nX_i\sim G(n,\beta)$.</li>
+          <li>$W_i\sim\chi^2_{(\nu_i)}$ independientes $\Rightarrow\ \sum W_i\sim\chi^2_{(\nu_1+\cdots+\nu_n)}$ (los grados de libertad se suman).</li>
+        </ul>
+        <div class="box cuidado"><span class="box-title">Cuidado</span>
+          <p>Hace falta que <b>todas tengan el mismo $\beta$</b>. Con escalas distintas, $(1-\beta_1t)^{-\alpha_1}(1-\beta_2t)^{-\alpha_2}$ no tiene la forma de ninguna Gamma y la suma <b>no</b> es Gamma.</p>
+        </div>
+      </div></details>
+    </div>
+
+    <!-- ---------------- Ejercicio 5 ---------------- -->
+    <div class="box ejercicio" id="ej-5">
+      <span class="box-title">Ejercicio 5 (Clase 2)</span>
+      <p>Sean $X_1,\dots,X_n$ v.a.'s i.i.d. $N(\mu_X,\sigma_X^2)$. Demuestre que:</p>
+      <p>a) $\sqrt n\left(\frac{\bar X-\mu_X}{\sigma_X}\right)\sim N(0,1)$ &nbsp; b) $n\left(\frac{\bar X-\mu_X}{\sigma_X}\right)^2\sim\chi^2_{(1)}$ &nbsp; c) $\sum_{i=1}^n\left(\frac{X_i-\mu_X}{\sigma_X}\right)^2\sim\chi^2_{(n)}$ &nbsp; d) $Y_1=\bar X$ y $Y_2=X_i-\bar X$ son independientes. <em>Pista: use el supuesto de normalidad conjunta.</em></p>
+      <p class="small muted">(Aquí $Y_1$, $Y_2$ son sólo nombres para dos v.a.; no son estadísticos de orden.) Escribimos $\mu=\mu_X$, $\sigma=\sigma_X$ para aligerar.</p>
+      <details class="pista"><summary>Pista 1 (a)</summary><div>
+        <p>$\bar X=\sum_i \frac1n X_i$, así que $M_{\bar X}(t)=\prod_i M_{X_i}(t/n)=\big[M_X(t/n)\big]^n$.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 2 (b, c)</summary><div>
+        <p>(b) es el cuadrado de (a) → Ejercicio 2b. (c) es una suma de $n$ variables $\chi^2_{(1)}$ independientes → multiplica FGMs.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 3 (d)</summary><div>
+        <p>$(\bar X,\ X_i-\bar X)$ es una transformación lineal del vector normal $(X_1,\dots,X_n)$, así que es <b>normal bivariado</b>. Para un vector normal, covarianza cero ⇔ independencia. Calcula $\Cov(\bar X,X_i-\bar X)$.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <p><b>a)</b></p>
+        <ol class="pasos">
+          <li>$M_{\bar X}(t)=\E\big[e^{\frac tn(X_1+\cdots+X_n)}\big]=\prod_{i=1}^nM_{X_i}(t/n)=\Big[\exp\Big\{\mu\frac tn+\frac{\sigma^2}{2}\frac{t^2}{n^2}\Big\}\Big]^n=\exp\Big\{\mu t+\frac{\sigma^2}{n}\frac{t^2}{2}\Big\}.$</li>
+          <li>Forma normal con media $\mu$ y varianza $\sigma^2/n$: $\ \bar X\sim N(\mu,\sigma^2/n)$. <em>(Resultado clave del curso: el promedio de normales es normal, con varianza $n$ veces más pequeña.)</em></li>
+          <li>$\sqrt n\,\frac{\bar X-\mu}{\sigma}=\frac{\bar X-\mu}{\sigma/\sqrt n}$ es la estandarización de $\bar X$: es $a+b\bar X$ con $b=\frac{\sqrt n}{\sigma}$, $a=-\frac{\sqrt n\,\mu}{\sigma}$. Por el Ejercicio 2a es normal con media $a+b\mu=0$ y varianza $b^2\frac{\sigma^2}{n}=\frac{n}{\sigma^2}\frac{\sigma^2}{n}=1$:
+            $$\boxed{\sqrt n\Big(\frac{\bar X-\mu}{\sigma}\Big)\sim N(0,1)}.$$</li>
+        </ol>
+        <p><b>b)</b> $n\left(\frac{\bar X-\mu}{\sigma}\right)^2=\left[\sqrt n\,\frac{\bar X-\mu}{\sigma}\right]^2=Z^2$ con $Z\sim N(0,1)$ por (a). Por el Ejercicio 2b, $Z^2\sim\chi^2_{(1)}$. $\ \blacksquare$</p>
+        <p><b>c)</b></p>
+        <ol class="pasos">
+          <li>Sea $W_i=\left(\frac{X_i-\mu}{\sigma}\right)^2$. Por el Ejercicio 2b, cada $W_i\sim\chi^2_{(1)}$, con $M_{W_i}(t)=(1-2t)^{-1/2}$.</li>
+          <li>Las $W_i$ son independientes (cada una es función de una $X_i$ distinta, y las $X_i$ son independientes).</li>
+          <li>$M_{\sum W_i}(t)=\big[(1-2t)^{-1/2}\big]^n=(1-2t)^{-n/2}$, que es la FGM de $\chi^2_{(n)}$. Por unicidad, $\sum_{i=1}^n\left(\frac{X_i-\mu}{\sigma}\right)^2\sim\chi^2_{(n)}$. $\ \blacksquare$</li>
+        </ol>
+        <p><b>d)</b> <em>Ruta 1: normalidad conjunta (la pista del profesor).</em></p>
+        <ol class="pasos">
+          <li><b>Son conjuntamente normales.</b> El vector $(X_1,\dots,X_n)$ es normal multivariado (componentes normales independientes). $Y_1=\bar X$ e $Y_2=X_i-\bar X$ son combinaciones lineales de las $X_k$; toda transformación lineal de un vector normal es normal, así que $(Y_1,Y_2)$ es <b>normal bivariado</b>.</li>
+          <li><b>Hecho clave:</b> si $(Y_1,Y_2)$ es normal bivariado, entonces $\Cov(Y_1,Y_2)=0\iff Y_1,Y_2$ independientes. (Con $\rho=0$ la densidad normal bivariada se factoriza en el producto de las marginales.)</li>
+          <li><b>Calcula la covarianza.</b> $\Cov(\bar X,X_i)=\frac1n\sum_{k=1}^n\Cov(X_k,X_i)=\frac1n\Cov(X_i,X_i)=\frac{\sigma^2}{n}$ (las demás covarianzas son $0$ por independencia), y $\Var(\bar X)=\frac{\sigma^2}{n}$. Entonces
+            $$\Cov(\bar X,\,X_i-\bar X)=\Cov(\bar X,X_i)-\Var(\bar X)=\frac{\sigma^2}{n}-\frac{\sigma^2}{n}=0.$$</li>
+          <li>Por el hecho clave, $\bar X$ y $X_i-\bar X$ son independientes. $\ \blacksquare$</li>
+        </ol>
+        <p><em>Ruta 2: con FGM conjunta (todo dentro del método de esta clase).</em> Para dos v.a., $M_{Y_1,Y_2}(s,t)=\E[e^{sY_1+tY_2}]$, y son independientes si y sólo si $M_{Y_1,Y_2}(s,t)=M_{Y_1}(s)M_{Y_2}(t)$.</p>
+        <ol class="pasos">
+          <li>$sY_1+tY_2=s\bar X+t(X_i-\bar X)=\sum_{k=1}^n c_kX_k$ con $c_k=\frac{s-t}{n}$ si $k\neq i$ y $c_i=\frac{s-t}{n}+t$.</li>
+          <li>Por independencia, $\E[e^{\sum c_kX_k}]=\prod_k e^{\mu c_k+\sigma^2c_k^2/2}=\exp\{\mu\sum c_k+\tfrac{\sigma^2}{2}\sum c_k^2\}$.</li>
+          <li>$\sum c_k=(s-t)+t=s$ y $\sum c_k^2=n\frac{(s-t)^2}{n^2}+2t\frac{s-t}{n}+t^2=\frac{s^2}{n}+\frac{n-1}{n}t^2$ (simplificado con sympy).</li>
+          <li>Entonces $M_{Y_1,Y_2}(s,t)=\underbrace{\exp\Big\{\mu s+\frac{\sigma^2}{n}\frac{s^2}{2}\Big\}}_{M_{\bar X}(s)}\cdot\underbrace{\exp\Big\{\frac{(n-1)\sigma^2}{n}\frac{t^2}{2}\Big\}}_{\text{FGM de }N(0,\,\frac{n-1}{n}\sigma^2)}$: se factoriza, luego son independientes, y de paso $X_i-\bar X\sim N\big(0,\frac{n-1}{n}\sigma^2\big)$.</li>
+        </ol>
+        <div class="box cuidado"><span class="box-title">¿Por qué insiste la pista en la normalidad conjunta?</span>
+          <p>Porque en general <b>covarianza cero NO implica independencia</b>. Ejemplo: $X\sim N(0,1)$ y $X^2$ tienen $\Cov(X,X^2)=\E(X^3)=0$, pero $X^2$ está totalmente determinada por $X$. La equivalencia "incorrelación ⇔ independencia" sólo vale si el par es conjuntamente normal. Este resultado (d) es la semilla de "$\bar X$ y $S^2$ son independientes", que verás en la <a href="clase-03.html">Clase 3</a>.</p>
+        </div>
+      </div></details>
+    </div>
+
+    <div class="sim" id="sim-sumas">
+      <p class="sim-title">Simulación (a): suma de $n$ v.a. independientes vs. lo que predice la FGM</p>
+      <p class="sim-desc">Se simulan 20 000 sumas $U=X_1+\cdots+X_n$. El histograma (naranja) es la realidad simulada; la curva o los puntos (azul) son la distribución que identificamos con la FGM. Cambia la familia, $n$ y los parámetros.</p>
+      <div class="controls ctl-a"></div>
+      <div class="controls ctl-b"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+  </section>
+
+  <!-- =============================================================== -->
+  <section>
+    <h2 id="orden">3. Estadísticos de orden: mínimo y máximo</h2>
+
+    <div class="box idea"><span class="box-title">Intuición</span>
+      <p>Tomas una muestra $Y_1,\dots,Y_n$ y la <b>ordenas</b> de menor a mayor. El valor que queda primero es el mínimo, el último es el máximo, el del medio es la mediana... Cada uno de esos valores es una v.a. (cambia de muestra en muestra) y tiene su propia distribución. Ejemplos: "¿cuánto dura un sistema en serie?" (falla con el <b>primer</b> componente → mínimo), "¿cuánto dura un sistema en paralelo?" (falla con el <b>último</b> → máximo), "¿cuál es la probabilidad de que el tercer valor más pequeño sea menor que 72?" (→ $Y_{(3)}$).</p>
+    </div>
+
+    <div class="box definicion"><span class="box-title">Definición</span>
+      <p>Sean $Y_1,\dots,Y_n$ v.a. independientes con acumulada común $F(y)$. Los <b>estadísticos de orden</b> son las mismas variables ordenadas:
+      $$Y_{(1)}\le Y_{(2)}\le\cdots\le Y_{(n)},\qquad Y_{(1)}=\min(Y_1,\dots,Y_n),\quad Y_{(n)}=\max(Y_1,\dots,Y_n).$$</p>
+    </div>
+    <div class="box nota"><span class="box-title">Notación</span>
+      <p>En clase se usa $Y_{(i)}$ (con paréntesis). En el Ejercicio 8 de esta clase y en la <a href="../deberes/lista-1-1.html">Lista 1.1</a> se escribe $Y_i$ <b>sin paréntesis</b> para el $i$-ésimo ordenado (y $X_1,\dots,X_n$ para la muestra original). Lee siempre el enunciado para saber cuál es cuál.</p>
+    </div>
+
+    <h3 id="patron">El truco que lo resuelve todo</h3>
+    <div class="box idea"><span class="box-title">Patrón máximo / mínimo</span>
+      $$\{Y_{(n)}\le y\}=\{\text{todos}\le y\}=\{Y_1\le y,\dots,Y_n\le y\},\qquad \{Y_{(1)} > y\}=\{\text{todos} > y\}=\{Y_1 > y,\dots,Y_n > y\}.$$
+      <p><b>¿Por qué?</b> Si el <em>más grande</em> no pasa de $y$, nadie pasa de $y$; y si nadie pasa de $y$, en particular el más grande no pasa. Igual con el mínimo: si el <em>más pequeño</em> supera $y$, todos lo superan.</p>
+      <p><b>¿Para qué sirve?</b> "Todos" es una <b>intersección</b> de eventos independientes, y su probabilidad es un <b>producto</b>. En cambio $\{Y_{(1)}\le y\}$ significa "<em>al menos uno</em> $\le y$" (una unión, difícil), por eso para el mínimo se pasa por el complemento.</p>
+    </div>
+
+    <h3 id="acumuladas">Distribuciones acumuladas de $Y_{(1)}$ y $Y_{(n)}$</h3>
+    <p><b>Máximo:</b></p>
+    $$F_{Y_{(n)}}(y)=\P(Y_{(n)}\le y)=\P(Y_1\le y,\dots,Y_n\le y)\overset{\text{indep.}}{=}\P(Y_1\le y)\cdots\P(Y_n\le y)=\big[F(y)\big]^n.$$
+    <p><b>Mínimo</b> (por el complemento):</p>
+    $$F_{Y_{(1)}}(y)=1-\P(Y_{(1)} > y)=1-\P(Y_1 > y,\dots,Y_n > y)=1-\big[1-F(y)\big]^n.$$
+
+    <h3 id="densidades-min-max">Densidades de $Y_{(1)}$ y $Y_{(n)}$</h3>
+    <p>Si además las $Y_i$ son continuas con densidad $f=F'$, derivamos (regla de la cadena: la derivada de $[\,\text{algo}\,]^n$ es $n[\,\text{algo}\,]^{n-1}\cdot(\text{algo})'$):</p>
+    $$g_{(n)}(y)=\frac{d}{dy}F_{Y_{(n)}}(y)=\frac{d}{dy}\big[F(y)\big]^n=n\big[F(y)\big]^{n-1}f(y),$$
+    $$g_{(1)}(y)=\frac{d}{dy}F_{Y_{(1)}}(y)=\frac{d}{dy}\Big\{1-\big[1-F(y)\big]^n\Big\}=-n\big[1-F(y)\big]^{n-1}\cdot\big(-f(y)\big)=n\big[1-F(y)\big]^{n-1}f(y).$$
+
+    <div class="box cuidado"><span class="box-title">Errata en el PDF de la Clase 2</span>
+      <p>En el PDF la primera línea de cada derivación aparece como $g_{(n)}(y)=\frac{d}{dy}[F_{Y_{(n)}}(y)]^n$ y $g_{(1)}(y)=\frac{d}{dy}[F_{Y_{(1)}}(y)]^n$ (además con el corchete sin cerrar). Así escrito estaría elevando a la $n$ <b>la acumulada del máximo, que ya es</b> $[F(y)]^n$ (daría $[F(y)]^{n^2}$). Lo correcto es derivar la acumulada <b>tal cual</b>:</p>
+      $$g_{(n)}(y)=\frac{d}{dy}F_{Y_{(n)}}(y)=\frac{d}{dy}[F(y)]^n,\qquad g_{(1)}(y)=\frac{d}{dy}F_{Y_{(1)}}(y)=\frac{d}{dy}\{1-[1-F(y)]^n\}.$$
+      <p>Las líneas siguientes y los resultados finales del PDF sí son correctos.</p>
+    </div>
+
+    <div class="box ejemplo" id="ejemplo-a"><span class="box-title">Ejemplo rápido</span>
+      <p>Tres números $U(0,1)$ independientes. ¿Probabilidad de que el más grande sea menor que $0.5$? Por el patrón: los tres deben ser menores que $0.5$, así que $\P(Y_{(3)}\le 0.5)=0.5^3=0.125$. ¿Y de que el más pequeño supere $0.5$? Los tres deben superarlo: $\P(Y_{(1)} > 0.5)=(1-0.5)^3=0.125$.</p>
+    </div>
+
+    <!-- ---------------- Ejercicio 6 ---------------- -->
+    <div class="box ejercicio" id="ej-6">
+      <span class="box-title">Ejercicio 6 (Clase 2)</span>
+      <p>Sean $X_1,\dots,X_n$ v.a.'s i.i.d. con distribución exponencial con media igual a $\beta$. Calcule e identifique la distribución del mínimo $Y_{(1)}$. Luego, asumiendo $n=5$ y $\beta=2$, calcule $\P(Y_{(1)} > 3{,}6)$.</p>
+      <details class="pista"><summary>Pista 1</summary><div>
+        <p>"Media $\beta$" es justo la $\text{Exp}(\beta)$ del Formulario: $f(x)=\frac1\beta e^{-x/\beta}$, $F(x)=1-e^{-x/\beta}$, $x > 0$.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 2</summary><div>
+        <p>Calcula $1-F(y)$ y elévalo a la $n$: $(e^{-y/\beta})^n=e^{-ny/\beta}$. ¿De qué exponencial es esa cola?</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Cola de cada $X_i$:</b> $1-F(y)=e^{-y/\beta}$, $y > 0$.</li>
+          <li><b>Patrón del mínimo:</b> $\P(Y_{(1)} > y)=[1-F(y)]^n=\big(e^{-y/\beta}\big)^n=e^{-y/(\beta/n)}$, así que $F_{Y_{(1)}}(y)=1-e^{-y/(\beta/n)}$, $y > 0$.</li>
+          <li><b>Densidad</b> (con $g_{(1)}$): $g_{(1)}(y)=n\,[e^{-y/\beta}]^{n-1}\,\frac1\beta e^{-y/\beta}=\frac{n}{\beta}\,e^{-ny/\beta}=\frac{1}{\beta/n}e^{-y/(\beta/n)}$, $y > 0$.</li>
+          <li><b>Identifica:</b> es la densidad exponencial con media $\beta/n$:
+            $$\boxed{Y_{(1)}\sim\text{Exp}\big(\beta/n\big)}\quad(\text{media }\beta/n;\ \text{en "tasa": } n/\beta).$$
+            Interpretación: con $n$ componentes en serie, el sistema falla, en promedio, $n$ veces antes que un componente solo.</li>
+          <li><b>Caso numérico</b> $n=5$, $\beta=2$: $Y_{(1)}\sim\text{Exp}(0.4)$ y
+            $$\P(Y_{(1)} > 3.6)=e^{-3.6/0.4}=e^{-9}\approx 1.234\times10^{-4}.$$
+            Comprobación con el patrón: los 5 deben superar 3.6, $\big(e^{-3.6/2}\big)^5=e^{-1.8\cdot5}=e^{-9}$. ✓ (Verificado con Monte Carlo con $10^6$ réplicas.)</li>
+        </ol>
+        <p><b>¿Por qué tan pequeña?</b> La media del mínimo es $0.4$; superar $3.6$ es estar a 9 medias de distancia.</p>
+      </div></details>
+    </div>
+    <div id="nc-ej6"></div>
+
+    <div class="sim" id="sim-minmax">
+      <p class="sim-title">Simulación (b): mínimo y máximo de $n$ variables</p>
+      <p class="sim-desc">Se generan 20 000 muestras de tamaño $n$; se guarda el mínimo y el máximo de cada una. Histogramas = simulación; curvas = $g_{(1)}$ y $g_{(n)}$. Observa cómo, al crecer $n$, el mínimo se pega al borde izquierdo y el máximo se aleja hacia la derecha.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+
+    <div id="quiz-patron"></div>
+  </section>
+
+  <!-- =============================================================== -->
+  <section>
+    <h2 id="teorema1">4. El $i$-ésimo estadístico de orden (Teorema 1)</h2>
+
+    <div class="box teorema"><span class="box-title">Teorema 1 (caso general)</span>
+      <p>Sean $Y_1,\dots,Y_n$ v.a. continuas i.i.d. con acumulada $F(y)$ y densidad $f(y)$. La densidad marginal del $i$-ésimo estadístico de orden $Y_{(i)}$ es</p>
+      $$f_{Y_{(i)}}(x)=\frac{n!}{(i-1)!\,(n-i)!}\,\big[F(x)\big]^{i-1}\,f(x)\,\big[1-F(x)\big]^{n-i},\qquad x\in\R.$$
+    </div>
+    <p><b>Comprobación:</b> con $i=n$ queda $n[F(x)]^{n-1}f(x)=g_{(n)}$, y con $i=1$ queda $n[1-F(x)]^{n-1}f(x)=g_{(1)}$. El teorema generaliza lo anterior.</p>
+
+    <h3 id="heuristica">De dónde sale: tres "clases" de puntos alrededor de $x$</h3>
+    <p>La idea es contar. Que $Y_{(i)}$ caiga "justo en $x$" (en un intervalito $[x,x+dx]$) significa exactamente esto: de los $n$ valores de la muestra,</p>
+
+    <figure class="fig">
+      <svg viewBox="0 0 640 150" role="img" aria-label="Recta con puntos: tres a la izquierda de x, uno dentro del intervalito [x, x+dx] y cuatro a la derecha">
+        <rect class="band" x="300" y="22" width="34" height="86"/>
+        <line class="ax" x1="20" y1="70" x2="620" y2="70"/>
+        <line class="tk" x1="300" y1="22" x2="300" y2="108" stroke-dasharray="5 4"/>
+        <line class="tk" x1="334" y1="22" x2="334" y2="108" stroke-dasharray="5 4"/>
+        <circle class="p1" cx="70" cy="70" r="8"/><circle class="p1" cx="150" cy="70" r="8"/><circle class="p1" cx="240" cy="70" r="8"/>
+        <circle class="p2" cx="316" cy="70" r="9"/>
+        <circle class="p3" cx="390" cy="70" r="8"/><circle class="p3" cx="455" cy="70" r="8"/><circle class="p3" cx="530" cy="70" r="8"/><circle class="p3" cx="590" cy="70" r="8"/>
+        <text class="lb" x="300" y="130" text-anchor="middle">x</text>
+        <text class="lb" x="340" y="130" text-anchor="start">x+dx</text>
+        <text class="lbm" x="150" y="40" text-anchor="middle">Clase 1: i−1 puntos</text>
+        <text class="lbm" x="317" y="16" text-anchor="middle">Clase 2: 1</text>
+        <text class="lbm" x="490" y="40" text-anchor="middle">Clase 3: n−i puntos</text>
+        <text class="lbm" x="316" y="95" text-anchor="middle">Y(i)</text>
+      </svg>
+      <figcaption>Ejemplo con $n=8$, $i=4$: tres puntos a la izquierda de $x$, el cuarto ordenado dentro de $[x,x+dx]$ y cuatro a la derecha.</figcaption>
+    </figure>
+    <ul class="leyenda-clases">
+      <li><span class="dot c1"></span><span><b>Clase 1</b> — valores menores que $x$: deben ser exactamente $i-1$. Cada $Y$ cae ahí con probabilidad $p_1=\P(Y &lt; x)=F(x)$.</span></li>
+      <li><span class="dot c2"></span><span><b>Clase 2</b> — valores "cercanos" a $x$ (en $[x,x+dx]$): exactamente $1$ (ese es $Y_{(i)}$). Probabilidad $p_2=\P(x\le Y\le x+dx)\approx f(x)\,dx$.</span></li>
+      <li><span class="dot c3"></span><span><b>Clase 3</b> — valores mayores que $x$: los $n-i$ restantes. Probabilidad $p_3=\P(Y > x)=1-F(x)$ (en rigor $\P(Y > x+dx)$, pero la diferencia es del orden de $dx$ y desaparece en el límite).</span></li>
+    </ul>
+    <p>Cada uno de los $n$ valores cae, de forma independiente, en una de las tres clases. Eso es exactamente un <b>experimento multinomial</b> con $n$ ensayos y tres categorías. Recuerda: la probabilidad de obtener $k_1,k_2,k_3$ resultados en cada categoría ($k_1+k_2+k_3=n$) es</p>
+    $$\binom{n}{k_1\ k_2\ k_3}p_1^{k_1}p_2^{k_2}p_3^{k_3}=\frac{n!}{k_1!\,k_2!\,k_3!}\,p_1^{k_1}p_2^{k_2}p_3^{k_3},$$
+    <p>donde el coeficiente multinomial cuenta <b>cuáles</b> de los $n$ valores van a cada clase. Con $A_1=\{i-1\text{ en la clase 1}\}$, $A_2=\{1\text{ en la clase 2}\}$, $A_3=\{n-i\text{ en la clase 3}\}$:</p>
+    $$\begin{aligned}
+      f_{Y_{(i)}}(x)\,dx&\approx\P(x\le Y_{(i)}\le x+dx)\approx\P(A_1\cap A_2\cap A_3)\\
+      &\approx\binom{n}{i-1\ \ 1\ \ n-i}p_1^{\,i-1}\,p_2^{\,1}\,p_3^{\,n-i}
+      =\frac{n!}{(i-1)!\,1!\,(n-i)!}\,[F(x)]^{i-1}\,f(x)\,dx\,[1-F(x)]^{n-i}.
+    \end{aligned}$$
+    <p>Divide entre $dx$ y obtienes el Teorema 1. El primer "$\approx$" es la definición de densidad; el segundo ignora el caso de que caigan <b>dos o más</b> puntos en $[x,x+dx]$, cuya probabilidad es del orden de $(dx)^2$ y no aporta al dividir entre $dx$ y hacer $dx\to0$.</p>
+
+    <details class="prueba"><summary>Prueba rigurosa (sin "≈"): por la acumulada</summary><div>
+      <p>$Y_{(i)}\le x$ ocurre si y sólo si <b>al menos $i$</b> de los $n$ valores son $\le x$. El número de valores $\le x$ es $\text{Bin}(n,F(x))$, así que</p>
+      $$F_{Y_{(i)}}(x)=\sum_{k=i}^{n}\binom nk[F(x)]^k[1-F(x)]^{n-k}.$$
+      <p>Al derivar cada término y usar $k\binom nk=n\binom{n-1}{k-1}$ y $(n-k)\binom nk=n\binom{n-1}{k}$, el término $k$ queda $n f(x)\,[a_{k-1}-a_k]$ con $a_k=\binom{n-1}{k}F^k(1-F)^{n-1-k}$ (y $a_n=0$). La suma es <b>telescópica</b> y sobrevive sólo $n f(x)\,a_{i-1}=n\binom{n-1}{i-1}F^{i-1}(1-F)^{n-i}f(x)=\frac{n!}{(i-1)!(n-i)!}F^{i-1}f(1-F)^{n-i}$. $\ \blacksquare$</p>
+    </div></details>
+
+    <div class="box ejemplo" id="ejemplo-b"><span class="box-title">Ejemplo (la fórmula binomial en acción)</span>
+      <p>Con $n=5$ valores $N(0,1)$, ¿cuál es $\P(Y_{(2)} &lt; 0)$? "El segundo más pequeño es negativo" ⇔ "al menos 2 de los 5 son negativos". Como cada uno es negativo con probabilidad $1/2$: $\P(Y_{(2)} &lt; 0)=\P(\text{Bin}(5,\tfrac12)\ge2)=1-\frac{1+5}{32}=\frac{26}{32}=0.8125$. (Integrando numéricamente la densidad del Teorema 1 se obtiene lo mismo, y una simulación da $0.812$.)</p>
+    </div>
+
+    <div class="sim" id="sim-multinomial">
+      <p class="sim-title">Simulación (d): la derivación multinomial, en vivo</p>
+      <p class="sim-desc">$n$ puntos $U(0,1)$ sobre la recta. Azul: clase 1 (antes de $x$); verde: clase 2 (en $[x,x+dx]$); naranja: clase 3 (después de $x+dx$). El evento $A_1\cap A_2\cap A_3$ es "exactamente $(i-1,\,1,\,n-i)$ puntos". Repite muchas veces y compara con la multinomial y con $f_{Y_{(i)}}(x)\,dx$. Achica $dx$: las tres cantidades se juntan.</p>
+      <div class="controls"></div>
+      <div class="controls ctl-btn"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+
+    <!-- ---------------- Ejercicio 7 ---------------- -->
+    <div class="box ejercicio" id="ej-7">
+      <span class="box-title">Ejercicio 7 (Clase 2)</span>
+      <p>Sean $X_1,\dots,X_n$ v.a.'s i.i.d. $\text{Uniforme}(0,1)$. Encuentre la FDP del $i$-ésimo elemento de la muestra ordenada. ¿Cuál es la media del mínimo? ¿Y del máximo? ¿Qué sucede para $n$ grande?</p>
+      <details class="pista"><summary>Pista 1</summary><div>
+        <p>Para $U(0,1)$: $f(x)=1$ y $F(x)=x$ en $(0,1)$. Sustituye en el Teorema 1.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 2</summary><div>
+        <p>Compara con la densidad $\text{Beta}(a,b)$: $\frac{\Gamma(a+b)}{\Gamma(a)\Gamma(b)}x^{a-1}(1-x)^{b-1}$ y recuerda $\Gamma(m)=(m-1)!$. La media de una $\text{Beta}(a,b)$ es $\frac{a}{a+b}$.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Sustituye en el Teorema 1</b> con $F(x)=x$, $f(x)=1$, $0 &lt; x &lt; 1$:
+            $$f_{Y_{(i)}}(x)=\frac{n!}{(i-1)!\,(n-i)!}\,x^{i-1}(1-x)^{n-i},\qquad 0 &lt; x &lt; 1.$$</li>
+          <li><b>Reconoce una Beta.</b> La $\text{Beta}(a,b)$ tiene núcleo $x^{a-1}(1-x)^{b-1}$: aquí $a-1=i-1$ y $b-1=n-i$, o sea $a=i$, $b=n-i+1$. La constante también coincide: $\frac{\Gamma(a+b)}{\Gamma(a)\Gamma(b)}=\frac{\Gamma(n+1)}{\Gamma(i)\Gamma(n-i+1)}=\frac{n!}{(i-1)!\,(n-i)!}$. Por tanto
+            $$\boxed{Y_{(i)}\sim\text{Beta}(i,\ n-i+1)},\qquad \E\big(Y_{(i)}\big)=\frac{i}{i+(n-i+1)}=\frac{i}{n+1}.$$</li>
+          <li><b>Media del mínimo</b> ($i=1$, $Y_{(1)}\sim\text{Beta}(1,n)$, densidad $n(1-x)^{n-1}$): $\E(Y_{(1)})=\dfrac{1}{n+1}$.
+            <br><span class="small">Otra forma: $\E(Y_{(1)})=\int_0^1\P(Y_{(1)} > y)\,dy=\int_0^1(1-y)^n\,dy=\frac{1}{n+1}$.</span></li>
+          <li><b>Media del máximo</b> ($i=n$, $Y_{(n)}\sim\text{Beta}(n,1)$, densidad $nx^{n-1}$): $\E(Y_{(n)})=\int_0^1x\cdot nx^{n-1}dx=\dfrac{n}{n+1}$.</li>
+          <li><b>Interpretación bonita:</b> los $n$ puntos parten el intervalo $(0,1)$ en $n+1$ pedazos que, en promedio, miden lo mismo, $\frac{1}{n+1}$. Por eso el $i$-ésimo punto está, en promedio, en $\frac{i}{n+1}$.</li>
+          <li><b>¿Qué pasa con $n$ grande?</b> $\E(Y_{(1)})=\frac1{n+1}\to0$ y $\E(Y_{(n)})=\frac{n}{n+1}\to1$. Además las varianzas se van a cero:
+            $$\Var(Y_{(1)})=\Var(Y_{(n)})=\frac{1\cdot n}{(n+1)^2(n+2)}\to0,$$
+            así que el mínimo se concentra en $0$ y el máximo en $1$ (convergen en probabilidad a los extremos del soporte): con muchos datos, el más pequeño y el más grande "tocan" los bordes. Más aún, $\P(Y_{(1)} > t/n)=(1-t/n)^n\to e^{-t}$: el mínimo es del orden de $1/n$ y $nY_{(1)}$ se comporta como una $\text{Exp}(1)$.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <div class="sim" id="sim-beta">
+      <p class="sim-title">Simulación (c): $Y_{(i)}$ de $n$ uniformes es $\text{Beta}(i,\,n-i+1)$</p>
+      <p class="sim-desc">20 000 muestras de $n$ uniformes; se ordena cada una y se guarda el $i$-ésimo valor. La línea punteada marca la media teórica $i/(n+1)$.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+    <div id="nc-beta"></div>
+  </section>
+
+  <!-- =============================================================== -->
+  <section>
+    <h2 id="conjunta">5. Densidades conjuntas de los estadísticos de orden</h2>
+
+    <h3 id="conjunta-todos">Todos a la vez</h3>
+    <div class="box teorema"><span class="box-title">Densidad conjunta de $(Y_{(1)},\dots,Y_{(n)})$</span>
+      $$f_{Y_{(1)},\dots,Y_{(n)}}(y_1,\dots,y_n)=n!\,f(y_1)f(y_2)\cdots f(y_n),\qquad y_1 &lt; y_2 &lt; \cdots &lt; y_n,$$
+      <p>y cero fuera de esa región.</p>
+    </div>
+    <p><b>¿Por qué el $n!$?</b> La muestra original $(Y_1,\dots,Y_n)$ tiene densidad $f(y_1)\cdots f(y_n)$ en todo $\R^n$. Al ordenar, todos los $n!$ reacomodos de un mismo conjunto de valores van a parar al <b>mismo</b> punto ordenado $y_1 &lt; \cdots &lt; y_n$. Por ejemplo, con $n=2$, el par ordenado $(1,3)$ sale de $(Y_1,Y_2)=(1,3)$ o de $(3,1)$: dos caminos, cada uno con densidad $f(1)f(3)$, total $2f(1)f(3)$. Con $n$ valores hay $n!$ caminos. Toda la masa de $\R^n$ se "dobla" sobre la región $y_1 &lt; \cdots &lt; y_n$, que es $1/n!$ del espacio.</p>
+
+    <h3 id="conjunta-par">Un par $(Y_{(i)},Y_{(j)})$ con $i &lt; j$</h3>
+    <div class="box teorema"><span class="box-title">Densidad conjunta de $(Y_{(i)},Y_{(j)})$</span>
+      $$f_{Y_{(i)},Y_{(j)}}(x,y)=\frac{n!}{(i-1)!\,(j-i-1)!\,(n-j)!}\,f(x)f(y)\,[F(x)]^{i-1}\,[F(y)-F(x)]^{j-i-1}\,[1-F(y)]^{n-j},\qquad x &lt; y.$$
+    </div>
+    <p>Misma heurística multinomial, ahora con <b>cinco</b> clases:</p>
+    <figure class="fig">
+      <svg viewBox="0 0 640 150" role="img" aria-label="Recta con cinco clases: antes de x, en x, entre x e y, en y, después de y">
+        <rect class="band" x="210" y="22" width="30" height="86"/>
+        <rect class="band2" x="440" y="22" width="30" height="86"/>
+        <line class="ax" x1="20" y1="70" x2="620" y2="70"/>
+        <circle class="p1" cx="70" cy="70" r="8"/><circle class="p1" cx="150" cy="70" r="8"/>
+        <circle class="p2" cx="225" cy="70" r="9"/>
+        <circle class="p5" cx="290" cy="70" r="8"/><circle class="p5" cx="345" cy="70" r="8"/><circle class="p5" cx="395" cy="70" r="8"/>
+        <circle class="p4" cx="455" cy="70" r="9"/>
+        <circle class="p3" cx="520" cy="70" r="8"/><circle class="p3" cx="590" cy="70" r="8"/>
+        <text class="lb" x="225" y="132" text-anchor="middle">x</text>
+        <text class="lb" x="455" y="132" text-anchor="middle">y</text>
+        <text class="lbm" x="110" y="40" text-anchor="middle">i−1</text>
+        <text class="lbm" x="225" y="16" text-anchor="middle">Y(i)</text>
+        <text class="lbm" x="342" y="40" text-anchor="middle">j−i−1</text>
+        <text class="lbm" x="455" y="16" text-anchor="middle">Y(j)</text>
+        <text class="lbm" x="555" y="40" text-anchor="middle">n−j</text>
+      </svg>
+      <figcaption>Ejemplo con $n=9$, $i=3$, $j=7$.</figcaption>
+    </figure>
+    <ul class="leyenda-clases">
+      <li><span class="dot c1"></span><span>$i-1$ valores antes de $x$, cada uno con probabilidad $F(x)$;</span></li>
+      <li><span class="dot c2"></span><span>$1$ valor en $[x,x+dx]$ (es $Y_{(i)}$), probabilidad $\approx f(x)\,dx$;</span></li>
+      <li><span class="dot c5"></span><span>$j-i-1$ valores entre $x$ e $y$, cada uno con probabilidad $F(y)-F(x)$;</span></li>
+      <li><span class="dot c4"></span><span>$1$ valor en $[y,y+dy]$ (es $Y_{(j)}$), probabilidad $\approx f(y)\,dy$;</span></li>
+      <li><span class="dot c3"></span><span>$n-j$ valores después de $y$, cada uno con probabilidad $1-F(y)$.</span></li>
+    </ul>
+    <p>El coeficiente multinomial $\frac{n!}{(i-1)!\,1!\,(j-i-1)!\,1!\,(n-j)!}$ por el producto de probabilidades, dividido entre $dx\,dy$, da exactamente la fórmula. Si te piden un par, <b>no memorices</b>: dibuja la recta, cuenta cuántos puntos hay en cada tramo y escribe la multinomial. (Comprobación: con $U(0,1)$, $n=5$, $i=2$, $j=4$, la fórmula integra $1$ sobre $0 &lt; x &lt; y &lt; 1$; verificado con sympy.)</p>
+
+    <!-- ---------------- Ejercicio 8 ---------------- -->
+    <div class="box ejercicio" id="ej-8">
+      <span class="box-title">Ejercicio 8 (Clase 2)</span>
+      <p>Sean $X_1,\dots,X_n$ v.a.'s i.i.d. con distribución exponencial de parámetro $\lambda$. Además, definimos por $Y_1,\dots,Y_n$ a sus respectivos estadísticos de orden, y sean
+      $$Z_1=Y_1\quad\text{y}\quad Z_j=Y_j-Y_{j-1},\quad j=2,\dots,n.$$
+      Pruebe que $Z_1,\dots,Z_n$ son independientes y $Z_j\sim\text{Exp}(\lambda(n-j+1))$, $j=1,\dots,n$.</p>
+      <div class="box cuidado"><span class="box-title">¿Qué significa "parámetro $\lambda$"?</span>
+        <p>Aquí $\lambda$ es la <b>tasa</b>: $f(x)=\lambda e^{-\lambda x}$, $x > 0$, media $1/\lambda$. En la notación del Formulario es $\text{Exp}(\beta)$ con $\beta=1/\lambda$. Igual, "$Z_j\sim\text{Exp}(\lambda(n-j+1))$" quiere decir <b>tasa</b> $\lambda(n-j+1)$, o sea media $\frac{1}{\lambda(n-j+1)}$. Además, aquí $Y_j$ (sin paréntesis) es el $j$-ésimo <b>ordenado</b>. A los $Z_j$ se les llama <b>espaciamientos</b>.</p>
+      </div>
+      <details class="pista"><summary>Pista 1</summary><div>
+        <p>Empieza por la densidad conjunta de todos los estadísticos de orden: $n!\,\lambda^n e^{-\lambda(y_1+\cdots+y_n)}$ en $0 &lt; y_1 &lt; \cdots &lt; y_n$.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 2</summary><div>
+        <p>La inversa es $y_k=z_1+\cdots+z_k$. El Jacobiano de una matriz triangular con unos en la diagonal es $1$. ¿Cuántas veces aparece $z_j$ en $\sum_k y_k$?</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Densidad conjunta de los ordenados</b> (sección anterior, con $f(x)=\lambda e^{-\lambda x}$):
+            $$f_{Y_1,\dots,Y_n}(y_1,\dots,y_n)=n!\prod_{k=1}^n\lambda e^{-\lambda y_k}=n!\,\lambda^n\exp\Big\{-\lambda\sum_{k=1}^ny_k\Big\},\qquad 0 &lt; y_1 &lt; \cdots &lt; y_n.$$</li>
+          <li><b>Transformación e inversa</b> (método del Jacobiano, <a href="clase-01.html">Clase 1</a>): $z_1=y_1$, $z_j=y_j-y_{j-1}$. Despejando: $y_k=z_1+z_2+\cdots+z_k$.</li>
+          <li><b>Soporte:</b> $0 &lt; y_1 &lt; y_2 &lt; \cdots &lt; y_n$ ⇔ $z_1 > 0$ y cada salto $z_j=y_j-y_{j-1} > 0$. Así que el nuevo soporte es $z_j > 0$ para todo $j$: un "rectángulo" (producto de intervalos), que es lo que necesitamos para poder tener independencia.</li>
+          <li><b>Jacobiano:</b> $\frac{\partial y_k}{\partial z_j}=1$ si $j\le k$ y $0$ si $j > k$: matriz triangular inferior con unos en la diagonal, determinante $|J|=1$.</li>
+          <li><b>Reescribe el exponente.</b> $z_j$ aparece en $y_k$ para cada $k\ge j$, es decir, en $n-j+1$ de los $y_k$:
+            $$\sum_{k=1}^ny_k=\sum_{k=1}^n\sum_{j=1}^kz_j=\sum_{j=1}^n(n-j+1)\,z_j.$$
+            (Ej. con $n=4$: $y_1+y_2+y_3+y_4=4z_1+3z_2+2z_3+z_4$.)</li>
+          <li><b>Densidad de $Z$:</b> como $n!=\prod_{j=1}^n(n-j+1)$, podemos repartir $n!\,\lambda^n$ entre los factores:
+            $$f_{Z}(z_1,\dots,z_n)=n!\,\lambda^n\,e^{-\lambda\sum_j(n-j+1)z_j}\cdot1=\prod_{j=1}^n\Big[\lambda(n-j+1)\,e^{-\lambda(n-j+1)z_j}\Big],\qquad z_j > 0.$$</li>
+          <li><b>Concluye.</b> La densidad conjunta es un producto de funciones, cada una de una sola $z_j$, sobre un soporte producto, y cada factor es una densidad exponencial de tasa $\lambda(n-j+1)$ (integra 1). Por lo tanto $Z_1,\dots,Z_n$ son <b>independientes</b> y
+            $$\boxed{Z_j\sim\text{Exp}\big(\text{tasa }\lambda(n-j+1)\big)},\quad\text{media }\frac{1}{\lambda(n-j+1)}.\qquad\blacksquare$$</li>
+        </ol>
+        <div class="box idea"><span class="box-title">Intuición (falta de memoria)</span>
+          <p>Piensa en $n$ focos con vida exponencial. El primero se quema tras el mínimo de $n$ exponenciales: tasa $n\lambda$ (es el Ejercicio 6). En ese instante quedan $n-1$ focos y, por la <b>falta de memoria</b>, es como si fueran nuevos: el siguiente se quema tras el mínimo de $n-1$ exponenciales, tasa $(n-1)\lambda$... El $j$-ésimo espaciamiento es el mínimo de los $n-j+1$ sobrevivientes. Y "como si fueran nuevos" es justamente por qué los espaciamientos son independientes.</p>
+          <p><b>Regalo:</b> $Y_n=Z_1+\cdots+Z_n$, así que $\E(Y_n)=\frac1\lambda\big(\frac1n+\frac1{n-1}+\cdots+1\big)$. Por ejemplo, con $\lambda=1$ y $n=5$: $\E(\max)=1+\frac12+\frac13+\frac14+\frac15\approx2.283$.</p>
+        </div>
+      </div></details>
+    </div>
+
+    <div class="sim" id="sim-espacios">
+      <p class="sim-title">Simulación (f): espaciamientos de exponenciales (Ejercicio 8)</p>
+      <p class="sim-desc">20 000 muestras de $n$ exponenciales de tasa $\lambda$; se ordenan y se calcula $Z_j=Y_j-Y_{j-1}$. La curva es la densidad exponencial de tasa $\lambda(n-j+1)$. La lectura muestra además la correlación entre espaciamientos consecutivos (≈ 0, compatible con la independencia).</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+
+    <!-- ---------------- Ejercicio 9 ---------------- -->
+    <div class="box ejercicio" id="ej-9">
+      <span class="box-title">Ejercicio 9 <span class="badge star">★ reto</span></span>
+      <p>Tres personas $A$, $B$ y $C$, llegan al mismo tiempo a una central telefónica que posee dos dispositivos electrónicos. Los dos dispositivos son utilizados inmediatamente por $A$ y $B$. La persona $C$ espera al primero que se desocupe y luego usa ese dispositivo. Sean $X_1$, $X_2$ y $X_3$ los tiempos de las llamadas de $A$, $B$ y $C$ respectivamente. Suponga que $X_1$, $X_2$ y $X_3$ son v.a.'s i.i.d. con distribución exponencial de parámetro $\lambda$.</p>
+      <p>a) Sea $Z=\max\{X_1,X_2\}-\min\{X_1,X_2\}$. Determine su densidad. &nbsp; b) Calcule $\P(Z &lt; X_3)$. &nbsp; c) ¿Cómo se puede interpretar el resultado en el ítem anterior?</p>
+      <p class="small muted">"Parámetro $\lambda$" = tasa: $f(x)=\lambda e^{-\lambda x}$, media $1/\lambda$ (Formulario: $\text{Exp}(\beta=1/\lambda)$).</p>
+      <details class="pista"><summary>Pista 1 (a)</summary><div>
+        <p>$Z=Y_2-Y_1$ es el segundo espaciamiento de una muestra de tamaño $n=2$: usa el Ejercicio 8 con $n=2$, $j=2$. O calcula directamente $\P(Z > z)=\P(|X_1-X_2| > z)=2\,\P(X_1-X_2 > z)$.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 2 (b)</summary><div>
+        <p>$Z$ depende sólo de $X_1,X_2$, así que es independiente de $X_3$. Condiciona en $Z=z$: $\P(Z &lt; X_3)=\int_0^\infty f_Z(z)\,\P(X_3 > z)\,dz$.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 3 (c)</summary><div>
+        <p>$C$ empieza a hablar en el instante $\min\{X_1,X_2\}$ y termina en $\min\{X_1,X_2\}+X_3$. La otra persona termina en $\max\{X_1,X_2\}$. ¿Qué significa que $\max &lt; \min+X_3$?</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <p><b>a) Densidad de $Z$.</b></p>
+        <ol class="pasos">
+          <li><b>Reescribe:</b> $\max\{X_1,X_2\}-\min\{X_1,X_2\}=|X_1-X_2|$. Por simetría ($X_1$ y $X_2$ son intercambiables), para $z > 0$:
+            $\P(Z > z)=\P(X_1-X_2 > z)+\P(X_2-X_1 > z)=2\,\P(X_1 > X_2+z)$.</li>
+          <li><b>Condiciona en $X_2=b$</b> y usa $\P(X_1 > c)=e^{-\lambda c}$:
+            $$\P(X_1 > X_2+z)=\int_0^\infty\lambda e^{-\lambda b}\,e^{-\lambda(b+z)}\,db=e^{-\lambda z}\int_0^\infty\lambda e^{-2\lambda b}\,db=e^{-\lambda z}\cdot\frac12.$$</li>
+          <li>Así $\P(Z > z)=2\cdot\frac12e^{-\lambda z}=e^{-\lambda z}$, y derivando $F_Z(z)=1-e^{-\lambda z}$:
+            $$\boxed{f_Z(z)=\lambda e^{-\lambda z},\ z > 0}\qquad Z\sim\text{Exp}(\text{tasa }\lambda),$$
+            ¡la misma distribución que cada llamada! (Verificado con sympy y con $10^6$ simulaciones.)</li>
+          <li><b>Por el Ejercicio 8</b> (otra vía): con $n=2$, $Z=Y_2-Y_1=Z_2\sim\text{Exp}(\lambda(2-2+1))=\text{Exp}(\lambda)$. Mismo resultado.</li>
+        </ol>
+        <p><b>b) $\P(Z &lt; X_3)$.</b></p>
+        <ol class="pasos">
+          <li>$Z$ es función de $(X_1,X_2)$, independientes de $X_3$; luego $Z$ y $X_3$ son independientes, ambas $\text{Exp}(\lambda)$.</li>
+          <li>$\P(Z &lt; X_3)=\int_0^\infty f_Z(z)\,\P(X_3 > z)\,dz=\int_0^\infty\lambda e^{-\lambda z}e^{-\lambda z}\,dz=\lambda\cdot\frac{1}{2\lambda}=\boxed{\tfrac12}.$</li>
+          <li>Tiene sentido: $Z$ y $X_3$ son i.i.d. y continuas, así que por simetría cada una es la menor con probabilidad $1/2$. ¡No depende de $\lambda$!</li>
+        </ol>
+        <p><b>c) Interpretación.</b></p>
+        <ol class="pasos">
+          <li>$C$ empieza en $\min\{X_1,X_2\}$ y termina en $\min\{X_1,X_2\}+X_3$. Quien quedó hablando (de $A$ o $B$) termina en $\max\{X_1,X_2\}$, es decir, $Z$ unidades de tiempo <b>después</b> de que $C$ empezó.</li>
+          <li>$Z &lt; X_3$ ⇔ $\max\{X_1,X_2\} &lt; \min\{X_1,X_2\}+X_3$ ⇔ <b>la persona que quedaba termina antes que $C$</b> ⇔ <b>$C$ es el último de los tres en salir de la central</b>.</li>
+          <li>Así, $\P(C\text{ es el último en terminar})=\frac12$. Lo sorprendente: uno pensaría que $C$, que empezó más tarde, debería ser "más probablemente" el último. Pero por la <b>falta de memoria</b> de la exponencial, en el instante en que $C$ empieza, el tiempo que le <b>queda</b> a la otra persona ($Z$) es otra vez $\text{Exp}(\lambda)$, como si recién empezara: los dos "arrancan de cero" en igualdad de condiciones, y cada uno termina primero con probabilidad $1/2$.</li>
+          <li>Si las duraciones <b>no</b> fueran exponenciales, esto falla. Por ejemplo, con $U(0,L)$ se obtiene $\P(Z &lt; X_3)=\int_0^L\frac2L\big(1-\frac zL\big)\big(1-\frac zL\big)dz=\frac23$: la llamada que ya lleva rato tiende a estar por terminar. Compruébalo en la simulación (e).</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <div class="sim" id="sim-central">
+      <p class="sim-title">Simulación (e): la central telefónica (Ejercicio 9)</p>
+      <p class="sim-desc">Arriba: un "día" en la central (barras = llamadas; la línea rosada es $Z$, lo que le falta a quien sigue hablando cuando $C$ empieza). Abajo: histograma de $Z$ en 20 000 días, con la densidad de $Z$ (azul) y la de $X_3$ (verde, punteada). Con exponenciales ambas curvas coinciden: eso es la falta de memoria. Cambia a uniformes para ver cómo se rompe.</p>
+      <div class="controls"></div>
+      <div class="controls ctl-btn"></div>
+      <div class="plot plot-tl"></div>
+      <div class="plot plot-h"></div>
+      <div class="out"></div>
+    </div>
+    <div id="quiz-central"></div>
+  </section>
+
+  <!-- =============================================================== -->
+  <section>
+    <h2 id="resumen">6. Resumen de la clase</h2>
+    <div class="table-wrap">
+      <table class="tabla text-left">
+        <thead><tr><th>Quiero…</th><th>Herramienta</th><th>Fórmula clave</th></tr></thead>
+        <tbody>
+          <tr><td>Distribución de una suma de independientes</td><td>FGM</td><td>$M_U(t)=\prod M_{Y_i}(t)$ y reconocer</td></tr>
+          <tr><td>Distribución de $a+bX$</td><td>FGM</td><td>$M_{a+bX}(t)=e^{at}M_X(bt)$</td></tr>
+          <tr><td>Acumulada del máximo</td><td>"todos $\le y$"</td><td>$[F(y)]^n$</td></tr>
+          <tr><td>Acumulada del mínimo</td><td>"todos $> y$" y complemento</td><td>$1-[1-F(y)]^n$</td></tr>
+          <tr><td>Densidad de $Y_{(i)}$</td><td>Teorema 1 (multinomial, 3 clases)</td><td>$\frac{n!}{(i-1)!(n-i)!}F^{i-1}f(1-F)^{n-i}$</td></tr>
+          <tr><td>Densidad de todos los ordenados</td><td>$n!$ reacomodos</td><td>$n!\,f(y_1)\cdots f(y_n)$, $y_1 &lt; \cdots &lt; y_n$</td></tr>
+          <tr><td>Densidad de un par $(Y_{(i)},Y_{(j)})$</td><td>multinomial, 5 clases</td><td>$\frac{n!}{(i-1)!(j-i-1)!(n-j)!}f(x)f(y)F(x)^{i-1}[F(y)-F(x)]^{j-i-1}[1-F(y)]^{n-j}$</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Resultados para recordar: suma de normales independientes es normal; suma de Poisson es Poisson; suma de Gammas con el mismo $\beta$ es Gamma; $Z^2\sim\chi^2_{(1)}$; mínimo de exponenciales es exponencial (tasas se suman); $Y_{(i)}$ de uniformes es $\text{Beta}(i,n-i+1)$.</p>
+  </section>
+
+  <!-- =============================================================== -->
+  <section>
+    <h2 id="deber">7. Practica con el deber</h2>
+    <p>La Parte III de la <a href="../deberes/lista-1-1.html">Lista 1.1</a> aplica directamente esta clase (allí $Y_1\le\cdots\le Y_n$ son los ordenados, sin paréntesis). No los resolvemos aquí; esta es la técnica de cada uno:</p>
+    <ul>
+      <li><a href="../deberes/lista-1-1.html#ej-7"><b>Ejercicio 7</b></a> (máquina con 4 componentes): (a) "fallan todos" → <b>máximo</b>, $g_{(n)}$; (b) "falla uno" → <b>mínimo</b>, $g_{(1)}$ (como el Ejercicio 6); (c) "queda uno funcionando" → $Y_3$ con el <b>Teorema 1</b> ($n=4$, $i=3$). Ojo: "parámetro $1/4$" es la <b>tasa</b> → media 4 años.</li>
+      <li><a href="../deberes/lista-1-1.html#ej-8"><b>Ejercicio 8</b></a> (tres uniformes): <b>densidad conjunta de todos los ordenados</b>, $3!$ en $0 &lt; y_1 &lt; y_2 &lt; y_3 &lt; 1$ (o la del par $(Y_1,Y_3)$), e integrar sobre la región que pide cada inciso.</li>
+      <li><a href="../deberes/lista-1-1.html#ej-9"><b>Ejercicio 9</b></a> (central telefónica): es <b>casi idéntico</b> al <a href="#ej-9">Ejercicio 9 de esta clase</a> (sólo cambia la redacción: "C sustituye a la primera persona que finalice"). Espaciamiento de exponenciales y falta de memoria.</li>
+      <li><a href="../deberes/lista-1-1.html#ej-10"><b>Ejercicio 10</b></a> (rango y punto medio): el <b>patrón del máximo</b> combinado con "todos en $(u,v]$" para $\P(Y_1\le u,\,Y_n\le v)$; derivar en $u$ y $v$ da la densidad del par $(Y_{(1)},Y_{(n)})$; luego <b>Jacobiano</b> (<a href="clase-01.html">Clase 1</a>) para $(R,M)$.</li>
+      <li><a href="../deberes/lista-1-1.html#ej-11"><b>Ejercicio 11</b></a> (un par cualquiera): <b>densidad conjunta de $(Y_{(i)},Y_{(j)})$</b> (sección 5) + <b>Jacobiano</b> con $U=Y_i$, $W=Y_j-Y_i$; al final se reconoce una Beta.</li>
+      <li><a href="../deberes/lista-1-1.html#ej-12"><b>Ejercicio 12</b></a> (cocientes $Y_i/Y_{i+1}$): <b>densidad conjunta de todos los ordenados</b> ($n!$) + <b>Jacobiano $n$-dimensional</b>; la misma idea que el Ejercicio 8 (cambio de variables que factoriza la densidad).</li>
+    </ul>
+  </section>
+
+</main>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../assets/js/stats.js"></script>
+<script src="../assets/js/plot.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+(function () {
+  'use strict';
+  const S = EM.stats, D = S.dist, fmt = S.fmt, R = String.raw;
+  const rng = S.rng;
+  const M = 20000; // réplicas por simulación
+
+  // ---------- utilidades locales ----------
+  function box(id) {
+    const r = document.getElementById(id);
+    return { root: r, controls: r.querySelectorAll('.controls'), plot: r.querySelector('.plot'), out: r.querySelector('.out') };
+  }
+  // máximo de f en [a,b] (para escalar el eje y)
+  function peak(f, a, b) { let m = 0; for (let k = 0; k <= 400; k++) { const v = f(a + (b - a) * k / 400); if (isFinite(v) && v > m) m = v; } return m; }
+  // altura máxima de un histograma de densidad
+  function histMax(data, lo, hi, bins) {
+    const w = (hi - lo) / bins, c = new Array(bins).fill(0);
+    for (const x of data) { const k = Math.floor((x - lo) / w); if (k >= 0 && k < bins) c[k]++; }
+    return Math.max(...c) / (data.length * w);
+  }
+  function mean(a) { let s = 0; for (const x of a) s += x; return s / a.length; }
+  function variance(a) { const m = mean(a); let s = 0; for (const x of a) s += (x - m) * (x - m); return s / (a.length - 1); }
+  function corr(a, b) {
+    const ma = mean(a), mb = mean(b); let sab = 0, saa = 0, sbb = 0;
+    for (let k = 0; k < a.length; k++) { const da = a[k] - ma, db = b[k] - mb; sab += da * db; saa += da * da; sbb += db * db; }
+    return sab / Math.sqrt(saa * sbb);
+  }
+  const rexp = rate => -Math.log(rng()) / rate; // exponencial de TASA rate
+
+  // =================================================================
+  // Simulación (a): sumas y FGM
+  // =================================================================
+  (function () {
+    const B = box('sim-sumas');
+    const st = { fam: 'exp', n: 3, beta: 2, alpha: 1.5, lam: 0.5, data: [] };
+    const p = EM.plot.create(B.plot, { xmin: 0, xmax: 10, ymin: 0, ymax: 1, height: 280, xlabel: 'u' });
+    const out = EM.ui.readout(B.out);
+
+    function model() {
+      const n = st.n;
+      if (st.fam === 'exp') {
+        const d = D.gamma(n, st.beta);
+        return { d, gen: () => { let s = 0; for (let i = 0; i < n; i++) s += -st.beta * Math.log(rng()); return s; },
+          sum: R`X_i\iid\text{Exp}(\beta=${fmt(st.beta, 2)})`,
+          mgf: R`M_U(t)=\big[(1-${fmt(st.beta, 2)}t)^{-1}\big]^{${n}}=(1-${fmt(st.beta, 2)}t)^{-${n}}`,
+          res: R`U\sim G(${n},\,${fmt(st.beta, 2)})` };
+      }
+      if (st.fam === 'gamma') {
+        const d = D.gamma(n * st.alpha, st.beta);
+        return { d, gen: () => { let s = 0; for (let i = 0; i < n; i++) s += st.beta * S.rgammaShape(st.alpha, rng); return s; },
+          sum: R`X_i\iid G(${fmt(st.alpha, 2)},\,${fmt(st.beta, 2)})`,
+          mgf: R`M_U(t)=\big[(1-${fmt(st.beta, 2)}t)^{-${fmt(st.alpha, 2)}}\big]^{${n}}=(1-${fmt(st.beta, 2)}t)^{-${fmt(n * st.alpha, 2)}}`,
+          res: R`U\sim G(${fmt(n * st.alpha, 2)},\,${fmt(st.beta, 2)})` };
+      }
+      if (st.fam === 'pois') {
+        const tot = st.lam * n * (n + 1) / 2;
+        const d = D.poisson(tot);
+        return { d, discrete: true, gen: () => { let s = 0; for (let i = 1; i <= n; i++) s += S.rpois(st.lam * i, rng); return s; },
+          sum: R`X_i\sim\text{Poisson}(\lambda_i)\text{ indep., }\lambda_i=${fmt(st.lam, 2)}\cdot i`,
+          mgf: R`M_U(t)=\prod_{i=1}^{${n}} e^{\lambda_i(e^t-1)}=e^{${fmt(tot, 3)}(e^t-1)}`,
+          res: R`U\sim\text{Poisson}(${fmt(tot, 3)})` };
+      }
+      // chi: suma de cuadrados de normales estándar
+      const d = D.chi2(n);
+      return { d, gen: () => { let s = 0; for (let i = 0; i < n; i++) { const z = S.rnorm01(rng); s += z * z; } return s; },
+        sum: R`X_i=Z_i^2,\ Z_i\iid N(0,1)`,
+        mgf: R`M_U(t)=\big[(1-2t)^{-1/2}\big]^{${n}}=(1-2t)^{-${n}/2}`,
+        res: R`U\sim\chi^2_{(${n})}=G(${n}/2,\,2)` };
+    }
+
+    function simulate() { const m = model(); st.data = new Array(M); for (let k = 0; k < M; k++) st.data[k] = m.gen(); render(); }
+
+    function render() {
+      const m = model(), d = m.d, sd = Math.sqrt(d.var);
+      if (m.discrete) {
+        const K = Math.max(4, Math.ceil(d.mean + 4.5 * sd));
+        const lo = -0.5, hi = K + 0.5, bins = K + 1;
+        const ks = [], ps = []; for (let k = 0; k <= K; k++) { ks.push(k); ps.push(d.pmf(k)); }
+        const ym = 1.2 * Math.max(Math.max(...ps), st.data.length ? histMax(st.data, lo, hi, bins) : 0);
+        p.setRange({ xmin: lo, xmax: hi, ymin: 0, ymax: ym });
+        p.draw(g => {
+          if (st.data.length) g.hist(st.data, { bins, range: [lo, hi], color: 'c2', alpha: .5, label: 'simulación' });
+          g.points(ks, ps, { color: 'c1', r: 3.5, alpha: 1, label: 'pmf identificada con la FGM' });
+        });
+      } else {
+        const xmax = d.mean + 4.5 * sd, bins = 50;
+        const ym = 1.2 * Math.max(Math.min(peak(d.pdf, xmax * 0.02, xmax), 4), st.data.length ? histMax(st.data, 0, xmax, bins) : 0);
+        p.setRange({ xmin: 0, xmax, ymin: 0, ymax: ym });
+        p.draw(g => {
+          if (st.data.length) g.hist(st.data, { bins, range: [0, xmax], color: 'c2', alpha: .5, label: 'simulación' });
+          g.curve(d.pdf, { color: 'c1', width: 2.5, label: 'densidad identificada con la FGM' });
+        });
+      }
+      const em = st.data.length ? mean(st.data) : NaN, ev = st.data.length ? variance(st.data) : NaN;
+      out.set(R`$${m.sum}$, $n=${st.n}$. &nbsp; FGM: $${m.mgf}$ &nbsp;⇒&nbsp; <b>$${m.res}$</b><br>` +
+        R`Media: simulada <b>${fmt(em, 3)}</b> vs. teórica <b>${fmt(d.mean, 3)}</b> &nbsp;·&nbsp; Varianza: simulada <b>${fmt(ev, 3)}</b> vs. teórica <b>${fmt(d.var, 3)}</b>`);
+    }
+
+    const [ca, cb] = B.controls;
+    EM.ui.select(ca, { label: 'Familia', value: st.fam, options: [
+      { value: 'exp', label: 'Exponencial Exp(β)' }, { value: 'gamma', label: 'Gamma G(α, β)' },
+      { value: 'pois', label: 'Poisson(λᵢ), λᵢ = λ·i' }, { value: 'chi', label: 'Normal estándar al cuadrado' }],
+      onChange: v => { st.fam = v; buildParams(); simulate(); } });
+    EM.ui.slider(ca, { tex: 'n', min: 1, max: 12, step: 1, value: st.n, onInput: v => { st.n = v; simulate(); } });
+    EM.ui.button(ca, 'Simular de nuevo', simulate, { primary: true });
+    function buildParams() {
+      cb.innerHTML = '';
+      if (st.fam === 'exp' || st.fam === 'gamma') {
+        if (st.fam === 'gamma') EM.ui.slider(cb, { tex: R`\alpha`, min: 0.5, max: 4, step: 0.5, value: st.alpha, fmt: v => v.toFixed(1), onInput: v => { st.alpha = v; simulate(); } });
+        EM.ui.slider(cb, { tex: R`\beta`, min: 0.5, max: 3, step: 0.25, value: st.beta, fmt: v => v.toFixed(2), onInput: v => { st.beta = v; simulate(); } });
+      } else if (st.fam === 'pois') {
+        EM.ui.slider(cb, { tex: R`\lambda`, min: 0.1, max: 1, step: 0.05, value: st.lam, fmt: v => v.toFixed(2), onInput: v => { st.lam = v; simulate(); } });
+      } else {
+        cb.append(EM.ui.el('span', { class: 'muted' }, 'Sin parámetros: cada sumando es Z², con Z ~ N(0, 1).'));
+      }
+    }
+    buildParams();
+    simulate();
+  })();
+
+  // =================================================================
+  // Simulación (b): mínimo y máximo
+  // =================================================================
+  (function () {
+    const B = box('sim-minmax');
+    const st = { dist: 'unif', n: 5, show: 'ambos', mins: [], maxs: [] };
+    const p = EM.plot.create(B.plot, { xmin: 0, xmax: 1, ymin: 0, ymax: 5, height: 290, xlabel: 'y' });
+    const out = EM.ui.readout(B.out);
+
+    function model() {
+      const n = st.n;
+      if (st.dist === 'unif') return {
+        gen: () => rng(), xmax: 1,
+        g1: y => (y < 0 || y > 1) ? 0 : n * Math.pow(1 - y, n - 1),
+        gn: y => (y < 0 || y > 1) ? 0 : n * Math.pow(y, n - 1),
+        e1: 1 / (n + 1), en: n / (n + 1), name: R`U(0,1)`,
+        tex1: R`\tfrac{1}{n+1}`, texn: R`\tfrac{n}{n+1}`,
+      };
+      let H = 0; for (let k = 1; k <= n; k++) H += 1 / k;
+      return {
+        gen: () => -Math.log(rng()), xmax: Math.max(4, H + 4),
+        g1: y => y < 0 ? 0 : n * Math.exp(-n * y),
+        gn: y => y < 0 ? 0 : n * Math.pow(1 - Math.exp(-y), n - 1) * Math.exp(-y),
+        e1: 1 / n, en: H, name: R`\text{Exp}(\beta=1)`,
+        tex1: R`\tfrac1n`, texn: R`1+\tfrac12+\cdots+\tfrac1n`,
+      };
+    }
+    function simulate() {
+      const m = model(), n = st.n;
+      st.mins = new Array(M); st.maxs = new Array(M);
+      for (let k = 0; k < M; k++) {
+        let lo = Infinity, hi = -Infinity;
+        for (let i = 0; i < n; i++) { const x = m.gen(); if (x < lo) lo = x; if (x > hi) hi = x; }
+        st.mins[k] = lo; st.maxs[k] = hi;
+      }
+      render();
+    }
+    function render() {
+      const m = model(), bins = 50, xmax = m.xmax;
+      const showMin = st.show !== 'max', showMax = st.show !== 'min';
+      let ym = 0;
+      if (showMin) ym = Math.max(ym, peak(m.g1, 0, xmax), histMax(st.mins, 0, xmax, bins));
+      if (showMax) ym = Math.max(ym, peak(m.gn, 0, xmax), histMax(st.maxs, 0, xmax, bins));
+      p.setRange({ xmin: 0, xmax, ymin: 0, ymax: 1.12 * ym });
+      p.draw(g => {
+        if (showMin) g.hist(st.mins, { bins, range: [0, xmax], color: 'c1', alpha: .35, label: 'mínimos simulados' });
+        if (showMax) g.hist(st.maxs, { bins, range: [0, xmax], color: 'c2', alpha: .35, label: 'máximos simulados' });
+        if (showMin) g.curve(m.g1, { color: 'c1', width: 2.5, label: 'g₍₁₎(y)' });
+        if (showMax) g.curve(m.gn, { color: 'c2', width: 2.5, label: 'g₍ₙ₎(y)' });
+      });
+      out.set(R`Distribución: $${m.name}$, $n=${st.n}$.<br>` +
+        R`$\E(Y_{(1)})=${m.tex1}$: simulada <b>${fmt(mean(st.mins), 4)}</b> vs. teórica <b>${fmt(m.e1, 4)}</b><br>` +
+        R`$\E(Y_{(n)})=${m.texn}$: simulada <b>${fmt(mean(st.maxs), 4)}</b> vs. teórica <b>${fmt(m.en, 4)}</b>`);
+    }
+    const c = B.controls[0];
+    EM.ui.select(c, { label: 'Distribución', value: st.dist, options: [{ value: 'unif', label: 'Uniforme(0, 1)' }, { value: 'exp', label: 'Exponencial, media 1' }], onChange: v => { st.dist = v; simulate(); } });
+    EM.ui.select(c, { label: 'Mostrar', value: st.show, options: [{ value: 'ambos', label: 'mínimo y máximo' }, { value: 'min', label: 'sólo el mínimo' }, { value: 'max', label: 'sólo el máximo' }], onChange: v => { st.show = v; render(); } });
+    EM.ui.slider(c, { tex: 'n', min: 1, max: 20, step: 1, value: st.n, onInput: v => { st.n = v; simulate(); } });
+    simulate();
+  })();
+
+  // =================================================================
+  // Simulación (c): Y_(i) de uniformes ~ Beta(i, n-i+1)
+  // =================================================================
+  (function () {
+    const B = box('sim-beta');
+    const st = { n: 5, i: 2, data: [] };
+    const p = EM.plot.create(B.plot, { xmin: 0, xmax: 1, ymin: 0, ymax: 3, height: 270, xlabel: 'x' });
+    const out = EM.ui.readout(B.out);
+    let sI;
+    function simulate() {
+      const n = st.n, i = st.i, buf = new Float64Array(n);
+      st.data = new Array(M);
+      for (let k = 0; k < M; k++) { for (let j = 0; j < n; j++) buf[j] = rng(); buf.sort(); st.data[k] = buf[i - 1]; }
+      render();
+    }
+    function render() {
+      const n = st.n, i = st.i, d = D.beta(i, n - i + 1), bins = 50;
+      const ym = 1.15 * Math.max(Math.min(peak(d.pdf, 0.001, 0.999), 40), histMax(st.data, 0, 1, bins));
+      p.setRange({ ymax: ym });
+      p.draw(g => {
+        g.hist(st.data, { bins, range: [0, 1], color: 'c2', alpha: .5, label: R`Y₍ᵢ₎ simulado` });
+        g.curve(d.pdf, { color: 'c1', width: 2.5, from: 0.0005, to: 0.9995, label: `Beta(${i}, ${n - i + 1})` });
+        g.vline(d.mean, { color: 'c3', label: 'i/(n+1)' });
+      });
+      out.set(R`$Y_{(${i})}\sim\text{Beta}(${i},\,${n - i + 1})$. &nbsp; Media: simulada <b>${fmt(mean(st.data), 4)}</b> vs. teórica $\frac{${i}}{${n + 1}}=$ <b>${fmt(d.mean, 4)}</b> &nbsp;·&nbsp; ` +
+        R`Desv. estándar: simulada <b>${fmt(Math.sqrt(variance(st.data)), 4)}</b> vs. teórica <b>${fmt(Math.sqrt(d.var), 4)}</b>`);
+    }
+    const c = B.controls[0];
+    EM.ui.slider(c, { tex: 'n', min: 1, max: 30, step: 1, value: st.n, onInput: v => {
+      st.n = v; sI.input.max = v; if (st.i > v) { st.i = v; } sI.set(st.i); simulate(); } });
+    sI = EM.ui.slider(c, { tex: 'i', min: 1, max: st.n, step: 1, value: st.i, onInput: v => { st.i = Math.min(v, st.n); simulate(); } });
+    simulate();
+  })();
+
+  // =================================================================
+  // Simulación (d): derivación multinomial
+  // =================================================================
+  (function () {
+    const B = box('sim-multinomial');
+    const st = { n: 7, i: 3, x: 0.4, dx: 0.08, pts: [], rep: null };
+    const p = EM.plot.create(B.plot, { xmin: 0, xmax: 1, ymin: 0, ymax: 1, height: 190, xlabel: 'y', yticks: 1, grid: false, margin: { l: 18, r: 14, t: 14, b: 38 } });
+    const out = EM.ui.readout(B.out);
+    let sI;
+    const cls = y => y < st.x ? 0 : (y <= st.x + st.dx ? 1 : 2);
+    function newSample() { st.pts = []; for (let k = 0; k < st.n; k++) st.pts.push(rng()); st.rep = null; render(); }
+    function repeat() {
+      const n = st.n, i = st.i; let hitA = 0, hitY = 0; const buf = new Float64Array(n);
+      for (let k = 0; k < M; k++) {
+        const cnt = [0, 0, 0];
+        for (let j = 0; j < n; j++) { buf[j] = rng(); cnt[cls(buf[j])]++; }
+        if (cnt[0] === i - 1 && cnt[1] === 1 && cnt[2] === n - i) hitA++;
+        buf.sort(); if (buf[i - 1] >= st.x && buf[i - 1] <= st.x + st.dx) hitY++;
+      }
+      st.rep = { A: hitA / M, Y: hitY / M, n, i, x: st.x, dx: st.dx };
+      render();
+    }
+    function render() {
+      const n = st.n, i = st.i, x = st.x, dx = st.dx;
+      const sorted = st.pts.slice().sort((a, b) => a - b);
+      const yi = sorted[i - 1];
+      const colors = ['c1', 'c3', 'c2'];
+      p.draw(g => {
+        g.polygon([[x, 0], [x + dx, 0], [x + dx, 1], [x, 1]], { color: 'c3', alpha: .18 });
+        g.vline(x, { color: 'ink', label: 'x', labelY: 1 });
+        g.vline(x + dx, { color: 'muted' });
+        g.line(0, 0.45, 1, 0.45, { color: 'muted', width: 1 });
+        st.pts.forEach((y, k) => g.points([y], [0.45], { color: colors[cls(y)], r: 6, alpha: .9 }));
+        if (yi !== undefined) g.text(R`Y(${i})`, yi, 0.45, { align: 'center', dy: -14, size: 12, bold: true });
+        g.text('clase 1', Math.max(0.01, x / 2), 0.85, { align: 'center', color: 'c1', size: 12 });
+        g.text('clase 3', Math.min(0.99, (x + dx + 1) / 2), 0.85, { align: 'center', color: 'c2', size: 12 });
+      });
+      const cnt = [0, 0, 0]; st.pts.forEach(y => cnt[cls(y)]++);
+      const pat = cnt[0] === i - 1 && cnt[1] === 1 && cnt[2] === n - i;
+      const inBand = yi >= x && yi <= x + dx;
+      const coef = S.factorial(n) / (S.factorial(i - 1) * S.factorial(n - i));
+      const multi = coef * Math.pow(x, i - 1) * dx * Math.pow(1 - x - dx, n - i);
+      const dens = D.beta(i, n - i + 1).pdf(x);
+      const exact = D.beta(i, n - i + 1).cdf(x + dx) - D.beta(i, n - i + 1).cdf(x);
+      let html = R`Esta muestra: clase 1 = <b>${cnt[0]}</b>, clase 2 = <b>${cnt[1]}</b>, clase 3 = <b>${cnt[2]}</b> → ¿patrón $(i-1,1,n-i)=(${i - 1},1,${n - i})$? <b>${pat ? 'sí' : 'no'}</b>. &nbsp; ¿$Y_{(${i})}\in[x,x+dx]$? <b>${inBand ? 'sí' : 'no'}</b>`;
+      html += R`<br>Multinomial exacta $\frac{n!}{(i-1)!\,1!\,(n-i)!}x^{i-1}(dx)(1-x-dx)^{n-i}=$ <b>${fmt(multi, 4)}</b> &nbsp;·&nbsp; $\P(x\le Y_{(i)}\le x+dx)=$ <b>${fmt(exact, 4)}</b> &nbsp;·&nbsp; $f_{Y_{(i)}}(x)\,dx=$ <b>${fmt(dens * dx, 4)}</b>`;
+      if (st.rep && st.rep.n === n && st.rep.i === i && st.rep.x === x && st.rep.dx === dx)
+        html += R`<br>En ${M.toLocaleString('es')} repeticiones: frecuencia del patrón <b>${fmt(st.rep.A, 4)}</b> &nbsp;·&nbsp; frecuencia de $Y_{(${i})}\in[x,x+dx]$: <b>${fmt(st.rep.Y, 4)}</b>`;
+      else html += R`<br><span class="muted">Pulsa «Repetir» para estimar las frecuencias.</span>`;
+      out.set(html);
+    }
+    const c = B.controls[0], cb = B.controls[1];
+    EM.ui.slider(c, { tex: 'n', min: 2, max: 12, step: 1, value: st.n, onInput: v => { st.n = v; sI.input.max = v; if (st.i > v) st.i = v; sI.set(st.i); newSample(); } });
+    sI = EM.ui.slider(c, { tex: 'i', min: 1, max: st.n, step: 1, value: st.i, onInput: v => { st.i = Math.min(v, st.n); render(); } });
+    EM.ui.slider(c, { tex: 'x', min: 0.05, max: 0.9, step: 0.01, value: st.x, fmt: v => v.toFixed(2), onInput: v => { st.x = v; render(); } });
+    EM.ui.slider(c, { tex: 'dx', min: 0.005, max: 0.1, step: 0.005, value: st.dx, fmt: v => v.toFixed(3), onInput: v => { st.dx = v; render(); } });
+    EM.ui.button(cb, 'Nueva muestra', newSample);
+    EM.ui.button(cb, 'Repetir 20 000 veces', repeat, { primary: true });
+    newSample();
+  })();
+
+  // =================================================================
+  // Simulación (f): espaciamientos (Ejercicio 8)
+  // =================================================================
+  (function () {
+    const B = box('sim-espacios');
+    const st = { n: 4, j: 1, lam: 1, Z: [] };
+    const p = EM.plot.create(B.plot, { xmin: 0, xmax: 1, ymin: 0, ymax: 1, height: 260, xlabel: 'z' });
+    const out = EM.ui.readout(B.out);
+    let sJ;
+    function simulate() {
+      const n = st.n, buf = new Float64Array(n);
+      st.Z = Array.from({ length: n }, () => new Array(M));
+      for (let k = 0; k < M; k++) {
+        for (let i = 0; i < n; i++) buf[i] = rexp(st.lam);
+        buf.sort();
+        let prev = 0; for (let i = 0; i < n; i++) { st.Z[i][k] = buf[i] - prev; prev = buf[i]; }
+      }
+      render();
+    }
+    function render() {
+      const n = st.n, j = st.j, rate = st.lam * (n - j + 1), data = st.Z[j - 1];
+      const xmax = 5 / rate, bins = 50, f = z => z < 0 ? 0 : rate * Math.exp(-rate * z);
+      p.setRange({ xmax, ymax: 1.15 * Math.max(rate, histMax(data, 0, xmax, bins)) });
+      p.draw(g => {
+        g.hist(data, { bins, range: [0, xmax], color: 'c2', alpha: .5, label: `Z${j} simulado` });
+        g.curve(f, { color: 'c1', width: 2.5, label: 'Exp(tasa λ(n−j+1))' });
+      });
+      const a = j < n ? j - 1 : j - 2, b = a + 1;
+      const r = n >= 2 ? corr(st.Z[a], st.Z[b]) : NaN;
+      out.set(R`$Z_{${j}}\sim\text{Exp}\big(\text{tasa }\lambda(n-j+1)=${fmt(st.lam, 2)}\cdot${n - j + 1}=${fmt(rate, 3)}\big)$. &nbsp; Media: simulada <b>${fmt(mean(data), 4)}</b> vs. teórica $\frac{1}{${fmt(rate, 3)}}=$ <b>${fmt(1 / rate, 4)}</b><br>` +
+        R`Correlación muestral entre $Z_{${a + 1}}$ y $Z_{${b + 1}}$: <b>${fmt(r, 3)}</b> (≈ 0)`);
+    }
+    const c = B.controls[0];
+    EM.ui.slider(c, { tex: 'n', min: 2, max: 8, step: 1, value: st.n, onInput: v => { st.n = v; sJ.input.max = v; if (st.j > v) st.j = v; sJ.set(st.j); simulate(); } });
+    sJ = EM.ui.slider(c, { tex: 'j', min: 1, max: st.n, step: 1, value: st.j, onInput: v => { st.j = Math.min(v, st.n); render(); } });
+    EM.ui.slider(c, { tex: R`\lambda`, min: 0.5, max: 3, step: 0.25, value: st.lam, fmt: v => v.toFixed(2), onInput: v => { st.lam = v; simulate(); } });
+    simulate();
+  })();
+
+  // =================================================================
+  // Simulación (e): central telefónica (Ejercicio 9)
+  // =================================================================
+  (function () {
+    const B = box('sim-central');
+    const st = { dist: 'exp', lam: 1, day: null, Z: [], X3: [] };
+    const pT = EM.plot.create(B.root.querySelector('.plot-tl'), { xmin: 0, xmax: 3, ymin: 0, ymax: 3.3, height: 170, xlabel: 'tiempo', yticks: 1, legend: false });
+    const pH = EM.plot.create(B.root.querySelector('.plot-h'), { xmin: 0, xmax: 5, ymin: 0, ymax: 1.2, height: 250, xlabel: 'z' });
+    const out = EM.ui.readout(B.out);
+    const gen = () => st.dist === 'exp' ? rexp(st.lam) : (2 / st.lam) * rng();
+    function oneDay() { st.day = { x1: gen(), x2: gen(), x3: gen() }; render(); }
+    function simulate() {
+      st.Z = new Array(M); st.X3 = new Array(M);
+      for (let k = 0; k < M; k++) { const a = gen(), b = gen(); st.Z[k] = Math.abs(a - b); st.X3[k] = gen(); }
+      render();
+    }
+    function render() {
+      const d = st.day, lo = Math.min(d.x1, d.x2), hi = Math.max(d.x1, d.x2), endC = lo + d.x3;
+      const T = Math.max(hi, endC) * 1.08;
+      pT.setRange({ xmax: T });
+      const bar = (x0, x1, y, col) => [[x0, y - 0.3], [x1, y - 0.3], [x1, y + 0.3], [x0, y + 0.3]];
+      const rowLong = d.x1 >= d.x2 ? 2.7 : 1.7;
+      pT.draw(g => {
+        g.polygon(bar(0, d.x1, 2.7), { color: 'c1', alpha: .75 });
+        g.polygon(bar(0, d.x2, 1.7), { color: 'c6', alpha: .75 });
+        g.polygon(bar(lo, endC, 0.7), { color: 'c3', alpha: .75 });
+        g.text('A', 0, 2.7, { align: 'right', baseline: 'middle', dx: -6, bold: true });
+        g.text('B', 0, 1.7, { align: 'right', baseline: 'middle', dx: -6, bold: true });
+        g.text('C', 0, 0.7, { align: 'right', baseline: 'middle', dx: -6, bold: true });
+        g.vline(lo, { color: 'muted' });
+        g.line(lo, rowLong + 0.42, hi, rowLong + 0.42, { color: 'c4', width: 3.5 });
+        g.text('Z', (lo + hi) / 2, rowLong + 0.42, { align: 'center', dy: -4, color: 'c4', bold: true });
+      });
+      // histograma
+      const L = 2 / st.lam;
+      const fZ = st.dist === 'exp' ? (z => z < 0 ? 0 : st.lam * Math.exp(-st.lam * z)) : (z => (z < 0 || z > L) ? 0 : 2 * (1 - z / L) / L);
+      const fX = st.dist === 'exp' ? fZ : (z => (z < 0 || z > L) ? 0 : 1 / L);
+      const xmax = st.dist === 'exp' ? 5 / st.lam : L, bins = 50;
+      pH.setRange({ xmax, ymax: 1.18 * Math.max(peak(fZ, 0, xmax), histMax(st.Z, 0, xmax, bins)) });
+      pH.draw(g => {
+        g.hist(st.Z, { bins, range: [0, xmax], color: 'c2', alpha: .5, label: 'Z simulado' });
+        g.curve(fZ, { color: 'c1', width: 2.5, label: 'densidad de Z' });
+        g.curve(fX, { color: 'c3', width: 2.5, dash: [7, 5], label: 'densidad de X₃' });
+      });
+      let cnt = 0; for (let k = 0; k < M; k++) if (st.Z[k] < st.X3[k]) cnt++;
+      const theo = st.dist === 'exp' ? R`\tfrac12` : R`\tfrac23`;
+      const last = hi < endC;
+      out.set(R`Este día: $X_1=${fmt(d.x1, 3)}$, $X_2=${fmt(d.x2, 3)}$, $X_3=${fmt(d.x3, 3)}$, $Z=${fmt(hi - lo, 3)}$ → <b>${last ? 'C es el último en salir' : 'C no es el último en salir'}</b>.<br>` +
+        R`En ${M.toLocaleString('es')} días: $\widehat{\P}(Z &lt; X_3)=$ <b>${fmt(cnt / M, 4)}</b> &nbsp; (teórico: $${theo}$${st.dist === 'exp' ? ', para todo λ' : ''}).`);
+    }
+    const c = B.controls[0], cb = B.controls[1];
+    EM.ui.select(c, { label: 'Duración de llamadas', value: st.dist, options: [
+      { value: 'exp', label: 'Exponencial de tasa λ (sin memoria)' }, { value: 'unif', label: 'Uniforme(0, 2/λ) (misma media, con memoria)' }],
+      onChange: v => { st.dist = v; oneDay(); simulate(); } });
+    EM.ui.slider(c, { tex: R`\lambda`, min: 0.25, max: 3, step: 0.25, value: st.lam, fmt: v => v.toFixed(2), onInput: v => { st.lam = v; oneDay(); simulate(); } });
+    EM.ui.button(cb, 'Otro día', oneDay);
+    EM.ui.button(cb, 'Simular 20 000 días', simulate, { primary: true });
+    st.day = { x1: gen(), x2: gen(), x3: gen() };
+    simulate();
+  })();
+
+  // =================================================================
+  // Autoevaluación
+  // =================================================================
+  EM.ui.quiz('#quiz-fgm', {
+    question: R`Sumas $n=5$ v.a. independientes y obtienes $M_U(t)=(1-3t)^{-5}$, $t &lt; 1/3$. ¿Cuál es la distribución de $U$?`,
+    options: [R`$G(5,\,3)$`, R`$G(3,\,5)$`, R`$\chi^2_{(10)}$`, R`$\text{Exp}(3/5)$`],
+    answer: 0,
+    explain: R`La forma es $(1-\beta t)^{-\alpha}$ con $\beta=3$ (lo que multiplica a $t$) y $\alpha=5$ (el exponente). Sería la suma de 5 exponenciales $\text{Exp}(3)$. Para ser $\chi^2$ la base tendría que ser $(1-2t)$.`,
+  });
+  EM.ui.quiz('#quiz-fgm', {
+    question: R`$X\sim\text{Poisson}(2)$ e $Y\sim\text{Poisson}(3)$ independientes. ¿Qué es $M_{X+Y}(t)$?`,
+    options: [R`$e^{6(e^t-1)}$`, R`$e^{5(e^t-1)}$`, R`$e^{2(e^t-1)}+e^{3(e^t-1)}$`, R`$e^{5(e^{2t}-1)}$`],
+    answer: 1,
+    explain: R`Las FGM se <b>multiplican</b> (no se suman): $e^{2(e^t-1)}e^{3(e^t-1)}=e^{5(e^t-1)}$, o sea $X+Y\sim\text{Poisson}(5)$.`,
+  });
+
+  EM.ui.numcheck('#nc-ej6', {
+    prompt: R`Ejercicio 6: $\P(Y_{(1)} > 3.6)$ con $n=5$, $\beta=2$ (escribe por ejemplo 0.000123):`,
+    answer: Math.exp(-9), tol: 3e-6, hint: R`$\P(Y_{(1)} > y)=e^{-ny/\beta}$`,
+  });
+
+  EM.ui.quiz('#quiz-patron', {
+    question: R`El evento $\{Y_{(1)}\le y\}$ (el mínimo no supera $y$) es lo mismo que:`,
+    options: ['todos los $Y_i$ son $\\le y$', 'al menos un $Y_i$ es $\\le y$', 'ningún $Y_i$ es $\\le y$', 'exactamente un $Y_i$ es $\\le y$'],
+    answer: 1,
+    explain: R`Basta con que <em>uno</em> esté por debajo de $y$ para que el mínimo también lo esté. Como "al menos uno" es una unión (difícil), se usa el complemento: $\P(Y_{(1)}\le y)=1-\P(\text{todos} > y)=1-[1-F(y)]^n$.`,
+  });
+  EM.ui.numcheck('#quiz-patron', {
+    prompt: R`Con 4 uniformes $U(0,1)$, ¿$\P(Y_{(4)}\le 0.9)$?`,
+    answer: Math.pow(0.9, 4), tol: 5e-4, hint: R`los cuatro deben ser $\le 0.9$`,
+  });
+
+  EM.ui.numcheck('#nc-beta', {
+    prompt: R`Con $n=4$ uniformes $U(0,1)$, ¿$\E(Y_{(3)})$?`,
+    answer: 0.6, tol: 1e-3, hint: R`$Y_{(i)}\sim\text{Beta}(i,n-i+1)$, media $i/(n+1)$`,
+  });
+  EM.ui.numcheck('#nc-beta', {
+    prompt: R`Con $n=9$ uniformes, ¿$\E(Y_{(9)})$ (la media del máximo)?`,
+    answer: 0.9, tol: 1e-3, hint: R`$n/(n+1)$`,
+  });
+
+  EM.ui.quiz('#quiz-central', {
+    question: R`En el Ejercicio 9, ¿qué representa el evento $\{Z &lt; X_3\}$?`,
+    options: ['Que C termina antes que A y B', 'Que C es el último de los tres en terminar', 'Que A termina antes que B', 'Que C espera menos de lo que habla'],
+    answer: 1,
+    explain: R`$Z$ es lo que le falta a quien sigue hablando cuando $C$ empieza; si eso es menor que la llamada de $C$, esa persona sale antes y $C$ es el último. Probabilidad $1/2$, gracias a la falta de memoria.`,
+  });
+})();
+</script>
+</body>
+</html>

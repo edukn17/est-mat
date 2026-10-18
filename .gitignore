@@ -1,0 +1,17 @@
+node_modules/
+*.png
+
+# Artefactos generados por scripts/build.sh (intermedios + data.js)
+scripts/build/
+
+# Entorno de trabajo local
+.claude/
+.venv/
+venv/
+
+# Material fuente del curso (PDFs/Xournal), no se publica
+Clases/
+Tablas/
+Formularios/
+Deberes/
+*.xopp

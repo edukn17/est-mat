@@ -1,0 +1,21 @@
+{
+  "name": "est-mat",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Guía interactiva de Estadística Matemática (ESPOL, II PAO 2026)",
+  "homepage": "https://edukn17.github.io/est-mat",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/edukn17/est-mat.git"
+  },
+  "scripts": {
+    "test": "node tests/stats.test.js && node tests/smoke.js",
+    "test:stats": "node tests/stats.test.js",
+    "test:smoke": "node tests/smoke.js",
+    "tablas": "bash scripts/build.sh"
+  },
+  "devDependencies": {
+    "jsdom": "^24.1.3",
+    "katex": "0.16.11"
+  }
+}

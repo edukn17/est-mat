@@ -1,0 +1,939 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clase 3 · Distribuciones muestrales</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/theme.js"></script>
+<style>
+  /* sólo para esta página: tablas pequeñas de extractos */
+  .tabla-mini td.hit { font-weight: 700; }
+  .flex-res { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+</style>
+</head>
+<body data-page="clase-03" data-root="../">
+<main id="contenido">
+
+  <header class="page-head">
+    <p class="kicker">Clase 3</p>
+    <h1>Distribuciones muestrales: la media, la χ² y la t de Student</h1>
+    <p class="lead">Al terminar vas a saber qué distribución tienen $\bar Y$ y $S^2$ cuando la población es normal, qué son la $\chi^2$ y la $t$ (desde cero), cómo leer sus tablas y cómo resolver los seis ejemplos de la clase.</p>
+  </header>
+
+  <div class="box nota"><span class="box-title">Antes de empezar</span>
+    <p>Esta clase usa dos herramientas de las clases anteriores: la <b>FGM</b> (si dos v.a. tienen la misma FGM, tienen la misma distribución; la FGM de una suma de independientes es el producto de las FGM, ver <a href="clase-02.html">Clase 2</a>) y, en una prueba opcional, el <b>Jacobiano</b> (<a href="clase-01.html">Clase 1</a>). Recuerda también:
+    $$Y\sim N(\mu,\sigma^2)\ \Longrightarrow\ M_Y(t)=e^{\mu t+\sigma^2t^2/2},$$ $$X\sim G(\alpha,\beta)\ \Longrightarrow\ M_X(t)=(1-\beta t)^{-\alpha},\quad t\lt 1/\beta .$$</p>
+  </div>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="objetivo">1. ¿Para qué sirve todo esto?</h2>
+    <p>La <b>Estadística inferencial</b> quiere decir algo sobre una <b>población</b> completa (que no podemos observar entera) usando sólo una <b>muestra</b>, y además decir <b>qué tan seguros</b> estamos. Esa última parte es la difícil: para medir la incertidumbre necesitamos saber cómo <em>varía</em> lo que calculamos con la muestra si repitiéramos el muestreo. Eso es exactamente una <b>distribución muestral</b>, el tema de hoy.</p>
+
+    <div class="box ejercicio" id="ejemplo-1">
+      <span class="box-title">Ejemplo 1 (Clase 3) — conceptual</span>
+      <p>Un tanque de peces de un criadero es arrojado a un lago. Deseamos saber la longitud media de los peces en el tanque. En lugar de medir todos los peces (lo cual en la práctica no es factible), muestreamos al azar algunos de ellos $Y_1,\dots,Y_n$ y se usa la media de la muestra $\bar Y$ para estimar la media de la población $\mu$. Sean $Y_1,\dots,Y_n$ v.a. i.i.d. (muestra aleatoria) de $f(y;\theta)$, donde $\theta\in\Theta$; $\Theta$ es el conjunto de posibles valores de $\theta$, el <b>espacio paramétrico</b>.</p>
+      <p><b>Lo que debes poder responder:</b> (a) ¿cuál es la población y cuál el parámetro? (b) ¿qué es $\Theta$ aquí? (c) ¿cuál es el estadístico, el estimador y la estimación? (d) ¿por qué $\bar Y$ es una variable aleatoria y $\mu$ no?</p>
+      <details class="pista"><summary>Pista 1</summary><div><p>Un <b>parámetro</b> es un número fijo (desconocido) de la población. Algo calculado con la muestra cambia de muestra en muestra.</p></div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Población:</b> todas las longitudes de los peces del tanque, modeladas por una densidad $f(y;\theta)$. <b>Parámetro de interés:</b> la longitud media $\mu=\E[Y]$ (puede ser parte de $\theta$; si el modelo es normal, $\theta=(\mu,\sigma^2)$).</li>
+          <li><b>Espacio paramétrico:</b> una longitud media es positiva, así que si sólo interesa $\mu$, $\Theta=(0,\infty)$; si el modelo es $N(\mu,\sigma^2)$, $\Theta=\{(\mu,\sigma^2):\mu\gt 0,\ \sigma^2\gt 0\}$.</li>
+          <li><b>Estadístico / estimador:</b> $\bar Y=\frac1n\sum_{i=1}^n Y_i$. Es un estadístico porque sólo usa los datos (no usa $\mu$), y es un estimador porque lo proponemos para aproximar $\mu$.</li>
+          <li><b>Estimación:</b> el número que sale al medir los peces atrapados, p. ej. $\bar y=23.4$ cm. Con mayúscula $\bar Y$ = la regla (v.a.); con minúscula $\bar y$ = el resultado de aplicarla a <em>estos</em> datos.</li>
+          <li><b>¿Por qué $\bar Y$ es aleatoria?</b> Si otro día atrapas otros $n$ peces, obtienes otro $\bar y$. $\mu$ en cambio es una sola cifra fija del tanque: no cambia aunque cambie la muestra. La pregunta de la inferencia es: ¿qué tan lejos puede caer $\bar Y$ de $\mu$? Para responderla necesitamos la distribución de $\bar Y$ (sección 4).</li>
+        </ol>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="estadistico">2. Estadístico, estimador y estimación</h2>
+    <div class="box definicion"><span class="box-title">Definición (Estadístico)</span>
+      <p>Sea $Y_1,\dots,Y_n$ una muestra aleatoria de $f(y;\theta)$. Una cantidad $T=T(Y_1,\dots,Y_n)$ es un <b>estadístico</b> si depende <b>únicamente</b> de la muestra, es decir, <b>no depende del parámetro desconocido</b> $\theta$.</p>
+      <p>Ejemplos: $\bar Y$, $S^2=\frac{1}{n-1}\sum_{i=1}^n (Y_i-\bar Y)^2$, $Y_{(1)}$, $Y_{(n)}$, la mediana de $Y_1,\dots,Y_n$, etc.</p>
+    </div>
+    <div class="box definicion"><span class="box-title">Definición (Estimador y estimación)</span>
+      <p>Un <b>estimador</b> $T(Y_1,\dots,Y_n)$ es un estadístico propuesto para estimar $\theta$ (es una v.a., con mayúsculas). Una <b>estimación</b> $T(y_1,\dots,y_n)$ es el valor numérico que toma el estimador con los datos observados (minúsculas).</p>
+    </div>
+    <div class="box nota"><span class="box-title">Observaciones de la clase</span>
+      <p>a) Como los estadísticos son funciones de la muestra aleatoria, <b>son variables aleatorias</b>. b) Por tanto tienen distribución de probabilidad: a esa distribución se le llama <b>distribución muestral</b>.</p>
+    </div>
+    <div class="box cuidado"><span class="box-title">Cuidado: "no depende de θ" no significa "su distribución no depende de θ"</span>
+      <p>$\bar Y$ es un estadístico aunque su distribución, $N(\mu,\sigma^2/n)$, dependa de $\mu$. Lo que importa es que para <b>calcular</b> su valor no necesitas conocer $\mu$. En cambio, $(\bar Y-\mu)/(\sigma/\sqrt n)$ <b>no</b> es un estadístico si $\mu$ es desconocido (no lo puedes calcular), aunque su distribución $N(0,1)$ no dependa de nada. A estas cantidades que mezclan datos y parámetro, pero tienen distribución conocida, se les llama <b>pivotes</b>: son la materia prima de los intervalos de confianza.</p>
+    </div>
+    <div id="quiz-estadistico"></div>
+
+    <h3 id="dist-muestral">¿Qué es una distribución muestral? (la idea que el profe no dibuja)</h3>
+    <div class="box idea"><span class="box-title">Intuición</span>
+      <p>Imagina que repites el experimento miles de veces: cada vez sacas una muestra nueva de tamaño $n$ y calculas $\bar y$. Obtienes miles de valores $\bar y^{(1)},\bar y^{(2)},\dots$ Su histograma se parece a una curva: esa curva es la <b>distribución muestral de $\bar Y$</b>. Las simulaciones de esta página hacen exactamente eso. Las dos distribuciones muestrales más usadas son la de $\bar Y$ y la de $S^2$, y bajo el <b>supuesto de normalidad</b> (datos normales i.i.d., razonable en muchos problemas aplicados) se pueden calcular de forma exacta.</p>
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="media">3. La media muestral: Teorema 1</h2>
+    <div class="box teorema"><span class="box-title">Teorema 1</span>
+      <p>Sea $Y_1,\dots,Y_n$ una muestra aleatoria de tamaño $n$ de una distribución $N(\mu,\sigma^2)$. Entonces
+      $$\bar Y\sim N\!\left(\mu,\ \frac{\sigma^2}{n}\right)\qquad\Longleftrightarrow\qquad Z=\frac{\bar Y-\mu}{\sigma/\sqrt n}\sim N(0,1).$$</p>
+    </div>
+    <details class="prueba"><summary>Prueba (con la FGM)</summary><div>
+      <ol class="pasos">
+        <li>Cada $Y_i\sim N(\mu,\sigma^2)$ tiene $M_{Y_i}(t)=e^{\mu t+\sigma^2t^2/2}$.</li>
+        <li>Como $\bar Y=\sum_i Y_i/n$ y las $Y_i$ son independientes, la esperanza del producto es el producto de esperanzas:
+        $$M_{\bar Y}(t)=\E\big[e^{t\sum Y_i/n}\big]=\prod_{i=1}^n\E\big[e^{(t/n)Y_i}\big]=\prod_{i=1}^n M_{Y_i}\!\left(\tfrac tn\right)=\left[e^{\mu t/n+\sigma^2t^2/(2n^2)}\right]^n=e^{\mu t+\frac{\sigma^2}{n}\frac{t^2}{2}}.$$</li>
+        <li>Ésa es la FGM de una $N(\mu,\sigma^2/n)$. Por unicidad de la FGM, $\bar Y\sim N(\mu,\sigma^2/n)$.</li>
+        <li>Estandarizar (restar la media y dividir por la desviación estándar $\sigma/\sqrt n$) es una transformación lineal, que mantiene la normalidad: $Z\sim N(0,1)$. $\blacksquare$</li>
+      </ol>
+    </div></details>
+    <div class="box idea"><span class="box-title">Lo que dice en palabras</span>
+      <p>$\bar Y$ está centrada en $\mu$ (no se equivoca "en promedio") y su dispersión es $\sigma/\sqrt n$: <b>para reducir el error a la mitad necesitas cuatro veces más datos</b>. A $\sigma/\sqrt n$ se le llama <b>error estándar</b> de $\bar Y$.</p>
+    </div>
+
+    <div class="sim" id="sim-media">
+      <p class="sim-title">Simulación (a): la distribución muestral de $\bar Y$</p>
+      <p class="sim-desc">Población $N(\mu=12,\ \sigma^2=1)$ (la embotelladora). Para cada $n$ se sacan 4000 muestras de tamaño $n$ y se dibuja el histograma de sus 4000 medias. Compara con la curva $N(\mu,\sigma^2/n)$ del Teorema 1 y con la población (punteada). Las líneas verdes marcan $\mu\pm0.3$ (Ejemplo 2: pon $n=9$).</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+
+    <div class="box ejercicio" id="ejemplo-2">
+      <span class="box-title">Ejemplo 2 (Clase 3)</span>
+      <p>Una máquina embotelladora puede ser regulada para que descargue un promedio de $\mu$ onzas por botella. Se ha observado que la cantidad de llenado dispensado por la máquina se distribuye normal con $\sigma=1.0$ onza. Se selecciona aleatoriamente una muestra de $n=9$ botellas llenas de una salida de la máquina en un día determinado (todas embotelladas con la misma configuración de máquina), y las onzas de llenado se miden para cada una. Encuentre la probabilidad de que la media de la muestra esté dentro de 0.3 onzas de la media verdadera $\mu$ para la configuración elegida.</p>
+      <details class="pista"><summary>Pista 1</summary><div><p>"Estar dentro de 0.3 onzas de $\mu$" se escribe $|\bar Y-\mu|\le 0.3$.</p></div></details>
+      <details class="pista"><summary>Pista 2</summary><div><p>Divide todo por el error estándar $\sigma/\sqrt n$ para tener una $Z\sim N(0,1)$.</p></div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Distribución de $\bar Y$.</b> Los llenados son $N(\mu,1)$ e independientes; por el Teorema 1, $\bar Y\sim N(\mu,\ 1/9)$, o sea, error estándar $\sigma/\sqrt n = 1/3$.</li>
+          <li><b>Traducir el evento.</b> Buscamos $\P(|\bar Y-\mu|\le 0.3)=\P(-0.3\le \bar Y-\mu\le 0.3)$.</li>
+          <li><b>Estandarizar</b> (dividir los tres miembros por $1/3$, número positivo, así que las desigualdades no cambian):
+          $$\P\left(-\frac{0.3}{1/3}\le \frac{\bar Y-\mu}{1/3}\le \frac{0.3}{1/3}\right)=\P(-0.9\le Z\le 0.9).$$
+          Fíjate que $\mu$ desapareció: la respuesta vale para <em>cualquier</em> configuración de la máquina.</li>
+          <li><b>Usar la simetría de la normal:</b> $\P(-0.9\le Z\le 0.9)=\Phi(0.9)-\Phi(-0.9)=2\Phi(0.9)-1$.</li>
+          <li><b>Valor numérico.</b> Con la tabla normal de Estadística I, $\Phi(0.90)=0.8159$, así que
+          $$\P(|\bar Y-\mu|\le 0.3)=2(0.8159)-1=\boxed{0.6318}\quad(\text{exacto: }0.63188).$$</li>
+          <li><b>¿Y si sólo tengo las tablas del curso?</b> En <code>Tablas/</code> no hay tabla normal: los cuantiles $z$ están en la <b>fila $\nu=\infty$ de la tabla $t$</b>. Esa fila trae 0.842 (columna 80.0%) y 1.150 (columna 87.5%). Como $0.842\lt 0.9\lt 1.150$: $0.80\lt\Phi(0.9)\lt 0.875$, y así $0.60\lt \P\lt 0.75$. Sólo se puede <b>acotar</b> (lo mismo que haremos en el Ejemplo 5).</li>
+          <li><b>Interpretación:</b> alrededor del 63 % de los días la media de 9 botellas cae a menos de 0.3 onzas de la verdadera $\mu$. Lo comprueba la simulación (a) con $n=9$.</li>
+        </ol>
+      </div></details>
+    </div>
+    <div id="nc-ej2"></div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="chi2">4. La distribución χ² desde cero</h2>
+    <p>Para hablar de la distribución de $S^2$ necesitamos una distribución nueva. Aparece de forma muy natural: <b>¿qué distribución tiene una suma de cuadrados de normales estándar?</b> Las sumas de cuadrados están en todas partes (la varianza es un promedio de cuadrados), así que esta pregunta es central.</p>
+
+    <div class="box definicion"><span class="box-title">Definición (Chi-cuadrado con ν grados de libertad)</span>
+      <p>Decimos que $W\sim\chi^2_{(\nu)}$ si $W\sim G\!\left(\frac{\nu}{2},\,2\right)$ (Gamma con escala $\beta=2$), es decir, si su fdp es
+      $$f_W(w)=\frac{1}{2^{\nu/2}\,\Gamma(\nu/2)}\,w^{\nu/2-1}e^{-w/2},\qquad w\gt 0 .$$
+      El número $\nu\gt 0$ se llama <b>grados de libertad</b> (g.l.). Como es una Gamma, todo sale del formulario:
+      $$\E[W]=\alpha\beta=\nu,\qquad \Var(W)=\alpha\beta^2=2\nu,\qquad M_W(t)=(1-2t)^{-\nu/2},\ t\lt\tfrac12 .$$</p>
+    </div>
+    <div class="box nota"><span class="box-title">Datos clave que vas a usar todo el curso</span>
+      <ul>
+        <li><b>De dónde sale:</b> si $Z_1,\dots,Z_\nu$ son $N(0,1)$ independientes, $Z_1^2+\dots+Z_\nu^2\sim\chi^2_{(\nu)}$ (Lema 1, abajo). Los "grados de libertad" cuentan cuántos cuadrados <b>independientes</b> estás sumando.</li>
+        <li><b>Sólo toma valores positivos</b> (es una suma de cuadrados) y es <b>asimétrica a la derecha</b>.</li>
+        <li><b>Forma según ν:</b> con $\nu=1$ y $\nu=2$ la densidad es máxima en 0 y decrece; con $\nu\ge 3$ tiene una joroba con moda en $\nu-2$; a medida que $\nu$ crece se vuelve más simétrica y se parece a una $N(\nu,2\nu)$.</li>
+        <li><b>Es aditiva:</b> si $W_1\sim\chi^2_{(\nu_1)}$ y $W_2\sim\chi^2_{(\nu_2)}$ son independientes, $W_1+W_2\sim\chi^2_{(\nu_1+\nu_2)}$, porque $(1-2t)^{-\nu_1/2}(1-2t)^{-\nu_2/2}=(1-2t)^{-(\nu_1+\nu_2)/2}$.</li>
+        <li><b>Para qué sirve:</b> describe la variabilidad de $S^2$ (Teorema 2) y por tanto sirve para hacer inferencia sobre $\sigma^2$; más adelante, también para pruebas de bondad de ajuste.</li>
+      </ul>
+    </div>
+
+    <div class="sim" id="fig-chi">
+      <p class="sim-title">Figura interactiva: la forma de la $\chi^2_{(\nu)}$</p>
+      <p class="sim-desc">Mueve $\nu$. La línea vertical marca la media $\nu$. Observa la asimetría para $\nu$ pequeño y cómo se "normaliza" al crecer $\nu$ (curva punteada: $N(\nu,2\nu)$).</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+
+    <h3 id="tabla-chi">Cómo leer la tabla χ² de ESPOL</h3>
+    <p>La tabla (<code>Tablas/Chi.pdf</code>, 2 páginas) tiene una fila por cada $\nu$ y columnas con porcentajes. <b>El porcentaje es el área a la IZQUIERDA</b> (el dibujo de la tabla tiene sombreada la cola izquierda):</p>
+    $$\text{fila }\nu,\ \text{columna }p\ \longrightarrow\ x\ \text{ tal que }\ \P\big(\chi^2_{(\nu)}\le x\big)=p .$$
+    <p>La página 1 trae $p$ de 0.1% a 50%; la página 2, de 60% a 99.9%. Por ejemplo, para $\nu=9$: columna 5.0% → 3.325, columna 95.0% → 16.919. Es decir $\P(\chi^2_{(9)}\le 3.325)=0.05$ y $\P(\chi^2_{(9)}\le 16.919)=0.95$.</p>
+    <div class="box cuidado"><span class="box-title">El "al revés" de la clase</span>
+      <p>En clase se escribe $\chi^2_{\alpha}$ para el valor con área $\alpha$ a la <b>derecha</b>. Traducción: $\chi^2_{(\nu),\alpha}$ = <b>columna $1-\alpha$</b> de la tabla. Ej.: $\chi^2_{(9),\,0.05}=16.919$ (columna 95%) y $\chi^2_{(9),\,0.95}=3.325$ (columna 5%). Más práctica en <a href="../herramientas/tablas.html">Cómo leer las tablas</a> y en el <a href="../herramientas/distribuciones.html">laboratorio de distribuciones</a>.</p>
+    </div>
+
+    <div class="box teorema"><span class="box-title">Lema 1</span>
+      <p>Sean $Y_1,\dots,Y_n$ como en el Teorema 1. Entonces $Z_i=(Y_i-\mu)/\sigma$, $i=1,\dots,n$, son normales estándar independientes y
+      $$\sum_{i=1}^n Z_i^2=\sum_{i=1}^n\left(\frac{Y_i-\mu}{\sigma}\right)^2\sim\chi^2_{(n)}.$$</p>
+    </div>
+    <details class="prueba"><summary>Prueba (con la FGM)</summary><div>
+      <ol class="pasos">
+        <li>Cada $Z_i$ es una transformación lineal de $Y_i$, luego $Z_i\sim N(0,1)$; y funciones de v.a. independientes son independientes.</li>
+        <li><b>FGM de un solo cuadrado.</b> Para $t\lt 1/2$:
+        $$M_{Z^2}(t)=\E\big[e^{tZ^2}\big]=\int_{-\infty}^{\infty}e^{tz^2}\frac{1}{\sqrt{2\pi}}e^{-z^2/2}\,dz=\int_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}}e^{-\frac{z^2(1-2t)}{2}}\,dz .$$
+        El integrando es, salvo la constante, la densidad de una $N\big(0,\ \frac{1}{1-2t}\big)$, cuya integral con la constante $\frac{\sqrt{1-2t}}{\sqrt{2\pi}}$ vale 1. Por tanto la integral vale $(1-2t)^{-1/2}$. Así $M_{Z^2}(t)=(1-2t)^{-1/2}$: <b>$Z^2\sim\chi^2_{(1)}$</b>.</li>
+        <li><b>Suma de independientes:</b> $M_{\sum Z_i^2}(t)=\prod_{i=1}^n(1-2t)^{-1/2}=(1-2t)^{-n/2}$, la FGM de $\chi^2_{(n)}$. Por unicidad, $\sum Z_i^2\sim\chi^2_{(n)}$. $\blacksquare$</li>
+      </ol>
+    </div></details>
+    <div id="quiz-chi"></div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="varianza">5. La varianza muestral: Teorema 2</h2>
+    <div class="box teorema"><span class="box-title">Teorema 2</span>
+      <p>Sean $Y_1,\dots,Y_n$ como en el Teorema 1 (normales i.i.d.). Entonces</p>
+      <p>1) $\bar Y\ \ind\ S^2$ ($\bar Y$ y $S^2$ son <b>independientes</b>);</p>
+      <p>2) $\displaystyle \frac{1}{\sigma^2}\sum_{i=1}^n (Y_i-\bar Y)^2=\frac{(n-1)S^2}{\sigma^2}\sim\chi^2_{(n-1)}.$</p>
+    </div>
+    <div class="box idea"><span class="box-title">Compara con el Lema 1</span>
+      <p>Lema 1: $\sum (Y_i-\mu)^2/\sigma^2\sim\chi^2_{(n)}$. Teorema 2: si cambias la $\mu$ (desconocida) por $\bar Y$ (calculable), la suma sigue siendo $\chi^2$ pero <b>pierde un grado de libertad</b>. Entender ese "−1" es entender la clase.</p>
+    </div>
+    <div class="box cuidado"><span class="box-title">Cuidado: la pista del PDF tiene un error</span>
+      <p>El PDF dice "<em>Use el hecho que $Y_i\perp(Y_i-\bar Y)$</em>". Eso es <b>falso</b>: $\Cov(Y_i,\,Y_i-\bar Y)=\Var(Y_i)-\Cov(Y_i,\bar Y)=\sigma^2-\frac{\sigma^2}{n}=\frac{n-1}{n}\sigma^2\neq 0$. Lo correcto (y lo que se usa en la prueba) es
+      $$\bar Y\ \ind\ (Y_i-\bar Y),\quad i=1,\dots,n .$$
+      La otra pista, "sume y reste $\mu$ dentro del binomio", es correcta: $Y_i-\bar Y=(Y_i-\mu)-(\bar Y-\mu)$; es lo mismo que sumar y restar $\bar Y$ dentro de $(Y_i-\mu)$, que es lo que hacemos abajo.</p>
+    </div>
+
+    <details class="prueba"><summary>Prueba de 1): $\bar Y\ \ind\ S^2$ (FGM conjunta)</summary><div>
+      <p><b>Idea:</b> mostrar que $\bar Y$ es independiente del vector de desvíos $\mathbf D=(Y_1-\bar Y,\dots,Y_n-\bar Y)$. Como $S^2=\frac{1}{n-1}\sum D_i^2$ es función sólo de $\mathbf D$, quedará $\bar Y\ind S^2$. Herramienta: <b>dos vectores aleatorios son independientes si y sólo si su FGM conjunta se factoriza</b> en (función de los argumentos del primero) × (función de los del segundo).</p>
+      <ol class="pasos">
+        <li>FGM conjunta de $(\bar Y,\mathbf D)$ con argumentos $s,t_1,\dots,t_n$. Sea $\bar t=\frac1n\sum t_i$. Reagrupando por $Y_i$:
+        $$s\bar Y+\sum_{i=1}^n t_i(Y_i-\bar Y)=\sum_{i=1}^n a_iY_i,\qquad a_i=\frac sn+(t_i-\bar t).$$
+        (Porque $\sum_i t_i\bar Y=n\bar t\,\bar Y=\sum_i \bar t\,Y_i$.)</li>
+        <li>Dos cuentas: $\sum a_i=s+\sum(t_i-\bar t)=s$, y
+        $$\sum a_i^2=\frac{s^2}{n}+\frac{2s}{n}\underbrace{\sum(t_i-\bar t)}_{=0}+\sum(t_i-\bar t)^2=\frac{s^2}{n}+\sum(t_i-\bar t)^2 .$$</li>
+        <li><b>Aquí se usa la normalidad.</b> Como las $Y_i$ son $N(\mu,\sigma^2)$ independientes:
+        $$\E\Big[e^{\sum a_iY_i}\Big]=\prod_i e^{\mu a_i+\sigma^2a_i^2/2}=e^{\mu\sum a_i+\frac{\sigma^2}{2}\sum a_i^2}
+        =\underbrace{e^{\mu s+\frac{\sigma^2}{n}\frac{s^2}{2}}}_{M_{\bar Y}(s)}\cdot\underbrace{e^{\frac{\sigma^2}{2}\sum(t_i-\bar t)^2}}_{\text{sólo depende de }t_1,\dots,t_n}.$$</li>
+        <li>El primer factor es la FGM de $\bar Y$ y el segundo es la FGM de $\mathbf D$ (ponga $s=0$). La FGM conjunta se factoriza, luego $\bar Y\ind\mathbf D$ y por tanto $\bar Y\ind S^2$. $\blacksquare$</li>
+      </ol>
+      <p class="small muted">Atajo equivalente (si ya viste la normal multivariada): $(\bar Y,\mathbf D)$ es normal conjunta y $\Cov(\bar Y,Y_i-\bar Y)=\frac{\sigma^2}{n}-\frac{\sigma^2}{n}=0$; en la normal conjunta, covarianza cero implica independencia. Con otras poblaciones esto <b>falla</b> (simulación (c)).</p>
+    </div></details>
+
+    <details class="prueba"><summary>Prueba de 2): $(n-1)S^2/\sigma^2\sim\chi^2_{(n-1)}$</summary><div>
+      <ol class="pasos">
+        <li><b>Sumar y restar $\bar Y$</b> dentro de $(Y_i-\mu)$ y desarrollar el cuadrado:
+        $$\begin{aligned}\sum_{i=1}^n (Y_i-\mu)^2&=\sum_{i=1}^n\big[(Y_i-\bar Y)+(\bar Y-\mu)\big]^2\\&=\sum (Y_i-\bar Y)^2+2(\bar Y-\mu)\underbrace{\sum (Y_i-\bar Y)}_{=\ \sum Y_i-n\bar Y\ =\ 0}+\,n(\bar Y-\mu)^2 .\end{aligned}$$</li>
+        <li><b>Dividir por $\sigma^2$:</b>
+        $$\underbrace{\sum_{i=1}^n\Big(\frac{Y_i-\mu}{\sigma}\Big)^2}_{A}=\underbrace{\frac{(n-1)S^2}{\sigma^2}}_{B}+\underbrace{\Big(\frac{\bar Y-\mu}{\sigma/\sqrt n}\Big)^2}_{C}.$$</li>
+        <li><b>Lo que sabemos:</b> $A\sim\chi^2_{(n)}$ (Lema 1). $C$ es el cuadrado de una $N(0,1)$ (Teorema 1), así que $C\sim\chi^2_{(1)}$ (Lema 1 con un solo término). Y $B\ind C$ porque $B$ es función de $S^2$ y $C$ de $\bar Y$ (parte 1).</li>
+        <li><b>FGM:</b> por independencia, $M_A(t)=M_B(t)\,M_C(t)$:
+        $$(1-2t)^{-n/2}=M_B(t)\,(1-2t)^{-1/2}\ \Longrightarrow\ M_B(t)=(1-2t)^{-(n-1)/2},\quad t\lt \tfrac12 .$$</li>
+        <li>Es la FGM de $\chi^2_{(n-1)}$; por unicidad, $\dfrac{(n-1)S^2}{\sigma^2}\sim\chi^2_{(n-1)}$. $\blacksquare$</li>
+      </ol>
+    </div></details>
+
+    <div class="box idea"><span class="box-title">¿Por qué se pierde un grado de libertad? (tres maneras de verlo)</span>
+      <ul>
+        <li><b>Restricción:</b> los desvíos $Y_i-\bar Y$ siempre suman 0. Si conoces $n-1$ de ellos, el último queda determinado. Sólo hay $n-1$ desvíos "libres".</li>
+        <li><b>La identidad de arriba:</b> $\chi^2_{(n)}=\chi^2_{(n-1)}+\chi^2_{(1)}$. El trozo $\chi^2_{(1)}$ es lo que "gastaste" al estimar $\mu$ con $\bar Y$.</li>
+        <li><b>$\bar Y$ es demasiado buena:</b> $a=\bar Y$ es el valor que <em>minimiza</em> $\sum (Y_i-a)^2$, así que $\sum(Y_i-\bar Y)^2\le\sum(Y_i-\mu)^2$ siempre. En promedio es menor exactamente en $\sigma^2$: $\E\big[\sum(Y_i-\bar Y)^2\big]=(n-1)\sigma^2$. Por eso $S^2$ divide entre $n-1$: así $\E[S^2]=\sigma^2$ (y $\E[(n-1)S^2/\sigma^2]=n-1$, la media de la $\chi^2_{(n-1)}$).</li>
+      </ul>
+    </div>
+
+    <div class="sim" id="sim-chi">
+      <p class="sim-title">Simulación (b): ¿$\chi^2_{(n-1)}$ o $\chi^2_{(n)}$?</p>
+      <p class="sim-desc">Se generan 5000 muestras normales de tamaño $n$ ($\sigma=1$) y se calcula $\sum (Y_i-c)^2/\sigma^2$ centrando en $c=\bar Y$ (lo que hace $S^2$) o en $c=\mu$ (verdadera). Mira qué curva se ajusta al histograma en cada caso. La diferencia se nota más con $n$ pequeño.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+
+    <div class="sim" id="sim-indep">
+      <p class="sim-title">Simulación (c): la independencia $\bar Y\ind S^2$ es un privilegio de la normal</p>
+      <p class="sim-desc">Cada punto es una muestra de tamaño $n$: su $(\bar y,\ s^2)$. Con población <b>normal</b> la nube no tiene ninguna tendencia. Con la <b>exponencial</b> (asimétrica) las muestras con media grande tienen también varianza grande. Con la <b>uniforme</b> la correlación es ≈ 0 ¡pero igual hay dependencia! (la nube tiene forma de "techo": medias extremas sólo ocurren con varianza pequeña).</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="ej3">6. Ejemplo 3: un intervalo para S²</h2>
+    <div class="box ejercicio" id="ejemplo-3">
+      <span class="box-title">Ejemplo 3 (Clase 3)</span>
+      <p>En el Ejemplo 2, se supone que las onzas de relleno de la máquina de embotellado tienen una distribución normal con $\sigma^2=1$. Suponga que planeamos seleccionar una muestra aleatoria de diez botellas y medir la cantidad de llenado en cada botella. Si estas diez observaciones se usan para calcular $S^2$, puede ser útil especificar un intervalo de valores que incluirá a $S^2$ con una alta probabilidad. Encuentre los números $b_1$ y $b_2$ de modo que
+      $$\P(b_1\le S^2\le b_2)=0.90 .$$</p>
+      <details class="pista"><summary>Pista 1</summary><div><p>No conoces la distribución de $S^2$ directamente, pero sí la de $(n-1)S^2/\sigma^2$. Multiplica los tres miembros de la desigualdad por $(n-1)/\sigma^2$.</p></div></details>
+      <details class="pista"><summary>Pista 2</summary><div><p>Hay infinitas parejas $(b_1,b_2)$ que dejan 0.90 en el medio. La convención es dejar la misma probabilidad (5 %) en cada cola.</p></div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Identificar la pieza conocida.</b> $n=10$, $\sigma^2=1$, población normal. Por el Teorema 2:
+          $$\frac{(n-1)S^2}{\sigma^2}=\frac{9S^2}{1}=9S^2\sim\chi^2_{(9)} .$$</li>
+          <li><b>Transformar el evento</b> (multiplicar por 9 > 0 no cambia las desigualdades):
+          $$\P(b_1\le S^2\le b_2)=\P(9b_1\le 9S^2\le 9b_2)=\P\big(9b_1\le \chi^2_{(9)}\le 9b_2\big)=0.90 .$$</li>
+          <li><b>Elegir cómo repartir el 10 % que sobra.</b> El área total fuera del intervalo es $1-0.90=0.10$. Repartimos <b>5 % en cada cola</b>:
+          $$\P\big(\chi^2_{(9)}\lt 9b_1\big)=0.05,\qquad \P\big(\chi^2_{(9)}\gt 9b_2\big)=0.05\ \Leftrightarrow\ \P\big(\chi^2_{(9)}\le 9b_2\big)=0.95 .$$
+          ¿Por qué así? Es la elección estándar (colas iguales), fácil de leer en la tabla y simétrica en el "riesgo" de quedarse corto o pasarse. <b>No es la única</b>: cualquier reparto $a$ a la izquierda y $0.10-a$ a la derecha también da 0.90 (ver la simulación abajo).</li>
+          <li><b>Leer la tabla χ² (fila $\nu=9$, porque los g.l. son $n-1=9$):</b>
+            <div class="table-wrap"><table class="tabla tabla-mini">
+              <tr><th>ν</th><th>2.5%</th><th class="hl">5.0%</th><th>10.0%</th><th>…</th><th>90.0%</th><th class="hl">95.0%</th><th>97.5%</th></tr>
+              <tr><td>8</td><td>2.180</td><td>2.733</td><td>3.490</td><td>…</td><td>13.362</td><td>15.507</td><td>17.535</td></tr>
+              <tr><td class="hl">9</td><td>2.700</td><td class="hit">3.325</td><td>4.168</td><td>…</td><td>14.684</td><td class="hit">16.919</td><td>19.023</td></tr>
+              <tr><td>10</td><td>3.247</td><td>3.940</td><td>4.865</td><td>…</td><td>15.987</td><td>18.307</td><td>20.483</td></tr>
+            </table></div>
+            Columna <b>5.0%</b> (página 1, área 0.05 a la izquierda): $9b_1=3.325$. Columna <b>95.0%</b> (página 2, área 0.95 a la izquierda = 0.05 a la derecha): $9b_2=16.919$. En la notación de clase: $9b_1=\chi^2_{(9),0.95}$ y $9b_2=\chi^2_{(9),0.05}$.</li>
+          <li><b>Despejar:</b>
+          $$b_1=\frac{3.325}{9}=\boxed{0.369},\qquad b_2=\frac{16.919}{9}=\boxed{1.880}.$$
+          (Valores exactos: $3.32511/9=0.36946$ y $16.91898/9=1.87989$; la tabla es exacta a 3 decimales.)</li>
+          <li><b>Interpretación:</b> con probabilidad 0.90, la varianza muestral de 10 botellas caerá entre 0.369 y 1.880 aunque la verdadera sea $\sigma^2=1$. ¡Es un rango enorme! Con $n=10$, $S^2$ es un estimador muy ruidoso de $\sigma^2$: su desviación estándar es $\sigma^2\sqrt{2/(n-1)}=0.47$.</li>
+          <li><b>Otras elecciones válidas</b> (todas con probabilidad 0.90): sólo cola derecha, $[0,\ 14.684/9]=[0,\ 1.632]$; sólo cola izquierda, $[4.168/9,\ \infty)=[0.463,\ \infty)$; el intervalo más corto posible es aproximadamente $[0.270,\ 1.702]$ (con 1.7 % a la izquierda y 8.3 % a la derecha), de longitud 1.431 frente a 1.510 del de colas iguales.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <div class="sim" id="sim-ej3">
+      <p class="sim-title">Simulación (e1): visual del Ejemplo 3 — ¿cómo repartir el 10 %?</p>
+      <p class="sim-desc">Densidad de $9S^2\sim\chi^2_{(9)}$. Área azul = 0.90 siempre. Mueve cuánta probabilidad dejas en la cola izquierda ($a$); la derecha recibe $0.10-a$. Con $a=0.05$ obtienes la respuesta del ejemplo.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+    <p><b>Practica:</b> repite el Ejemplo 3 pidiendo $\P(b_1\le S^2\le b_2)=0.95$ (colas de 2.5 %), con $n=10$, $\sigma^2=1$.</p>
+    <div id="nc-ej3"></div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="t">7. ¿Y si no conocemos σ? La t de Student desde cero</h2>
+    <div class="box ejercicio" id="pregunta">
+      <span class="box-title">Pregunta (Clase 3)</span>
+      <p>¿Qué sucede si se desconoce la desviación estándar de la población?</p>
+      <details class="solucion"><summary>Respuesta explicada</summary><div>
+        <p>En el Ejemplo 2 usamos $Z=(\bar Y-\mu)/(\sigma/\sqrt n)$, que necesita $\sigma$. En la práctica $\sigma$ casi nunca se conoce. Lo natural es <b>reemplazarla por su estimador $S$</b>:
+        $$\frac{\bar Y-\mu}{S/\sqrt n}=\frac{\sqrt n(\bar Y-\mu)}{S}.$$
+        Ésta es la cantidad que, según la clase, "provee la base para desarrollar métodos que permiten hacer inferencias acerca de $\mu$". Pero <b>ya no es $N(0,1)$</b>: el denominador $S$ también es aleatorio, y a veces sale pequeño, lo que infla el cociente. Su distribución es una distribución nueva, la <b>$t$ de Student con $n-1$ g.l.</b> (Resultado importante, abajo).</p>
+      </div></details>
+    </div>
+
+    <div class="box definicion"><span class="box-title">Definición (t de Student con ν grados de libertad)</span>
+      <p>Decimos que $X\sim t_{(\nu)}$ si su fdp es
+      $$f_X(x)=\frac{\Gamma\!\left(\frac{\nu+1}{2}\right)}{\sqrt{\nu\pi}\;\Gamma\!\left(\frac{\nu}{2}\right)}\left(1+\frac{x^2}{\nu}\right)^{-\frac{\nu+1}{2}},\qquad x\in\R,\ \nu\gt 0 .$$</p>
+    </div>
+    <div class="box nota"><span class="box-title">Lo que tienes que saber de la t</span>
+      <ul>
+        <li><b>Forma:</b> campana simétrica alrededor de 0, como la $N(0,1)$, pero <b>más baja en el centro y con colas más pesadas</b> (decae como una potencia $|x|^{-(\nu+1)}$, no como $e^{-x^2/2}$). Cuanto menor $\nu$, más pesadas las colas. Con $\nu=1$ es la distribución de Cauchy.</li>
+        <li><b>Momentos:</b> $\E[X]=0$ si $\nu\gt 1$ y $\Var(X)=\dfrac{\nu}{\nu-2}\gt 1$ si $\nu\gt 2$ (Ejemplo 4). Si $\nu\le 1$ no existe la media; si $\nu\le 2$ la varianza es infinita.</li>
+        <li><b>Converge a la normal:</b> cuando $\nu\to\infty$, $t_{(\nu)}\to N(0,1)$. Por eso la última fila ($\nu=\infty$) de la tabla $t$ son los cuantiles $z$. Razón: en $T=Z/\sqrt{W/\nu}$, $\E[W/\nu]=1$ y $\Var(W/\nu)=2\nu/\nu^2=2/\nu\to 0$, así que el denominador se pega a 1 y $T\approx Z$. (También directamente: $\left(1+\frac{x^2}{\nu}\right)^{-\frac{\nu+1}{2}}\to e^{-x^2/2}$.)</li>
+        <li><b>Para qué sirve:</b> hacer inferencia sobre $\mu$ con $\sigma$ desconocida (intervalos y pruebas $t$), y en general cada vez que estandarizas con una varianza <em>estimada</em>.</li>
+      </ul>
+    </div>
+
+    <div class="sim" id="fig-t">
+      <p class="sim-title">Figura interactiva: $t_{(\nu)}$ frente a $N(0,1)$</p>
+      <p class="sim-desc">Mueve $\nu$. Fíjate en las colas (más allá de ±2): la $t$ tiene más área ahí. Al crecer $\nu$ las curvas se confunden.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+
+    <div class="box teorema"><span class="box-title">Teorema 3 (de dónde sale la t)</span>
+      <p>Sea $Z\sim N(0,1)$ y $W\sim\chi^2_{(\nu)}$. Si $Z$ y $W$ son <b>independientes</b>, entonces
+      $$T\overset{d}{=}\frac{Z}{\sqrt{W/\nu}}\sim t_{(\nu)} .$$</p>
+    </div>
+    <details class="prueba"><summary>Prueba (método del Jacobiano, Clase 1) — opcional</summary><div>
+      <ol class="pasos">
+        <li>Por independencia, $f_{Z,W}(z,w)=\dfrac{1}{\sqrt{2\pi}}e^{-z^2/2}\cdot\dfrac{w^{\nu/2-1}e^{-w/2}}{2^{\nu/2}\Gamma(\nu/2)}$, $z\in\R$, $w\gt 0$.</li>
+        <li>Transformación $t=z/\sqrt{w/\nu}$, $u=w$ (variable auxiliar). Inversa: $z=t\sqrt{u/\nu}$, $w=u$. Jacobiano:
+        $$J=\det\begin{pmatrix}\partial z/\partial t & \partial z/\partial u\\ \partial w/\partial t & \partial w/\partial u\end{pmatrix}=\det\begin{pmatrix}\sqrt{u/\nu} & \frac{t}{2\sqrt{u\nu}}\\ 0 & 1\end{pmatrix}=\sqrt{u/\nu}.$$</li>
+        <li>Densidad conjunta: $f_{T,U}(t,u)=\dfrac{1}{\sqrt{2\pi}\,2^{\nu/2}\Gamma(\nu/2)\sqrt\nu}\;u^{\frac{\nu+1}{2}-1}\,e^{-\frac u2\left(1+\frac{t^2}{\nu}\right)}$, $u\gt 0$.</li>
+        <li>Integrar $u$ con la integral Gamma $\int_0^\infty u^{a-1}e^{-u/b}du=\Gamma(a)b^a$, con $a=\frac{\nu+1}{2}$, $b=\frac{2}{1+t^2/\nu}$:
+        $$f_T(t)=\frac{\Gamma\!\left(\frac{\nu+1}{2}\right)2^{\frac{\nu+1}{2}}}{\sqrt{2\pi}\,2^{\nu/2}\Gamma(\nu/2)\sqrt\nu}\left(1+\frac{t^2}{\nu}\right)^{-\frac{\nu+1}{2}}=\frac{\Gamma\!\left(\frac{\nu+1}{2}\right)}{\sqrt{\nu\pi}\,\Gamma\!\left(\frac{\nu}{2}\right)}\left(1+\frac{t^2}{\nu}\right)^{-\frac{\nu+1}{2}},$$
+        porque $2^{(\nu+1)/2}/(\sqrt2\cdot 2^{\nu/2})=1$. Es la fdp de $t_{(\nu)}$. $\blacksquare$</li>
+      </ol>
+    </div></details>
+
+    <div class="box teorema"><span class="box-title">Resultado importante</span>
+      <p>Si $Y_1,\dots,Y_n$ es una muestra aleatoria de $N(\mu,\sigma^2)$, entonces
+      $$T=\frac{Z}{\sqrt{W/\nu}}=\frac{\dfrac{\bar Y-\mu}{\sigma/\sqrt n}}{\sqrt{\dfrac{(n-1)S^2/\sigma^2}{n-1}}}=\frac{\bar Y-\mu}{S/\sqrt n}\sim t_{(n-1)} .$$</p>
+    </div>
+    <details class="prueba"><summary>Por qué funciona (las tres piezas)</summary><div>
+      <ol class="pasos">
+        <li>$Z=\dfrac{\bar Y-\mu}{\sigma/\sqrt n}\sim N(0,1)$ por el Teorema 1.</li>
+        <li>$W=\dfrac{(n-1)S^2}{\sigma^2}\sim\chi^2_{(n-1)}$ por el Teorema 2, parte 2; así $\nu=n-1$.</li>
+        <li>$Z\ind W$ porque $Z$ es función de $\bar Y$, $W$ de $S^2$, y $\bar Y\ind S^2$ (Teorema 2, parte 1). Por el Teorema 3, $T\sim t_{(n-1)}$.</li>
+        <li><b>La magia:</b> en el cociente, $\sigma$ se cancela: $\dfrac{(\bar Y-\mu)\sqrt n/\sigma}{S/\sigma}=\dfrac{\bar Y-\mu}{S/\sqrt n}$. Sólo queda $\mu$ como incógnita, así que $T$ es un pivote para $\mu$ que <b>no necesita conocer $\sigma$</b>.</li>
+      </ol>
+    </div></details>
+
+    <div class="sim" id="sim-t">
+      <p class="sim-title">Simulación (d): estandarizar con $S$ engorda las colas</p>
+      <p class="sim-desc">Se generan muestras normales de tamaño $n$ y se calcula $T=(\bar Y-\mu)/(S/\sqrt n)$ (o $Z$, si usas la $\sigma$ verdadera). Compara el histograma con $t_{(n-1)}$ y con $N(0,1)$, sobre todo en las colas. La lectura también comprueba el Ejemplo 4: varianza ≈ $\nu/(\nu-2)$.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+
+    <h3 id="tabla-t">Cómo leer la tabla t de ESPOL</h3>
+    <p>Igual que la χ²: <b>fila $\nu$, columna $p$ = valor $t$ con área $p$ a la izquierda</b>, $\P(t_{(\nu)}\le t)=p$. La tabla sólo trae $p\ge 60\%$, porque la parte izquierda sale por simetría:</p>
+    $$\P(T\le -c)=\P(T\ge c)=1-\P(T\le c),\qquad \P(|T|\le c)=2\,\P(T\le c)-1 .$$
+    <p>Valor crítico de clase $t_{(\nu),\alpha}$ (área $\alpha$ a la derecha) = <b>columna $1-\alpha$</b>. Ej.: $t_{(8),0.025}$ = columna 97.5 % = 2.306; $t_{(8),0.05}$ = columna 95 % = 1.860. La columna "66.7%" es $p=2/3$.</p>
+    <div id="quiz-t"></div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="ej4">8. Ejemplo 4: media y varianza de la t</h2>
+    <div class="box ejercicio" id="ejemplo-4">
+      <span class="box-title">Ejemplo 4 (Clase 3)</span>
+      <p>Suponga v.a. independientes $Z\sim N(0,1)$ y $W\sim\chi^2_{(\nu)}$. Se conoce que bajo estas condiciones $T=\dfrac{Z}{\sqrt{W/\nu}}\sim t_{(\nu)}$.</p>
+      <p>a) Pruebe que $\E[T]=0$, si $\nu\gt 1$.<br>b) Pruebe que $\Var[T]=\dfrac{\nu}{\nu-2}$, si $\nu\gt 2$.</p>
+      <p><em>Pista (del PDF):</em> use la independencia.</p>
+      <details class="pista"><summary>Pista 1</summary><div><p>Escribe $T=\sqrt\nu\;Z\cdot W^{-1/2}$. Si $Z\ind W$, entonces $\E[g(Z)h(W)]=\E[g(Z)]\,\E[h(W)]$: no hace falta la fdp de la $t$.</p></div></details>
+      <details class="pista"><summary>Pista 2</summary><div><p>Calcula un momento general de la χ²: $\E[W^k]=\int_0^\infty w^k f_W(w)\,dw$, usando $\int_0^\infty w^{a-1}e^{-w/\beta}dw=\Gamma(a)\beta^a$ (válida sólo si $a\gt 0$).</p></div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Momentos de la χ² (incluidos los negativos).</b> Para $W\sim\chi^2_{(\nu)}$ y $k$ real:
+          $$\E[W^k]=\int_0^\infty\frac{w^{k+\nu/2-1}e^{-w/2}}{2^{\nu/2}\Gamma(\nu/2)}\,dw=\frac{\Gamma(\nu/2+k)\,2^{\nu/2+k}}{2^{\nu/2}\Gamma(\nu/2)}=\frac{2^k\,\Gamma(\nu/2+k)}{\Gamma(\nu/2)},$$
+          y la integral converge <b>sólo si $\nu/2+k\gt 0$</b> (cerca de $w=0$ el integrando es $w^{k+\nu/2-1}$). Aquí aparecen las condiciones del enunciado.</li>
+          <li><b>(a) Media.</b> Por independencia,
+          $$\E[T]=\sqrt\nu\;\E[Z]\;\E\big[W^{-1/2}\big]=\sqrt\nu\cdot 0\cdot\E\big[W^{-1/2}\big]=0,$$
+          siempre que $\E[W^{-1/2}]$ sea finita: con $k=-\tfrac12$ se necesita $\nu/2-1/2\gt 0$, es decir <b>$\nu\gt 1$</b>. (Lo mismo garantiza $\E|T|=\sqrt\nu\,\E|Z|\,\E[W^{-1/2}]\lt\infty$, o sea que la media existe. Con $\nu=1$, Cauchy, $\E|T|=\infty$ y no hay media.)</li>
+          <li><b>(b) Segundo momento.</b> Como $\E[T]=0$, $\Var[T]=\E[T^2]$. Por independencia:
+          $$\E[T^2]=\E\!\left[\frac{\nu Z^2}{W}\right]=\nu\;\E[Z^2]\;\E[W^{-1}]=\nu\cdot 1\cdot\E[W^{-1}] .$$</li>
+          <li><b>$\E[1/W]$.</b> Con $k=-1$ (requiere $\nu/2-1\gt 0$, es decir <b>$\nu\gt 2$</b>):
+          $$\E[W^{-1}]=\frac{2^{-1}\Gamma(\nu/2-1)}{\Gamma(\nu/2)}=\frac{\Gamma(\nu/2-1)}{2\,(\nu/2-1)\,\Gamma(\nu/2-1)}=\frac{1}{\nu-2},$$
+          usando $\Gamma(a)=(a-1)\Gamma(a-1)$ con $a=\nu/2$.</li>
+          <li><b>Conclusión:</b> $\Var[T]=\nu\cdot\dfrac{1}{\nu-2}=\dfrac{\nu}{\nu-2}$ para $\nu\gt 2$. $\blacksquare$</li>
+          <li><b>Lectura:</b> $\frac{\nu}{\nu-2}\gt 1=\Var(Z)$: la $t$ está más dispersa que la normal (colas pesadas), y $\frac{\nu}{\nu-2}\to 1$ cuando $\nu\to\infty$. Ej.: $\nu=3$: 3; $\nu=5$: 1.667; $\nu=10$: 1.25. Con $\nu\le 2$ la varianza es infinita: en la simulación (d) con $n=3$ ($\nu=2$) verás que la varianza empírica salta muchísimo de una corrida a otra.</li>
+        </ol>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="ej5">9. Ejemplo 5: σ desconocida y cómo acotar con la tabla t</h2>
+    <div class="box ejercicio" id="ejemplo-5">
+      <span class="box-title">Ejemplo 5 (Clase 3)</span>
+      <p>En el ejemplo de la máquina de botellas, suponga que la cantidad de llenado de la máquina se encuentra normalmente distribuida, pero su desviación estándar $\sigma$ es desconocida. Sin embargo, una muestra de $n=9$ botellas llenadas nos da una desviación estándar muestral $s=1.275$. Encuentre
+      $$\P(|\bar Y-\mu|\le 0.3).$$</p>
+      <details class="pista"><summary>Pista 1</summary><div><p>Como $\sigma$ es desconocida, divide por $S/\sqrt n$ en lugar de $\sigma/\sqrt n$ y usa el Resultado importante: $T\sim t_{(n-1)}$.</p></div></details>
+      <details class="pista"><summary>Pista 2</summary><div><p>Calcula $c=0.3\sqrt n/s$ y busca en la fila $\nu=8$ de la tabla $t$ entre qué dos columnas cae $c$.</p></div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Pivote.</b> Población normal, $\sigma$ desconocida, $n=9$: $T=\dfrac{\bar Y-\mu}{S/\sqrt 9}\sim t_{(8)}$ ($\nu=n-1=8$).</li>
+          <li><b>Traducir el evento</b> dividiendo por $S/\sqrt n$ y sustituyendo el valor observado $s=1.275$:
+          $$|\bar Y-\mu|\le 0.3\iff \left|\frac{\bar Y-\mu}{S/\sqrt n}\right|\le \frac{0.3\sqrt 9}{s}=\frac{0.9}{1.275}=0.7059 .$$
+          Entonces $\P(|\bar Y-\mu|\le 0.3)=\P(|T|\le 0.7059)=2\,\P(T\le 0.7059)-1$ (simetría de la $t$).</li>
+          <li><b>Leer la tabla t, fila $\nu=8$:</b>
+            <div class="table-wrap"><table class="tabla tabla-mini">
+              <tr><th>ν</th><th>60.0%</th><th class="hl">66.7%</th><th class="hl">75.0%</th><th>80.0%</th><th>87.5%</th><th>90.0%</th><th>95.0%</th><th>97.5%</th></tr>
+              <tr><td class="hl">8</td><td>0.262</td><td class="hit">0.447</td><td class="hit">0.706</td><td>0.889</td><td>1.240</td><td>1.397</td><td>1.860</td><td>2.306</td></tr>
+            </table></div>
+            Nuestro $c=0.7059$ cae entre la columna 66.7 % (0.447) y la columna 75.0 % (0.706), prácticamente encima de 0.706.</li>
+          <li><b>Acotar</b> (la cdf es creciente, así que el orden de los $t$ se traslada a las probabilidades):
+          $$0.447\lt 0.7059\le 0.706\ \Longrightarrow\ 0.667\lt \P(T\le 0.7059)\le 0.75\ \Longrightarrow\ 0.333\lt \P(|T|\le 0.7059)\le 0.50 .$$</li>
+          <li><b>Aproximar:</b> como $c$ coincide con 0.706 hasta el tercer decimal, $\P(T\le c)\approx 0.75$ y
+          $$\P(|\bar Y-\mu|\le 0.3)\approx 2(0.75)-1=\boxed{0.50}\quad(\text{exacto con software: }0.4997).$$</li>
+          <li><b>Comparar con el Ejemplo 2</b> (0.632 con $\sigma=1$ conocida): aquí sale menos por dos razones: la desviación observada $s=1.275$ es mayor que 1, y la $t_{(8)}$ tiene colas más pesadas que la normal. (Si usaras ingenuamente la normal con $s$, obtendrías $2\Phi(0.706)-1=0.520$, que sobrestima.)</li>
+        </ol>
+        <div class="box cuidado"><span class="box-title">Una sutileza honesta</span>
+          <p>Estrictamente, al sustituir $S$ por el número $s$ lo que se calcula es la probabilidad del evento $|\bar Y-\mu|\le 0.706\,S/\sqrt n$ ("$\bar Y$ cae a menos de 0.706 errores estándar <em>estimados</em> de $\mu$"), que vale 0.50 sea cual sea $\sigma$. Es la respuesta que espera la clase (y Wackerly). La simulación (e3) lo verifica.</p>
+        </div>
+      </div></details>
+    </div>
+
+    <div class="box idea"><span class="box-title">Receta: acotar una probabilidad con una tabla que sólo tiene algunas columnas</span>
+      <ol>
+        <li>Calcula el valor $c$ (estadístico) y ubica la fila de tus g.l.</li>
+        <li>Encuentra las dos columnas vecinas: $t_{p_1}\le c\le t_{p_2}$.</li>
+        <li>Como la cdf es creciente: $p_1\le\P(T\le c)\le p_2$. Para dos colas: $2p_1-1\le\P(|T|\le c)\le 2p_2-1$.</li>
+        <li>Si $c\lt 0.325$ (columna 60 %), usa $t_{0.5}=0$ como cota inferior (por simetría, $\P(T\le 0)=0.5$). Si $c$ supera la última columna, la cota superior es 1.</li>
+      </ol>
+      <p>En examen es perfectamente válido responder "la probabilidad está entre 0.333 y 0.50, ≈ 0.50".</p>
+    </div>
+
+    <div class="sim" id="sim-acotar">
+      <p class="sim-title">Simulación (e2): visual del Ejemplo 5 y acotador con la tabla t</p>
+      <p class="sim-desc">Elige la fila $\nu$ y el valor $c$. Se sombrea $\P(|T|\le c)$ bajo $t_{(\nu)}$ (la punteada es $N(0,1)$) y se muestra entre qué columnas de la tabla ESPOL cae $c$. Empieza en el Ejemplo 5: $\nu=8$, $c=0.7059$.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+
+    <div class="sim" id="sim-pivote">
+      <p class="sim-title">Simulación (e3): el 0.50 no depende de σ</p>
+      <p class="sim-desc">Tú no conoces $\sigma$, pero la naturaleza sí. Elige la $\sigma$ "verdadera", genera 20 000 muestras de $n=9$ y cuenta en cuántas ocurre $|\bar Y-\mu|\le 0.706\,S/3$ (el evento del Ejemplo 5). Compara con el evento de margen fijo $|\bar Y-\mu|\le 0.3$, que sí depende de $\sigma$.</p>
+      <div class="controls"></div>
+      <div class="out"></div>
+    </div>
+
+    <p><b>Practica (variante):</b> mismo problema pero la muestra de 9 botellas dio $s=1.0$. Calcula $c$, acota con la tabla y da el valor exacto de $\P(|\bar Y-\mu|\le 0.3)$ (usa el acotador de arriba).</p>
+    <div id="nc-ej5"></div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="ej6">10. Ejemplo 6★: k poblaciones con varianza común</h2>
+    <div class="box ejercicio" id="ejemplo-6">
+      <span class="box-title">Ejemplo 6 (Clase 3) <span class="badge star">★ reto</span></span>
+      <p>Suponga que muestras independientes (de tamaño $n_i$) se toman de cada una de $k$ poblaciones y que la población $i$ está normalmente distribuida con media $\mu_i$ y varianza $\sigma^2$, $i=1,2,\dots,k$. Esto es, todas las poblaciones están distribuidas normalmente con la misma varianza pero con (posiblemente) medias diferentes. Sean $\bar X_i$ y $S_i^2$, $i=1,\dots,k$ las respectivas medias muestrales y varianzas. Sea
+      $$\theta=\sum_{i=1}^k c_i\mu_k ,$$
+      donde $c_1,c_2,\dots,c_k$ son constantes dadas.</p>
+      <p>a) Calcule la distribución de $\bar\theta=\sum_{i=1}^k c_i\bar X_i$. Además, proporcione razones para cualesquiera afirmaciones que haga.</p>
+      <p>b) Proporcione la distribución de $\dfrac{\mathrm{SSE}}{\sigma^2}$, donde $\mathrm{SSE}=\sum_{i=1}^k (n_i-1)S_i^2$. Justifique las afirmaciones que haga.</p>
+      <p>c) Proporcione la distribución de
+      $$\frac{\hat\theta-\theta}{\sqrt{\left(\frac{c_1^2}{n_1}+\frac{c_2^2}{n_2}+\dots+\frac{c_k^2}{n_k}\right)\mathrm{MSE}}},\qquad\text{donde }\ \mathrm{MSE}=\frac{\mathrm{SSE}}{n_1+n_2+\dots+n_k-k}.$$</p>
+
+      <div class="box cuidado"><span class="box-title">Erratas del enunciado</span>
+        <p>1) Dice $\theta=\sum c_i\mu_k$: debe ser $\theta=\sum_{i=1}^k c_i\mu_i$ (el subíndice de la suma es $i$). 2) En (a) se escribe $\bar\theta$ y en (c) $\hat\theta$: son <b>el mismo</b> estimador, $\hat\theta=\bar\theta=\sum c_i\bar X_i$.</p>
+      </div>
+
+      <details class="pista"><summary>Pista 1</summary><div><p>(a) Cada $\bar X_i\sim N(\mu_i,\sigma^2/n_i)$ por el Teorema 1, y son independientes entre sí. Una combinación lineal de normales independientes es normal (pruébalo con la FGM).</p></div></details>
+      <details class="pista"><summary>Pista 2</summary><div><p>(b) Teorema 2 en cada muestra + aditividad de la χ².</p></div></details>
+      <details class="pista"><summary>Pista 3</summary><div><p>(c) Arma $Z$ con (a), $W$ con (b), demuestra que son independientes y usa el Teorema 3. La $\sigma$ se cancela.</p></div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <p>Notación: $N=n_1+\dots+n_k$ (tamaño total).</p>
+        <h4>a) Distribución de $\bar\theta$</h4>
+        <ol class="pasos">
+          <li>Por el Teorema 1 aplicado a la muestra $i$: $\bar X_i\sim N(\mu_i,\sigma^2/n_i)$.</li>
+          <li>Las $k$ muestras son independientes, y $\bar X_i$ sólo usa la muestra $i$, luego $\bar X_1,\dots,\bar X_k$ son independientes.</li>
+          <li>FGM de $\bar\theta$, usando independencia y $M_{\bar X_i}(s)=e^{\mu_i s+\sigma^2s^2/(2n_i)}$:
+          $$M_{\bar\theta}(s)=\prod_{i=1}^k M_{\bar X_i}(c_is)=\prod_{i=1}^k e^{c_i\mu_i s+\frac{\sigma^2c_i^2}{n_i}\frac{s^2}{2}}=\exp\Big\{\Big(\sum c_i\mu_i\Big)s+\sigma^2\Big(\sum\frac{c_i^2}{n_i}\Big)\frac{s^2}{2}\Big\}.$$</li>
+          <li>Por unicidad de la FGM:
+          $$\boxed{\ \bar\theta\sim N\Big(\theta,\ \sigma^2\sum_{i=1}^k\frac{c_i^2}{n_i}\Big)\ }\qquad\Longleftrightarrow\qquad Z=\frac{\bar\theta-\theta}{\sigma\sqrt{\sum c_i^2/n_i}}\sim N(0,1).$$</li>
+        </ol>
+        <h4>b) Distribución de $\mathrm{SSE}/\sigma^2$</h4>
+        <ol class="pasos">
+          <li>$\dfrac{\mathrm{SSE}}{\sigma^2}=\sum_{i=1}^k\dfrac{(n_i-1)S_i^2}{\sigma^2}$.</li>
+          <li>Por el Teorema 2 en la muestra $i$ (normal con varianza $\sigma^2$): $\dfrac{(n_i-1)S_i^2}{\sigma^2}\sim\chi^2_{(n_i-1)}$.</li>
+          <li>Los sumandos son independientes (cada uno usa sólo su muestra). Por la aditividad de la χ² (producto de FGM $\prod(1-2t)^{-(n_i-1)/2}$):
+          $$\boxed{\ \frac{\mathrm{SSE}}{\sigma^2}\sim\chi^2_{\left(\sum (n_i-1)\right)}=\chi^2_{(N-k)}\ }.$$
+          Se pierde un g.l. por cada media estimada: $k$ en total.</li>
+        </ol>
+        <h4>c) Distribución del cociente</h4>
+        <ol class="pasos">
+          <li>Sea $Z$ el de (a) y $W=\mathrm{SSE}/\sigma^2\sim\chi^2_{(N-k)}$ de (b).</li>
+          <li><b>Independencia $Z\ind W$:</b> dentro de cada muestra $\bar X_i\ind S_i^2$ (Teorema 2, parte 1), y las muestras son independientes entre sí; por tanto las $2k$ v.a. $\bar X_1,S_1^2,\dots,\bar X_k,S_k^2$ son mutuamente independientes. $Z$ es función de $(\bar X_1,\dots,\bar X_k)$ y $W$ de $(S_1^2,\dots,S_k^2)$: funciones de bloques disjuntos de v.a. independientes son independientes.</li>
+          <li>Por el Teorema 3 con $\nu=N-k$:
+          $$\frac{Z}{\sqrt{W/(N-k)}}=\frac{\dfrac{\hat\theta-\theta}{\sigma\sqrt{\sum c_i^2/n_i}}}{\sqrt{\dfrac{\mathrm{SSE}}{\sigma^2(N-k)}}}=\frac{\hat\theta-\theta}{\sqrt{\Big(\sum\frac{c_i^2}{n_i}\Big)\dfrac{\mathrm{SSE}}{N-k}}}=\frac{\hat\theta-\theta}{\sqrt{\Big(\sum\frac{c_i^2}{n_i}\Big)\mathrm{MSE}}}\ ,$$
+          y la $\sigma$ se canceló.</li>
+          <li>Conclusión:
+          $$\boxed{\ \frac{\hat\theta-\theta}{\sqrt{\left(\frac{c_1^2}{n_1}+\dots+\frac{c_k^2}{n_k}\right)\mathrm{MSE}}}\sim t_{(n_1+\dots+n_k-k)}\ }.$$</li>
+          <li><b>Para qué sirve:</b> con $k=2$, $c_1=1$, $c_2=-1$ obtienes $\theta=\mu_1-\mu_2$ y $\dfrac{(\bar X_1-\bar X_2)-(\mu_1-\mu_2)}{\sqrt{\mathrm{MSE}\,(1/n_1+1/n_2)}}\sim t_{(n_1+n_2-2)}$: la famosa prueba $t$ de dos muestras con varianza combinada ($\mathrm{MSE}=S_p^2$). Con $k$ general es la base del ANOVA.</li>
+        </ol>
+        <p class="small muted">Verificado por Monte Carlo (10⁵ réplicas, $k=3$, $n=(4,6,5)$, $c=(1,-0.5,2)$, $\sigma=2$): media y varianza de $\bar\theta$, de $\mathrm{SSE}/\sigma^2$ (≈12 y ≈24 = $N-k$ y $2(N-k)$), y prueba K-S del cociente contra $t_{(12)}$ sin rechazo.</p>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="resumen">11. Resumen y autoevaluación</h2>
+    <div class="table-wrap"><table class="tabla text-left">
+      <tr><th>Si la muestra es $N(\mu,\sigma^2)$ i.i.d.…</th><th>Distribución</th><th>Úsalo cuando</th></tr>
+      <tr><td>$\dfrac{\bar Y-\mu}{\sigma/\sqrt n}$</td><td>$N(0,1)$</td><td>preguntan por $\bar Y$ y conoces $\sigma$ (Ej. 2)</td></tr>
+      <tr><td>$\sum\big(\frac{Y_i-\mu}{\sigma}\big)^2$</td><td>$\chi^2_{(n)}$</td><td>conoces $\mu$ (raro)</td></tr>
+      <tr><td>$\dfrac{(n-1)S^2}{\sigma^2}$</td><td>$\chi^2_{(n-1)}$</td><td>preguntan por $S^2$ o $\sigma^2$ (Ej. 3)</td></tr>
+      <tr><td>$\dfrac{\bar Y-\mu}{S/\sqrt n}$</td><td>$t_{(n-1)}$</td><td>preguntan por $\bar Y$ y <b>no</b> conoces $\sigma$ (Ej. 5)</td></tr>
+      <tr><td>$\bar Y$ y $S^2$</td><td>independientes</td><td>es lo que permite armar la $t$ (sólo vale si la población es normal)</td></tr>
+    </table></div>
+    <div id="quiz-final"></div>
+    <p class="small muted">Para profundizar: <a href="../herramientas/distribuciones.html">laboratorio de distribuciones</a> (χ², t, F) y <a href="../herramientas/tablas.html">cómo leer las tablas</a>. La próxima clase construye la distribución $F$ como cociente de dos χ² (<a href="clase-04.html">Clase 4</a>).</p>
+  </section>
+
+</main>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../assets/js/stats.js"></script>
+<script src="../assets/js/plot.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+(function () {
+  'use strict';
+  const S = EM.stats, D = S.dist, fmt = S.fmt;
+  const byId = id => document.getElementById(id);
+  const part = (root, sel) => root.querySelector(sel);
+  const Z01 = D.normal(0, 1);
+
+  // ---------- auxiliares locales ----------
+  function corr(xs, ys) {
+    const n = xs.length, mx = S.mean(xs), my = S.mean(ys);
+    let sxy = 0, sxx = 0, syy = 0;
+    for (let i = 0; i < n; i++) { const a = xs[i] - mx, b = ys[i] - my; sxy += a * b; sxx += a * a; syy += b * b; }
+    return sxy / Math.sqrt(sxx * syy);
+  }
+  // una muestra de tamaño n -> {m, ss} con ss = sum (y - ybar)^2  (Welford)
+  function sampleMS(n, gen) {
+    let m = 0, ss = 0;
+    for (let i = 1; i <= n; i++) { const y = gen(); const d = y - m; m += d / i; ss += d * (y - m); }
+    return { m, ss };
+  }
+  // Tabla t ESPOL (Tablas/t.pdf): columnas = probabilidad acumulada
+  const T_COLS = [0.600, 2 / 3, 0.750, 0.800, 0.875, 0.900, 0.950, 0.975, 0.990, 0.995, 0.999];
+  const T_LAB = ['60.0%', '66.7%', '75.0%', '80.0%', '87.5%', '90.0%', '95.0%', '97.5%', '99.0%', '99.5%', '99.9%'];
+  const T_TAB = {
+    1: [0.325, 0.577, 1.000, 1.376, 2.414, 3.078, 6.314, 12.706, 31.821, 63.657, 318.31],
+    2: [0.289, 0.500, 0.816, 1.061, 1.604, 1.886, 2.920, 4.303, 6.965, 9.925, 22.327],
+    3: [0.277, 0.476, 0.765, 0.978, 1.423, 1.638, 2.353, 3.182, 4.541, 5.841, 10.215],
+    4: [0.271, 0.464, 0.741, 0.941, 1.344, 1.533, 2.132, 2.776, 3.747, 4.604, 7.173],
+    5: [0.267, 0.457, 0.727, 0.920, 1.301, 1.476, 2.015, 2.571, 3.365, 4.032, 5.893],
+    6: [0.265, 0.453, 0.718, 0.906, 1.273, 1.440, 1.943, 2.447, 3.143, 3.707, 5.208],
+    7: [0.263, 0.449, 0.711, 0.896, 1.254, 1.415, 1.895, 2.365, 2.998, 3.499, 4.785],
+    8: [0.262, 0.447, 0.706, 0.889, 1.240, 1.397, 1.860, 2.306, 2.896, 3.355, 4.501],
+    9: [0.261, 0.445, 0.703, 0.883, 1.230, 1.383, 1.833, 2.262, 2.821, 3.250, 4.297],
+    10: [0.260, 0.444, 0.700, 0.879, 1.221, 1.372, 1.812, 2.228, 2.764, 3.169, 4.144],
+    11: [0.260, 0.443, 0.697, 0.876, 1.214, 1.363, 1.796, 2.201, 2.718, 3.106, 4.025],
+    12: [0.259, 0.442, 0.695, 0.873, 1.209, 1.356, 1.782, 2.179, 2.681, 3.055, 3.930],
+    13: [0.259, 0.441, 0.694, 0.870, 1.204, 1.350, 1.771, 2.160, 2.650, 3.012, 3.852],
+    14: [0.258, 0.440, 0.692, 0.868, 1.200, 1.345, 1.761, 2.145, 2.624, 2.977, 3.787],
+    15: [0.258, 0.439, 0.691, 0.866, 1.197, 1.341, 1.753, 2.131, 2.602, 2.947, 3.733],
+    16: [0.258, 0.439, 0.690, 0.865, 1.194, 1.337, 1.746, 2.120, 2.583, 2.921, 3.686],
+    17: [0.257, 0.438, 0.689, 0.863, 1.191, 1.333, 1.740, 2.110, 2.567, 2.898, 3.646],
+    18: [0.257, 0.438, 0.688, 0.862, 1.189, 1.330, 1.734, 2.101, 2.552, 2.878, 3.610],
+    19: [0.257, 0.438, 0.688, 0.861, 1.187, 1.328, 1.729, 2.093, 2.539, 2.861, 3.579],
+    20: [0.257, 0.437, 0.687, 0.860, 1.185, 1.325, 1.725, 2.086, 2.528, 2.845, 3.552],
+    21: [0.257, 0.437, 0.686, 0.859, 1.183, 1.323, 1.721, 2.080, 2.518, 2.831, 3.527],
+    22: [0.256, 0.437, 0.686, 0.858, 1.182, 1.321, 1.717, 2.074, 2.508, 2.819, 3.505],
+    23: [0.256, 0.436, 0.685, 0.858, 1.180, 1.319, 1.714, 2.069, 2.500, 2.807, 3.485],
+    24: [0.256, 0.436, 0.685, 0.857, 1.179, 1.318, 1.711, 2.064, 2.492, 2.797, 3.467],
+    25: [0.256, 0.436, 0.684, 0.856, 1.178, 1.316, 1.708, 2.060, 2.485, 2.787, 3.450],
+    26: [0.256, 0.436, 0.684, 0.856, 1.177, 1.315, 1.706, 2.056, 2.479, 2.779, 3.435],
+    27: [0.256, 0.435, 0.684, 0.855, 1.176, 1.314, 1.703, 2.052, 2.473, 2.771, 3.421],
+    28: [0.256, 0.435, 0.683, 0.855, 1.175, 1.313, 1.701, 2.048, 2.467, 2.763, 3.408],
+    29: [0.256, 0.435, 0.683, 0.854, 1.174, 1.311, 1.699, 2.045, 2.462, 2.756, 3.396],
+    30: [0.256, 0.435, 0.683, 0.854, 1.173, 1.310, 1.697, 2.042, 2.457, 2.750, 3.385],
+    35: [0.255, 0.434, 0.682, 0.852, 1.170, 1.306, 1.690, 2.030, 2.438, 2.724, 3.340],
+    40: [0.255, 0.434, 0.681, 0.851, 1.167, 1.303, 1.684, 2.021, 2.423, 2.704, 3.307],
+    45: [0.255, 0.434, 0.680, 0.850, 1.165, 1.301, 1.679, 2.014, 2.412, 2.690, 3.281],
+    50: [0.255, 0.433, 0.679, 0.849, 1.164, 1.299, 1.676, 2.009, 2.403, 2.678, 3.261],
+    55: [0.255, 0.433, 0.679, 0.848, 1.163, 1.297, 1.673, 2.004, 2.396, 2.668, 3.245],
+    60: [0.254, 0.433, 0.679, 0.848, 1.162, 1.296, 1.671, 2.000, 2.390, 2.660, 3.232],
+    Infinity: [0.253, 0.431, 0.674, 0.842, 1.150, 1.282, 1.645, 1.960, 2.326, 2.576, 3.090],
+  };
+  const tDist = nu => isFinite(nu) ? D.t(nu) : Z01;
+
+  // ====================== Sim (a): media muestral ======================
+  (function () {
+    const root = byId('sim-media'); const mu = 12, sigma = 1, M = 4000;
+    let n = 9, data = [];
+    const p = EM.plot.create(part(root, '.plot'), { xmin: mu - 3.5, xmax: mu + 3.5, ymin: 0, ymax: 1.5, height: 290, xlabel: 'ȳ' });
+    const out = EM.ui.readout(part(root, '.out'));
+    function sim() {
+      data = new Array(M);
+      for (let i = 0; i < M; i++) { let s = 0; for (let j = 0; j < n; j++) s += mu + sigma * S.rnorm01(); data[i] = s / n; }
+      render();
+    }
+    function render() {
+      const se = sigma / Math.sqrt(n), N = D.normal(mu, se), pop = D.normal(mu, sigma);
+      p.setRange({ ymax: N.pdf(mu) * 1.3 });
+      p.draw(g => {
+        g.hist(data, { bins: 40, range: [mu - 4.5 * se, mu + 4.5 * se], color: 'c2', label: `${M} medias simuladas` });
+        g.curve(N.pdf, { color: 'c1', label: `N(μ, σ²/n), n = ${n}` });
+        g.curve(pop.pdf, { color: 'muted', dash: [5, 4], label: 'población N(μ, σ²)' });
+        g.vline(mu - 0.3, { color: 'c3' }); g.vline(mu + 0.3, { color: 'c3' });
+      });
+      const pr = S.prop(data, x => Math.abs(x - mu) <= 0.3);
+      const th = 2 * Z01.cdf(0.3 * Math.sqrt(n) / sigma) - 1;
+      out.set(`Media de las $\\bar y$: <b>${fmt(S.mean(data), 3)}</b> (teoría $\\mu=12$) · Varianza: <b>${fmt(S.var(data), 4)}</b> (teoría $\\sigma^2/n=${fmt(1 / n, 4)}$)<br>
+        Proporción con $|\\bar y-\\mu|\\le 0.3$: <b>${fmt(pr, 3)}</b> · teoría $2\\Phi(0.3\\sqrt n/\\sigma)-1=$ <b>${fmt(th, 4)}</b>${n === 9 ? ' ← Ejemplo 2' : ''}`);
+    }
+    const c = part(root, '.controls');
+    EM.ui.slider(c, { tex: 'n', min: 1, max: 50, step: 1, value: n, onInput: v => { n = v; sim(); } });
+    EM.ui.button(c, 'Otras 4000 muestras', sim, { primary: true });
+    sim();
+  })();
+
+  // ====================== Figura χ² ======================
+  (function () {
+    const root = byId('fig-chi'); let nu = 4;
+    const p = EM.plot.create(part(root, '.plot'), { xmin: 0, xmax: 20, ymin: 0, ymax: 0.5, height: 260, xlabel: 'w' });
+    const out = EM.ui.readout(part(root, '.out'));
+    function render() {
+      const W = D.chi2(nu), N = D.normal(nu, Math.sqrt(2 * nu));
+      const xmax = Math.max(12, nu + 4.5 * Math.sqrt(2 * nu));
+      const ymax = nu <= 2 ? 0.6 : W.pdf(nu - 2) * 1.25;
+      p.setRange({ xmax, ymax });
+      p.draw(g => {
+        g.area(W.pdf, 0, xmax, { color: 'c1', alpha: 0.15 });
+        g.curve(W.pdf, { color: 'c1', label: `χ²(${nu})` });
+        g.curve(N.pdf, { color: 'muted', dash: [5, 4], label: `N(${nu}, ${2 * nu})` });
+        g.vline(nu, { label: 'media ν', color: 'c2' });
+      });
+      out.set(`$\\E[W]=\\nu=${nu}$, $\\Var(W)=2\\nu=${2 * nu}$, moda $=${nu >= 2 ? nu - 2 : 0}$ · Tabla: columna 5% → <b>${fmt(W.q(0.05), 3)}</b>, columna 95% → <b>${fmt(W.q(0.95), 3)}</b>`);
+    }
+    EM.ui.slider(part(root, '.controls'), { tex: '\\nu', min: 1, max: 40, step: 1, value: nu, onInput: v => { nu = v; render(); } });
+    render();
+  })();
+
+  // ====================== Sim (b): (n-1)S²/σ² ======================
+  (function () {
+    const root = byId('sim-chi'); const M = 5000;
+    let n = 4, center = 'ybar', data = [];
+    const p = EM.plot.create(part(root, '.plot'), { xmin: 0, xmax: 20, ymin: 0, ymax: 0.5, height: 280, xlabel: 'Σ(Yᵢ − c)²/σ²' });
+    const out = EM.ui.readout(part(root, '.out'));
+    function sim() {
+      data = new Array(M);
+      for (let i = 0; i < M; i++) {
+        const ys = new Array(n); let s = 0;
+        for (let j = 0; j < n; j++) { ys[j] = S.rnorm01(); s += ys[j]; }
+        const c = center === 'ybar' ? s / n : 0; // μ = 0, σ = 1
+        let q = 0; for (let j = 0; j < n; j++) q += (ys[j] - c) ** 2;
+        data[i] = q;
+      }
+      render();
+    }
+    function render() {
+      const A = D.chi2(n - 1), B = D.chi2(n);
+      const xmax = n + 5 * Math.sqrt(2 * n) + 1;
+      let ymax = 0;
+      for (let k = 1; k <= 200; k++) { const x = xmax * k / 200; ymax = Math.max(ymax, A.pdf(x), B.pdf(x)); }
+      p.setRange({ xmax, ymax: Math.min(ymax * 1.2, 1.2) });
+      p.draw(g => {
+        g.hist(data, { bins: 50, range: [0, xmax], color: 'c2', label: center === 'ybar' ? 'Σ(Yᵢ − Ȳ)²/σ² simulada' : 'Σ(Yᵢ − μ)²/σ² simulada' });
+        g.curve(A.pdf, { color: 'c1', label: `χ²(n−1) = χ²(${n - 1})` });
+        g.curve(B.pdf, { color: 'c4', dash: [6, 4], label: `χ²(n) = χ²(${n})` });
+      });
+      const m = S.mean(data);
+      const crA = A.crit(0.05), crB = B.crit(0.05);
+      out.set(`Promedio simulado: <b>${fmt(m, 3)}</b> (media de $\\chi^2_{(${n - 1})}$ = ${n - 1}; de $\\chi^2_{(${n})}$ = ${n}) <br>
+        Proporción por encima de $\\chi^2_{(${n - 1}),0.05}=${fmt(crA, 3)}$: <b>${fmt(S.prop(data, x => x > crA), 3)}</b> · por encima de $\\chi^2_{(${n}),0.05}=${fmt(crB, 3)}$: <b>${fmt(S.prop(data, x => x > crB), 3)}</b> (la distribución correcta da 0.05)`);
+    }
+    const c = part(root, '.controls');
+    EM.ui.slider(c, { tex: 'n', min: 2, max: 20, step: 1, value: n, onInput: v => { n = v; sim(); } });
+    EM.ui.select(c, { label: 'Centrar en', value: center, options: [{ value: 'ybar', label: 'Ȳ (como en S²)' }, { value: 'mu', label: 'μ verdadera' }], onChange: v => { center = v; sim(); } });
+    EM.ui.button(c, 'Simular de nuevo', sim, { primary: true });
+    sim();
+  })();
+
+  // ====================== Sim (c): independencia ======================
+  (function () {
+    const root = byId('sim-indep'); const M = 2000;
+    const POPS = {
+      normal: { label: 'Normal N(0, 1)', gen: () => S.rnorm01(), mu: 0, s2: 1 },
+      exp: { label: 'Exponencial (β = 1)', gen: () => -Math.log(S.rng()), mu: 1, s2: 1 },
+      unif: { label: 'Uniforme U(0, 1)', gen: () => S.rng(), mu: 0.5, s2: 1 / 12 },
+    };
+    let pop = 'normal', n = 5, xs = [], ys = [];
+    const p = EM.plot.create(part(root, '.plot'), { xmin: -2, xmax: 2, ymin: 0, ymax: 4, height: 300, xlabel: 'ȳ', ylabel: 's²' });
+    const out = EM.ui.readout(part(root, '.out'));
+    function sim() {
+      const P = POPS[pop]; xs = new Array(M); ys = new Array(M);
+      for (let i = 0; i < M; i++) { const r = sampleMS(n, P.gen); xs[i] = r.m; ys[i] = r.ss / (n - 1); }
+      render();
+    }
+    function render() {
+      const P = POPS[pop];
+      const x0 = S.quantile(xs, 0.002), x1 = S.quantile(xs, 0.998), pad = (x1 - x0) * 0.05;
+      p.setRange({ xmin: x0 - pad, xmax: x1 + pad, ymin: 0, ymax: S.quantile(ys, 0.99) * 1.1 });
+      p.draw(g => {
+        g.points(xs, ys, { r: 1.8, alpha: 0.35, color: 'c1', label: `${M} muestras de n = ${n}` });
+        g.hline(P.s2, { color: 'c2' }); g.vline(P.mu, { color: 'c2', dash: [3, 3] });
+      });
+      const r1 = corr(xs, ys), r2 = corr(xs.map(x => (x - P.mu) ** 2), ys);
+      const verdict = pop === 'normal' ? 'ninguna relación: independientes (Teorema 2).'
+        : pop === 'exp' ? 'relación clara: $\\bar Y$ grande ⇒ $S^2$ grande. NO son independientes.'
+          : 'correlación ≈ 0, pero $(\\bar Y-\\mu)^2$ y $S^2$ sí están relacionadas: NO son independientes (correlación cero ≠ independencia).';
+      out.set(`$\\operatorname{corr}(\\bar Y,S^2)\\approx$ <b>${fmt(r1, 3)}</b> · $\\operatorname{corr}\\big((\\bar Y-\\mu)^2,S^2\\big)\\approx$ <b>${fmt(r2, 3)}</b><br>${verdict}`);
+    }
+    const c = part(root, '.controls');
+    EM.ui.select(c, { label: 'Población', value: pop, options: Object.entries(POPS).map(([k, v]) => ({ value: k, label: v.label })), onChange: v => { pop = v; sim(); } });
+    EM.ui.slider(c, { tex: 'n', min: 3, max: 30, step: 1, value: n, onInput: v => { n = v; sim(); } });
+    EM.ui.button(c, 'Simular de nuevo', sim, { primary: true });
+    sim();
+  })();
+
+  // ====================== Sim (e1): Ejemplo 3 ======================
+  (function () {
+    const root = byId('sim-ej3'); const W = D.chi2(9);
+    let a = 0.05;
+    const p = EM.plot.create(part(root, '.plot'), { xmin: 0, xmax: 30, ymin: 0, ymax: 0.12, height: 260, xlabel: '9S²' });
+    const out = EM.ui.readout(part(root, '.out'));
+    function render() {
+      const lo = a <= 0 ? 0 : W.q(a), hi = a >= 0.1 - 1e-9 ? Infinity : W.q(a + 0.9);
+      p.draw(g => {
+        g.area(W.pdf, 0, lo, { color: 'bad', alpha: 0.45, label: `cola izq. ${fmt(a, 4)}` });
+        g.area(W.pdf, lo, Math.min(hi, 30), { color: 'accent', alpha: 0.3, label: 'área 0.90' });
+        if (isFinite(hi)) g.area(W.pdf, hi, 30, { color: 'bad', alpha: 0.45 });
+        g.curve(W.pdf, { color: 'c1', label: 'χ²(9)' });
+        if (lo > 0) g.vline(lo, { label: fmt(lo, 3), labelY: 0.118 });
+        if (isFinite(hi)) g.vline(hi, { label: fmt(hi, 3), labelY: 0.118 });
+      });
+      const b1 = lo / 9, b2 = hi / 9;
+      out.set(`Cola izquierda $a=${fmt(a, 4)}$, derecha $0.10-a=${fmt(0.1 - a, 4)}$ → $9b_1=${fmt(lo, 3)}$, $9b_2=${isFinite(hi) ? fmt(hi, 3) : '\\infty'}$<br>
+        $b_1=$ <b>${fmt(b1, 3)}</b>, $b_2=$ <b>${isFinite(b2) ? fmt(b2, 3) : '∞'}</b>, longitud $b_2-b_1=$ <b>${isFinite(b2) ? fmt(b2 - b1, 3) : '∞'}</b>${Math.abs(a - 0.05) < 1e-9 ? ' ← colas iguales (respuesta del Ejemplo 3)' : ''}`);
+    }
+    EM.ui.slider(part(root, '.controls'), { label: 'cola izquierda a', min: 0, max: 0.1, step: 0.0025, value: a, fmt: v => v.toFixed(4), onInput: v => { a = v; render(); } });
+    render();
+  })();
+
+  // ====================== Figura t ======================
+  (function () {
+    const root = byId('fig-t'); let nu = 3;
+    const p = EM.plot.create(part(root, '.plot'), { xmin: -5, xmax: 5, ymin: 0, ymax: 0.45, height: 260, xlabel: 'x' });
+    const out = EM.ui.readout(part(root, '.out'));
+    function render() {
+      const T = D.t(nu);
+      p.draw(g => {
+        g.area(T.pdf, -5, -2, { color: 'c2', alpha: 0.35 }); g.area(T.pdf, 2, 5, { color: 'c2', alpha: 0.35, label: 'colas |x| > 2 de la t' });
+        g.curve(Z01.pdf, { color: 'muted', dash: [5, 4], label: 'N(0, 1)' });
+        g.curve(T.pdf, { color: 'c1', label: `t(${nu})` });
+      });
+      const v = nu > 2 ? fmt(nu / (nu - 2), 3) : (nu > 1 ? '\\infty' : '\\text{no existe}');
+      out.set(`$\\P(|T|\\gt 2)=$ <b>${fmt(2 * T.sf(2), 4)}</b> frente a $\\P(|Z|\\gt 2)=$ <b>${fmt(2 * Z01.sf(2), 4)}</b> · $\\Var(T)=${v}$ · cuantil 97.5%: <b>${fmt(T.q(0.975), 3)}</b> (normal: 1.960)`);
+    }
+    EM.ui.slider(part(root, '.controls'), { tex: '\\nu', min: 1, max: 60, step: 1, value: nu, onInput: v => { nu = v; render(); } });
+    render();
+  })();
+
+  // ====================== Sim (d): T vs t(n-1) vs N(0,1) ======================
+  (function () {
+    const root = byId('sim-t');
+    let n = 4, denom = 'S', data = [];
+    const p = EM.plot.create(part(root, '.plot'), { xmin: -5, xmax: 5, ymin: 0, ymax: 0.45, height: 290, xlabel: 'T' });
+    const out = EM.ui.readout(part(root, '.out'));
+    function sim() {
+      const M = Math.min(10000, Math.floor(200000 / n));
+      data = new Array(M);
+      for (let i = 0; i < M; i++) {
+        const r = sampleMS(n, () => 12 + 2 * S.rnorm01()); // μ = 12, σ = 2
+        const sd = denom === 'S' ? Math.sqrt(r.ss / (n - 1)) : 2;
+        data[i] = (r.m - 12) / (sd / Math.sqrt(n));
+      }
+      render();
+    }
+    function render() {
+      const nu = n - 1, T = D.t(nu);
+      p.draw(g => {
+        g.hist(data, { bins: 80, range: [-5, 5], color: 'c2', label: denom === 'S' ? 'T = (Ȳ−μ)/(S/√n) simulada' : 'Z = (Ȳ−μ)/(σ/√n) simulada' });
+        g.curve(T.pdf, { color: 'c1', label: `t(n−1) = t(${nu})` });
+        g.curve(Z01.pdf, { color: 'ink', dash: [5, 4], width: 1.6, label: 'N(0, 1)' });
+      });
+      const emp = S.prop(data, x => Math.abs(x) > 2), out5 = S.prop(data, x => Math.abs(x) > 5);
+      const ve = S.var(data);
+      const vt = denom === 'S' ? (nu > 2 ? `teoría $\\nu/(\\nu-2)=${fmt(nu / (nu - 2), 3)}$` : 'teoría: $\\infty$ (ν ≤ 2), por eso no se estabiliza') : 'teoría: 1';
+      out.set(`$\\P(|\\cdot|\\gt 2)$: simulada <b>${fmt(emp, 4)}</b> · $t_{(${nu})}$: <b>${fmt(2 * T.sf(2), 4)}</b> · $N(0,1)$: <b>0.0455</b><br>
+        Fuera de la gráfica ($|\\cdot|\\gt 5$): ${fmt(100 * out5, 2)} % · Varianza simulada: <b>${fmt(ve, 3)}</b> (${vt})`);
+    }
+    const c = part(root, '.controls');
+    EM.ui.slider(c, { tex: 'n', min: 2, max: 30, step: 1, value: n, onInput: v => { n = v; sim(); } });
+    EM.ui.select(c, { label: 'Dividir por', value: denom, options: [{ value: 'S', label: 'S/√n (σ desconocida)' }, { value: 'sigma', label: 'σ/√n (σ conocida)' }], onChange: v => { denom = v; sim(); } });
+    EM.ui.button(c, 'Simular de nuevo', sim, { primary: true });
+    sim();
+  })();
+
+  // ====================== Sim (e2): acotador con la tabla t ======================
+  (function () {
+    const root = byId('sim-acotar');
+    let nuKey = '8', c = 0.7059;
+    const p = EM.plot.create(part(root, '.plot'), { xmin: -4.5, xmax: 4.5, ymin: 0, ymax: 0.45, height: 260, xlabel: 't' });
+    const out = EM.ui.readout(part(root, '.out'));
+    const tblHost = EM.ui.el('div', { class: 'table-wrap' }); root.append(tblHost);
+    function bracket(row, x) {
+      // devuelve [p1, t1, idx1, p2, t2, idx2] con t1 <= x <= t2
+      let i1 = -1, i2 = -1;
+      for (let i = 0; i < row.length; i++) { if (row[i] <= x) i1 = i; if (row[i] >= x && i2 < 0) i2 = i; }
+      const lo = i1 < 0 ? [0.5, 0, -1] : [T_COLS[i1], row[i1], i1];
+      const hi = i2 < 0 ? [1, Infinity, -1] : [T_COLS[i2], row[i2], i2];
+      return { p1: lo[0], t1: lo[1], i1: lo[2], p2: hi[0], t2: hi[1], i2: hi[2] };
+    }
+    function render() {
+      const nu = nuKey === 'inf' ? Infinity : +nuKey, T = tDist(nu);
+      const row = T_TAB[nuKey === 'inf' ? 'Infinity' : nuKey];
+      p.draw(g => {
+        g.area(T.pdf, -c, c, { color: 'accent', alpha: 0.35, label: 'P(|T| ≤ c)' });
+        g.curve(Z01.pdf, { color: 'muted', dash: [5, 4], label: 'N(0, 1)' });
+        g.curve(T.pdf, { color: 'c1', label: isFinite(nu) ? `t(${nu})` : 't(∞) = N(0,1)' });
+        g.vline(-c, {}); g.vline(c, { label: 'c' });
+      });
+      const b = bracket(row, c);
+      const exact = 2 * T.cdf(c) - 1;
+      const pl = v => v === 0.5 ? '0.5' : (Math.abs(v - 2 / 3) < 1e-9 ? '0.667' : fmt(v, 3));
+      const tl = v => isFinite(v) ? fmt(v, 3) : '\\infty';
+      const loTxt = b.i1 < 0 ? '$t_{0.5}=0$ (simetría)' : `columna ${T_LAB[b.i1]} → ${fmt(b.t1, 3)}`;
+      const hiTxt = b.i2 < 0 ? 'más allá de la última columna' : `columna ${T_LAB[b.i2]} → ${fmt(b.t2, 3)}`;
+      out.set(`Fila $\\nu=${isFinite(nu) ? nu : '\\infty'}$: ${loTxt} $\\le c=${fmt(c, 4)}\\le$ ${hiTxt}<br>
+        ⇒ $${pl(b.p1)}\\le \\P(T\\le c)\\le ${pl(b.p2)}$ ⇒ <b>$${fmt(2 * b.p1 - 1, 3)}\\le \\P(|T|\\le c)\\le ${fmt(2 * b.p2 - 1, 3)}$</b><br>
+        Valor exacto (software): $\\P(|T|\\le c)=$ <b>${fmt(exact, 4)}</b>`);
+      // fila de la tabla resaltada
+      let h = '<table class="tabla tabla-mini"><tr><th>ν</th>' + T_LAB.map((l, i) => `<th class="${i === b.i1 || i === b.i2 ? 'hl' : ''}">${l}</th>`).join('') + '</tr>';
+      h += `<tr><td class="hl">${isFinite(nu) ? nu : '∞'}</td>` + row.map((v, i) => `<td class="${i === b.i1 || i === b.i2 ? 'hit' : ''}">${v.toFixed(3)}</td>`).join('') + '</tr></table>';
+      tblHost.innerHTML = h;
+    }
+    const ctr = part(root, '.controls');
+    const keys = Object.keys(T_TAB).filter(k => k !== 'Infinity').sort((x, y) => x - y);
+    EM.ui.select(ctr, { tex: '\\nu', value: nuKey, options: keys.map(k => ({ value: k, label: k })).concat([{ value: 'inf', label: '∞ (normal)' }]), onChange: v => { nuKey = v; render(); } });
+    EM.ui.slider(ctr, { tex: 'c', min: 0, max: 4, step: 0.0001, value: c, fmt: v => v.toFixed(4), onInput: v => { c = v; render(); } });
+    render();
+  })();
+
+  // ====================== Sim (e3): pivote del Ejemplo 5 ======================
+  (function () {
+    const root = byId('sim-pivote');
+    let sigma = 1.275;
+    const out = EM.ui.readout(part(root, '.out'));
+    function sim() {
+      const M = 20000, n = 9, mu = 12, k = 0.9 / 1.275; // 0.7059
+      let hitT = 0, hitFix = 0;
+      for (let i = 0; i < M; i++) {
+        const r = sampleMS(n, () => mu + sigma * S.rnorm01());
+        const s = Math.sqrt(r.ss / (n - 1)), d = Math.abs(r.m - mu);
+        if (d <= k * s / 3) hitT++;
+        if (d <= 0.3) hitFix++;
+      }
+      out.set(`$\\sigma$ verdadera $=${fmt(sigma, 3)}$ · 20 000 muestras de $n=9$<br>
+        Evento del Ej. 5, $|\\bar Y-\\mu|\\le 0.7059\\,S/3$: <b>${fmt(hitT / M, 3)}</b> (teoría $2F_{t_{(8)}}(0.7059)-1=0.4997$, para toda $\\sigma$)<br>
+        Margen fijo, $|\\bar Y-\\mu|\\le 0.3$: <b>${fmt(hitFix / M, 3)}</b> (teoría $2\\Phi(0.9/\\sigma)-1=${fmt(2 * Z01.cdf(0.9 / sigma) - 1, 4)}$, depende de $\\sigma$)`);
+    }
+    const c = part(root, '.controls');
+    EM.ui.slider(c, { tex: '\\sigma', min: 0.3, max: 3, step: 0.005, value: sigma, fmt: v => v.toFixed(3), onInput: v => { sigma = v; } });
+    EM.ui.button(c, 'Simular 20 000 muestras', sim, { primary: true });
+    sim();
+  })();
+
+  // ====================== Autoevaluación ======================
+  EM.ui.quiz('#quiz-estadistico', {
+    question: 'Con una muestra de $N(\\mu,\\sigma^2)$ y $\\mu,\\sigma$ desconocidas, ¿cuál de estas cantidades es un estadístico?',
+    options: ['$\\dfrac{\\bar Y-\\mu}{S/\\sqrt n}$', '$\\dfrac{(n-1)S^2}{\\sigma^2}$', '$\\max(Y_1,\\dots,Y_n)-\\min(Y_1,\\dots,Y_n)$', '$\\sum (Y_i-\\mu)^2$'],
+    answer: 2,
+    explain: 'El rango $Y_{(n)}-Y_{(1)}$ sólo usa los datos. Las otras necesitan $\\mu$ o $\\sigma$, que no conoces: son pivotes, no estadísticos.',
+  });
+  EM.ui.quiz('#quiz-chi', {
+    question: 'En la tabla χ² de ESPOL, fila $\\nu=9$, columna 95.0% dice 16.919. ¿Qué significa?',
+    options: ['$\\P(\\chi^2_{(9)}\\gt 16.919)=0.95$', '$\\P(\\chi^2_{(9)}\\le 16.919)=0.95$, o sea $\\chi^2_{(9),0.05}=16.919$', '$\\P(\\chi^2_{(9)}\\le 16.919)=0.05$', 'Que la media de la $\\chi^2_{(9)}$ es 16.919'],
+    answer: 1,
+    explain: 'Las tablas ESPOL dan el área a la IZQUIERDA. Área 0.95 a la izquierda = 0.05 a la derecha, que en la notación de clase es $\\chi^2_{(9),0.05}$. La media es $\\nu=9$.',
+  });
+  EM.ui.quiz('#quiz-t', {
+    question: 'Muestra normal de $n=12$ con $\\sigma$ desconocida. ¿Qué valor $c$ cumple $\\P(-c\\le T\\le c)=0.95$ para $T=(\\bar Y-\\mu)/(S/\\sqrt n)$?',
+    options: ['1.960 (fila ∞, columna 97.5%)', '2.179 (fila 12, columna 97.5%)', '2.201 (fila 11, columna 97.5%)', '1.796 (fila 11, columna 95%)'],
+    answer: 2,
+    explain: 'g.l. $=n-1=11$. Dejar 0.95 en el centro deja 0.025 en cada cola, o sea área 0.975 a la izquierda de $c$: columna 97.5%, fila 11 → 2.201.',
+  });
+  EM.ui.numcheck('#nc-ej2', {
+    prompt: 'Variante del Ejemplo 2 con $n=16$ (σ = 1): $\\P(|\\bar Y-\\mu|\\le 0.3)=$',
+    answer: 2 * Z01.cdf(1.2) - 1, tol: 0.002,
+    hint: '$0.3/(1/4)=1.2$ y $2\\Phi(1.2)-1$, con $\\Phi(1.2)=0.8849$.',
+  });
+  EM.ui.numcheck('#nc-ej3', {
+    prompt: '$b_1=$ (tabla: fila 9, columna 2.5%)', answer: 2.700 / 9, tol: 0.002, hint: '$9b_1=2.700$ ⇒ $b_1=0.300$.',
+  });
+  EM.ui.numcheck('#nc-ej3', {
+    prompt: '$b_2=$ (tabla: fila 9, columna 97.5%)', answer: 19.023 / 9, tol: 0.002, hint: '$9b_2=19.023$ ⇒ $b_2=2.114$.',
+  });
+  EM.ui.numcheck('#nc-ej5', {
+    prompt: 'Con $s=1.0$: $c=0.3\\sqrt 9/s=$', answer: 0.9, tol: 0.001, hint: '$0.9/1.0$.',
+  });
+  EM.ui.numcheck('#nc-ej5', {
+    prompt: 'Valor exacto de $\\P(|T|\\le 0.9)$, $T\\sim t_{(8)}$:', answer: 2 * D.t(8).cdf(0.9) - 1, tol: 0.003,
+    hint: 'fila 8: 0.889 (80%) ≤ 0.9 ≤ 1.240 (87.5%) ⇒ entre 0.60 y 0.75; el exacto es ≈ 0.606.',
+  });
+  EM.ui.quiz('#quiz-final', {
+    question: 'Muestra normal de tamaño $n=15$. ¿Qué distribución tiene $14S^2/\\sigma^2$ y por qué no $\\chi^2_{(15)}$?',
+    options: ['$\\chi^2_{(15)}$, porque hay 15 datos', '$\\chi^2_{(14)}$: al usar $\\bar Y$ en lugar de $\\mu$ los desvíos suman cero y se pierde un g.l.', '$t_{(14)}$, porque $\\sigma$ es desconocida', '$N(14,28)$ exactamente'],
+    answer: 1,
+    explain: 'Teorema 2: $(n-1)S^2/\\sigma^2\\sim\\chi^2_{(n-1)}$. La $t$ aparece al dividir una normal estándar por $\\sqrt{\\chi^2/\\nu}$; $N(14,28)$ es sólo una aproximación para $\\nu$ grande.',
+  });
+  EM.ui.quiz('#quiz-final', {
+    question: 'Si la población NO es normal (p. ej. exponencial), ¿qué parte de esta clase deja de valer?',
+    options: ['Sólo que $\\E[\\bar Y]=\\mu$', 'La independencia $\\bar Y\\ind S^2$ y las distribuciones exactas $N$, $\\chi^2$ y $t$', 'Nada, todo sigue igual', 'Sólo la fórmula de $S^2$'],
+    answer: 1,
+    explain: '$\\E[\\bar Y]=\\mu$ y $\\Var(\\bar Y)=\\sigma^2/n$ valen siempre, pero las distribuciones exactas y la independencia usan la normalidad (simulación (c)). Para $n$ grande, el TLC (Clase 5) rescata la normalidad aproximada de $\\bar Y$.',
+  });
+})();
+</script>
+</body>
+</html>

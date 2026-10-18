@@ -1,0 +1,1865 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lista 1.1 · Transformaciones</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/theme.js"></script>
+<style>
+  /* estilos propios de esta página (no tocan la hoja común) */
+  .tecnica { font-family: var(--font-ui); font-size: 14px; color: var(--muted); margin: 10px 0 4px; }
+  .tecnica a { font-weight: 600; }
+  .figs { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin: 12px 0; }
+  .fig { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 6px 10px 8px; }
+  .fig figcaption { font: 13px/1.4 var(--font-ui); color: var(--muted); text-align: center; }
+  .fig .controls { margin: 4px 0; }
+  .indice-partes { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+  .indice-partes > div { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 14px; }
+  .indice-partes h3 { margin: 4px 0 6px; font-size: 15px; }
+  .indice-partes ol { margin: 0; padding-left: 1.6em; font-size: 16px; }
+  .chk { border: 1px dashed var(--line); border-radius: var(--radius); padding: 4px 12px; margin: 12px 0; background: var(--surface); }
+  .chk-title { font: 600 13px var(--font-ui); color: var(--muted); margin: 6px 0 0; }
+  .resultado { border: 2px solid var(--good); border-radius: var(--radius); padding: 8px 14px; margin: 12px 0; background: var(--surface); }
+  details.verif > summary { color: var(--accent); }
+  .sol-inciso { font-family: var(--font-ui); font-size: 17px; margin: 22px 0 6px; padding-top: 8px; border-top: 1px dashed var(--line); }
+  .pasos-uso { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-family: var(--font-ui); font-size: 14px; margin: 10px 0; }
+  .pasos-uso span.pu { background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; }
+  .pasos-uso span.flecha { color: var(--muted); }
+</style>
+</head>
+<body data-root="../" data-page="lista-1-1">
+<main id="contenido">
+
+  <header class="page-head">
+    <p class="kicker">Deber · Lista 1.1 · II PAO 2026</p>
+    <h1>Transformaciones y estadísticos de orden</h1>
+    <p class="lead">Los 12 ejercicios del deber con pistas graduales, la solución completa (como la entregarías) y una simulación para comprobar cada resultado.</p>
+    <p><span class="badge">Entrega: martes 20/10/2026</span></p>
+  </header>
+
+  <section>
+    <h2 id="como-usar">Cómo usar esta página</h2>
+    <p>La instrucción del deber es <em>“Resuelva los siguientes ejercicios justificando cada paso”</em>. Esta página está pensada para que <b>tú</b> lo resuelvas; por eso todo lo que da la respuesta viene plegado. Para cada ejercicio:</p>
+    <div class="pasos-uso">
+      <span class="pu">1 · Intenta solo (papel y lápiz)</span><span class="flecha">→</span>
+      <span class="pu">2 · Pista 1</span><span class="flecha">→</span>
+      <span class="pu">3 · Pista 2 (y 3)</span><span class="flecha">→</span>
+      <span class="pu">4 · Solución completa</span><span class="flecha">→</span>
+      <span class="pu">5 · Verificación por simulación</span>
+    </div>
+    <ul>
+      <li>Antes de abrir la solución, usa los cuadros <b>“Comprueba tu respuesta”</b>: escribes tu número y te dice si está bien, sin revelar nada.</li>
+      <li>Cada ejercicio dice qué <b>técnica</b> usa y enlaza a la parte de la <a href="../temas/clase-01.html">Clase 1</a> donde se explica.</li>
+      <li>Las soluciones están escritas al nivel de lo que se entrega: soporte, planteamiento, cálculo y conclusión. Cópialas a tu manera, no al pie de la letra: entenderlas es lo que te sirve para el examen.</li>
+    </ul>
+
+    <div class="box cuidado">
+      <span class="box-title">Trampas de notación de este deber</span>
+      <ol>
+        <li><b>Estadísticos de orden sin paréntesis.</b> En la Parte III el deber escribe $Y_1\le Y_2\le\dots\le Y_n$ para los estadísticos de orden de $X_1,\dots,X_n$. En clase (y en Wackerly) se escriben $Y_{(1)}\le\dots\le Y_{(n)}$. O sea: en este deber $Y_1$ es el <b>mínimo</b> y $Y_n$ el <b>máximo</b>, no “la primera observación”. (En la Parte II, en cambio, $Y$ es simplemente otra variable.)</li>
+        <li><b>“Parámetro λ” = tasa.</b> “Exponencial de parámetro $\lambda$” significa $f(x)=\lambda e^{-\lambda x}$, $x&gt;0$, con media $1/\lambda$. El Formulario 2 usa $\text{Exp}(\beta)$ con <b>media</b> $\beta$: la conversión es $\beta=1/\lambda$. Ejemplo: “parámetro $1/4$” (ej. 7) es media de 4 años, no de 1/4 de año.</li>
+        <li><b>Gamma con tasa.</b> $\text{Gamma}(r,\lambda)$ del ej. 6 tiene densidad $\dfrac{\lambda^r x^{r-1}e^{-\lambda x}}{\Gamma(r)}$ y media $r/\lambda$. En el Formulario es $G(\alpha=r,\ \beta=1/\lambda)$, con $\beta$ <b>escala</b>.</li>
+        <li><b>“Función de distribución”</b> = función de distribución <b>acumulada</b> $F(t)=\P(\cdot\le t)$, definida para <b>todo</b> $t\in\R$. Escríbela siempre por tramos, incluidos los tramos donde vale 0 y 1.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section>
+    <h2 id="indice">Índice de ejercicios</h2>
+    <div class="indice-partes">
+      <div>
+        <h3>Parte I · Una variable</h3>
+        <ol>
+          <li value="1"><a href="#ej-1">Uniforme en [0, 10]: $X^2+2$, recorte y $|X-4|$</a></li>
+          <li value="2"><a href="#ej-2">Distancia al centro de una esfera</a></li>
+          <li value="3"><a href="#ej-3">El faro y la Cauchy</a></li>
+        </ol>
+      </div>
+      <div>
+        <h3>Parte II · Vectores y Jacobiano</h3>
+        <ol>
+          <li value="4"><a href="#ej-4">$f=kxy$ en un triángulo</a></li>
+          <li value="5"><a href="#ej-5">$|X-Y|$ y $X+Y$ con exponenciales</a></li>
+          <li value="6"><a href="#ej-6">Gamma + Gamma: suma y proporción</a></li>
+        </ol>
+      </div>
+      <div>
+        <h3>Parte III · Estadísticos de orden</h3>
+        <ol>
+          <li value="7"><a href="#ej-7">Máquina con cuatro componentes</a></li>
+          <li value="8"><a href="#ej-8">Tres uniformes ordenadas</a></li>
+          <li value="9"><a href="#ej-9">La central telefónica</a></li>
+          <li value="10"><a href="#ej-10">Rango y punto medio muestral</a></li>
+          <li value="11"><a href="#ej-11">Un par cualquiera de estadísticos de orden</a></li>
+          <li value="12"><a href="#ej-12">Cocientes $Y_i/Y_{i+1}$</a></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       PARTE I
+       ================================================================ -->
+  <section>
+    <h2 id="parte-1">Parte I · Función de distribución y transformaciones de una variable</h2>
+
+    <!-- ========================= EJERCICIO 1 ========================= -->
+    <div class="box ejercicio" id="ej-1">
+      <span class="box-title">Ejercicio 1</span>
+      <p>Sea $X$ una variable aleatoria con distribución uniforme en el intervalo $[0,10]$. Determine la función de distribución de las siguientes variables aleatorias:</p>
+      <ol type="a">
+        <li>$Y=X^2+2$.</li>
+        <li>$W=\max\{2,\ \min\{4,X\}\}$. ¿Es $W$ una variable aleatoria continua?</li>
+        <li>$Z=|X-4|$.</li>
+      </ol>
+      <p class="tecnica">Técnica: método de la distribución acumulada → <a href="../temas/clase-01.html#acumulada">Clase 1 · método de la acumulada</a></p>
+
+      <div class="chk" id="chk-1"><p class="chk-title">Comprueba tu respuesta (sin ver la solución)</p></div>
+
+      <details class="pista"><summary>Pista 1 · cómo empezar</summary><div>
+        <p>Todo sale de $F_X(x)=\P(X\le x)=x/10$ para $0\le x\le 10$. Para cada variable nueva haz siempre lo mismo:</p>
+        <ol>
+          <li>Encuentra su <b>soporte</b> (qué valores puede tomar) usando que $X\in[0,10]$.</li>
+          <li>Escribe el evento $\{Y\le y\}$ como un evento sobre $X$ y calcula su probabilidad con $F_X$.</li>
+          <li>Pon los tramos donde la acumulada vale 0 y 1.</li>
+        </ol>
+      </div></details>
+      <details class="pista"><summary>Pista 2 · el evento en cada inciso</summary><div>
+        <ul>
+          <li>(a) $X^2+2\le y \iff X^2\le y-2 \iff -\sqrt{y-2}\le X\le \sqrt{y-2}$. Como $X\ge 0$, la parte negativa no aporta.</li>
+          <li>(b) Haz una tabla: ¿qué vale $W$ si $X\le 2$? ¿si $2&lt;X&lt;4$? ¿si $X\ge 4$? Luego calcula $\P(W=2)$ y $\P(W=4)$.</li>
+          <li>(c) $|X-4|\le z \iff 4-z\le X\le 4+z$. Cuidado: ese intervalo se sale de $[0,10]$ por la izquierda cuando $z&gt;4$.</li>
+        </ul>
+      </div></details>
+      <details class="pista"><summary>Pista 3 · la pregunta de (b)</summary><div>
+        <p>Una v.a. es continua si su acumulada es continua (equivalente: $\P(W=w)=0$ para todo $w$). Mira si $F_W$ salta. Y si no es continua, ¿es discreta? Una discreta concentra <b>toda</b> su probabilidad en una cantidad numerable de puntos: suma los saltos y compara con 1.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <p><b>Punto de partida.</b> $X\sim U[0,10]$: $f_X(x)=\tfrac1{10}$ en $[0,10]$ y
+        $$F_X(x)=\begin{cases}0,&amp;x&lt;0,\\ x/10,&amp;0\le x\le 10,\\ 1,&amp;x&gt;10.\end{cases}$$</p>
+
+        <p class="sol-inciso">(a) $Y=X^2+2$</p>
+        <ol class="pasos">
+          <li><b>Soporte.</b> Como $0\le X\le 10$, $\;2\le X^2+2\le 102$. Así $Y\in[2,102]$.</li>
+          <li><b>Fuera del soporte.</b> Si $y&lt;2$, $\{Y\le y\}=\varnothing$ y $F_Y(y)=0$. Si $y\ge 102$, $\{Y\le y\}$ es seguro y $F_Y(y)=1$.</li>
+          <li><b>Dentro del soporte</b> ($2\le y&lt;102$):
+            $$\begin{aligned}F_Y(y)&=\P(X^2+2\le y)=\P\big(-\sqrt{y-2}\le X\le\sqrt{y-2}\big)\\&=\P\big(X\le\sqrt{y-2}\big)=\frac{\sqrt{y-2}}{10},\end{aligned}$$
+            donde quitamos el extremo izquierdo porque $\P(X&lt;0)=0$, y usamos $F_X$ porque $\sqrt{y-2}\in[0,10]$.</li>
+          <li><b>Resultado.</b>
+            <div class="resultado">$$F_Y(y)=\begin{cases}0,&amp;y&lt;2,\\[2pt] \dfrac{\sqrt{y-2}}{10},&amp;2\le y&lt;102,\\[4pt] 1,&amp;y\ge 102,\end{cases}$$ $$f_Y(y)=F_Y'(y)=\frac{1}{20\sqrt{y-2}},\quad 2&lt;y&lt;102.$$</div>
+            $F_Y$ es continua (en $y=102$ vale $\sqrt{100}/10=1$), así que $Y$ es continua. Su densidad no es acotada cerca de $y=2$ pero sí integrable.</li>
+        </ol>
+
+        <p class="sol-inciso">(b) $W=\max\{2,\min\{4,X\}\}$</p>
+        <ol class="pasos">
+          <li><b>Qué hace $W$.</b> “Recorta” a $X$ al intervalo $[2,4]$:
+            <div class="table-wrap"><table class="tabla">
+              <tr><th>Si…</th><th>$\min\{4,X\}$</th><th>$W$</th><th>Probabilidad</th></tr>
+              <tr><td>$X\le 2$</td><td>$X$</td><td>$\max\{2,X\}=2$</td><td>$\P(X\le2)=0.2$</td></tr>
+              <tr><td>$2&lt;X&lt;4$</td><td>$X$</td><td>$X$</td><td>$0.2$</td></tr>
+              <tr><td>$X\ge 4$</td><td>$4$</td><td>$\max\{2,4\}=4$</td><td>$\P(X\ge4)=0.6$</td></tr>
+            </table></div>
+            Por tanto $W\in[2,4]$, con $\P(W=2)=0.2$ y $\P(W=4)=0.6$.</li>
+          <li><b>Acumulada.</b> Si $w&lt;2$: $F_W(w)=0$ (siempre $W\ge 2$). Si $w\ge 4$: $F_W(w)=1$ (siempre $W\le 4$). Si $2\le w&lt;4$, de la tabla, $W\le w$ ocurre exactamente cuando $X\le w$ (si $X\le 2$, $W=2\le w$; si $2&lt;X&lt;4$, $W=X$; si $X\ge 4$, $W=4&gt;w$). Luego $F_W(w)=\P(X\le w)=w/10$.
+            <div class="resultado">$$F_W(w)=\begin{cases}0,&amp;w&lt;2,\\ w/10,&amp;2\le w&lt;4,\\ 1,&amp;w\ge 4.\end{cases}$$</div></li>
+          <li><b>¿Es continua?</b> <b>No.</b> $F_W$ tiene dos saltos:
+            $$\begin{aligned}F_W(2)-F_W(2^-)&=0.2-0=0.2=\P(W=2),\\ F_W(4)-F_W(4^-)&=1-0.4=0.6=\P(W=4).\end{aligned}$$
+            Una v.a. continua cumple $\P(W=w)=0$ para todo $w$ (su acumulada es continua); aquí hay puntos con probabilidad positiva. En particular $W$ <b>no tiene densidad</b>: no existe $f$ con $\P(W\in A)=\int_A f$.</li>
+          <li><b>¿Es discreta?</b> <b>Tampoco.</b> Los átomos suman $0.2+0.6=0.8&lt;1$; el $0.2$ restante está repartido de forma continua en $(2,4)$, donde cada punto tiene probabilidad 0. Así que $W$ es una variable <b>mixta</b>:
+            $$F_W = 0.8\,F_{\text{disc}}+0.2\,F_{U(2,4)},$$ donde $F_{\text{disc}}$ es la acumulada discreta con $\P(2)=\tfrac14$, $\P(4)=\tfrac34$.
+            (Comprobación: para $2\le w&lt;4$, $0.8\cdot\frac14+0.2\cdot\frac{w-2}{2}=\frac{w}{10}$.)</li>
+          <li><b>Extra:</b> su media se calcula sumando la parte discreta y la continua: $\E[W]=2(0.2)+\int_2^4 w\,\tfrac{1}{10}\,dw+4(0.6)=0.4+0.6+2.4=3.4$.</li>
+        </ol>
+        <div class="figs">
+          <figure class="fig"><div id="fig1-FW"></div><figcaption>$F_W$: saltos de 0.2 en $w=2$ y de 0.6 en $w=4$ (● valor que toma, ○ valor que no toma).</figcaption></figure>
+          <figure class="fig"><div id="fig1-FY"></div><figcaption>$F_Y(y)=\sqrt{y-2}/10$: continua, sube muy rápido al inicio.</figcaption></figure>
+        </div>
+
+        <p class="sol-inciso">(c) $Z=|X-4|$</p>
+        <ol class="pasos">
+          <li><b>Soporte.</b> $X-4\in[-4,6]$, así que $Z\in[0,6]$. Si $z&lt;0$, $F_Z(z)=0$; si $z\ge 6$, $F_Z(z)=1$.</li>
+          <li><b>Evento.</b> Para $z\ge0$: $\{|X-4|\le z\}=\{4-z\le X\le 4+z\}$. Hay que ver cuándo ese intervalo cabe en $[0,10]$:
+            <ul>
+              <li>$0\le z\le 4$: $4-z\ge0$ y $4+z\le 8\le10$, cabe entero: $F_Z(z)=\dfrac{(4+z)-(4-z)}{10}=\dfrac{z}{5}$.</li>
+              <li>$4&lt;z&lt;6$: $4-z&lt;0$, el extremo izquierdo se sale; $\{Z\le z\}=\{0\le X\le 4+z\}$ y $F_Z(z)=\dfrac{4+z}{10}$.</li>
+            </ul></li>
+          <li><b>Resultado.</b>
+            <div class="resultado">$$F_Z(z)=\begin{cases}0,&amp;z&lt;0,\\ z/5,&amp;0\le z\le 4,\\ (4+z)/10,&amp;4&lt;z&lt;6,\\ 1,&amp;z\ge 6,\end{cases}$$ $$f_Z(z)=\begin{cases}1/5,&amp;0&lt;z&lt;4,\\ 1/10,&amp;4&lt;z&lt;6.\end{cases}$$</div>
+            Es continua: en $z=4$ ambos tramos dan $0.8$ y en $z=6$ dan $1$. <b>Intuición:</b> para $z&lt;4$ hay <em>dos</em> valores de $X$ ($4\pm z$) que producen el mismo $Z$; para $z&gt;4$ sólo uno ($4+z$). Por eso la densidad se reduce a la mitad.</li>
+        </ol>
+        <figure class="fig"><div class="controls" id="fig1-Zctl"></div><div id="fig1-Z"></div><figcaption>Mueve $z$: la franja sombreada es $\{Z\le z\}$ vista sobre la densidad de $X$. Cuando $z&gt;4$ deja de crecer por la izquierda.</figcaption><div id="fig1-Zout"></div></figure>
+      </div></details>
+
+      <details class="verif"><summary>Verificación por simulación</summary><div>
+        <div class="sim" id="sim-1">
+          <p class="sim-title">Acumulada empírica vs. la que calculaste</p>
+          <p class="sim-desc">Se generan valores de $X\sim U[0,10]$, se transforman y se dibuja la proporción de valores $\le t$ (acumulada empírica, naranja) sobre la fórmula teórica (azul).</p>
+          <div class="controls"></div>
+          <div class="plot"></div>
+          <div class="out"></div>
+        </div>
+      </div></details>
+    </div>
+
+    <!-- ========================= EJERCICIO 2 ========================= -->
+    <div class="box ejercicio" id="ej-2">
+      <span class="box-title">Ejercicio 2</span>
+      <p>Se elige un punto de manera uniforme al azar dentro de una esfera de radio $R$. Sea $D$ su distancia al centro.</p>
+      <ol type="a">
+        <li>Halle la función de distribución acumulada de $D$.</li>
+        <li>Obtenga su densidad y calcule la esperanza $\E[D]$.</li>
+      </ol>
+      <p class="tecnica">Técnica: método de la acumulada con probabilidad geométrica (cociente de volúmenes) → <a href="../temas/clase-01.html#acumulada">Clase 1 · acumulada</a> (es el mismo tipo que el Ejercicio 3* de clase, el punto en un triángulo).</p>
+
+      <div class="chk" id="chk-2"><p class="chk-title">Comprueba tu respuesta (sin ver la solución)</p></div>
+
+      <details class="pista"><summary>Pista 1 · qué significa “uniforme dentro de la esfera”</summary><div>
+        <p>Que la probabilidad de caer en una región $A$ de la bola es proporcional a su volumen: $\P(\text{punto}\in A)=\dfrac{\text{Vol}(A)}{\text{Vol(bola)}}$. No hace falta ninguna integral triple.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 2 · el evento $\{D\le d\}$</summary><div>
+        <p>“Estar a distancia $\le d$ del centro” es estar dentro de la bola concéntrica de radio $d$. ¿Qué volumen tiene? Divide. Luego deriva y calcula $\int_0^R d\, f_D(d)\,dd$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <p><b>Interpretación.</b> “Dentro de una esfera” se entiende como la bola sólida $B_R=\{\mathbf p\in\R^3:\ \|\mathbf p\|\le R\}$, y “uniforme” significa $\P(\mathbf p\in A)=\text{Vol}(A)/\text{Vol}(B_R)$ para $A\subseteq B_R$, con $\text{Vol}(B_R)=\tfrac43\pi R^3$.</p>
+        <p class="sol-inciso">(a) Acumulada</p>
+        <ol class="pasos">
+          <li><b>Soporte.</b> $0\le D\le R$. Si $d&lt;0$, $F_D(d)=0$; si $d\ge R$, $F_D(d)=1$.</li>
+          <li><b>Evento.</b> Para $0\le d\le R$, $\{D\le d\}=\{\text{el punto cae en } B_d\}$, la bola concéntrica de radio $d$.</li>
+          <li><b>Probabilidad.</b> $$F_D(d)=\frac{\text{Vol}(B_d)}{\text{Vol}(B_R)}=\frac{\tfrac43\pi d^3}{\tfrac43\pi R^3}=\frac{d^3}{R^3}.$$
+            <div class="resultado">$$F_D(d)=\begin{cases}0,&amp;d&lt;0,\\ d^3/R^3,&amp;0\le d\le R,\\ 1,&amp;d&gt;R.\end{cases}$$</div></li>
+        </ol>
+        <p class="sol-inciso">(b) Densidad y esperanza</p>
+        <ol class="pasos">
+          <li><b>Densidad</b> (derivando el tramo central): <div class="resultado">$$f_D(d)=\frac{3d^2}{R^3},\qquad 0\le d\le R\quad(0\text{ fuera}).$$</div> Comprobación: $\int_0^R 3d^2/R^3\,dd=1$.</li>
+          <li><b>Esperanza.</b> $$\E[D]=\int_0^R d\cdot\frac{3d^2}{R^3}\,dd=\frac{3}{R^3}\cdot\frac{R^4}{4}=\boxed{\frac{3R}{4}}.$$
+            Otra forma (para variables no negativas): $\E[D]=\int_0^R\big(1-F_D(d)\big)dd=R-\frac{R}{4}=\frac{3R}{4}$.</li>
+          <li><b>Interpretación.</b> La densidad crece como $d^2$: hay mucho más volumen lejos del centro. La mediana cumple $(m/R)^3=1/2$, o sea $m=R/\sqrt[3]{2}\approx0.794R$: la mitad de los puntos está en la cáscara exterior de grosor $0.21R$. (Extra: $\Var(D)=\tfrac{3R^2}{80}$.)</li>
+        </ol>
+        <div class="box cuidado"><span class="box-title">Error típico</span>
+          Pensar que $D\sim U[0,R]$ (“elijo la distancia al azar”) o usar áreas ($d^2/R^2$, como si fuera un disco). En 3D el volumen escala con el cubo del radio.</div>
+        <div class="figs">
+          <figure class="fig"><div class="controls" id="fig2-ctl"></div><div id="fig2-corte"></div><figcaption>Corte por el centro: la bola $B_d$ (sombreada) dentro de $B_R$ ($R=1$).</figcaption><div id="fig2-out"></div></figure>
+          <figure class="fig"><div id="fig2-fF"></div><figcaption>$f_D(d)=3d^2$ y $F_D(d)=d^3$ para $R=1$; la línea marca $\E[D]=3/4$.</figcaption></figure>
+        </div>
+      </div></details>
+
+      <details class="verif"><summary>Verificación por simulación</summary><div>
+        <div class="sim" id="sim-2">
+          <p class="sim-title">Puntos al azar en la bola</p>
+          <p class="sim-desc">Se generan puntos uniformes en el cubo $[-R,R]^3$ y se conservan sólo los que caen en la bola (aceptación–rechazo). Histograma de sus distancias al centro vs. $f_D(d)=3d^2/R^3$.</p>
+          <div class="controls"></div>
+          <div class="plot"></div>
+          <div class="out"></div>
+        </div>
+      </div></details>
+    </div>
+
+    <!-- ========================= EJERCICIO 3 ========================= -->
+    <div class="box ejercicio" id="ej-3">
+      <span class="box-title">Ejercicio 3</span>
+      <p>Un faro a 1 km de una costa recta emite un haz de luz. El ángulo $\Theta$ entre el haz y la perpendicular a la costa es $\Theta\sim U(-\pi/2,\pi/2)$. Si $X$ es la distancia (con signo) desde el pie de la perpendicular hasta el punto iluminado en la costa, demuestre que $X$ sigue una distribución de Cauchy estándar.</p>
+      <figure class="fig"><div class="controls" id="fig3-ctl"></div><div id="fig3-faro"></div><figcaption>Mueve el ángulo $\Theta$ (ángulos a la derecha de la perpendicular son positivos y dan $X&gt;0$).</figcaption></figure>
+      <p class="tecnica">Técnica: método de la acumulada, o transformación monótona (Jacobiano 1D) → <a href="../temas/clase-01.html#acumulada">acumulada</a> · <a href="../temas/clase-01.html#jacobiano-1d">Jacobiano univariado</a></p>
+
+      <div class="chk" id="chk-3"><p class="chk-title">Comprueba tu respuesta (sin ver la solución)</p></div>
+
+      <details class="pista"><summary>Pista 1 · la relación entre $X$ y $\Theta$</summary><div>
+        <p>Mira el triángulo rectángulo de la figura: cateto adyacente a $\Theta$ = 1 km, cateto opuesto = $X$. ¿Qué función trigonométrica relaciona los catetos?</p>
+      </div></details>
+      <details class="pista"><summary>Pista 2 · invertir</summary><div>
+        <p>$X=\tan\Theta$. En $(-\pi/2,\pi/2)$ la tangente es <b>estrictamente creciente</b> y toma todos los valores reales, así que $\tan\Theta\le x\iff\Theta\le\arctan x$. Usa $F_\Theta(\theta)=\frac{\theta+\pi/2}{\pi}$.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 3 · qué hay que mostrar</summary><div>
+        <p>La Cauchy estándar tiene densidad $f(x)=\dfrac{1}{\pi(1+x^2)}$, $x\in\R$ (y acumulada $\frac12+\frac1\pi\arctan x$). Basta llegar a una de las dos.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Modelo.</b> En el triángulo rectángulo con vértices faro, pie de la perpendicular y punto iluminado, el cateto adyacente a $\Theta$ mide 1 y el opuesto mide $|X|$. Con el signo (derecha positivo, $\Theta&gt;0$ hacia la derecha): $$X=1\cdot\tan\Theta=\tan\Theta.$$</li>
+          <li><b>Distribución de $\Theta$.</b> $f_\Theta(\theta)=\frac1\pi$ y $F_\Theta(\theta)=\dfrac{\theta+\pi/2}{\pi}$ para $-\frac\pi2&lt;\theta&lt;\frac\pi2$.</li>
+          <li><b>Soporte y monotonía.</b> $h(\theta)=\tan\theta$ es continua y estrictamente creciente en $(-\pi/2,\pi/2)$, con imagen todo $\R$ y inversa $h^{-1}(x)=\arctan x\in(-\pi/2,\pi/2)$. Así $X$ toma valores en todo $\R$.</li>
+          <li><b>Acumulada.</b> Para cualquier $x\in\R$, por ser $\tan$ creciente:
+            $$\begin{aligned}F_X(x)&=\P(\tan\Theta\le x)=\P(\Theta\le\arctan x)\\&=\frac{\arctan x+\pi/2}{\pi}=\frac12+\frac{1}{\pi}\arctan x.\end{aligned}$$</li>
+          <li><b>Densidad.</b> Derivando, con $(\arctan x)'=\frac{1}{1+x^2}$:
+            <div class="resultado">$$f_X(x)=\frac{1}{\pi\,(1+x^2)},\qquad x\in\R,$$</div>
+            que es la densidad de la <b>Cauchy estándar</b> (posición 0, escala 1). $\blacksquare$</li>
+          <li><b>Mismo resultado por el Jacobiano</b> (fórmula de la clase, válida porque $h$ es monótona en el soporte): $f_X(x)=f_\Theta\big(h^{-1}(x)\big)\left|\frac{d h^{-1}(x)}{dx}\right|=\frac1\pi\cdot\frac{1}{1+x^2}$.</li>
+        </ol>
+        <div class="box nota"><span class="box-title">Para pensar</span>
+          Cuando $\Theta$ se acerca a $\pm\pi/2$ el haz llega casi paralelo a la costa y $X$ se va a $\pm\infty$: por eso la Cauchy tiene colas tan pesadas que <b>no tiene media</b> ($\int|x|\,f_X(x)\,dx=\infty$). En la simulación verás que el promedio de muchos $X$ nunca se estabiliza.</div>
+      </div></details>
+
+      <details class="verif"><summary>Verificación por simulación</summary><div>
+        <div class="sim" id="sim-3">
+          <p class="sim-title">Muchos destellos del faro</p>
+          <p class="sim-desc">Se generan ángulos $\Theta\sim U(-\pi/2,\pi/2)$ y se calcula $X=\tan\Theta$. Arriba: histograma (en $[-6,6]$) vs. densidad de Cauchy. Abajo: el promedio acumulado $\bar X_n$, que salta sin converger.</p>
+          <div class="controls"></div>
+          <div class="plot" data-k="h"></div>
+          <div class="plot" data-k="m"></div>
+          <div class="out"></div>
+        </div>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       PARTE II
+       ================================================================ -->
+  <section>
+    <h2 id="parte-2">Parte II · Vectores aleatorios y método del Jacobiano</h2>
+
+    <!-- ========================= EJERCICIO 4 ========================= -->
+    <div class="box ejercicio" id="ej-4">
+      <span class="box-title">Ejercicio 4</span>
+      <p>Sean $X$ e $Y$ variables aleatorias con función de densidad conjunta dada por
+      $$f(x,y)=\begin{cases}kxy, &amp; \text{si } x\ge0,\ y\ge0 \text{ y } x+y\le 1,\\ 0, &amp; \text{en caso contrario.}\end{cases}$$</p>
+      <ol type="a">
+        <li>Obtenga $k$.</li>
+        <li>Calcule las densidades marginales de $X$ e $Y$.</li>
+        <li>¿Son $X$ e $Y$ independientes?</li>
+        <li>Calcule las siguientes probabilidades: $\P(X\ge Y)$, $\P(X\ge 1/2\mid X+Y\le 3/4)$ y $\P(X^2+Y^2\le 1)$.</li>
+        <li>Obtenga la densidad conjunta de $U=X+Y$ y $V=X-Y$, así como las marginales.</li>
+      </ol>
+      <p class="tecnica">Técnica: integrales dobles sobre regiones (a–d) y Jacobiano bivariado (e) → <a href="../temas/clase-01.html#jacobiano-2d">Clase 1 · Jacobiano bivariado</a> (la transformación de (e) es la misma del <a href="../temas/clase-01.html#ejemplo-3">Ejemplo 3</a>).</p>
+
+      <div class="chk" id="chk-4"><p class="chk-title">Comprueba tu respuesta (sin ver la solución)</p></div>
+
+      <details class="pista"><summary>Pista 1 · dibuja el soporte</summary><div>
+        <p>El soporte es el triángulo $T$ de vértices $(0,0),(1,0),(0,1)$. Para un $x$ fijo en $[0,1]$, $y$ va de $0$ a $1-x$. Con eso salen (a) y (b): $\int_0^1\!\int_0^{1-x}kxy\,dy\,dx=1$ y $f_X(x)=\int_0^{1-x}f(x,y)\,dy$.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 2 · independencia y probabilidades</summary><div>
+        <ul>
+          <li>(c) Aunque $kxy$ “parece” un producto, el soporte <b>no es un rectángulo</b>. Busca un punto $(x,y)$ donde $f(x,y)=0$ pero $f_X(x)f_Y(y)&gt;0$.</li>
+          <li>(d) Dibuja cada región. Para $\P(X\ge Y)$ usa la simetría $f(x,y)=f(y,x)$. Para la condicional calcula numerador y denominador por separado; sirve probar que $\P(X+Y\le t)=t^4$. Para el disco: ¿dónde está el triángulo respecto al círculo unitario?</li>
+        </ul>
+      </div></details>
+      <details class="pista"><summary>Pista 3 · el soporte nuevo en (e)</summary><div>
+        <p>Inversa: $x=\frac{u+v}{2}$, $y=\frac{u-v}{2}$, $|J|=\frac12$. Traduce <b>cada</b> desigualdad del soporte: $x\ge0\iff v\ge -u$; $y\ge0\iff v\le u$; $x+y\le1\iff u\le1$. Dibuja la región en el plano $(u,v)$ antes de integrar las marginales: para $f_V$ los límites de $u$ dependen de $|v|$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <p>Llamemos $T=\{(x,y): x\ge0,\ y\ge0,\ x+y\le1\}$ al soporte.</p>
+        <p class="sol-inciso">(a) Constante $k$</p>
+        <p>Una densidad debe ser $\ge0$ (exige $k&gt;0$) e integrar 1:
+        $$\begin{aligned}1&=\int_0^1\!\!\int_0^{1-x}kxy\,dy\,dx=k\int_0^1 x\,\frac{(1-x)^2}{2}\,dx\\&=\frac k2\int_0^1(x-2x^2+x^3)\,dx=\frac k2\Big(\frac12-\frac23+\frac14\Big)=\frac{k}{24}.\end{aligned}$$</p>
+        <div class="resultado">$k=24$, es decir $f(x,y)=24xy$ en $T$.</div>
+
+        <p class="sol-inciso">(b) Marginales</p>
+        <p>Para $0\le x\le1$: $\displaystyle f_X(x)=\int_0^{1-x}24xy\,dy=24x\cdot\frac{(1-x)^2}{2}=12x(1-x)^2$, y $0$ fuera de $[0,1]$. Como $f(x,y)=f(y,x)$ y $T$ es simétrico, lo mismo para $Y$:</p>
+        <div class="resultado">$$\begin{aligned}f_X(x)&=12x(1-x)^2,\quad 0\le x\le1,\\ f_Y(y)&=12y(1-y)^2,\quad 0\le y\le1.\end{aligned}$$</div>
+        <p>(Ambas son $\text{Beta}(2,3)$; comprobación: $12\int_0^1x(1-x)^2dx=12\cdot\frac1{12}=1$.)</p>
+
+        <p class="sol-inciso">(c) ¿Independientes?</p>
+        <p><b>No.</b> Serían independientes si y sólo si $f(x,y)=f_X(x)f_Y(y)$ para (casi) todo $(x,y)$. Tomemos $(x,y)=(\frac34,\frac34)$: como $\frac34+\frac34&gt;1$, $f(\frac34,\frac34)=0$, pero
+        $$f_X(\tfrac34)\,f_Y(\tfrac34)=\Big(12\cdot\tfrac34\cdot\tfrac1{16}\Big)^2=\Big(\tfrac{9}{16}\Big)^2&gt;0.$$
+        Y no es un punto aislado: falla en todo el triángulo superior $\{x,y\in(0,1),\ x+y&gt;1\}$, que tiene área positiva. Dicho con probabilidades: $\P(X&gt;\frac34,Y&gt;\frac34)=0\ne\P(X&gt;\frac34)\P(Y&gt;\frac34)$.</p>
+        <div class="box cuidado"><span class="box-title">La trampa</span>
+          $f(x,y)=24xy\cdot\1\{x\ge0,y\ge0,x+y\le1\}$. El factor $xy$ se separa, pero la <b>indicadora</b> no se puede escribir como (función de $x$)·(función de $y$). El criterio de factorización sólo sirve cuando el soporte es un producto (un rectángulo, quizás infinito). Intuición: si sabes que $X=0.9$, entonces $Y\le0.1$; saber $X$ cambia lo que puede pasar con $Y$.</div>
+
+        <p class="sol-inciso">(d) Probabilidades</p>
+        <p><b>$\P(X\ge Y)$.</b> Como $f(x,y)=f(y,x)$ y $T$ es simétrico respecto de la recta $y=x$, $(X,Y)$ y $(Y,X)$ tienen la misma distribución, así que $\P(X\ge Y)=\P(Y\ge X)$. Ambas suman $1+\P(X=Y)=1$ (una recta tiene área 0). Por tanto $\P(X\ge Y)=\tfrac12$. Comprobación directa: la región es $0\le y\le\frac12$, $y\le x\le 1-y$:
+        $$\begin{aligned}\int_0^{1/2}\!\!\int_y^{1-y}24xy\,dx\,dy&=\int_0^{1/2}12y\big[(1-y)^2-y^2\big]dy\\&=\int_0^{1/2}12y(1-2y)\,dy=12\Big(\frac18-\frac1{12}\Big)=\frac12.\end{aligned}$$</p>
+        <p><b>$\P(X\ge\frac12\mid X+Y\le\frac34)$.</b> Por definición es $\dfrac{\P(X\ge\frac12,\ X+Y\le\frac34)}{\P(X+Y\le\frac34)}$.</p>
+        <ul>
+          <li><b>Denominador.</b> Para $0\le t\le1$, la región $\{x,y\ge0,\ x+y\le t\}$ da
+            $$\begin{aligned}\P(X+Y\le t)&=\int_0^t\!\!\int_0^{t-x}24xy\,dy\,dx=\int_0^t 12x(t-x)^2\,dx\\&=12\Big(\frac{t^4}{2}-\frac{2t^4}{3}+\frac{t^4}{4}\Big)=t^4,\end{aligned}$$ así que $\P(X+Y\le\frac34)=\big(\frac34\big)^4=\frac{81}{256}$.</li>
+          <li><b>Numerador.</b> Región: $\frac12\le x\le\frac34$, $0\le y\le\frac34-x$ (triangulito). Con $w=\frac34-x$:
+            $$\begin{aligned}\int_{1/2}^{3/4}12x\Big(\tfrac34-x\Big)^2dx&=\int_0^{1/4}12\Big(\tfrac34-w\Big)w^2\,dw=12\Big[\frac{w^3}{4}-\frac{w^4}{4}\Big]_0^{1/4}\\&=3\Big(\frac1{64}-\frac1{256}\Big)=\frac{9}{256}.\end{aligned}$$</li>
+        </ul>
+        <div class="resultado">$\P(X\ge\frac12\mid X+Y\le\frac34)=\dfrac{9/256}{81/256}=\dfrac19\approx0.1111.$</div>
+        <p><b>$\P(X^2+Y^2\le1)$.</b> Si $(x,y)\in T$, como $x,y\ge0$: $\;x^2+y^2\le x^2+2xy+y^2=(x+y)^2\le1$. O sea, $T$ está <b>contenido</b> en el disco unitario (la hipotenusa $x+y=1$ es una cuerda del círculo). Entonces $\{(X,Y)\in T\}\subseteq\{X^2+Y^2\le1\}$ y</p>
+        <div class="resultado">$\P(X\ge Y)=\tfrac12,\qquad \P(X^2+Y^2\le1)=1.$</div>
+        <div class="figs">
+          <figure class="fig"><div id="fig4-a"></div><figcaption>$T$ y la región $\{x\ge y\}$ (oscura): la mitad simétrica.</figcaption></figure>
+          <figure class="fig"><div id="fig4-b"></div><figcaption>$\{x+y\le\frac34\}$ (claro) y, dentro, $\{x\ge\frac12\}$ (oscuro).</figcaption></figure>
+          <figure class="fig"><div id="fig4-c"></div><figcaption>El triángulo cabe entero en el disco $x^2+y^2\le1$.</figcaption></figure>
+        </div>
+
+        <p class="sol-inciso">(e) $U=X+Y$, $V=X-Y$</p>
+        <ol class="pasos">
+          <li><b>Inversa.</b> $(x,y)\mapsto(x+y,\,x-y)$ es lineal e invertible: sumando y restando, $x=\dfrac{u+v}{2}$, $y=\dfrac{u-v}{2}$.</li>
+          <li><b>Jacobiano.</b> $$\begin{aligned}J&=\det\begin{pmatrix}\partial x/\partial u&amp;\partial x/\partial v\\ \partial y/\partial u&amp;\partial y/\partial v\end{pmatrix}=\det\begin{pmatrix}1/2&amp;1/2\\1/2&amp;-1/2\end{pmatrix}\\&=-\frac14-\frac14=-\frac12,\qquad|J|=\frac12.\end{aligned}$$</li>
+          <li><b>Soporte nuevo.</b> $x\ge0\iff v\ge-u$; $\ y\ge0\iff v\le u$; $\ x+y\le1\iff u\le1$. Juntas: $$T^*=\{(u,v):\ 0\le u\le1,\ -u\le v\le u\},$$ el triángulo de vértices $(0,0),(1,1),(1,-1)$ (que $u\ge0$ se deduce de $-u\le v\le u$).</li>
+          <li><b>Densidad conjunta.</b>
+            <div class="resultado">$$f_{U,V}(u,v)=24\cdot\frac{u+v}{2}\cdot\frac{u-v}{2}\cdot\frac12=3(u^2-v^2),\qquad 0\le u\le1,\ |v|\le u.$$</div></li>
+          <li><b>Marginal de $U$.</b> Para $0\le u\le1$: $\displaystyle f_U(u)=\int_{-u}^{u}3(u^2-v^2)\,dv=3\Big(2u^3-\frac{2u^3}{3}\Big)=4u^3$. (Coincide con $\P(X+Y\le t)=t^4$ de (d).)</li>
+          <li><b>Marginal de $V$.</b> Fijo $v\in[-1,1]$, en $T^*$ la $u$ va de $|v|$ a $1$:
+            $$f_V(v)=\int_{|v|}^{1}3(u^2-v^2)\,du=\Big[u^3-3v^2u\Big]_{|v|}^{1}=1-3v^2+2|v|^3=(1-|v|)^2(1+2|v|).$$
+            <div class="resultado">$$\begin{aligned}f_U(u)&=4u^3,\quad 0\le u\le1,\\ f_V(v)&=1-3v^2+2|v|^3,\quad -1\le v\le1.\end{aligned}$$</div>
+            Comprobación: $\int_{-1}^1f_V=2\big(1-1+\frac12\big)=1$. $f_V$ es simétrica porque $X$ e $Y$ son intercambiables. Y $U,V$ <b>no</b> son independientes (soporte triangular, otra vez).</li>
+        </ol>
+        <div class="figs">
+          <figure class="fig"><div id="fig4-uv"></div><figcaption>Soporte $T^*$ en el plano $(u,v)$; las aristas de $T$ van a: $x=0\to v=-u$, $y=0\to v=u$, $x+y=1\to u=1$.</figcaption></figure>
+          <figure class="fig"><div id="fig4-marg"></div><figcaption>Marginales $f_U(u)=4u^3$ (azul) y $f_V(v)$ (naranja).</figcaption></figure>
+        </div>
+      </div></details>
+
+      <details class="verif"><summary>Verificación por simulación</summary><div>
+        <div class="sim" id="sim-4">
+          <p class="sim-title">Puntos con densidad $24xy$ en el triángulo</p>
+          <p class="sim-desc">Aceptación–rechazo: se proponen puntos uniformes en $[0,1]^2$ y se acepta $(x,y)$ con probabilidad $24xy/6$ si está en $T$ (6 es el máximo de $24xy$ en $T$). Elige qué evento colorear.</p>
+          <div class="controls"></div>
+          <div class="figs" style="margin:0">
+            <div class="plot" data-k="xy"></div>
+            <div class="plot" data-k="u"></div>
+            <div class="plot" data-k="v"></div>
+          </div>
+          <div class="out"></div>
+        </div>
+      </div></details>
+    </div>
+
+    <!-- ========================= EJERCICIO 5 ========================= -->
+    <div class="box ejercicio" id="ej-5">
+      <span class="box-title">Ejercicio 5</span>
+      <p>Sean $X$ e $Y$ variables aleatorias independientes, ambas con distribución exponencial de parámetro 1. Calcule la densidad conjunta de $U=|X-Y|$ y $V=X+Y$, así como las marginales. ¿Son $U$ y $V$ independientes?</p>
+      <p><em>Observación:</em> la transformación $(x,y)\mapsto(|x-y|,\,x+y)$ no es inyectiva; trabaje por separado en las regiones $\{x&gt;y\}$ y $\{x&lt;y\}$.</p>
+      <p class="tecnica">Técnica: Jacobiano bivariado con transformación no inyectiva (partir el soporte y sumar) → <a href="../temas/clase-01.html#jacobiano-2d">Clase 1 · Jacobiano bivariado</a></p>
+
+      <div class="chk" id="chk-5"><p class="chk-title">Comprueba tu respuesta (sin ver la solución)</p></div>
+
+      <details class="pista"><summary>Pista 1 · por qué partir</summary><div>
+        <p>“Parámetro 1” = tasa 1: $f(x)=e^{-x}$, $x&gt;0$ (aquí coincide con $\text{Exp}(\beta=1)$ del Formulario). Los puntos $(x,y)$ y $(y,x)$ dan el mismo $(u,v)$: la función es 2 a 1. En $A_1=\{x&gt;y&gt;0\}$ y en $A_2=\{y&gt;x&gt;0\}$, por separado, sí es biyectiva (la recta $x=y$ tiene probabilidad 0).</p>
+      </div></details>
+      <details class="pista"><summary>Pista 2 · cada región</summary><div>
+        <p>En $A_1$: $u=x-y$, $v=x+y$, inversa $x=\frac{v+u}2$, $y=\frac{v-u}2$. En $A_2$: $u=y-x$, inversa $x=\frac{v-u}2$, $y=\frac{v+u}2$. En ambas $|J|=\frac12$, $f_{X,Y}=e^{-(x+y)}=e^{-v}$, y ambas regiones van a parar al <b>mismo</b> conjunto: ¿cuál? (traduce $y&gt;0$ y $x&gt;y$).</p>
+      </div></details>
+      <details class="pista"><summary>Pista 3 · sumar</summary><div>
+        <p>$f_{U,V}(u,v)=\sum_{i=1}^{2} f_{X,Y}\big(x_i(u,v),y_i(u,v)\big)\,|J_i|$ sobre la imagen común. Para independencia, mira si el soporte en $(u,v)$ es un rectángulo.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Densidad conjunta de partida.</b> “Exponencial de parámetro 1” (tasa 1): $f_X(x)=e^{-x}$, $x&gt;0$. Por independencia,
+            $$f_{X,Y}(x,y)=e^{-x}e^{-y}=e^{-(x+y)},\qquad x&gt;0,\ y&gt;0.$$</li>
+          <li><b>Partición.</b> $g(x,y)=(|x-y|,x+y)$ cumple $g(x,y)=g(y,x)$: no es inyectiva. Partimos el soporte en $A_1=\{x&gt;y&gt;0\}$, $A_2=\{y&gt;x&gt;0\}$ y $A_0=\{x=y\}$; como $\P((X,Y)\in A_0)=0$ (una recta tiene área cero) se ignora. En cada $A_i$, $g$ es biyectiva.</li>
+          <li><b>Región $A_1$ ($x&gt;y$).</b> $u=x-y$, $v=x+y$ $\Rightarrow$ $x_1=\frac{v+u}{2}$, $y_1=\frac{v-u}{2}$.
+            $$J_1=\det\begin{pmatrix}1/2&amp;1/2\\-1/2&amp;1/2\end{pmatrix}=\frac12 .$$
+            Imagen: $x&gt;y\iff u&gt;0$ y $y&gt;0\iff v&gt;u$ ($x&gt;0$ queda implícito). Luego $A_1\to B=\{(u,v):0&lt;u&lt;v\}$.</li>
+          <li><b>Región $A_2$ ($x&lt;y$).</b> $u=y-x$, $v=x+y$ $\Rightarrow$ $x_2=\frac{v-u}{2}$, $y_2=\frac{v+u}{2}$.
+            $$J_2=\det\begin{pmatrix}-1/2&amp;1/2\\1/2&amp;1/2\end{pmatrix}=-\frac12,\quad |J_2|=\frac12 .$$
+            Imagen: $y&gt;x\iff u&gt;0$, $x&gt;0\iff v&gt;u$. También $A_2\to B$.</li>
+          <li><b>Sumar las dos contribuciones.</b> Para un conjunto $C\subseteq B$, $\P((U,V)\in C)=\P((X,Y)\in A_1,\ g\in C)+\P((X,Y)\in A_2,\ g\in C)$, y a cada sumando se le aplica el Jacobiano. En ambas regiones $x_i+y_i=v$, así que
+            $$f_{U,V}(u,v)=e^{-v}\cdot\tfrac12+e^{-v}\cdot\tfrac12 .$$
+            <div class="resultado">$$f_{U,V}(u,v)=e^{-v},\qquad 0&lt;u&lt;v.$$</div>
+            Comprobación: $\int_0^\infty\!\int_0^v e^{-v}\,du\,dv=\int_0^\infty v e^{-v}dv=1$.</li>
+          <li><b>Marginales.</b>
+            $$\begin{aligned}f_U(u)&=\int_u^\infty e^{-v}\,dv=e^{-u},\quad u&gt;0,\\ f_V(v)&=\int_0^v e^{-v}\,du=v\,e^{-v},\quad v&gt;0.\end{aligned}$$
+            <div class="resultado">$U\sim\text{Exp}(1)$ (¡igual que $X$!) y $V\sim\text{Gamma}(2,1)$ (en el Formulario, $G(\alpha=2,\beta=1)$).</div></li>
+          <li><b>¿Independientes?</b> <b>No.</b> El soporte $B=\{0&lt;u&lt;v\}$ no es un rectángulo. Concretamente, como siempre $U&lt;V$:
+            $$\P(U&gt;1,\ V&lt;1)=0,$$ pero $$\P(U&gt;1)\,\P(V&lt;1)=e^{-1}\big(1-2e^{-1}\big)\approx0.0972&gt;0.$$
+            (También $f_U(1)f_V(2)=2e^{-3}\ne e^{-2}=f_{U,V}(1,2)$.)</li>
+        </ol>
+        <div class="box idea"><span class="box-title">Lo que está pasando</span>
+          Dado $V=v$, la densidad condicional es $f_{U\mid V}(u\mid v)=\dfrac{e^{-v}}{v e^{-v}}=\dfrac1v$ en $(0,v)$: <b>$U\mid V=v\sim U(0,v)$</b>. Conocer la suma acota la diferencia; por eso son dependientes (correlación $\approx0.71$).</div>
+        <div class="figs">
+          <figure class="fig"><div id="fig5-xy"></div><figcaption>Plano $(x,y)$: $A_1=\{x&gt;y\}$ (azul) y $A_2=\{x&lt;y\}$ (naranja). La recta $x+y=v$ corta a ambas.</figcaption></figure>
+          <figure class="fig"><div id="fig5-uv"></div><figcaption>Plano $(u,v)$: <b>ambas</b> regiones van al mismo $B=\{0&lt;u&lt;v\}$; por eso se suman las dos contribuciones.</figcaption></figure>
+        </div>
+      </div></details>
+
+      <details class="verif"><summary>Verificación por simulación</summary><div>
+        <div class="sim" id="sim-5">
+          <p class="sim-title">$U=|X-Y|$ y $V=X+Y$ con exponenciales</p>
+          <p class="sim-desc">Nube de puntos $(U,V)$ (nunca cae bajo la diagonal) e histogramas vs. $e^{-u}$ y $v e^{-v}$.</p>
+          <div class="controls"></div>
+          <div class="figs" style="margin:0">
+            <div class="plot" data-k="uv"></div>
+            <div class="plot" data-k="u"></div>
+            <div class="plot" data-k="v"></div>
+          </div>
+          <div class="out"></div>
+        </div>
+      </div></details>
+    </div>
+
+    <!-- ========================= EJERCICIO 6 ========================= -->
+    <div class="box ejercicio" id="ej-6">
+      <span class="box-title">Ejercicio 6</span>
+      <p>Sean $X$ e $Y$ variables aleatorias independientes, $X\sim\text{Gamma}(r,\lambda)$ e $Y\sim\text{Gamma}(s,\lambda)$, donde $\lambda&gt;0$, $r&gt;0$ y $s&gt;0$. Muestre que $P=X+Y$ y $Q=X/(X+Y)$ son independientes, $P\sim\text{Gamma}(r+s,\lambda)$ y $Q\sim\text{Beta}(r,s)$.</p>
+      <p class="tecnica">Técnica: Jacobiano bivariado + factorización de la densidad → <a href="../temas/clase-01.html#jacobiano-2d">Clase 1 · Jacobiano bivariado</a> (generaliza el <a href="../temas/clase-01.html#ejemplo-4">Ejemplo 4</a>, que es el caso $r=s=1$).</p>
+
+      <div class="chk" id="chk-6"><p class="chk-title">Comprueba tu respuesta (sin ver la solución)</p></div>
+
+      <details class="pista"><summary>Pista 1 · parametrización e inversa</summary><div>
+        <p>Aquí $\lambda$ es <b>tasa</b>: $f_X(x)=\dfrac{\lambda^r}{\Gamma(r)}x^{r-1}e^{-\lambda x}$, $x&gt;0$. Para la inversa: de $q=\frac{x}{x+y}=\frac{x}{p}$ sale $x=pq$, y entonces $y=p-x=p(1-q)$.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 2 · Jacobiano y soporte</summary><div>
+        <p>$J=\det\begin{pmatrix}q&amp;p\\1-q&amp;-p\end{pmatrix}=-p$. El soporte $\{x&gt;0,y&gt;0\}$ se convierte en $\{p&gt;0,\ 0&lt;q&lt;1\}$: ¡un rectángulo (infinito)! Eso es lo que permite factorizar.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 3 · factorizar</summary><div>
+        <p>Agrupa las potencias de $p$ por un lado y las de $q$ por el otro. Te faltará la constante $\Gamma(r+s)$: multiplica y divide por ella para que cada factor sea una densidad conocida.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Parametrización.</b> Con $\lambda$ tasa, $f_X(x)=\dfrac{\lambda^r x^{r-1}e^{-\lambda x}}{\Gamma(r)}$ ($x&gt;0$), $\E[X]=r/\lambda$; en notación del Formulario, $X\sim G(\alpha=r,\ \beta=1/\lambda)$. Por independencia,
+            $$f_{X,Y}(x,y)=\frac{\lambda^{r+s}}{\Gamma(r)\Gamma(s)}\,x^{r-1}y^{s-1}e^{-\lambda(x+y)},\qquad x&gt;0,\ y&gt;0.$$</li>
+          <li><b>Transformación e inversa.</b> $p=x+y$, $q=\frac{x}{x+y}$. Despejando: $x=pq$, $y=p(1-q)$. Es biyectiva entre $A=(0,\infty)^2$ y $A^*=(0,\infty)\times(0,1)$: si $x,y&gt;0$ entonces $p&gt;0$ y $0&lt;q&lt;1$; y recíprocamente, si $p&gt;0$ y $0&lt;q&lt;1$, entonces $x=pq&gt;0$ e $y=p(1-q)&gt;0$.</li>
+          <li><b>Jacobiano.</b>
+            $$\begin{aligned}J&=\det\begin{pmatrix}\partial x/\partial p&amp;\partial x/\partial q\\ \partial y/\partial p&amp;\partial y/\partial q\end{pmatrix}=\det\begin{pmatrix}q&amp;p\\1-q&amp;-p\end{pmatrix}\\&=-pq-p(1-q)=-p,\qquad|J|=p\ \ (p&gt;0).\end{aligned}$$</li>
+          <li><b>Densidad conjunta.</b> Sustituyendo ($x+y=p$):
+            $$\begin{aligned}f_{P,Q}(p,q)&=\frac{\lambda^{r+s}}{\Gamma(r)\Gamma(s)}(pq)^{r-1}\big(p(1-q)\big)^{s-1}e^{-\lambda p}\cdot p\\&=\frac{\lambda^{r+s}}{\Gamma(r)\Gamma(s)}\,p^{r+s-1}e^{-\lambda p}\,q^{r-1}(1-q)^{s-1},\end{aligned}$$ para $p&gt;0$, $0&lt;q&lt;1$.</li>
+          <li><b>Factorización.</b> Multiplicando y dividiendo por $\Gamma(r+s)$:
+            $$f_{P,Q}(p,q)=g(p)\,h(q),\quad\text{con}\quad \begin{aligned}g(p)&=\frac{\lambda^{r+s}}{\Gamma(r+s)}\,p^{r+s-1}e^{-\lambda p}\,\1\{p&gt;0\},\\ h(q)&=\frac{\Gamma(r+s)}{\Gamma(r)\Gamma(s)}\,q^{r-1}(1-q)^{s-1}\,\1\{0&lt;q&lt;1\}.\end{aligned}$$
+            $g$ es la densidad $\text{Gamma}(r+s,\lambda)$ y $h$ la densidad $\text{Beta}(r,s)$ (recuerda $B(r,s)=\frac{\Gamma(r)\Gamma(s)}{\Gamma(r+s)}$); cada una integra 1.</li>
+          <li><b>Marginales e independencia.</b> Integrando en $q$: $f_P(p)=g(p)\int_0^1h(q)\,dq=g(p)$; integrando en $p$: $f_Q(q)=h(q)$. Entonces $f_{P,Q}(p,q)=f_P(p)\,f_Q(q)$ para todo $(p,q)$, y como el soporte es el producto $(0,\infty)\times(0,1)$:
+            <div class="resultado">$P=X+Y\sim\text{Gamma}(r+s,\lambda)$, $\ Q=\dfrac{X}{X+Y}\sim\text{Beta}(r,s)$, y $P$ y $Q$ son <b>independientes</b>. $\blacksquare$</div></li>
+        </ol>
+        <div class="box nota"><span class="box-title">Comentarios</span>
+          <ul>
+            <li>Contrasta con los ejercicios 4 y 5: allí el soporte nuevo era un triángulo y no había independencia. Aquí el soporte es un rectángulo <em>y</em> la densidad factoriza.</li>
+            <li>$\lambda$ no aparece en la ley de $Q$: una proporción no depende de las unidades (cambiar $\lambda$ es cambiar de escala a $X$ e $Y$ a la vez).</li>
+            <li>Con $r=s=1$ (exponenciales) sale el Ejemplo 4 de clase: $Y_1/(Y_1+Y_2)\sim\text{Beta}(1,1)=U(0,1)$.</li>
+          </ul></div>
+        <figure class="fig"><div id="fig6"></div><figcaption>Las coordenadas $(p,q)$ en el plano $(x,y)$: rectas $x+y=p$ (gris) y rayos $q$ = constante desde el origen (color). El cuadrante entero corresponde al rectángulo $p&gt;0$, $0&lt;q&lt;1$.</figcaption></figure>
+      </div></details>
+
+      <details class="verif"><summary>Verificación por simulación</summary><div>
+        <div class="sim" id="sim-6">
+          <p class="sim-title">Suma y proporción de dos Gamma</p>
+          <p class="sim-desc">Se generan $X\sim\text{Gamma}(r,\lambda)$, $Y\sim\text{Gamma}(s,\lambda)$ ($\lambda$ tasa) y se comparan los histogramas de $P$ y $Q$ con las densidades $\text{Gamma}(r+s,\lambda)$ y $\text{Beta}(r,s)$. La nube $(P,Q)$ no muestra ninguna tendencia: así se ve la independencia.</p>
+          <div class="controls"></div>
+          <div class="figs" style="margin:0">
+            <div class="plot" data-k="p"></div>
+            <div class="plot" data-k="q"></div>
+            <div class="plot" data-k="pq"></div>
+          </div>
+          <div class="out"></div>
+        </div>
+      </div></details>
+    </div>
+  </section>
+
+<section>
+  <h2 id="parte-3">Parte III. Estadísticos de orden</h2>
+
+  <div class="box cuidado">
+    <span class="box-title">Cuidado con la notación de este deber</span>
+    <ul>
+      <li>Aquí las observaciones son $X_1,\dots,X_n$ y <b>$Y_1\le Y_2\le\cdots\le Y_n$ son sus estadísticos de orden</b> (sin paréntesis). En la <a href="../temas/clase-02.html">Clase 2</a> se escriben $Y_{(1)}\le\cdots\le Y_{(n)}$. Es lo mismo: $Y_1=\min X_i$, $Y_n=\max X_i$ y $Y_i$ es el $i$-ésimo valor más pequeño, <em>no</em> la $i$-ésima observación.</li>
+      <li>"Exponencial de parámetro $\lambda$" significa <b>tasa</b> $\lambda$: $f(x)=\lambda e^{-\lambda x}$, $x>0$, con media $1/\lambda$. En la notación del Formulario 2 eso es $\text{Exp}(\beta)$ con $\beta=1/\lambda$.</li>
+      <li>En el Ejercicio 7, "parámetro $1/4$" es tasa $\lambda=1/4$: cada componente dura en promedio <b>4 años</b>, es decir $\text{Exp}(\beta=4)$.</li>
+    </ul>
+  </div>
+
+  <div class="box nota">
+    <span class="box-title">Las fórmulas de la Clase 2 que vas a usar</span>
+    <p>Si $X_1,\dots,X_n$ son i.i.d. con fdp $f$ y acumulada $F$:</p>
+    $$F_{Y_n}(y)=F(y)^n,\qquad F_{Y_1}(y)=1-[1-F(y)]^n,$$
+    $$f_{Y_i}(y)=\frac{n!}{(i-1)!\,(n-i)!}\,F(y)^{i-1}f(y)\,[1-F(y)]^{n-i},$$
+    $$f_{Y_1,\dots,Y_n}(y_1,\dots,y_n)=n!\,f(y_1)\cdots f(y_n),\quad y_1 &lt; y_2 &lt; \cdots &lt; y_n,$$
+    $$f_{Y_i,Y_j}(u,v)=\frac{n!}{(i-1)!\,(j-i-1)!\,(n-j)!}\,F(u)^{i-1}[F(v)-F(u)]^{j-i-1}[1-F(v)]^{n-j}f(u)f(v),\quad u &lt; v.$$
+    <p>Para $U(0,1)$: $F(y)=y$, $f(y)=1$ en $(0,1)$, y $Y_i\sim\text{Beta}(i,\,n-i+1)$ (Ejercicio 7 de la Clase 2).</p>
+  </div>
+
+  <!-- ===================================================== EJERCICIO 7 -->
+  <div class="box ejercicio" id="ej-7">
+    <span class="box-title">Ejercicio 7 · Duración de una máquina con cuatro componentes</span>
+    <p>Una máquina tiene cuatro componentes idénticos, cuyos tiempos de duración en años son variables aleatorias independientes e idénticamente distribuidas, con distribución exponencial de parámetro $1/4$. Determine la densidad del tiempo de duración de la máquina, suponiendo que esta falla:</p>
+    <ol type="a">
+      <li>cuando todos los componentes hayan fallado.</li>
+      <li>cuando uno de los componentes falle.</li>
+      <li>cuando quede solo un componente funcionando.</li>
+    </ol>
+    <p>En los tres casos anteriores, obtenga la probabilidad de que la máquina dure al menos 5 años.</p>
+    <p class="small"><b>Técnica:</b> densidades del máximo, del mínimo y del $i$-ésimo estadístico de orden (<a href="../temas/clase-02.html">Clase 2</a>, Teorema 1).</p>
+
+    <details class="pista"><summary>Pista 1</summary><div>
+      <p>Llama $X_1,\dots,X_4$ a las duraciones y ordénalas: $Y_1\le Y_2\le Y_3\le Y_4$. ¿Qué estadístico de orden es la duración de la máquina en cada caso? En (c), "queda solo uno funcionando" ocurre en el instante en que falla el <b>tercer</b> componente.</p>
+    </div></details>
+    <details class="pista"><summary>Pista 2</summary><div>
+      <p>Con tasa $1/4$: $F(t)=1-e^{-t/4}$, $1-F(t)=e^{-t/4}$, $f(t)=\tfrac14 e^{-t/4}$ para $t>0$. Sustituye en $nF^{n-1}f$, $n(1-F)^{n-1}f$ y en el Teorema 1 con $n=4$, $i=3$.</p>
+    </div></details>
+    <details class="pista"><summary>Pista 3</summary><div>
+      <p>Para $\P(\,\cdot\ge 5)$ no hace falta integrar en (a) y (b): usa las acumuladas. En (c) puedes integrar, o contar: $Y_3\ge 5$ $\iff$ al año 5 han fallado <b>a lo sumo 2</b> de los 4 componentes, y ese número es $\text{Bin}(4,\,p)$ con $p=1-e^{-5/4}$.</p>
+    </div></details>
+
+    <details class="solucion"><summary>Solución completa</summary><div>
+      <p><b>Modelo.</b> $X_1,\dots,X_4\iid$ exponencial de tasa $\lambda=1/4$ (media 4 años):</p>
+      $$f(t)=\tfrac14 e^{-t/4},\qquad F(t)=1-e^{-t/4},\qquad 1-F(t)=e^{-t/4},\qquad t>0.$$
+
+      <h4>a) Falla cuando fallan todos: $T=Y_4=\max X_i$</h4>
+      <ol class="pasos">
+        <li>Acumulada del máximo: $F_{Y_4}(t)=\P(X_1\le t,\dots,X_4\le t)=F(t)^4=(1-e^{-t/4})^4$, por independencia.</li>
+        <li>Derivando: $$f_{Y_4}(t)=4\,(1-e^{-t/4})^3\cdot\tfrac14 e^{-t/4}=\boxed{e^{-t/4}\,(1-e^{-t/4})^3,\quad t>0.}$$</li>
+        <li>$\P(Y_4\ge 5)=1-F_{Y_4}(5)=\boxed{1-(1-e^{-5/4})^4}\approx 1-0.71350^4\approx \mathbf{0.7408}.$</li>
+      </ol>
+
+      <h4>b) Falla cuando falla uno: $T=Y_1=\min X_i$</h4>
+      <ol class="pasos">
+        <li>$\P(Y_1>t)=\P(X_1>t,\dots,X_4>t)=[1-F(t)]^4=(e^{-t/4})^4=e^{-t}$.</li>
+        <li>Luego $F_{Y_1}(t)=1-e^{-t}$ y $$\boxed{f_{Y_1}(t)=e^{-t},\quad t>0,}$$ es decir, $Y_1$ es exponencial de tasa $4\cdot\tfrac14=1$ (media 1 año). Es el resultado general: el mínimo de $n$ exponenciales de tasa $\lambda$ es exponencial de tasa $n\lambda$ (Ejercicio 6 de la Clase 2).</li>
+        <li>$\P(Y_1\ge 5)=e^{-5}\approx\mathbf{0.006738}.$</li>
+      </ol>
+
+      <h4>c) Falla cuando queda uno funcionando: $T=Y_3$</h4>
+      <ol class="pasos">
+        <li>Quedan $4-k$ funcionando después de la $k$-ésima falla; queda uno cuando $k=3$. Por el Teorema 1 con $n=4$, $i=3$: $\frac{4!}{2!\,1!}=12$ y
+          $$f_{Y_3}(t)=12\,F(t)^2 f(t)\,[1-F(t)]=12\,(1-e^{-t/4})^2\cdot\tfrac14e^{-t/4}\cdot e^{-t/4}.$$</li>
+        <li>Simplificando: $$\boxed{f_{Y_3}(t)=3\,e^{-t/2}\,(1-e^{-t/4})^2,\quad t>0.}$$ (Comprobación: integra 1.)</li>
+        <li>Desarrolla el cuadrado: $f_{Y_3}(t)=3\big(e^{-t/2}-2e^{-3t/4}+e^{-t}\big)$. Integrando término a término desde 5 (usa $\int_5^\infty e^{-ct}dt=e^{-5c}/c$):
+          $$\P(Y_3\ge 5)=3\Big(2e^{-5/2}-\tfrac83 e^{-15/4}+e^{-5}\Big)=\boxed{6e^{-5/2}-8e^{-15/4}+3e^{-5}}\approx\mathbf{0.3246}.$$</li>
+        <li><b>Otra forma (contando):</b> sea $N$ = número de componentes que han fallado al año 5, $N\sim\text{Bin}(4,p)$ con $p=1-e^{-5/4}$, $q=e^{-5/4}$. Entonces $Y_3\ge5\iff N\le 2$:
+          $$\P(N\le 2)=q^4+4pq^3+6p^2q^2\approx 0.3246.\ \checkmark$$</li>
+      </ol>
+
+      <div class="box idea"><span class="box-title">¿Tiene sentido?</span>
+        <p>Como $Y_1\le Y_3\le Y_4$, debe salir $\P(Y_1\ge5)\le\P(Y_3\ge5)\le\P(Y_4\ge5)$: $0.0067\le 0.3246\le 0.7408$ ✓. Las medias son $\E[Y_1]=1$, $\E[Y_3]=13/3\approx4.33$ y $\E[Y_4]=25/3\approx 8.33$ años.</p>
+      </div>
+      <div class="plot" id="p3-ej7-fig"></div>
+      <p class="small muted">Las tres densidades; el área a la derecha de $t=5$ es la probabilidad pedida.</p>
+    </div></details>
+
+    <div id="p3-ej7-check"></div>
+
+    <details class="verif"><summary>Verificación por simulación</summary><div>
+      <div class="sim" id="p3-ej7-sim">
+        <p class="sim-title">Simula máquinas de cuatro componentes</p>
+        <p class="sim-desc">Cada máquina: 4 duraciones exponenciales de media 4 años. Elige el caso y compara el histograma con la densidad y la proporción que dura al menos 5 años con la teoría.</p>
+        <div class="controls"></div>
+        <div class="plot"></div>
+        <div class="out"></div>
+      </div>
+    </div></details>
+  </div>
+
+  <!-- ===================================================== EJERCICIO 8 -->
+  <div class="box ejercicio" id="ej-8">
+    <span class="box-title">Ejercicio 8 · Probabilidades con los estadísticos de orden de tres uniformes</span>
+    <p>Sean $Y_1$, $Y_2$ y $Y_3$ los estadísticos de orden asociados a las variables aleatorias independientes $X_1$, $X_2$ y $X_3$, uniformemente distribuidas en $(0,1)$. Obtenga:</p>
+    <ol type="a">
+      <li>$\P(Y_1+Y_3\le 1)$.</li>
+      <li>$\P(Y_3 &lt; Y_1+Y_2)$.</li>
+      <li>$\P(Y_3>2Y_1)$.</li>
+      <li>El valor de $a$ tal que $\P(Y_3>aY_1)=1/2$.</li>
+    </ol>
+    <p class="small"><b>Técnica:</b> densidad conjunta de los estadísticos de orden e integración sobre regiones (<a href="../temas/clase-02.html">Clase 2</a>, "Distribución conjunta").</p>
+
+    <details class="pista"><summary>Pista 1</summary><div>
+      <p>La densidad conjunta es $f(y_1,y_2,y_3)=3!\cdot1\cdot1\cdot1=6$ en $0 &lt; y_1 &lt; y_2 &lt; y_3 &lt; 1$. En (a), (c) y (d) sólo aparecen $Y_1$ y $Y_3$: integra primero $y_2$ (de $y_1$ a $y_3$) y trabaja con $f_{Y_1,Y_3}(u,v)=6(v-u)$, $0 &lt; u &lt; v &lt; 1$.</p>
+    </div></details>
+    <details class="pista"><summary>Pista 2</summary><div>
+      <p>Dibuja el triángulo $0 &lt; u &lt; v &lt; 1$ y la recta del evento ($u+v=1$, $v=2u$, $v=au$). En (b) integra primero $y_3$ desde $y_2$ hasta $\min(1,\,y_1+y_2)$: eso obliga a partir la región en $y_1+y_2\le1$ y $y_1+y_2>1$.</p>
+    </div></details>
+    <details class="pista"><summary>Pista 3</summary><div>
+      <p>En (d) calcula $\P(Y_3>aY_1)$ como función de $a$ y separa los casos $a\le1$ y $a>1$. Al resolver la ecuación te saldrán dos raíces: sólo una es válida.</p>
+    </div></details>
+
+    <details class="solucion"><summary>Solución completa</summary><div>
+      <ol class="pasos">
+        <li><b>Densidad conjunta.</b> Con $f(x)=1$ en $(0,1)$: $f_{Y_1,Y_2,Y_3}(y_1,y_2,y_3)=3!=6$ en $S=\{0 &lt; y_1 &lt; y_2 &lt; y_3 &lt; 1\}$ (el volumen de $S$ es $1/6$, así que integra 1 ✓).</li>
+        <li><b>Marginal de $(Y_1,Y_3)$.</b> Para $0 &lt; u &lt; v &lt; 1$: $f_{Y_1,Y_3}(u,v)=\int_u^v 6\,dy_2=6(v-u)$. (Coincide con la fórmula del par con $n=3$, $i=1$, $j=3$: $\frac{3!}{0!\,1!\,0!}(v-u)^1$.)</li>
+      </ol>
+
+      <h4>a) $\P(Y_1+Y_3\le1)$</h4>
+      <ol class="pasos">
+        <li>Región: $0 &lt; u &lt; v$, $u+v\le1$. Como $u &lt; v\le 1-u$, necesariamente $u &lt; 1/2$. Integramos $v$ de $u$ a $1-u$:
+          $$\int_u^{1-u}6(v-u)\,dv=3(v-u)^2\Big|_{v=u}^{v=1-u}=3(1-2u)^2.$$</li>
+        <li>$$\P(Y_1+Y_3\le1)=\int_0^{1/2}3(1-2u)^2\,du=3\cdot\Big[-\tfrac{(1-2u)^3}{6}\Big]_0^{1/2}=\boxed{\tfrac12}.$$</li>
+        <li><b>Por simetría</b> (otra forma): $X_i\mapsto 1-X_i$ conserva la ley uniforme, convierte el mínimo en $1-Y_3$ y el máximo en $1-Y_1$; así $Y_1+Y_3$ tiene la misma ley que $2-(Y_1+Y_3)$, es simétrica alrededor de 1 y $\P(Y_1+Y_3\le1)=1/2$.</li>
+      </ol>
+
+      <h4>b) $\P(Y_3 &lt; Y_1+Y_2)$</h4>
+      <ol class="pasos">
+        <li>Fijados $y_1 &lt; y_2$, la condición sobre $y_3$ es $y_2 &lt; y_3 &lt; \min(1,\,y_1+y_2)$. Integrando $y_3$:
+          $$\int_{y_2}^{\min(1,y_1+y_2)}6\,dy_3=\begin{cases}6y_1, & y_1+y_2\le1,\\ 6(1-y_2), & y_1+y_2>1.\end{cases}$$</li>
+        <li>Región $R_1=\{0 &lt; y_1 &lt; y_2,\ y_1+y_2\le1\}$: $y_1\in(0,\tfrac12)$, $y_2\in(y_1,1-y_1)$:
+          $$\int_0^{1/2}6y_1(1-2y_1)\,dy_1=6\Big(\tfrac18-\tfrac1{12}\Big)=\tfrac14.$$</li>
+        <li>Región $R_2=\{y_1 &lt; y_2 &lt; 1,\ y_1+y_2>1\}$: $y_2\in(\tfrac12,1)$, $y_1\in(1-y_2,\,y_2)$, de longitud $2y_2-1$:
+          $$\int_{1/2}^{1}6(1-y_2)(2y_2-1)\,dy_2=6\Big[-\tfrac23y^3+\tfrac32y^2-y\Big]_{1/2}^{1}=6\Big(-\tfrac16+\tfrac5{24}\Big)=\tfrac14.$$</li>
+        <li>Sumando: $$\P(Y_3 &lt; Y_1+Y_2)=\tfrac14+\tfrac14=\boxed{\tfrac12}.$$</li>
+        <li><b>Interpretación:</b> $Y_3 &lt; Y_1+Y_2$ es justo la desigualdad triangular para el lado más largo, así que $1/2$ es la probabilidad de que tres longitudes $U(0,1)$ independientes formen un triángulo.</li>
+      </ol>
+
+      <h4>c) $\P(Y_3>2Y_1)$ y, de paso, $\P(Y_3>aY_1)$ para todo $a$</h4>
+      <ol class="pasos">
+        <li>Si $a\le1$: como $Y_3>Y_1\ge aY_1$ (salvo probabilidad 0), $\P(Y_3>aY_1)=1$.</li>
+        <li>Si $a>1$: $\{v>au\}=\{u &lt; v/a\}$ y $v/a &lt; v$, así que para cada $v$ integramos $u\in(0,v/a)$:
+          $$\int_0^{v/a}6(v-u)\,du=6\Big(\frac{v^2}{a}-\frac{v^2}{2a^2}\Big),\qquad \P(Y_3>aY_1)=\int_0^1 6v^2\Big(\frac1a-\frac1{2a^2}\Big)dv=\frac2a-\frac1{a^2}=\frac{2a-1}{a^2}.$$</li>
+        <li>Con $a=2$: $$\P(Y_3>2Y_1)=1-\tfrac14=\boxed{\tfrac34}.$$</li>
+      </ol>
+
+      <h4>d) $a$ con $\P(Y_3>aY_1)=1/2$</h4>
+      <ol class="pasos">
+        <li>Para $a\le1$ la probabilidad es 1, así que buscamos $a>1$: $\frac{2a-1}{a^2}=\frac12\iff a^2-4a+2=0\iff a=2\pm\sqrt2$.</li>
+        <li>$a=2-\sqrt2\approx0.586 &lt; 1$ se descarta (la fórmula sólo vale para $a>1$; ahí la probabilidad es 1). Queda $$\boxed{a=2+\sqrt2\approx3.414}.$$</li>
+        <li>Comprobación: $\frac{2(2+\sqrt2)-1}{(2+\sqrt2)^2}=\frac{3+2\sqrt2}{6+4\sqrt2}=\frac12$ ✓. Dicho de otra forma: $2+\sqrt2$ es la <b>mediana</b> del cociente $Y_3/Y_1$.</li>
+      </ol>
+
+      <div class="grid-2">
+        <div><div class="plot" id="p3-ej8-fig-a"></div><p class="small muted">(a) Plano $(y_1,y_3)$: triángulo soporte y región $y_1+y_3\le1$.</p></div>
+        <div><div class="plot" id="p3-ej8-fig-b"></div><p class="small muted">(b) Plano $(y_1,y_2)$ tras integrar $y_3$: en $R_1$ el integrando es $6y_1$, en $R_2$ es $6(1-y_2)$; cada parte aporta $1/4$.</p></div>
+        <div><div class="plot" id="p3-ej8-fig-c"></div><p class="small muted">(c) Región $y_3>2y_1$ (izquierda de la recta $v=2u$).</p></div>
+        <div><div class="plot" id="p3-ej8-fig-d"></div><p class="small muted">(d) Región $y_3>(2+\sqrt2)\,y_1$: concentra la mitad de la masa $6(v-u)$.</p></div>
+      </div>
+    </div></details>
+
+    <div id="p3-ej8-check"></div>
+
+    <details class="verif"><summary>Verificación por simulación</summary><div>
+      <div class="sim" id="p3-ej8-sim">
+        <p class="sim-title">Tres uniformes ordenadas</p>
+        <p class="sim-desc">Se generan muchas ternas $(X_1,X_2,X_3)$, se ordenan y se cuenta cuántas cumplen el evento. Los puntos verdes cumplen el evento; los grises no. En (b) el plano es $(Y_1+Y_2,\ Y_3)$ y el evento es "debajo de la diagonal".</p>
+        <div class="controls"></div>
+        <div class="plot"></div>
+        <div class="out"></div>
+      </div>
+    </div></details>
+  </div>
+
+  <!-- ===================================================== EJERCICIO 9 -->
+  <div class="box ejercicio" id="ej-9">
+    <span class="box-title">Ejercicio 9 · La central telefónica</span>
+    <p>Tres personas A, B y C llegan al mismo tiempo a una central telefónica que posee dos aparatos telefónicos. Los dos aparatos son utilizados inmediatamente por A y B. La persona C sustituye a la primera persona que finalice su llamada y cada persona se retira de la central una vez terminada su llamada. Sean $X_1$, $X_2$ y $X_3$ los tiempos de las llamadas de A, B y C, respectivamente. Suponga que $X_1$, $X_2$ y $X_3$ son variables aleatorias i.i.d. con distribución exponencial de parámetro $\lambda$.</p>
+    <ol type="a">
+      <li>Determine la densidad de $Z=\max\{X_1,X_2\}-\min\{X_1,X_2\}$.</li>
+      <li>Calcule $\P(Z &lt; X_3)$.</li>
+      <li>¿Qué representa la probabilidad calculada en el inciso (b)?</li>
+    </ol>
+    <p class="small"><b>Técnica:</b> densidad conjunta de $(Y_1,Y_2)$ + Jacobiano (<a href="../temas/clase-02.html">Clase 2</a>, <a href="../temas/clase-01.html">Clase 1</a>). Es prácticamente el <a href="../temas/clase-02.html#ej-9">Ejercicio 9* de la Clase 2</a>, y el inciso (a) es el caso $n=2$ del <a href="../temas/clase-02.html#ej-8">Ejercicio 8 de la Clase 2</a> (espaciamientos de exponenciales).</p>
+
+    <details class="pista"><summary>Pista 1</summary><div>
+      <p>Con $n=2$, $Z=Y_2-Y_1$. La densidad conjunta es $f_{Y_1,Y_2}(u,v)=2\lambda^2e^{-\lambda(u+v)}$, $0 &lt; u &lt; v$. Haz el cambio $U=Y_1$, $Z=Y_2-Y_1$.</p>
+    </div></details>
+    <details class="pista"><summary>Pista 2</summary><div>
+      <p>$Z$ depende sólo de $X_1,X_2$, así que es independiente de $X_3$. Si $Z$ y $X_3$ resultan tener la misma ley continua, ¿cuánto vale $\P(Z &lt; X_3)$ por simetría?</p>
+    </div></details>
+    <details class="pista"><summary>Pista 3</summary><div>
+      <p>Llama $T=\min(X_1,X_2)$ al instante en que C empieza. ¿A qué hora sale C? ¿A qué hora sale la persona (A o B) que seguía hablando? Compara.</p>
+    </div></details>
+
+    <details class="solucion"><summary>Solución completa</summary><div>
+      <p>"Parámetro $\lambda$" = tasa: $f(x)=\lambda e^{-\lambda x}$, $F(x)=1-e^{-\lambda x}$, $x>0$, media $1/\lambda$.</p>
+      <h4>a) Densidad de $Z$</h4>
+      <ol class="pasos">
+        <li>Con $n=2$: $Y_1=\min$, $Y_2=\max$ y $f_{Y_1,Y_2}(u,v)=2!\,f(u)f(v)=2\lambda^2e^{-\lambda(u+v)}$, $0 &lt; u &lt; v$.</li>
+        <li>Transformación $U=Y_1$, $Z=Y_2-Y_1$. Inversa: $y_1=u$, $y_2=u+z$. Jacobiano $J=\det\begin{pmatrix}1&0\\1&1\end{pmatrix}=1$. Soporte: $0 &lt; u &lt; u+z\iff u>0,\ z>0$.</li>
+        <li>$$f_{U,Z}(u,z)=2\lambda^2e^{-\lambda(2u+z)}=\underbrace{2\lambda e^{-2\lambda u}}_{\text{Exp tasa }2\lambda}\cdot\underbrace{\lambda e^{-\lambda z}}_{\text{Exp tasa }\lambda},\quad u>0,\ z>0.$$ Se factoriza en un rectángulo: $U$ y $Z$ son independientes.</li>
+        <li>Integrando $u$: $$\boxed{f_Z(z)=\lambda e^{-\lambda z},\quad z>0,}$$ o sea $Z$ es exponencial de parámetro $\lambda$, igual que cada llamada.</li>
+        <li><b>Intuición (falta de memoria):</b> cuando la primera persona cuelga, a la otra le queda un tiempo de llamada que, por la falta de memoria de la exponencial, vuelve a ser $\text{Exp}(\lambda)$ "nuevo", sin importar cuánto lleve hablando.</li>
+      </ol>
+      <h4>b) $\P(Z &lt; X_3)$</h4>
+      <ol class="pasos">
+        <li>$Z$ es función de $(X_1,X_2)$ y $X_3$ es independiente de ellos, luego $Z\ind X_3$ y su densidad conjunta es $\lambda e^{-\lambda z}\cdot\lambda e^{-\lambda x}$.</li>
+        <li>$$\P(Z &lt; X_3)=\int_0^\infty \lambda e^{-\lambda z}\,\P(X_3>z)\,dz=\int_0^\infty\lambda e^{-2\lambda z}\,dz=\boxed{\tfrac12}.$$ (O por simetría: $Z$ y $X_3$ son i.i.d. continuas, así que $\P(Z &lt; X_3)=\P(X_3 &lt; Z)$ y $\P(Z=X_3)=0$.) No depende de $\lambda$.</li>
+      </ol>
+      <h4>c) ¿Qué representa?</h4>
+      <ol class="pasos">
+        <li>Sea $T=\min(X_1,X_2)$: en ese instante cuelga el primero y entra C. Entonces
+          <ul>
+            <li>C sale en $T+X_3$;</li>
+            <li>la persona que seguía hablando sale en $\max(X_1,X_2)=T+Z$.</li>
+          </ul></li>
+        <li>Por lo tanto $\{Z &lt; X_3\}=\{T+Z &lt; T+X_3\}$ = "la persona (A o B) que seguía hablando termina antes que C" = <b>"C es el último de los tres en salir de la central"</b>.</li>
+        <li>Como vale $1/2$, también el complemento $\{X_3 &lt; Z\}$ = "C termina antes que el que seguía hablando" (C <b>no</b> es el último) tiene probabilidad $1/2$.</li>
+        <li><b>Lo sorprendente:</b> aunque C empezó más tarde, tiene exactamente la misma probabilidad de terminar antes o después que quien ya estaba hablando. Es la falta de memoria: en el instante $T$, la llamada en curso y la de C son dos $\text{Exp}(\lambda)$ "nuevas" e independientes.</li>
+      </ol>
+    </div></details>
+
+    <div id="p3-ej9-check"></div>
+
+    <details class="verif"><summary>Verificación por simulación</summary><div>
+      <div class="sim" id="p3-ej9-sim">
+        <p class="sim-title">Simula la central telefónica</p>
+        <p class="sim-desc">Arriba: una realización (barras = llamadas; C empieza cuando cuelga el primero). Abajo: histograma de $Z$ frente a $\lambda e^{-\lambda z}$. Cambia $\lambda$: la probabilidad se queda en 1/2.</p>
+        <div class="controls"></div>
+        <div class="plot p3-timeline"></div>
+        <div class="plot p3-hist"></div>
+        <div class="out"></div>
+      </div>
+    </div></details>
+  </div>
+
+  <!-- ===================================================== EJERCICIO 10 -->
+  <div class="box ejercicio" id="ej-10">
+    <span class="box-title">Ejercicio 10 · Rango y punto medio muestral</span>
+    <p>Sean $X_1,\dots,X_n$ ($n\ge2$) variables aleatorias i.i.d. con densidad $f$ y función de distribución $F$.</p>
+    <ol type="a">
+      <li>Muestre que, para $u &lt; v$, $\P(Y_1\le u,\ Y_n\le v)=F(v)^n-[F(v)-F(u)]^n$, y deduzca que la densidad conjunta de $(Y_1,Y_n)$ es
+        $$f_{Y_1,Y_n}(u,v)=n(n-1)\,[F(v)-F(u)]^{n-2}\,f(u)f(v),\qquad u &lt; v.$$</li>
+      <li>Suponga ahora que $X_i\sim U(0,1)$. Usando el método del Jacobiano, obtenga la densidad conjunta del rango $R=Y_n-Y_1$ y del punto medio $M=(Y_1+Y_n)/2$. Describa con cuidado su soporte.</li>
+      <li>Obtenga las densidades marginales de $R$ y de $M$. Identifique la distribución de $R$.</li>
+      <li>Calcule $\P(R>1/2)$ y verifique su resultado en el caso $n=2$ calculando directamente $\P(|X_1-X_2|>1/2)$.</li>
+    </ol>
+    <p class="small"><b>Técnica:</b> acumulada conjunta y derivada cruzada; Jacobiano bivariado (<a href="../temas/clase-02.html">Clase 2</a>, <a href="../temas/clase-01.html">Clase 1</a>).</p>
+
+    <details class="pista"><summary>Pista 1</summary><div>
+      <p>$\{Y_n\le v\}$ es "todas las $X_i\le v$". Parte ese evento según si $Y_1\le u$ o $Y_1>u$; el segundo pedazo es "todas las $X_i$ en $(u,v]$". La densidad conjunta es $\frac{\partial^2}{\partial u\,\partial v}$ de la acumulada conjunta.</p>
+    </div></details>
+    <details class="pista"><summary>Pista 2</summary><div>
+      <p>La inversa de $R=V-U$, $M=(U+V)/2$ es $U=M-R/2$, $V=M+R/2$. Traduce cada desigualdad del soporte $0 &lt; u &lt; v &lt; 1$ a $(r,m)$: te queda un triángulo.</p>
+    </div></details>
+    <details class="pista"><summary>Pista 3</summary><div>
+      <p>Para la marginal de $M$, la longitud del intervalo de $r$ es $2\min(m,1-m)$: separa $m\le\tfrac12$ y $m>\tfrac12$. Compara $f_R$ con la densidad $\text{Beta}(\alpha,\beta)$: $\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}x^{\alpha-1}(1-x)^{\beta-1}$.</p>
+    </div></details>
+
+    <details class="solucion"><summary>Solución completa</summary><div>
+      <h4>a) Acumulada y densidad conjunta de $(Y_1,Y_n)$</h4>
+      <ol class="pasos">
+        <li>$\{Y_n\le v\}=\{X_1\le v,\dots,X_n\le v\}$, con probabilidad $F(v)^n$.</li>
+        <li>Para $u &lt; v$ partimos: $\{Y_n\le v\}=\{Y_1\le u,\ Y_n\le v\}\ \cup\ \{Y_1>u,\ Y_n\le v\}$ (disjuntos). El segundo es "todas las $X_i$ caen en $(u,v]$": $\P=\prod_i[F(v)-F(u)]=[F(v)-F(u)]^n$.</li>
+        <li>Restando: $$\P(Y_1\le u,\ Y_n\le v)=F(v)^n-[F(v)-F(u)]^n,\qquad u &lt; v.$$ (Si $u\ge v$, $\{Y_n\le v\}\subset\{Y_1\le u\}$ y la acumulada es $F(v)^n$, que no depende de $u$: su derivada respecto de $u$ es 0, por eso la densidad es 0 fuera de $u &lt; v$.)</li>
+        <li>Derivamos respecto de $u$ (el término $F(v)^n$ desaparece): $\frac{\partial}{\partial u}=n[F(v)-F(u)]^{n-1}f(u)$.</li>
+        <li>Ahora respecto de $v$: $$f_{Y_1,Y_n}(u,v)=\frac{\partial^2}{\partial v\,\partial u}\P(Y_1\le u,Y_n\le v)=n(n-1)[F(v)-F(u)]^{n-2}f(u)f(v),\quad u &lt; v.\ \blacksquare$$ Es la fórmula del par $(Y_i,Y_j)$ de la Clase 2 con $i=1$, $j=n$.</li>
+      </ol>
+
+      <h4>b) Densidad conjunta de $(R,M)$ para $U(0,1)$</h4>
+      <ol class="pasos">
+        <li>Con $F(x)=x$, $f(x)=1$: $f_{Y_1,Y_n}(u,v)=n(n-1)(v-u)^{n-2}$, en $0 &lt; u &lt; v &lt; 1$.</li>
+        <li>Transformación $r=v-u$, $m=\frac{u+v}2$. Inversa: $u=m-\frac r2$, $v=m+\frac r2$.</li>
+        <li>Jacobiano de la inversa: $$J=\frac{\partial(u,v)}{\partial(r,m)}=\det\begin{pmatrix}-\tfrac12 & 1\\[2pt] \tfrac12 & 1\end{pmatrix}=-\tfrac12-\tfrac12=-1,\qquad |J|=1.$$</li>
+        <li>Soporte, desigualdad por desigualdad:
+          <ul>
+            <li>$u &lt; v\iff r>0$;</li>
+            <li>$u>0\iff m>\frac r2$;</li>
+            <li>$v &lt; 1\iff m &lt; 1-\frac r2$.</li>
+          </ul>
+          De $\frac r2 &lt; 1-\frac r2$ sale $r &lt; 1$. Así
+          $$S_{R,M}=\Big\{(r,m):\ 0 &lt; r &lt; 1,\ \ \tfrac r2 &lt; m &lt; 1-\tfrac r2\Big\}=\Big\{0 &lt; m &lt; 1,\ \ 0 &lt; r &lt; 2\min(m,1-m)\Big\},$$
+          el <b>triángulo</b> de vértices $(r,m)=(0,0),\ (0,1),\ (1,\tfrac12)$. Es la imagen del triángulo $\{0 &lt; u &lt; v &lt; 1\}$ (vértices $(0,0)\mapsto(0,0)$, $(1,1)\mapsto(0,1)$, $(0,1)\mapsto(1,\tfrac12)$): la diagonal $u=v$ va al lado $r=0$, el lado $u=0$ a $m=r/2$ y el lado $v=1$ a $m=1-r/2$.</li>
+        <li>$$\boxed{f_{R,M}(r,m)=n(n-1)\,r^{n-2},\qquad 0 &lt; r &lt; 1,\ \ \tfrac r2 &lt; m &lt; 1-\tfrac r2.}$$</li>
+      </ol>
+      <div class="grid-2">
+        <div><div class="plot" id="p3-ej10-fig-uv"></div><p class="small muted">Soporte de $(Y_1,Y_n)$ en el plano $(u,v)$.</p></div>
+        <div><div class="plot" id="p3-ej10-fig-rm"></div><p class="small muted">Su imagen: soporte de $(R,M)$ en el plano $(r,m)$. Mismos colores en los lados correspondientes.</p></div>
+      </div>
+      <div class="box cuidado"><span class="box-title">Ojo</span>
+        <p>La fórmula $n(n-1)r^{n-2}$ no contiene $m$, pero $R$ y $M$ <b>no</b> son independientes: el soporte no es un rectángulo (si $M$ está cerca de 0 o de 1, $R$ tiene que ser pequeño).</p>
+      </div>
+
+      <h4>c) Marginales</h4>
+      <ol class="pasos">
+        <li>De $R$: para $0 &lt; r &lt; 1$ el intervalo de $m$ mide $(1-\frac r2)-\frac r2=1-r$:
+          $$f_R(r)=\int_{r/2}^{1-r/2}n(n-1)r^{n-2}\,dm=\boxed{n(n-1)\,r^{n-2}(1-r),\quad 0 &lt; r &lt; 1.}$$</li>
+        <li>Como $\frac{\Gamma(n+1)}{\Gamma(n-1)\Gamma(2)}=\frac{n!}{(n-2)!}=n(n-1)$, esto es exactamente la densidad $\text{Beta}(n-1,\,2)$: $$R\sim\text{Beta}(n-1,\,2),\qquad \E[R]=\tfrac{n-1}{n+1}.$$</li>
+        <li>De $M$: para $0 &lt; m &lt; 1$, $r$ va de 0 a $2\min(m,1-m)$:
+          $$f_M(m)=\int_0^{2\min(m,1-m)}n(n-1)r^{n-2}\,dr=n\,[2\min(m,1-m)]^{n-1}=\begin{cases}n(2m)^{n-1}, & 0 &lt; m\le\tfrac12,\\[2pt] n(2-2m)^{n-1}, & \tfrac12 &lt; m &lt; 1.\end{cases}$$
+          Es simétrica alrededor de $1/2$ (para $n=2$, triangular). Comprobación: $2\int_0^{1/2}n(2m)^{n-1}dm=1$ ✓.</li>
+      </ol>
+
+      <h4>d) $\P(R>1/2)$</h4>
+      <ol class="pasos">
+        <li>Acumulada de $R$: $F_R(r)=\int_0^r n(n-1)(s^{n-2}-s^{n-1})\,ds=n\,r^{n-1}-(n-1)\,r^n$.</li>
+        <li>$$\P(R>\tfrac12)=1-\frac{n}{2^{n-1}}+\frac{n-1}{2^n}=\boxed{1-\frac{n+1}{2^n}}.$$ Por ejemplo: $n=2\Rightarrow\frac14$, $n=3\Rightarrow\frac12$, $n=5\Rightarrow\frac{13}{16}$.</li>
+        <li><b>Verificación con $n=2$:</b> $R=|X_1-X_2|$ y $(X_1,X_2)$ es uniforme en el cuadrado unitario. $\{|x_1-x_2|>\tfrac12\}$ son dos triángulos en las esquinas $(1,0)$ y $(0,1)$, cada uno con catetos $\tfrac12$: área $2\cdot\tfrac12\cdot\tfrac12\cdot\tfrac12=\tfrac14$. Coincide con $1-\frac{3}{4}=\frac14$ ✓.</li>
+      </ol>
+    </div></details>
+
+    <div id="p3-ej10-check"></div>
+
+    <details class="verif"><summary>Verificación por simulación</summary><div>
+      <div class="sim" id="p3-ej10-sim">
+        <p class="sim-title">Rango y punto medio de $n$ uniformes</p>
+        <p class="sim-desc">Izquierda: puntos $(R,M)$ simulados dentro del triángulo soporte. Derecha: histograma de $R$ (o de $M$) frente a la densidad teórica.</p>
+        <div class="controls"></div>
+        <div class="grid-2"><div class="plot p3-rm"></div><div class="plot p3-h"></div></div>
+        <div class="out"></div>
+      </div>
+    </div></details>
+  </div>
+
+  <!-- ===================================================== EJERCICIO 11 -->
+  <div class="box ejercicio" id="ej-11">
+    <span class="box-title">Ejercicio 11 · Un par cualquiera de estadísticos de orden</span>
+    <p>Sean $X_1,\dots,X_n$ variables aleatorias i.i.d. con densidad $f$ y función de distribución $F$, y sean $1\le i &lt; j\le n$. Recuerde que la densidad conjunta de $(Y_i,Y_j)$ es, para $u &lt; v$,</p>
+    $$f_{Y_i,Y_j}(u,v)=\frac{n!}{(i-1)!\,(j-i-1)!\,(n-j)!}\,F(u)^{i-1}\,[F(v)-F(u)]^{j-i-1}\,[1-F(v)]^{n-j}\,f(u)\,f(v).$$
+    <ol type="a">
+      <li>Suponga que $X_i\sim U(0,1)$. Usando el método del Jacobiano con $U=Y_i$ y $W=Y_j-Y_i$, muestre que $$W\sim\text{Beta}(j-i,\ n-j+i+1).$$ ¿Qué tiene de particular que esta distribución dependa de $i$ y $j$ solo a través de $j-i$?</li>
+      <li>Con $n=5$, calcule $\P(Y_4-Y_2>1/2)$.</li>
+    </ol>
+    <p class="small"><b>Técnica:</b> Jacobiano bivariado + integral Beta (<a href="../temas/clase-01.html">Clase 1</a>, <a href="../temas/clase-02.html">Clase 2</a>).</p>
+
+    <details class="pista"><summary>Pista 1</summary><div>
+      <p>La inversa es $y_i=u$, $y_j=u+w$, con Jacobiano 1. El soporte $0 &lt; u &lt; v &lt; 1$ se vuelve $u>0,\ w>0,\ u+w &lt; 1$.</p>
+    </div></details>
+    <details class="pista"><summary>Pista 2</summary><div>
+      <p>Para integrar $u$ en $\int_0^{1-w}u^{i-1}(1-w-u)^{n-j}\,du$ cambia $u=(1-w)t$: aparece $(1-w)^{\,\cdots}\int_0^1t^{i-1}(1-t)^{n-j}dt=(1-w)^{\,\cdots}B(i,\,n-j+1)$.</p>
+    </div></details>
+    <details class="pista"><summary>Pista 3</summary><div>
+      <p>En (b): $i=2$, $j=4$, así que $W\sim\text{Beta}(2,4)$, con densidad $20w(1-w)^3$.</p>
+    </div></details>
+
+    <details class="solucion"><summary>Solución completa</summary><div>
+      <h4>a) Ley de $W=Y_j-Y_i$</h4>
+      <ol class="pasos">
+        <li>Con $F(x)=x$, $f(x)=1$ y $c=\frac{n!}{(i-1)!\,(j-i-1)!\,(n-j)!}$:
+          $$f_{Y_i,Y_j}(u,v)=c\,u^{i-1}(v-u)^{j-i-1}(1-v)^{n-j},\qquad 0 &lt; u &lt; v &lt; 1.$$</li>
+        <li>Transformación $U=Y_i$, $W=Y_j-Y_i$; inversa $y_i=u$, $y_j=u+w$;
+          $$J=\frac{\partial(y_i,y_j)}{\partial(u,w)}=\det\begin{pmatrix}1&0\\1&1\end{pmatrix}=1.$$</li>
+        <li>Soporte: $0 &lt; u$, $u &lt; u+w\iff w>0$, $u+w &lt; 1$. Es el triángulo $\{u>0,\ w>0,\ u+w &lt; 1\}$. Entonces
+          $$f_{U,W}(u,w)=c\,u^{i-1}\,w^{j-i-1}\,(1-u-w)^{n-j},\qquad u>0,\ w>0,\ u+w &lt; 1.$$</li>
+        <li>Marginal de $W$ ($0 &lt; w &lt; 1$, $u\in(0,1-w)$), con $u=(1-w)t$, $du=(1-w)\,dt$:
+          $$\int_0^{1-w}u^{i-1}(1-w-u)^{n-j}du=(1-w)^{(i-1)+(n-j)+1}\int_0^1 t^{i-1}(1-t)^{n-j}dt=(1-w)^{n-j+i}\,\frac{(i-1)!\,(n-j)!}{(n-j+i)!}.$$</li>
+        <li>Multiplicando por $c\,w^{j-i-1}$ (se cancelan $(i-1)!$ y $(n-j)!$):
+          $$f_W(w)=\frac{n!}{(j-i-1)!\,(n-j+i)!}\,w^{j-i-1}(1-w)^{n-j+i},\qquad 0 &lt; w &lt; 1.$$</li>
+        <li>Con $\alpha=j-i$, $\beta=n-j+i+1$ se tiene $\alpha+\beta=n+1$ y $\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}=\frac{n!}{(j-i-1)!\,(n-j+i)!}$, así que $$\boxed{W=Y_j-Y_i\sim\text{Beta}(j-i,\ n-j+i+1).}\ \blacksquare$$</li>
+      </ol>
+      <div class="box idea"><span class="box-title">¿Qué tiene de particular? (espaciamientos intercambiables)</span>
+        <p>La ley de $Y_j-Y_i$ depende sólo de $k=j-i$: la distancia entre dos estadísticos separados $k$ lugares es la misma esté donde esté el par (al principio, en medio o al final). Además coincide con la ley de $Y_k=Y_k-0$, que es $\text{Beta}(k,\,n-k+1)$ (Ejercicio 7 de la Clase 2).</p>
+        <p>La razón: los $n$ puntos cortan $(0,1)$ en $n+1$ <b>espaciamientos</b> $D_1=Y_1,\ D_2=Y_2-Y_1,\dots,D_{n+1}=1-Y_n$. Su densidad conjunta es la constante $n!$ sobre el simplex $\{D_\ell>0,\ \sum D_\ell=1\}$: es <b>simétrica</b>, es decir, los espaciamientos son intercambiables. $Y_j-Y_i$ es la suma de $k$ espaciamientos consecutivos, y cualquier suma de $k$ de ellos tiene la misma ley.</p>
+        <p>Cruce con el Ejercicio 10: el rango $R=Y_n-Y_1$ tiene $k=n-1$, así que $R\sim\text{Beta}(n-1,2)$ ✓.</p>
+      </div>
+      <div class="grid-2">
+        <div><div class="plot" id="p3-ej11-fig-uv"></div><p class="small muted">Soporte de $(Y_i,Y_j)$: $0 &lt; u &lt; v &lt; 1$.</p></div>
+        <div><div class="plot" id="p3-ej11-fig-uw"></div><p class="small muted">Soporte de $(U,W)$: $u>0,\ w>0,\ u+w &lt; 1$. Para cada $w$, $u$ recorre $(0,\,1-w)$ (segmento marcado).</p></div>
+      </div>
+
+      <h4>b) $n=5$: $\P(Y_4-Y_2>1/2)$</h4>
+      <ol class="pasos">
+        <li>$i=2$, $j=4$: $W\sim\text{Beta}(2,\,5-4+2+1)=\text{Beta}(2,4)$, con $f_W(w)=\frac{5!}{1!\,3!}w(1-w)^3=20\,w(1-w)^3$.</li>
+        <li>Con $s=1-w$: $$\P(W>\tfrac12)=\int_{1/2}^1 20w(1-w)^3dw=\int_0^{1/2}20(1-s)s^3ds=20\Big(\frac{s^4}4-\frac{s^5}5\Big)\Big|_0^{1/2}=20\Big(\tfrac1{64}-\tfrac1{160}\Big)=\boxed{\tfrac3{16}=0.1875}.$$</li>
+        <li>Comprobación por intercambiabilidad: $Y_4-Y_2$ tiene la ley de $Y_2$ con $n=5$, y $\P(Y_2>\tfrac12)$ = "a lo sumo una de las 5 uniformes cae bajo $\tfrac12$" $=\frac{1+5}{32}=\frac3{16}$ ✓.</li>
+      </ol>
+    </div></details>
+
+    <div id="p3-ej11-check"></div>
+
+    <details class="verif"><summary>Verificación por simulación</summary><div>
+      <div class="sim" id="p3-ej11-sim">
+        <p class="sim-title">Distancia entre $Y_i$ y $Y_j$</p>
+        <p class="sim-desc">Barras: histograma de $Y_j-Y_i$. Línea: densidad $\text{Beta}(j-i,\,n-j+i+1)$. Línea punteada: histograma (como polígono) de $Y_{j-i}$. Mueve $i$ manteniendo $j-i$ fijo y verás que no cambia nada.</p>
+        <div class="controls"></div>
+        <div class="plot"></div>
+        <div class="out"></div>
+      </div>
+    </div></details>
+  </div>
+
+  <!-- ===================================================== EJERCICIO 12 -->
+  <div class="box ejercicio" id="ej-12">
+    <span class="box-title">Ejercicio 12 · Cocientes de estadísticos de orden uniformes</span>
+    <p>Sean $X_1,\dots,X_n$ variables aleatorias independientes e idénticamente distribuidas, con distribución uniforme en $(0,1)$, y defina
+      $$V_i=\frac{Y_i}{Y_{i+1}},\quad i=1,\dots,n-1\qquad\text{y}\qquad V_n=Y_n.$$
+      Demuestre que $V_1,\dots,V_n$ son independientes y $V_i\sim\text{Beta}(i,1)$, para $i=1,\dots,n$.</p>
+    <p class="small"><b>Técnica:</b> Jacobiano $n$-dimensional (<a href="../temas/clase-01.html">Clase 1</a>, "Caso $n$-dimensional") sobre la densidad conjunta $n!$ de los estadísticos de orden (<a href="../temas/clase-02.html">Clase 2</a>).</p>
+
+    <details class="pista"><summary>Pista 1</summary><div>
+      <p>Encuentra la inversa "de atrás hacia adelante": $y_n=v_n$, $y_{n-1}=v_{n-1}y_n$, … En general $y_k=v_k\,v_{k+1}\cdots v_n$. Hazlo primero con $n=3$.</p>
+    </div></details>
+    <details class="pista"><summary>Pista 2</summary><div>
+      <p>$y_k$ sólo depende de $v_k,\dots,v_n$, así que la matriz $\partial y/\partial v$ es <b>triangular superior</b>: su determinante es el producto de la diagonal $\partial y_k/\partial v_k=v_{k+1}\cdots v_n$. ¿Cuántas veces aparece cada $v_\ell$?</p>
+    </div></details>
+    <details class="pista"><summary>Pista 3</summary><div>
+      <p>Comprueba que $0 &lt; y_1 &lt; \cdots &lt; y_n &lt; 1\iff 0 &lt; v_\ell &lt; 1$ para todo $\ell$ (un cubo) y escribe $n!=1\cdot2\cdots n$ para factorizar la densidad.</p>
+    </div></details>
+
+    <details class="solucion"><summary>Solución completa</summary><div>
+      <ol class="pasos">
+        <li><b>Densidad de partida.</b> $f_{Y_1,\dots,Y_n}(y_1,\dots,y_n)=n!$ en $S_Y=\{0 &lt; y_1 &lt; y_2 &lt; \cdots &lt; y_n &lt; 1\}$.</li>
+        <li><b>Inversa.</b> De $V_n=Y_n$ y $V_k=Y_k/Y_{k+1}$ despejamos de atrás hacia adelante: $y_n=v_n$, $y_{n-1}=v_{n-1}y_n=v_{n-1}v_n$, y por inducción
+          $$y_k=v_k\,y_{k+1}=v_k\,v_{k+1}\cdots v_n,\qquad k=1,\dots,n.$$
+          La transformación es biyectiva (cada $v$ da un único $y$ y viceversa, pues $y_{k+1}>0$).</li>
+        <li><b>Soporte.</b> Si $y\in S_Y$: $v_k=y_k/y_{k+1}\in(0,1)$ y $v_n=y_n\in(0,1)$. Recíprocamente, si $v\in(0,1)^n$: $y_n=v_n\in(0,1)$ y $y_k=v_ky_{k+1}\in(0,\,y_{k+1})$, así que $0 &lt; y_1 &lt; \cdots &lt; y_n &lt; 1$. Por tanto $$S_V=(0,1)^n\quad\text{(el cubo unitario).}$$</li>
+        <li><b>Jacobiano.</b> $\dfrac{\partial y_k}{\partial v_\ell}=0$ si $\ell &lt; k$ (en $y_k$ no aparece $v_\ell$) y $=\dfrac{y_k}{v_\ell}$ si $\ell\ge k$. La matriz es triangular superior y
+          $$J=\prod_{k=1}^n\frac{\partial y_k}{\partial v_k}=\prod_{k=1}^n v_{k+1}\cdots v_n=\prod_{\ell=1}^n v_\ell^{\,\ell-1}=v_2\,v_3^2\cdots v_n^{\,n-1}>0,$$
+          porque $v_\ell$ aparece en la diagonal de las filas $k=1,\dots,\ell-1$, o sea $\ell-1$ veces.</li>
+        <li><b>Densidad de $V$.</b> $$f_V(v_1,\dots,v_n)=n!\prod_{\ell=1}^n v_\ell^{\,\ell-1}=\prod_{\ell=1}^n\big(\ell\,v_\ell^{\,\ell-1}\big),\qquad v\in(0,1)^n,$$ usando $n!=\prod_{\ell=1}^n \ell$.</li>
+        <li><b>Conclusión.</b> La densidad es un producto de funciones de una sola variable sobre un soporte rectangular (el cubo), así que $V_1,\dots,V_n$ son <b>independientes</b>, y $V_\ell$ tiene densidad $\ell\,v^{\ell-1}$ en $(0,1)$, que es la $\text{Beta}(\ell,1)$ (pues $\frac{\Gamma(\ell+1)}{\Gamma(\ell)\Gamma(1)}=\ell$). $\blacksquare$</li>
+      </ol>
+
+      <h4>Caso $n=3$ explícito</h4>
+      <ol class="pasos">
+        <li>$V_1=Y_1/Y_2$, $V_2=Y_2/Y_3$, $V_3=Y_3$. Inversa: $y_3=v_3$, $y_2=v_2v_3$, $y_1=v_1v_2v_3$.</li>
+        <li>$$J=\det\begin{pmatrix}\partial y_1/\partial v_1&\partial y_1/\partial v_2&\partial y_1/\partial v_3\\ \partial y_2/\partial v_1&\partial y_2/\partial v_2&\partial y_2/\partial v_3\\ \partial y_3/\partial v_1&\partial y_3/\partial v_2&\partial y_3/\partial v_3\end{pmatrix}=\det\begin{pmatrix}v_2v_3&v_1v_3&v_1v_2\\0&v_3&v_2\\0&0&1\end{pmatrix}=v_2\,v_3^2.$$</li>
+        <li>$$f_{V_1,V_2,V_3}(v_1,v_2,v_3)=3!\;v_2v_3^2=\underbrace{1}_{\text{Beta}(1,1)}\cdot\underbrace{2v_2}_{\text{Beta}(2,1)}\cdot\underbrace{3v_3^2}_{\text{Beta}(3,1)},\qquad 0 &lt; v_1,v_2,v_3 &lt; 1.$$ En particular $V_3=Y_3$ (el máximo) es $\text{Beta}(3,1)$, como ya sabíamos ✓.</li>
+      </ol>
+      <div class="grid-2">
+        <div><div class="plot" id="p3-ej12-fig-y"></div><p class="small muted">$n=2$: soporte $0 &lt; y_1 &lt; y_2 &lt; 1$. Las rectas $y_1=c\,y_2$ son "$v_1=c$"; las horizontales $y_2=c$ son "$v_2=c$".</p></div>
+        <div><div class="plot" id="p3-ej12-fig-v"></div><p class="small muted">Su imagen en $(v_1,v_2)$: el cuadrado unitario; los rayos se vuelven verticales y la densidad $2v_2$ ya no depende de $v_1$.</p></div>
+      </div>
+      <div class="box nota"><span class="box-title">Para qué sirve</span>
+        <p>Como $\P(V_\ell^{\ell}\le x)=\P(V_\ell\le x^{1/\ell})=x$, cada $V_\ell^\ell\sim U(0,1)$. Al revés: con $U_1,\dots,U_n$ uniformes independientes, $Y_k=\prod_{\ell\ge k}U_\ell^{1/\ell}$ genera los estadísticos de orden <em>ya ordenados</em>, sin ordenar nada.</p>
+      </div>
+    </div></details>
+
+    <details class="verif"><summary>Verificación por simulación</summary><div>
+      <div class="sim" id="p3-ej12-sim">
+        <p class="sim-title">Los cocientes $V_i$</p>
+        <p class="sim-desc">Se simulan muestras de $n$ uniformes, se ordenan y se calculan los $V_i$. El histograma de $V_i$ se compara con $i\,v^{i-1}$; la lectura muestra correlaciones y una probabilidad conjunta frente al producto de marginales.</p>
+        <div class="controls"></div>
+        <div class="plot"></div>
+        <div class="out"></div>
+      </div>
+    </div></details>
+  </div>
+</section>
+
+</main>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../assets/js/stats.js"></script>
+<script src="../assets/js/plot.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+/* ===================== Partes I y II (ejercicios 1–6) ===================== */
+(function () {
+  'use strict';
+  const S = EM.stats, Dist = S.dist, fmt = S.fmt, ui = EM.ui;
+  const $id = id => document.getElementById(id);
+  const N = 20000;
+
+  // ---------- utilidades locales ----------
+  // acumulada empírica a partir de una muestra ORDENADA
+  function ecdf(sorted) {
+    return x => { let lo = 0, hi = sorted.length; while (lo < hi) { const m = (lo + hi) >> 1; if (sorted[m] <= x) lo = m + 1; else hi = m; } return lo / sorted.length; };
+  }
+  function dot(g, x, y, color, open) {
+    const c = g.ctx; c.save(); c.beginPath(); c.arc(g.X(x), g.Y(y), 4.2, 0, 2 * Math.PI);
+    c.lineWidth = 2; c.strokeStyle = EM.plot.resolveColor(color);
+    c.fillStyle = EM.plot.resolveColor(open ? 'bg' : color); c.fill(); c.stroke(); c.restore();
+  }
+  function circle(g, cx, cy, r, o) { g.param(t => cx + r * Math.cos(t), t => cy + r * Math.sin(t), 0, 2 * Math.PI, o); }
+  function sim(id) {
+    const root = $id(id);
+    const plots = {};
+    root.querySelectorAll('.plot').forEach((d, i) => { plots[d.dataset.k || i] = d; });
+    return { root, ctl: root.querySelector('.controls'), plots, out: ui.readout(root.querySelector('.out')) };
+  }
+  function check(id, items) {
+    const host = $id(id);
+    items.forEach(o => ui.numcheck(host, o));
+  }
+  function maxOn(f, a, b, n = 400) { let m = 0; for (let i = 1; i < n; i++) { const v = f(a + (b - a) * i / n); if (isFinite(v) && v > m) m = v; } return m; }
+  const pct = (x, d = 4) => fmt(x, d);
+
+  // Las gráficas dentro de <details> cerrados se crean con ancho por defecto:
+  // al abrir cualquier desplegable se redibujan con el ancho real.
+  document.querySelectorAll('#contenido details').forEach(d => d.addEventListener('toggle', () => { if (d.open) EM.plot.redrawAll(); }));
+
+  /* =========================== EJERCICIO 1 =========================== */
+  check('chk-1', [
+    { prompt: '(a) $F_Y(27)=$', answer: 0.5, tol: 0.002 },
+    { prompt: '(b) $\\P(W=4)=$', answer: 0.6, tol: 0.002 },
+    { prompt: '(c) $F_Z(5)=$', answer: 0.9, tol: 0.002 },
+  ]);
+  const FY = y => y < 2 ? 0 : y >= 102 ? 1 : Math.sqrt(y - 2) / 10;
+  const FZ = z => z < 0 ? 0 : z <= 4 ? z / 5 : z < 6 ? (4 + z) / 10 : 1;
+  function drawFW(g, color) {
+    g.line(-1, 0, 2, 0, { color, width: 2.4 });
+    g.line(2, 0.2, 4, 0.4, { color, width: 2.4 });
+    g.line(4, 1, 7, 1, { color, width: 2.4 });
+    g.line(2, 0, 2, 0.2, { color: 'muted', dash: [3, 3], width: 1 });
+    g.line(4, 0.4, 4, 1, { color: 'muted', dash: [3, 3], width: 1 });
+    dot(g, 2, 0, color, true); dot(g, 2, 0.2, color, false);
+    dot(g, 4, 0.4, color, true); dot(g, 4, 1, color, false);
+  }
+  EM.plot.create($id('fig1-FW'), { xmin: 0, xmax: 6, ymin: 0, ymax: 1.1, height: 230, xlabel: 'w', ylabel: 'F_W(w)' })
+    .draw(g => {
+      drawFW(g, 'c1');
+      g.text('salto 0.2', 2.1, 0.1, { color: 'c2', size: 12 });
+      g.text('salto 0.6', 4.12, 0.7, { color: 'c2', size: 12 });
+    });
+  EM.plot.create($id('fig1-FY'), { xmin: 0, xmax: 110, ymin: 0, ymax: 1.1, height: 230, xlabel: 'y', ylabel: 'F_Y(y)' })
+    .draw(g => { g.curve(FY, { color: 'c1', n: 800 }); });
+  (function () {
+    let z = 3;
+    const p = EM.plot.create($id('fig1-Z'), { xmin: -1, xmax: 11, ymin: 0, ymax: 0.16, height: 200, xlabel: 'x', ylabel: 'f_X(x)', yticks: 3 });
+    const out = ui.readout($id('fig1-Zout'));
+    function render() {
+      const a = Math.max(0, 4 - z), b = Math.min(10, 4 + z);
+      p.draw(g => {
+        g.area(() => 0.1, a, b, { color: 'c1', alpha: 0.35 });
+        g.line(0, 0.1, 10, 0.1, { color: 'c1', width: 2.2 });
+        g.vline(4, { color: 'c4', label: 'x = 4' });
+        if (4 - z < 0) g.line(4 - z, 0.12, 0, 0.12, { color: 'bad', width: 2, dash: [4, 3] });
+        g.line(Math.max(-1, 4 - z), 0.12, 4 + z, 0.12, { color: 'ink', width: 1.2 });
+        g.text('4−z', 4 - z, 0.125, { align: 'center', size: 12 }); g.text('4+z', 4 + z, 0.125, { align: 'center', size: 12 });
+      });
+      out.set(z <= 4
+        ? `$z=${fmt(z, 2)}\\le 4$: el intervalo $[4-z,\\,4+z]$ cabe en $[0,10]$, $F_Z(z)=z/5=$ <b>${fmt(FZ(z), 3)}</b>`
+        : `$z=${fmt(z, 2)}\\gt 4$: el extremo $4-z$ sale de $[0,10]$ (tramo rojo, probabilidad 0), $F_Z(z)=(4+z)/10=$ <b>${fmt(FZ(z), 3)}</b>`);
+    }
+    ui.slider($id('fig1-Zctl'), { tex: 'z', min: 0, max: 6, step: 0.05, value: z, fmt: v => v.toFixed(2), onInput: v => { z = v; render(); } });
+    render();
+  })();
+  (function () {
+    const s = sim('sim-1');
+    let which = 'W', xs = [];
+    const cfg = {
+      Y: { t: v => v * v + 2, xmin: 0, xmax: 110, label: 'y', F: FY },
+      W: { t: v => Math.max(2, Math.min(4, v)), xmin: 0, xmax: 6, label: 'w' },
+      Z: { t: v => Math.abs(v - 4), xmin: -0.5, xmax: 7, label: 'z', F: FZ },
+    };
+    const p = EM.plot.create(s.plots[0], { xmin: 0, xmax: 6, ymin: 0, ymax: 1.08, height: 280, xlabel: 'w', legendPos: 'tl' });
+    function simulate() { xs = Array.from({ length: N }, () => 10 * S.rng()); render(); }
+    function render() {
+      const c = cfg[which];
+      const ys = xs.map(c.t).sort((a, b) => a - b), Fe = ecdf(ys);
+      p.setRange({ xmin: c.xmin, xmax: c.xmax, xlabel: c.label });
+      p.draw(g => {
+        if (which === 'W') { drawFW(g, 'c1'); g.curve(() => NaN, { color: 'c1', label: 'F teórica' }); }
+        else g.curve(c.F, { color: 'c1', label: 'F teórica', n: 900 });
+        g.curve(Fe, { color: 'c2', width: 1.6, dash: [6, 3], label: 'F empírica', n: 900 });
+      });
+      const prop = pred => S.prop(ys, pred);
+      if (which === 'Y') s.out.set(`$\\hat F_Y(27)=$ <b>${pct(Fe(27))}</b> (teórico $\\sqrt{25}/10=0.5$) · $\\hat F_Y(66)=$ <b>${pct(Fe(66))}</b> (teórico $0.8$)`);
+      if (which === 'W') s.out.set(`$\\hat\\P(W=2)=$ <b>${pct(prop(v => v === 2))}</b> (teórico 0.2) · $\\hat\\P(W=4)=$ <b>${pct(prop(v => v === 4))}</b> (teórico 0.6) · $\\hat\\P(2\\lt W\\lt 4)=$ <b>${pct(prop(v => v > 2 && v < 4))}</b> (teórico 0.2) · $\\bar W=$ <b>${fmt(S.mean(ys), 3)}</b> (teórico $\\E[W]=3.4$)`);
+      if (which === 'Z') s.out.set(`$\\hat F_Z(3)=$ <b>${pct(Fe(3))}</b> (teórico $3/5=0.6$) · $\\hat F_Z(5)=$ <b>${pct(Fe(5))}</b> (teórico $9/10=0.9$)`);
+    }
+    ui.select(s.ctl, { label: 'Variable', value: which, options: [{ value: 'Y', label: 'Y = X² + 2' }, { value: 'W', label: 'W = máx{2, mín{4, X}}' }, { value: 'Z', label: 'Z = |X − 4|' }], onChange: v => { which = v; render(); } });
+    ui.button(s.ctl, `Simular ${N.toLocaleString('es')} valores de X`, simulate, { primary: true });
+    simulate();
+  })();
+
+  /* =========================== EJERCICIO 2 =========================== */
+  check('chk-2', [
+    { prompt: 'Con $R=2$: $\\E[D]=$', answer: 1.5, tol: 0.002 },
+    { prompt: 'Con $R=2$: $\\P(D\\le 1)=$', answer: 0.125, tol: 0.001 },
+  ]);
+  (function () {
+    let d = 0.6;
+    const p = EM.plot.create($id('fig2-corte'), { xmin: -1.2, xmax: 1.2, ymin: -1.2, ymax: 1.2, equal: true, autoAxes: false, margin: { l: 10, r: 10, t: 10, b: 10 } });
+    const out = ui.readout($id('fig2-out'));
+    function render() {
+      p.draw(g => {
+        g.region((x, y) => x * x + y * y <= 1, { color: 'c1', alpha: 0.12 });
+        g.region((x, y) => x * x + y * y <= d * d, { color: 'c1', alpha: 0.45 });
+        circle(g, 0, 0, 1, { color: 'c1', width: 2 }); circle(g, 0, 0, d, { color: 'c2', width: 2 });
+        g.points([0], [0], { r: 3, color: 'ink' });
+        g.line(0, 0, d * Math.cos(0.6), d * Math.sin(0.6), { color: 'c2', width: 2 });
+        g.text('d', d * Math.cos(0.6) / 2, d * Math.sin(0.6) / 2 + 0.06, { color: 'c2', bold: true });
+        g.text('R = 1', 0.72, -0.82, { color: 'c1' });
+      });
+      out.set(`$F_D(${fmt(d, 2)})=d^3=$ <b>${fmt(d ** 3, 4)}</b> &nbsp;(si pensaras en áreas darías $d^2=${fmt(d * d, 4)}$, error)`);
+    }
+    ui.slider($id('fig2-ctl'), { tex: 'd', min: 0, max: 1, step: 0.01, value: d, fmt: v => v.toFixed(2), onInput: v => { d = v; render(); } });
+    render();
+  })();
+  EM.plot.create($id('fig2-fF'), { xmin: 0, xmax: 1.05, ymin: 0, ymax: 3.2, height: 230, xlabel: 'd', legendPos: 'tl' })
+    .draw(g => {
+      g.curve(t => t <= 1 ? 3 * t * t : 0, { color: 'c1', label: 'f_D(d) = 3d²' });
+      g.curve(t => t <= 1 ? t ** 3 : 1, { color: 'c2', label: 'F_D(d) = d³' });
+      g.vline(0.75, { color: 'c3', label: 'E[D] = 3/4', labelY: 2.6 });
+    });
+  (function () {
+    const s = sim('sim-2');
+    let R = 1, ds = [], tried = 0;
+    const p = EM.plot.create(s.plots[0], { xmin: 0, xmax: 1, ymin: 0, ymax: 3.3, height: 260, xlabel: 'd', legendPos: 'tl' });
+    function simulate() {
+      ds = []; tried = 0;
+      while (ds.length < N) {
+        const x = (2 * S.rng() - 1) * R, y = (2 * S.rng() - 1) * R, z = (2 * S.rng() - 1) * R; tried++;
+        const r2 = x * x + y * y + z * z; if (r2 <= R * R) ds.push(Math.sqrt(r2));
+      }
+      render();
+    }
+    function render() {
+      p.setRange({ xmax: R * 1.02, ymax: 3.3 / R });
+      p.draw(g => {
+        g.hist(ds, { bins: 40, range: [0, R], label: 'distancias simuladas' });
+        g.curve(t => t <= R ? 3 * t * t / R ** 3 : NaN, { color: 'c1', label: 'f_D(d) = 3d²/R³' });
+        g.vline(0.75 * R, { color: 'c3' });
+      });
+      s.out.set(`Media simulada $\\bar D=$ <b>${fmt(S.mean(ds), 4)}</b> vs. $\\E[D]=3R/4=$ <b>${fmt(0.75 * R, 4)}</b> · $\\hat\\P(D\\le R/2)=$ <b>${fmt(S.prop(ds, v => v <= R / 2), 4)}</b> vs. $1/8=0.125$ · aceptados ${ds.length} de ${tried} ($\\approx\\pi/6=0.524$)`);
+    }
+    ui.slider(s.ctl, { tex: 'R', min: 0.5, max: 3, step: 0.5, value: R, fmt: v => v.toFixed(1), onInput: v => { R = v; simulate(); } });
+    ui.button(s.ctl, 'Simular de nuevo', simulate, { primary: true });
+    simulate();
+  })();
+
+  /* =========================== EJERCICIO 3 =========================== */
+  check('chk-3', [
+    { prompt: '$\\P(X\\le 1)=$', answer: 0.75, tol: 0.002 },
+    { prompt: '$f_X(0)=$ (con 4 decimales)', answer: 1 / Math.PI, tol: 0.0006 },
+  ]);
+  (function () {
+    let th = 35;
+    const p = EM.plot.create($id('fig3-faro'), { xmin: -3.2, xmax: 3.2, ymin: -0.45, ymax: 1.3, equal: true, autoAxes: false, margin: { l: 8, r: 8, t: 8, b: 8 } });
+    p.draw(g => {
+      const t = th * Math.PI / 180, X = Math.tan(t);
+      g.line(-3.2, 0, 3.2, 0, { color: 'ink', width: 2 });
+      g.text('Costa (x)', 3.15, 0.06, { align: 'right', color: 'muted', size: 12 });
+      g.line(0, 1, 0, 0, { color: 'muted', dash: [4, 4], width: 1.4 });
+      g.text('1 km', -0.08, 0.5, { align: 'right', color: 'muted', size: 12 });
+      g.line(0.1, 0, 0.1, 0.1, { color: 'muted', width: 1 }); g.line(0, 0.1, 0.1, 0.1, { color: 'muted', width: 1 });
+      g.line(0, 1, X, 0, { color: 'c1', width: 2.6 });
+      g.param(u => 0.28 * Math.sin(u), u => 1 - 0.28 * Math.cos(u), 0, t, { color: 'c4', width: 1.6 });
+      g.text('Θ', 0.32 * Math.sin(t / 2) + (t >= 0 ? 0.04 : -0.1), 1 - 0.4 * Math.cos(t / 2), { color: 'c4', bold: true });
+      g.points([0], [1], { r: 6, color: 'c4' }); g.text('Faro', 0.12, 1.12, { size: 12 });
+      if (Math.abs(X) < 3.2) g.points([X], [0], { r: 5, color: 'c1' });
+      const xe = Math.max(-3.15, Math.min(3.15, X));
+      g.line(0, -0.18, xe, -0.18, { color: 'c2', width: 2 });
+      g.line(0, -0.24, 0, -0.12, { color: 'c2', width: 2 }); if (Math.abs(X) < 3.2) g.line(X, -0.24, X, -0.12, { color: 'c2', width: 2 });
+      g.text(`X = tan Θ = ${X.toFixed(2)}`, xe / 2, -0.38, { align: 'center', color: 'c2', size: 13, bold: true });
+      g.text('0', 0, 0.02, { align: 'center', baseline: 'top', dy: 4, color: 'muted', size: 11 });
+    });
+    ui.slider($id('fig3-ctl'), { tex: '\\Theta\\ (\\text{grados})', min: -85, max: 85, step: 1, value: th, fmt: v => v + '°', onInput: v => { th = v; p.redraw(); } });
+  })();
+  (function () {
+    const s = sim('sim-3');
+    const C = Dist.cauchy(0, 1);
+    let xs = [];
+    const ph = EM.plot.create(s.plots.h, { xmin: -6, xmax: 6, ymin: 0, ymax: 0.36, height: 240, xlabel: 'x', legendPos: 'tl' });
+    const pm = EM.plot.create(s.plots.m, { xmin: 0, xmax: N, ymin: -5, ymax: 5, height: 180, xlabel: 'n', ylabel: 'promedio de X₁…Xₙ' });
+    function simulate() { xs = Array.from({ length: N }, () => Math.tan(Math.PI * (S.rng() - 0.5))); render(); }
+    function render() {
+      ph.draw(g => {
+        g.hist(xs, { bins: 60, label: 'X = tan Θ simulados' });
+        g.curve(C.pdf, { color: 'c1', label: '1/(π(1+x²))' });
+      });
+      const run = []; let acc = 0; const step = 20;
+      for (let i = 0; i < xs.length; i++) { acc += xs[i]; if ((i + 1) % step === 0) run.push([i + 1, acc / (i + 1)]); }
+      pm.draw(g => { g.hline(0, { color: 'muted' }); g.curve(n => { const k = Math.min(run.length - 1, Math.max(0, Math.round(n / step) - 1)); return run[k][1]; }, { color: 'c4', width: 1.6 }); });
+      s.out.set(`$\\hat\\P(|X|\\le 1)=$ <b>${fmt(S.prop(xs, v => Math.abs(v) <= 1), 4)}</b> (teórico $\\tfrac{2}{\\pi}\\arctan 1=0.5$) · $\\hat\\P(|X|\\gt 6)=$ <b>${fmt(S.prop(xs, v => Math.abs(v) > 6), 4)}</b> (teórico $1-\\tfrac{2}{\\pi}\\arctan 6=${fmt(1 - 2 / Math.PI * Math.atan(6), 4)}$) · valor más extremo: <b>${fmt(xs.reduce((m, v) => Math.abs(v) > Math.abs(m) ? v : m, 0), 1)}</b>`);
+    }
+    ui.button(s.ctl, `Simular ${N.toLocaleString('es')} destellos`, simulate, { primary: true });
+    simulate();
+  })();
+
+  /* =========================== EJERCICIO 4 =========================== */
+  check('chk-4', [
+    { prompt: '(a) $k=$', answer: 24, tol: 0.01 },
+    { prompt: '(b) $f_X(1/2)=$', answer: 1.5, tol: 0.002 },
+    { prompt: '(d) $\\P(X\\ge 1/2\\mid X+Y\\le 3/4)=$', answer: 1 / 9, tol: 0.0006 },
+    { prompt: '(e) $f_V(1/2)=$', answer: 0.5, tol: 0.002 },
+  ]);
+  const tri = [[0, 0], [1, 0], [0, 1]];
+  const sq = { xmin: -0.1, xmax: 1.12, ymin: -0.1, ymax: 1.12, equal: true, xticks: 4, yticks: 4, margin: { l: 34, r: 10, t: 10, b: 30 } };
+  EM.plot.create($id('fig4-a'), Object.assign({ xlabel: 'x', ylabel: 'y' }, sq)).draw(g => {
+    g.polygon(tri, { color: 'c1', alpha: 0.15, stroke: 'c1' });
+    g.polygon([[0, 0], [1, 0], [0.5, 0.5]], { color: 'c1', alpha: 0.45 });
+    g.line(0, 0, 1, 1, { color: 'c2', dash: [5, 4] }); g.text('y = x', 0.78, 0.86, { color: 'c2', size: 12 });
+    g.text('x ≥ y', 0.5, 0.15, { align: 'center', bold: true });
+  });
+  EM.plot.create($id('fig4-b'), Object.assign({ xlabel: 'x', ylabel: 'y' }, sq)).draw(g => {
+    g.polygon(tri, { fill: false, stroke: 'muted' });
+    g.polygon([[0, 0], [0.75, 0], [0, 0.75]], { color: 'c3', alpha: 0.2, stroke: 'c3' });
+    g.polygon([[0.5, 0], [0.75, 0], [0.5, 0.25]], { color: 'c4', alpha: 0.6, stroke: 'c4' });
+    g.line(0.5, 0, 0.5, 1, { color: 'c4', dash: [4, 4], width: 1 });
+    g.text('x+y ≤ 3/4', 0.08, 0.3, { color: 'c3', size: 12 }); g.text('x = 1/2', 0.53, 0.9, { color: 'c4', size: 12 });
+  });
+  EM.plot.create($id('fig4-c'), Object.assign({ xlabel: 'x', ylabel: 'y' }, sq)).draw(g => {
+    g.region((x, y) => x >= 0 && y >= 0 && x * x + y * y <= 1, { color: 'c6', alpha: 0.18 });
+    g.param(t => Math.cos(t), t => Math.sin(t), 0, Math.PI / 2, { color: 'c6', width: 2 });
+    g.polygon(tri, { color: 'c1', alpha: 0.4, stroke: 'c1' });
+    g.text('x²+y² ≤ 1', 0.62, 0.86, { color: 'c6', size: 12 }); g.text('T', 0.25, 0.25, { bold: true });
+  });
+  EM.plot.create($id('fig4-uv'), { xmin: -0.15, xmax: 1.2, ymin: -1.15, ymax: 1.15, equal: true, xlabel: 'u', ylabel: 'v', xticks: 4, yticks: 4, margin: { l: 34, r: 10, t: 10, b: 30 } }).draw(g => {
+    g.polygon([[0, 0], [1, 1], [1, -1]], { color: 'c1', alpha: 0.3 });
+    g.line(0, 0, 1, 1, { color: 'c2', width: 2.4 }); g.line(0, 0, 1, -1, { color: 'c3', width: 2.4 }); g.line(1, -1, 1, 1, { color: 'c4', width: 2.4 });
+    g.text('v = u  (y = 0)', 0.12, 0.62, { color: 'c2', size: 12 });
+    g.text('v = −u  (x = 0)', 0.12, -0.66, { color: 'c3', size: 12 });
+    g.text('u = 1', 1.03, 0.05, { color: 'c4', size: 12 });
+    g.text('T*', 0.62, 0.0, { bold: true });
+  });
+  const fV4 = v => Math.abs(v) <= 1 ? 1 - 3 * v * v + 2 * Math.abs(v) ** 3 : 0;
+  const fU4 = u => u >= 0 && u <= 1 ? 4 * u ** 3 : 0;
+  EM.plot.create($id('fig4-marg'), { xmin: -1.1, xmax: 1.1, ymin: 0, ymax: 4.3, height: 230, legendPos: 'tl' }).draw(g => {
+    g.curve(fU4, { color: 'c1', label: 'f_U(u) = 4u³' });
+    g.curve(fV4, { color: 'c2', label: 'f_V(v) = 1 − 3v² + 2|v|³' });
+  });
+  (function () {
+    const s = sim('sim-4');
+    let pts = [], ev = 'xy';
+    const evs = {
+      xy: { label: 'X ≥ Y', inA: (x, y) => x >= y, cond: () => true },
+      cond: { label: 'X ≥ 1/2 dado X+Y ≤ 3/4', inA: (x, y) => x >= 0.5, cond: (x, y) => x + y <= 0.75 },
+      disk: { label: 'X² + Y² ≤ 1', inA: (x, y) => x * x + y * y <= 1, cond: () => true },
+    };
+    const sqp = { xmin: -0.05, xmax: 1.05, ymin: -0.05, ymax: 1.05, height: 280, xlabel: 'x', ylabel: 'y', xticks: 4, yticks: 4, margin: { l: 34, r: 10, t: 10, b: 30 } };
+    const pxy = EM.plot.create(s.plots.xy, sqp);
+    const pu = EM.plot.create(s.plots.u, { xmin: 0, xmax: 1, ymin: 0, ymax: 4.4, height: 280, xlabel: 'u = x + y', legendPos: 'tl' });
+    const pv = EM.plot.create(s.plots.v, { xmin: -1, xmax: 1, ymin: 0, ymax: 1.25, height: 280, xlabel: 'v = x − y', legendPos: 'tl' });
+    function simulate() {
+      pts = [];
+      while (pts.length < N) {
+        const x = S.rng(), y = S.rng();
+        if (x + y <= 1 && 6 * S.rng() <= 24 * x * y) pts.push([x, y]);
+      }
+      render();
+    }
+    function render() {
+      const E = evs[ev], show = pts.slice(0, 2500);
+      const inC = show.filter(([x, y]) => E.cond(x, y));
+      const a = inC.filter(([x, y]) => E.inA(x, y)), b = inC.filter(([x, y]) => !E.inA(x, y)), o = show.filter(([x, y]) => !E.cond(x, y));
+      pxy.draw(g => {
+        g.polygon(tri, { fill: false, stroke: 'muted' });
+        if (ev === 'disk') g.param(t => Math.cos(t), t => Math.sin(t), 0, Math.PI / 2, { color: 'c6', width: 1.5 });
+        if (ev === 'cond') g.line(0.75, 0, 0, 0.75, { color: 'c3', width: 1.5 });
+        g.points(o.map(p => p[0]), o.map(p => p[1]), { r: 1.4, color: 'muted', alpha: 0.35 });
+        g.points(b.map(p => p[0]), b.map(p => p[1]), { r: 1.6, color: 'c2', alpha: 0.7 });
+        g.points(a.map(p => p[0]), a.map(p => p[1]), { r: 1.6, color: 'c1', alpha: 0.8, label: E.label });
+      });
+      const U = pts.map(([x, y]) => x + y), V = pts.map(([x, y]) => x - y);
+      pu.draw(g => { g.hist(U, { bins: 40, label: 'U simulada' }); g.curve(fU4, { color: 'c1', label: '4u³' }); });
+      pv.draw(g => { g.hist(V, { bins: 40, label: 'V simulada' }); g.curve(fV4, { color: 'c1', label: 'f_V(v)' }); });
+      const nC = pts.filter(([x, y]) => x + y <= 0.75);
+      s.out.set(`$\\hat\\P(X\\ge Y)=$ <b>${fmt(S.prop(pts, ([x, y]) => x >= y), 4)}</b> (exacto $0.5$) · ` +
+        `$\\hat\\P(X\\ge\\tfrac12\\mid X+Y\\le\\tfrac34)=$ <b>${fmt(S.prop(nC, ([x]) => x >= 0.5), 4)}</b> (exacto $1/9\\approx0.1111$; usa sólo ${nC.length} puntos) · ` +
+        `$\\hat\\P(X^2+Y^2\\le1)=$ <b>${fmt(S.prop(pts, ([x, y]) => x * x + y * y <= 1), 4)}</b> (exacto 1) · ` +
+        `$\\hat\\P(U\\le\\tfrac12)=$ <b>${fmt(S.prop(U, u => u <= 0.5), 4)}</b> ($1/16=0.0625$) · $\\hat\\P(V\\le-\\tfrac12)=$ <b>${fmt(S.prop(V, v => v <= -0.5), 4)}</b> ($3/32=0.09375$)`);
+    }
+    ui.select(s.ctl, { label: 'Colorear', value: ev, options: Object.entries(evs).map(([k, o]) => ({ value: k, label: o.label })), onChange: v => { ev = v; render(); } });
+    ui.button(s.ctl, `Simular ${N.toLocaleString('es')} puntos`, simulate, { primary: true });
+    simulate();
+  })();
+
+  /* =========================== EJERCICIO 5 =========================== */
+  check('chk-5', [
+    { prompt: '$f_{U,V}(1,2)=$', answer: Math.exp(-2), tol: 0.0006 },
+    { prompt: '$\\P(U\\le 1)=$', answer: 1 - Math.exp(-1), tol: 0.0006 },
+    { prompt: '$\\E[V]=$', answer: 2, tol: 0.002 },
+  ]);
+  EM.plot.create($id('fig5-xy'), { xmin: -0.2, xmax: 3.2, ymin: -0.2, ymax: 3.2, equal: true, xlabel: 'x', ylabel: 'y', xticks: 4, yticks: 4, margin: { l: 34, r: 10, t: 10, b: 30 } }).draw(g => {
+    g.polygon([[0, 0], [3.2, 0], [3.2, 3.2]], { color: 'c1', alpha: 0.28 });
+    g.polygon([[0, 0], [0, 3.2], [3.2, 3.2]], { color: 'c2', alpha: 0.28 });
+    g.line(0, 0, 3.2, 3.2, { color: 'ink', dash: [5, 4] });
+    g.line(0, 2, 2, 0, { color: 'c4', width: 2 }); g.text('x + y = v', 1.25, 0.95, { color: 'c4', size: 12 });
+    g.points([1.4, 0.6], [0.6, 1.4], { r: 4, color: 'ink' }); g.text('(x,y)', 1.48, 0.5, { size: 11 }); g.text('(y,x)', 0.66, 1.5, { size: 11 });
+    g.text('A₁: x > y', 2.0, 0.4, { color: 'c1', bold: true }); g.text('A₂: x < y', 0.2, 2.7, { color: 'c2', bold: true });
+  });
+  EM.plot.create($id('fig5-uv'), { xmin: -0.2, xmax: 3.2, ymin: -0.2, ymax: 3.2, equal: true, xlabel: 'u', ylabel: 'v', xticks: 4, yticks: 4, margin: { l: 34, r: 10, t: 10, b: 30 } }).draw(g => {
+    g.polygon([[0, 0], [3.2, 3.2], [0, 3.2]], { color: 'c5', alpha: 0.3 });
+    g.line(0, 0, 3.2, 3.2, { color: 'ink', dash: [5, 4] }); g.text('v = u', 2.3, 2.05, { size: 12 });
+    g.points([0.8], [2], { r: 4, color: 'ink' }); g.text('(u,v) ← (x,y) y (y,x)', 0.9, 2.05, { size: 11 });
+    g.text('B: 0 < u < v', 0.15, 2.9, { color: 'c5', bold: true });
+  });
+  (function () {
+    const s = sim('sim-5');
+    let U = [], V = [];
+    const puv = EM.plot.create(s.plots.uv, { xmin: 0, xmax: 5, ymin: 0, ymax: 8, height: 280, xlabel: 'u', ylabel: 'v', legendPos: 'tr' });
+    const pu = EM.plot.create(s.plots.u, { xmin: 0, xmax: 5, ymin: 0, ymax: 1.08, height: 280, xlabel: 'u', legendPos: 'tr' });
+    const pv = EM.plot.create(s.plots.v, { xmin: 0, xmax: 10, ymin: 0, ymax: 0.42, height: 280, xlabel: 'v', legendPos: 'tr' });
+    function simulate() {
+      U = []; V = [];
+      for (let i = 0; i < N; i++) { const x = -Math.log(S.rng()), y = -Math.log(S.rng()); U.push(Math.abs(x - y)); V.push(x + y); }
+      render();
+    }
+    function render() {
+      puv.draw(g => {
+        g.polygon([[0, 0], [8, 8], [0, 8]], { color: 'c5', alpha: 0.12 });
+        g.line(0, 0, 8, 8, { color: 'ink', dash: [5, 4] });
+        g.points(U.slice(0, 2500), V.slice(0, 2500), { r: 1.5, color: 'c1', alpha: 0.5, label: '(U, V)' });
+      });
+      pu.draw(g => { g.hist(U, { bins: 50, label: 'U simulada' }); g.curve(u => Math.exp(-u), { color: 'c1', label: 'e^(−u)' }); });
+      pv.draw(g => { g.hist(V, { bins: 50, label: 'V simulada' }); g.curve(v => v * Math.exp(-v), { color: 'c1', label: 'v e^(−v)' }); });
+      const pU1 = S.prop(U, u => u > 1), pV1 = S.prop(V, v => v < 1);
+      let joint = 0; for (let i = 0; i < N; i++) if (U[i] > 1 && V[i] < 1) joint++;
+      const mU = S.mean(U), mV = S.mean(V); let c = 0; for (let i = 0; i < N; i++) c += (U[i] - mU) * (V[i] - mV);
+      const corr = c / (N - 1) / (S.sd(U) * S.sd(V));
+      s.out.set(`$\\hat\\P(U\\le1)=$ <b>${fmt(1 - pU1, 4)}</b> ($1-e^{-1}=0.6321$) · $\\hat\\P(V\\lt1)=$ <b>${fmt(pV1, 4)}</b> ($1-2e^{-1}=0.2642$) · ` +
+        `$\\hat\\P(U\\gt1,\\,V\\lt1)=$ <b>${fmt(joint / N, 4)}</b> vs. $\\hat\\P(U\\gt1)\\hat\\P(V\\lt1)=$ <b>${fmt(pU1 * pV1, 4)}</b> → no independientes · correlación muestral <b>${fmt(corr, 3)}</b>`);
+    }
+    ui.button(s.ctl, `Simular ${N.toLocaleString('es')} pares`, simulate, { primary: true });
+    simulate();
+  })();
+
+  /* =========================== EJERCICIO 6 =========================== */
+  check('chk-6', [
+    { prompt: 'Con $r=2,\\ s=3,\\ \\lambda=1$: $\\E[P]=$', answer: 5, tol: 0.005 },
+    { prompt: 'Con $r=2,\\ s=3$: $\\E[Q]=$', answer: 0.4, tol: 0.002 },
+  ]);
+  EM.plot.create($id('fig6'), { xmin: -0.1, xmax: 3.1, ymin: -0.1, ymax: 3.1, equal: true, xlabel: 'x', ylabel: 'y', xticks: 4, yticks: 4, margin: { l: 34, r: 10, t: 10, b: 30 } }).draw(g => {
+    [0.5, 1, 1.5, 2, 2.5, 3].forEach(pp => { g.line(pp, 0, 0, pp, { color: 'muted', width: 1, dash: [3, 3] }); g.text('p=' + pp, pp, 0.02, { size: 10, color: 'muted', align: 'center', baseline: 'top', dy: 4 }); });
+    const qs = [0.1, 0.25, 0.5, 0.75, 0.9], cols = ['c1', 'c2', 'c3', 'c4', 'c5'];
+    qs.forEach((q, i) => {
+      const xEnd = Math.min(3.1, 3.1 * q / (1 - q)), yEnd = xEnd * (1 - q) / q;
+      g.line(0, 0, xEnd, Math.min(yEnd, 3.1), { color: cols[i], width: 2 });
+      g.text('q=' + q, xEnd, Math.min(yEnd, 3.1), { color: cols[i], size: 11, align: 'right', dy: -4 });
+    });
+  });
+  (function () {
+    const s = sim('sim-6');
+    let r = 2, sp = 3, lam = 1, P = [], Q = [];
+    const pp = EM.plot.create(s.plots.p, { xmin: 0, xmax: 12, ymin: 0, ymax: 0.25, height: 260, xlabel: 'p', legendPos: 'tr' });
+    const pq = EM.plot.create(s.plots.q, { xmin: 0, xmax: 1, ymin: 0, ymax: 2.5, height: 260, xlabel: 'q', legendPos: 'tr' });
+    const ppq = EM.plot.create(s.plots.pq, { xmin: 0, xmax: 12, ymin: 0, ymax: 1, height: 260, xlabel: 'p', ylabel: 'q', yticks: 4 });
+    function simulate() {
+      const GX = Dist.gamma(r, 1 / lam), GY = Dist.gamma(sp, 1 / lam); // EM.stats usa β = escala = 1/λ
+      P = []; Q = [];
+      for (let i = 0; i < N; i++) { const x = GX.rand(), y = GY.rand(); P.push(x + y); Q.push(x / (x + y)); }
+      render();
+    }
+    function render() {
+      const GP = Dist.gamma(r + sp, 1 / lam), BQ = Dist.beta(r, sp);
+      const xmax = GP.q(0.995);
+      pp.setRange({ xmax, ymax: 1.25 * maxOn(GP.pdf, 0, xmax) });
+      pq.setRange({ ymax: 1.25 * maxOn(BQ.pdf, 0, 1) });
+      ppq.setRange({ xmax });
+      pp.draw(g => { g.hist(P, { bins: 50, label: 'P = X + Y' }); g.curve(GP.pdf, { color: 'c1', label: `Gamma(${r + sp}, ${lam})` }); });
+      pq.draw(g => { g.hist(Q, { bins: 40, label: 'Q = X/(X+Y)' }); g.curve(BQ.pdf, { color: 'c1', label: `Beta(${r}, ${sp})` }); });
+      ppq.draw(g => { g.points(P.slice(0, 2500), Q.slice(0, 2500), { r: 1.5, color: 'c1', alpha: 0.45 }); });
+      const mP = S.mean(P), mQ = S.mean(Q); let c = 0; for (let i = 0; i < N; i++) c += (P[i] - mP) * (Q[i] - mQ);
+      const corr = c / (N - 1) / (S.sd(P) * S.sd(Q));
+      const p0 = (r + sp) / lam, q0 = 0.5;
+      let joint = 0; for (let i = 0; i < N; i++) if (P[i] <= p0 && Q[i] <= q0) joint++;
+      s.out.set(`$\\bar P=$ <b>${fmt(mP, 3)}</b> (teórico $(r+s)/\\lambda=${fmt(p0, 3)}$) · $\\bar Q=$ <b>${fmt(mQ, 3)}</b> (teórico $r/(r+s)=${fmt(r / (r + sp), 3)}$) · ` +
+        `correlación$(P,Q)=$ <b>${fmt(corr, 3)}</b> · $\\hat\\P(P\\le ${fmt(p0, 2)},\\,Q\\le\\tfrac12)=$ <b>${fmt(joint / N, 4)}</b> vs. producto teórico <b>${fmt(GP.cdf(p0) * BQ.cdf(q0), 4)}</b>`);
+    }
+    ui.slider(s.ctl, { tex: 'r', min: 1, max: 6, step: 0.5, value: r, fmt: v => v.toFixed(1), onInput: v => { r = v; simulate(); } });
+    ui.slider(s.ctl, { tex: 's', min: 1, max: 6, step: 0.5, value: sp, fmt: v => v.toFixed(1), onInput: v => { sp = v; simulate(); } });
+    ui.slider(s.ctl, { tex: '\\lambda\\ (\\text{tasa})', min: 0.5, max: 3, step: 0.5, value: lam, fmt: v => v.toFixed(1), onInput: v => { lam = v; simulate(); } });
+    ui.button(s.ctl, 'Simular de nuevo', simulate, { primary: true });
+    simulate();
+  })();
+})();
+/* ===== Lista 1.1 · Parte III (Ejercicios 7–12): figuras y simulaciones =====
+   Todos los contenedores llevan el prefijo "p3-". Requiere EM.stats, EM.plot, EM.ui. */
+(function () {
+  'use strict';
+  const S = EM.stats, UI = EM.ui, fmt = S.fmt;
+  const byId = id => document.getElementById(id);
+  const head = byId('parte-3');
+  if (!head) return;
+  const SEC = head.closest('section') || document;
+
+  // ---------- utilidades ----------
+  const rnd = () => { let u; do { u = Math.random(); } while (u === 0); return u; };
+  const rexpRate = lam => -Math.log(rnd()) / lam;            // exponencial de TASA lam
+  function sortedUnif(n, buf) { for (let k = 0; k < n; k++) buf[k] = Math.random(); buf.sort(); return buf; }
+  function simParts(id) {
+    const r = byId(id);
+    return { root: r, controls: r.querySelector('.controls'), plot: r.querySelector('.plot'), out: r.querySelector('.out') };
+  }
+  // ajusta ymax a la curva y al histograma
+  function yTop(f, a, b, extra = 0) {
+    let m = extra;
+    for (let k = 1; k < 200; k++) { const y = f(a + (b - a) * k / 200); if (isFinite(y) && y > m) m = y; }
+    return m * 1.15 || 1;
+  }
+  function histMax(data, lo, hi, bins) {
+    const c = new Array(bins).fill(0), w = (hi - lo) / bins;
+    for (const x of data) { const k = Math.floor((x - lo) / w); if (k >= 0 && k < bins) c[k]++; }
+    return Math.max(...c) / (data.length * w);
+  }
+  // los gráficos dentro de <details> cerrados se miden mal: redibujar al abrir
+  SEC.querySelectorAll('details').forEach(d => d.addEventListener('toggle', () => { if (d.open) EM.plot.redrawAll(); }));
+  // ejecutar fn la primera vez que se abre el <details> que contiene a el
+  function onFirstOpen(el, fn) {
+    const d = el.closest('details');
+    if (!d) { fn(); return; }
+    let done = false;
+    d.addEventListener('toggle', () => { if (d.open && !done) { done = true; fn(); } });
+    if (d.open) { done = true; fn(); }
+  }
+  // figura de región en el cuadrado unitario
+  function squareFig(id, o = {}) {
+    return EM.plot.create(typeof id === 'string' ? byId(id) : id, Object.assign({ xmin: 0, xmax: 1, ymin: 0, ymax: 1, equal: true, xticks: 4, yticks: 4,
+      margin: { l: 40, r: 12, t: 12, b: 34 } }, o));
+  }
+  const TRI = [[0, 0], [0, 1], [1, 1]]; // soporte 0 < u < v < 1
+
+  // comprobadores numéricos
+  function checks(id, items) {
+    const host = byId(id);
+    if (!host) return;
+    host.append(UI.el('p', { class: 'small muted' }, 'Comprueba tus resultados antes de abrir la solución (escribe decimales):'));
+    items.forEach(it => UI.numcheck(host, it));
+  }
+
+  /* =================================================== EJERCICIO 7 */
+  (function ej7() {
+    const F = t => 1 - Math.exp(-t / 4);
+    const dens = {
+      a: t => t < 0 ? 0 : Math.exp(-t / 4) * Math.pow(F(t), 3),
+      b: t => t < 0 ? 0 : Math.exp(-t),
+      c: t => t < 0 ? 0 : 3 * Math.exp(-t / 2) * F(t) * F(t),
+    };
+    const exact = {
+      a: 1 - Math.pow(1 - Math.exp(-5 / 4), 4),
+      b: Math.exp(-5),
+      c: 6 * Math.exp(-5 / 2) - 8 * Math.exp(-15 / 4) + 3 * Math.exp(-5),
+    };
+    const mean = { a: 25 / 3, b: 1, c: 13 / 3 };
+    const order = { a: 3, b: 0, c: 2 };          // índice (0-based) del estadístico
+    const nombre = { a: 'a) máximo Y₄', b: 'b) mínimo Y₁', c: 'c) tercero Y₃' };
+
+    // figura estática con las tres densidades
+    EM.plot.create(byId('p3-ej7-fig'), { xmin: 0, xmax: 25, ymin: 0, ymax: 0.5, height: 260, xlabel: 't (años)', legendPos: 'tr' })
+      .draw(g => {
+        g.area(dens.a, 5, 25, { color: 'c1', alpha: 0.18 });
+        g.area(dens.c, 5, 25, { color: 'c3', alpha: 0.18 });
+        g.curve(dens.a, { color: 'c1', label: 'a) Y₄ (máx)' });
+        g.curve(dens.b, { color: 'c2', label: 'b) Y₁ (mín), sale de 1' });
+        g.curve(dens.c, { color: 'c3', label: 'c) Y₃' });
+        g.vline(5, { label: 't = 5', labelY: 0.5 });
+      });
+
+    checks('p3-ej7-check', [
+      { prompt: 'a) $\\P(Y_4\\ge5)\\approx$', answer: exact.a, tol: 6e-4 },
+      { prompt: 'b) $\\P(Y_1\\ge5)\\approx$', answer: exact.b, tol: 2e-5 },
+      { prompt: 'c) $\\P(Y_3\\ge5)\\approx$', answer: exact.c, tol: 6e-4 },
+    ]);
+
+    const sp = simParts('p3-ej7-sim');
+    const xr = { a: 30, b: 8, c: 20 };
+    let caso = 'a', data = [];
+    const p = EM.plot.create(sp.plot, { xmin: 0, xmax: 30, ymin: 0, ymax: 0.15, height: 280, xlabel: 't (años)' });
+    const out = UI.readout(sp.out);
+    function simulate() {
+      const M = 50000, buf = new Float64Array(4), k = order[caso];
+      data = new Array(M);
+      for (let r = 0; r < M; r++) { for (let c = 0; c < 4; c++) buf[c] = rexpRate(1 / 4); buf.sort(); data[r] = buf[k]; }
+      render();
+    }
+    function render() {
+      const f = dens[caso];
+      const top = data.length ? histMax(data, 0, xr[caso], 60) : 0;
+      p.setRange({ xmax: xr[caso], ymax: yTop(f, 0.001, xr[caso], top) });
+      p.draw(g => {
+        if (data.length) g.hist(data, { bins: 60, range: [0, xr[caso]], color: 'c2', label: 'simulación' });
+        g.area(f, 5, xr[caso], { color: 'accent', alpha: 0.2 });
+        g.curve(f, { color: 'c1', label: 'densidad ' + nombre[caso] });
+        g.vline(5, { label: '5 años' });
+      });
+      if (!data.length) { out.set('Pulsa <b>Simular</b>.'); return; }
+      const pr = S.prop(data, x => x >= 5), m = S.mean(data);
+      out.set(`Caso ${nombre[caso]} · ${data.length.toLocaleString('es')} máquinas<br>` +
+        `Proporción con duración ≥ 5: simulada <b>${fmt(pr, 4)}</b> · exacta <b>${fmt(exact[caso], 4)}</b><br>` +
+        `Duración media: simulada <b>${fmt(m, 3)}</b> · exacta <b>${fmt(mean[caso], 3)}</b> años`);
+    }
+    UI.select(sp.controls, { label: 'Caso', value: 'a', options: [
+      { value: 'a', label: 'a) falla cuando fallan todos' }, { value: 'b', label: 'b) falla con la primera falla' },
+      { value: 'c', label: 'c) queda uno funcionando' }], onChange: v => { caso = v; simulate(); } });
+    UI.button(sp.controls, 'Simular 50 000 máquinas', simulate, { primary: true });
+    render();
+    onFirstOpen(sp.root, simulate);
+  })();
+
+  /* =================================================== EJERCICIO 8 */
+  (function ej8() {
+    const A = 2 + Math.SQRT2;
+    // figuras estáticas
+    function fig13(id, region, line, label) {
+      squareFig(id, { xlabel: 'y₁', ylabel: 'y₃' }).draw(g => {
+        g.polygon(TRI, { color: 'muted', alpha: 0.12, stroke: 'muted', width: 1 });
+        g.polygon(region, { color: 'accent', alpha: 0.4 });
+        g.line(line[0], line[1], line[2], line[3], { color: 'c2', width: 2 });
+        g.text(label, line[2], line[3], { color: 'c2', align: 'left', dx: 4, dy: 14, size: 12 });
+      });
+    }
+    fig13('p3-ej8-fig-a', [[0, 0], [0, 1], [0.5, 0.5]], [1, 0, 0, 1], 'y₁+y₃=1');
+    fig13('p3-ej8-fig-c', [[0, 0], [0, 1], [0.5, 1]], [0, 0, 0.5, 1], 'y₃=2y₁');
+    fig13('p3-ej8-fig-d', [[0, 0], [0, 1], [1 / A, 1]], [0, 0, 1 / A, 1], 'y₃=(2+√2)y₁');
+    squareFig('p3-ej8-fig-b', { xlabel: 'y₁', ylabel: 'y₂' }).draw(g => {
+      g.polygon(TRI, { color: 'muted', alpha: 0.1, stroke: 'muted', width: 1 });
+      g.polygon([[0, 0], [0, 1], [0.5, 0.5]], { color: 'c1', alpha: 0.35 });
+      g.polygon([[0, 1], [0.5, 0.5], [1, 1]], { color: 'c3', alpha: 0.35 });
+      g.line(0, 1, 0.5, 0.5, { color: 'c2', width: 2 });
+      g.text('R₁: 6y₁', 0.08, 0.5, { bold: true });
+      g.text('R₂: 6(1−y₂)', 0.32, 0.86, { bold: true });
+      g.text('y₁+y₂=1', 0.5, 0.5, { color: 'c2', dx: 6, dy: 4, size: 12 });
+    });
+
+    checks('p3-ej8-check', [
+      { prompt: 'a) $\\P(Y_1+Y_3\\le1)=$', answer: 0.5, tol: 1e-3 },
+      { prompt: 'b) $\\P(Y_3 &lt; Y_1+Y_2)=$', answer: 0.5, tol: 1e-3 },
+      { prompt: 'c) $\\P(Y_3>2Y_1)=$', answer: 0.75, tol: 1e-3 },
+      { prompt: 'd) $a=$', answer: A, tol: 2e-3 },
+    ]);
+
+    // simulación
+    const sp = simParts('p3-ej8-sim');
+    const p = EM.plot.create(sp.plot, { xmin: 0, xmax: 1, ymin: 0, ymax: 1, height: w => Math.min(380, Math.round(w * 0.75)), xlabel: 'y₁', ylabel: 'y₃' });
+    const out = UI.readout(sp.out);
+    let ev = 'a', a = A, Y = null, M = 0;
+    const evento = {
+      a: (y1, y2, y3) => y1 + y3 <= 1,
+      b: (y1, y2, y3) => y3 < y1 + y2,
+      c: (y1, y2, y3) => y3 > 2 * y1,
+      d: (y1, y2, y3) => y3 > a * y1,
+    };
+    const exacto = () => ({ a: 0.5, b: 0.5, c: 0.75, d: a <= 1 ? 1 : (2 * a - 1) / (a * a) })[ev];
+    const texto = () => ({ a: 'P(Y₁+Y₃ ≤ 1)', b: 'P(Y₃ < Y₁+Y₂)', c: 'P(Y₃ > 2Y₁)', d: `P(Y₃ > ${fmt(a, 3)}·Y₁)` })[ev];
+    function simulate() {
+      M = 100000; Y = new Float64Array(3 * M); const b = new Float64Array(3);
+      for (let r = 0; r < M; r++) { sortedUnif(3, b); Y[3 * r] = b[0]; Y[3 * r + 1] = b[1]; Y[3 * r + 2] = b[2]; }
+      render();
+    }
+    function render() {
+      const isB = ev === 'b';
+      p.setRange({ xmax: isB ? 2 : 1, xlabel: isB ? 'y₁+y₂' : 'y₁' });
+      const inX = [], inY = [], outX = [], outY = [];
+      let hits = 0;
+      if (Y) for (let r = 0; r < M; r++) {
+        const y1 = Y[3 * r], y2 = Y[3 * r + 1], y3 = Y[3 * r + 2], ok = evento[ev](y1, y2, y3);
+        if (ok) hits++;
+        if (r < 2500) { const x = isB ? y1 + y2 : y1; (ok ? inX : outX).push(x); (ok ? inY : outY).push(y3); }
+      }
+      p.draw(g => {
+        if (isB) {
+          g.polygon([[0, 0], [2, 1], [0, 1]], { color: 'muted', alpha: 0.1, stroke: 'muted', width: 1 });
+          g.polygon([[0, 0], [2, 1], [1, 1]], { color: 'accent', alpha: 0.18 });
+          g.line(0, 0, 1, 1, { color: 'c2', width: 2 });
+        } else {
+          g.polygon(TRI, { color: 'muted', alpha: 0.1, stroke: 'muted', width: 1 });
+          const reg = ev === 'a' ? [[0, 0], [0, 1], [0.5, 0.5]] : ev === 'c' ? [[0, 0], [0, 1], [0.5, 1]] : (a > 1 ? [[0, 0], [0, 1], [1 / a, 1]] : TRI);
+          g.polygon(reg, { color: 'accent', alpha: 0.18 });
+        }
+        g.points(outX, outY, { color: 'muted', r: 1.5, alpha: 0.45 });
+        g.points(inX, inY, { color: 'c3', r: 1.6, alpha: 0.6 });
+      });
+      const ex = exacto();
+      out.set(Y ? `${texto()}: simulada <b>${fmt(hits / M, 4)}</b> · exacta <b>${fmt(ex, 4)}</b> (${M.toLocaleString('es')} ternas)` +
+        (ev === 'd' ? `<br>Con $a=2+\\sqrt2\\approx3.414$ la probabilidad exacta es 1/2.` : '')
+        : 'Pulsa <b>Simular</b>.');
+    }
+    UI.select(sp.controls, { label: 'Evento', value: 'a', options: [
+      { value: 'a', label: 'a) Y₁+Y₃ ≤ 1' }, { value: 'b', label: 'b) Y₃ < Y₁+Y₂' },
+      { value: 'c', label: 'c) Y₃ > 2Y₁' }, { value: 'd', label: 'd) Y₃ > a·Y₁' }], onChange: v => { ev = v; render(); } });
+    UI.slider(sp.controls, { tex: 'a', min: 0.5, max: 8, step: 0.01, value: A.toFixed(2), fmt: v => v.toFixed(2), onInput: v => { a = v; if (ev === 'd') render(); } });
+    UI.button(sp.controls, 'Simular 100 000 ternas', simulate, { primary: true });
+    render();
+    onFirstOpen(sp.root, simulate);
+  })();
+
+  /* =================================================== EJERCICIO 9 */
+  (function ej9() {
+    checks('p3-ej9-check', [{ prompt: 'b) $\\P(Z &lt; X_3)=$', answer: 0.5, tol: 1e-3 }]);
+    const r = byId('p3-ej9-sim');
+    const ctr = r.querySelector('.controls');
+    const out = UI.readout(r.querySelector('.out'));
+    let lam = 1, Z = [], one = null;
+    const tl = EM.plot.create(r.querySelector('.p3-timeline'), { xmin: 0, xmax: 4, ymin: 0.4, ymax: 3.6, height: 170, autoAxes: false,
+      margin: { l: 34, r: 14, t: 10, b: 30 } });
+    const ph = EM.plot.create(r.querySelector('.p3-hist'), { xmin: 0, xmax: 5, ymin: 0, ymax: 1.2, height: 240, xlabel: 'z' });
+    function nice(range) { const raw = range / 6, mag = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / mag; return (f < 1.5 ? 1 : f < 3 ? 2 : f < 7 ? 5 : 10) * mag; }
+    function realization() {
+      const x1 = rexpRate(lam), x2 = rexpRate(lam), x3 = rexpRate(lam);
+      one = { x1, x2, x3, T: Math.min(x1, x2), Mx: Math.max(x1, x2) };
+      drawTimeline();
+    }
+    function drawTimeline() {
+      if (!one) return;
+      const { x1, x2, x3, T, Mx } = one, end = Math.max(Mx, T + x3);
+      tl.setRange({ xmax: end * 1.08 });
+      tl.draw(g => {
+        const st = g.state, ctx = g.ctx, step = nice(st.xmax);
+        g.line(0, 0.5, st.xmax, 0.5, { color: 'muted', width: 1 });
+        for (let v = 0; v <= st.xmax + 1e-9; v += step) {
+          g.line(v, 0.5, v, 0.42, { color: 'muted', width: 1 });
+          g.text(String(+v.toFixed(3)), v, 0.42, { align: 'center', baseline: 'top', color: 'muted', size: 11, dy: 2 });
+        }
+        const bar = (y, a, b, col) => { ctx.lineCap = 'butt'; g.line(a, y, b, y, { color: col, width: 14 }); };
+        bar(3, 0, x1, 'c1'); bar(2, 0, x2, 'c4'); bar(1, T, T + x3, 'c3');
+        g.text('A', 0, 3, { align: 'right', baseline: 'middle', dx: -10, bold: true });
+        g.text('B', 0, 2, { align: 'right', baseline: 'middle', dx: -10, bold: true });
+        g.text('C', 0, 1, { align: 'right', baseline: 'middle', dx: -10, bold: true });
+        g.line(T, 0.5, T, 3.5, { color: 'ink', dash: [4, 4], width: 1 });
+        g.line(Mx, 0.5, Mx, 3.5, { color: 'c2', dash: [4, 4], width: 1 });
+        g.text('C entra', T, 3.5, { align: 'center', baseline: 'top', size: 11, dy: -2 });
+        g.text(`Z = ${fmt(Mx - T, 2)}`, (T + Mx) / 2, 2.5, { align: 'center', baseline: 'middle', color: 'c2', size: 12 });
+        g.text(`X₃ = ${fmt(x3, 2)}`, T + x3 / 2, 1.42, { align: 'center', baseline: 'middle', color: 'c3', size: 12 });
+      });
+    }
+    function simulate() {
+      const N = 100000; Z = new Array(N); let cless = 0, clast = 0;
+      for (let k = 0; k < N; k++) {
+        const x1 = rexpRate(lam), x2 = rexpRate(lam), x3 = rexpRate(lam);
+        const z = Math.abs(x1 - x2); Z[k] = z;
+        if (z < x3) cless++;
+        if (Math.min(x1, x2) + x3 > Math.max(x1, x2)) clast++;
+      }
+      const f = z => z < 0 ? 0 : lam * Math.exp(-lam * z);
+      ph.setRange({ xmax: 5 / lam, ymax: lam * 1.2 });
+      ph.draw(g => {
+        g.hist(Z, { bins: 50, range: [0, 5 / lam], color: 'c2', label: 'Z simulada' });
+        g.curve(f, { color: 'c1', label: 'f(z) = λ·exp(−λz)' });
+      });
+      out.set(`λ = ${fmt(lam, 2)} · ${N.toLocaleString('es')} simulaciones<br>` +
+        `$\\P(Z &lt; X_3)$: simulada <b>${fmt(cless / N, 4)}</b> · exacta <b>0.5</b><br>` +
+        `Proporción de veces que C es el último en salir: <b>${fmt(clast / N, 4)}</b> (es el mismo evento)<br>` +
+        `Media de Z: simulada <b>${fmt(S.mean(Z), 3)}</b> · exacta $1/\\lambda=$ <b>${fmt(1 / lam, 3)}</b>`);
+    }
+    UI.slider(ctr, { tex: '\\lambda', min: 0.2, max: 3, step: 0.1, value: 1, fmt: v => v.toFixed(1), onInput: v => { lam = v; simulate(); realization(); } });
+    UI.button(ctr, 'Simular 100 000', simulate, { primary: true });
+    UI.button(ctr, 'Otra realización', realization);
+    out.set('Pulsa <b>Simular</b>.');
+    onFirstOpen(r, () => { simulate(); realization(); });
+  })();
+
+  /* =================================================== EJERCICIO 10 */
+  (function ej10() {
+    // soporte (u,v) -> (r,m)
+    squareFig('p3-ej10-fig-uv', { xlabel: 'u = y₁', ylabel: 'v = yₙ' }).draw(g => {
+      g.polygon(TRI, { color: 'accent', alpha: 0.18 });
+      g.line(0, 0, 1, 1, { color: 'c1', width: 3 }); g.line(0, 0, 0, 1, { color: 'c2', width: 3 }); g.line(0, 1, 1, 1, { color: 'c4', width: 3 });
+      g.text('u = v', 0.55, 0.5, { color: 'c1', size: 12 });
+      g.text('u = 0', 0, 0.45, { color: 'c2', size: 12, dx: 6 });
+      g.text('v = 1', 0.45, 1, { color: 'c4', size: 12, dy: 16 });
+      g.text('(0,1)', 0, 1, { size: 11, dx: 4, dy: 30 });
+      g.text('(1,1)', 1, 1, { size: 11, align: 'right', dy: 30 });
+    });
+    squareFig('p3-ej10-fig-rm', { xlabel: 'r', ylabel: 'm' }).draw(g => {
+      g.polygon([[0, 0], [0, 1], [1, 0.5]], { color: 'accent', alpha: 0.18 });
+      g.line(0, 0, 0, 1, { color: 'c1', width: 3 }); g.line(0, 0, 1, 0.5, { color: 'c2', width: 3 }); g.line(0, 1, 1, 0.5, { color: 'c4', width: 3 });
+      g.text('r = 0', 0, 0.55, { color: 'c1', size: 12, dx: 6 });
+      g.text('m = r/2', 0.55, 0.27, { color: 'c2', size: 12, dy: 14 });
+      g.text('m = 1 − r/2', 0.45, 0.78, { color: 'c4', size: 12, dy: -6 });
+      g.text('(1, ½)', 1, 0.5, { size: 11, align: 'right', dy: -8 });
+    });
+
+    checks('p3-ej10-check', [
+      { prompt: 'd) con $n=2$: $\\P(R>1/2)=$', answer: 0.25, tol: 1e-3 },
+      { prompt: 'd) con $n=5$: $\\P(R>1/2)=$', answer: 13 / 16, tol: 1e-3 },
+    ]);
+
+    const r = byId('p3-ej10-sim');
+    const ctr = r.querySelector('.controls');
+    const out = UI.readout(r.querySelector('.out'));
+    const prm = squareFig(r.querySelector('.p3-rm'), { xlabel: 'r', ylabel: 'm' });
+    const ph = EM.plot.create(r.querySelector('.p3-h'), { xmin: 0, xmax: 1, ymin: 0, ymax: 2, height: w => Math.round(w * 0.9) + 46, xlabel: 'r' });
+    let n = 3, which = 'R', R = [], Mm = [];
+    const fR = x => (x <= 0 || x >= 1) ? 0 : n * (n - 1) * Math.pow(x, n - 2) * (1 - x);
+    const fM = x => (x <= 0 || x >= 1) ? 0 : n * Math.pow(2 * Math.min(x, 1 - x), n - 1);
+    function simulate() {
+      const N = 40000, b = new Float64Array(n); R = new Array(N); Mm = new Array(N);
+      for (let k = 0; k < N; k++) {
+        let lo = 1, hi = 0;
+        for (let c = 0; c < n; c++) { const u = Math.random(); if (u < lo) lo = u; if (u > hi) hi = u; }
+        R[k] = hi - lo; Mm[k] = (hi + lo) / 2;
+      }
+      render();
+    }
+    function render() {
+      prm.draw(g => {
+        g.polygon([[0, 0], [0, 1], [1, 0.5]], { color: 'accent', alpha: 0.12, stroke: 'accent', width: 1.5 });
+        g.points(R.slice(0, 2500), Mm.slice(0, 2500), { color: 'c1', r: 1.4, alpha: 0.5 });
+      });
+      const data = which === 'R' ? R : Mm, f = which === 'R' ? fR : fM;
+      ph.setRange({ xlabel: which === 'R' ? 'r' : 'm', ymax: yTop(f, 0, 1, data.length ? histMax(data, 0, 1, 40) : 0) });
+      ph.draw(g => {
+        if (data.length) g.hist(data, { bins: 40, range: [0, 1], color: 'c2' });
+        g.curve(f, { color: 'c1', label: which === 'R' ? `Beta(${n - 1}, 2)` : 'f_M teórica' });
+      });
+      if (!R.length) { out.set('Pulsa <b>Simular</b>.'); return; }
+      const pr = S.prop(R, x => x > 0.5), ex = 1 - (n + 1) / Math.pow(2, n);
+      out.set(`n = ${n} · ${R.length.toLocaleString('es')} muestras<br>` +
+        `$\\P(R>1/2)$: simulada <b>${fmt(pr, 4)}</b> · exacta $1-\\frac{n+1}{2^n}=$ <b>${fmt(ex, 4)}</b><br>` +
+        `$\\E[R]$: simulada <b>${fmt(S.mean(R), 4)}</b> · exacta $\\frac{n-1}{n+1}=$ <b>${fmt((n - 1) / (n + 1), 4)}</b>` +
+        (n === 2 ? '<br>Con n = 2, R = |X₁ − X₂| y la probabilidad es el área 1/4 de las dos esquinas del cuadrado.' : ''));
+    }
+    UI.slider(ctr, { tex: 'n', min: 2, max: 12, step: 1, value: 3, onInput: v => { n = Math.round(v); simulate(); } });
+    UI.select(ctr, { label: 'Histograma de', value: 'R', options: [{ value: 'R', label: 'rango R' }, { value: 'M', label: 'punto medio M' }], onChange: v => { which = v; render(); } });
+    UI.button(ctr, 'Simular', simulate, { primary: true });
+    render();
+    onFirstOpen(r, simulate);
+  })();
+
+  /* =================================================== EJERCICIO 11 */
+  (function ej11() {
+    squareFig('p3-ej11-fig-uv', { xlabel: 'u = yᵢ', ylabel: 'v = yⱼ' }).draw(g => {
+      g.polygon(TRI, { color: 'accent', alpha: 0.25, stroke: 'accent', width: 1.5 });
+      g.line(0.2, 0.2, 0.2, 0.6, { color: 'c2', width: 2.5 });
+      g.text('w = v − u', 0.2, 0.4, { color: 'c2', size: 12, dx: 6 });
+    });
+    squareFig('p3-ej11-fig-uw', { xlabel: 'u', ylabel: 'w' }).draw(g => {
+      g.polygon([[0, 0], [1, 0], [0, 1]], { color: 'accent', alpha: 0.25, stroke: 'accent', width: 1.5 });
+      g.line(0, 0.4, 0.6, 0.4, { color: 'c2', width: 3 });
+      g.text('u ∈ (0, 1 − w)', 0.3, 0.4, { color: 'c2', size: 12, align: 'center', dy: -8 });
+      g.text('u + w = 1', 0.5, 0.5, { size: 12, dx: 8 });
+    });
+
+    checks('p3-ej11-check', [{ prompt: 'b) $\\P(Y_4-Y_2>1/2)=$', answer: 3 / 16, tol: 1e-3 }]);
+
+    const sp = simParts('p3-ej11-sim');
+    const p = EM.plot.create(sp.plot, { xmin: 0, xmax: 1, ymin: 0, ymax: 3, height: 280, xlabel: 'w' });
+    const out = UI.readout(sp.out);
+    let n = 5, i = 2, j = 4, W = [], Yk = [];
+    const sl = {};
+    function fix(changed) {
+      if (changed === 'n') { j = Math.min(j, n); if (i >= j) i = j - 1; }
+      if (changed === 'i') { i = Math.min(i, n - 1); if (j <= i) j = i + 1; }
+      if (changed === 'j') { j = Math.max(2, Math.min(j, n)); if (i >= j) i = j - 1; }
+      sl.n.set(n); sl.i.set(i); sl.j.set(j);
+    }
+    function simulate() {
+      const N = 30000, b = new Float64Array(n), k = j - i;
+      W = new Array(N); Yk = new Array(N);
+      for (let t = 0; t < N; t++) { sortedUnif(n, b); W[t] = b[j - 1] - b[i - 1]; Yk[t] = b[k - 1]; }
+      render();
+    }
+    function render() {
+      const a = j - i, bb = n - j + i + 1, B = S.dist.beta(a, bb), bins = 40;
+      const dens = new Array(bins).fill(0);
+      for (const y of Yk) { const q = Math.min(bins - 1, Math.floor(y * bins)); dens[q] += bins / Yk.length; }
+      const step = x => dens[Math.min(bins - 1, Math.max(0, Math.floor(x * bins)))];
+      p.setRange({ ymax: yTop(B.pdf, 0, 1, Math.max(W.length ? histMax(W, 0, 1, bins) : 0, ...dens)) });
+      p.draw(g => {
+        if (W.length) g.hist(W, { bins, range: [0, 1], color: 'c2', label: `Y${j} − Y${i}` });
+        if (Yk.length) g.curve(step, { color: 'c4', dash: [5, 4], width: 1.8, label: `Y${a} (n=${n})` });
+        g.curve(B.pdf, { color: 'c1', label: `Beta(${a}, ${bb})` });
+      });
+      if (!W.length) { out.set('Pulsa <b>Simular</b>.'); return; }
+      out.set(`n = ${n}, i = ${i}, j = ${j} ⇒ $W=Y_{${j}}-Y_{${i}}\\sim\\text{Beta}(${a},\\,${bb})$<br>` +
+        `$\\P(W>1/2)$: simulada <b>${fmt(S.prop(W, x => x > 0.5), 4)}</b> · exacta <b>${fmt(B.sf(0.5), 4)}</b>` +
+        ` · y $\\P(Y_{${a}}>1/2)$ simulada <b>${fmt(S.prop(Yk, x => x > 0.5), 4)}</b>`);
+    }
+    sl.n = UI.slider(sp.controls, { tex: 'n', min: 2, max: 10, step: 1, value: n, onInput: v => { n = Math.round(v); fix('n'); simulate(); } });
+    sl.i = UI.slider(sp.controls, { tex: 'i', min: 1, max: 9, step: 1, value: i, onInput: v => { i = Math.round(v); fix('i'); simulate(); } });
+    sl.j = UI.slider(sp.controls, { tex: 'j', min: 2, max: 10, step: 1, value: j, onInput: v => { j = Math.round(v); fix('j'); simulate(); } });
+    UI.button(sp.controls, 'Volver a simular', simulate, { primary: true });
+    render();
+    onFirstOpen(sp.root, simulate);
+  })();
+
+  /* =================================================== EJERCICIO 12 */
+  (function ej12() {
+    const cs = [0.25, 0.5, 0.75];
+    squareFig('p3-ej12-fig-y', { xlabel: 'y₁', ylabel: 'y₂' }).draw(g => {
+      g.polygon(TRI, { color: 'accent', alpha: 0.15, stroke: 'accent', width: 1.5 });
+      cs.forEach(c => { g.line(0, 0, c, 1, { color: 'c1', width: 1.8 }); g.line(0, c, c, c, { color: 'c2', width: 1.8 }); });
+      g.text('v₁ = ½', 0.5, 1, { color: 'c1', size: 11, align: 'center', dy: 14 });
+      g.text('v₂ = ½', 0.5, 0.5, { color: 'c2', size: 11, dx: 4 });
+    });
+    squareFig('p3-ej12-fig-v', { xlabel: 'v₁', ylabel: 'v₂' }).draw(g => {
+      g.polygon([[0, 0], [1, 0], [1, 1], [0, 1]], { color: 'accent', alpha: 0.15, stroke: 'accent', width: 1.5 });
+      cs.forEach(c => { g.line(c, 0, c, 1, { color: 'c1', width: 1.8 }); g.line(0, c, 1, c, { color: 'c2', width: 1.8 }); });
+      g.text('v₁ = ½', 0.5, 1, { color: 'c1', size: 11, align: 'center', dy: 14 });
+      g.text('v₂ = ½', 1, 0.5, { color: 'c2', size: 11, align: 'right', dy: -4 });
+    });
+
+    const sp = simParts('p3-ej12-sim');
+    const p = EM.plot.create(sp.plot, { xmin: 0, xmax: 1, ymin: 0, ymax: 4, height: 270, xlabel: 'v' });
+    const out = UI.readout(sp.out);
+    let n = 3, i = 1, V = null, N = 0;
+    const sl = {};
+    function simulate() {
+      N = 30000; V = new Float64Array(N * n); const b = new Float64Array(n);
+      for (let t = 0; t < N; t++) {
+        sortedUnif(n, b);
+        for (let k = 0; k < n - 1; k++) V[t * n + k] = b[k] / b[k + 1];
+        V[t * n + n - 1] = b[n - 1];
+      }
+      render();
+    }
+    function col(k) { const a = new Array(N); for (let t = 0; t < N; t++) a[t] = V[t * n + k]; return a; }
+    function render() {
+      const f = v => (v <= 0 || v >= 1) ? 0 : i * Math.pow(v, i - 1);
+      const data = V ? col(i - 1) : [];
+      p.setRange({ ymax: Math.max(i, data.length ? histMax(data, 0, 1, 40) : 0) * 1.15 });
+      p.draw(g => {
+        if (data.length) g.hist(data, { bins: 40, range: [0, 1], color: 'c2', label: `V${i} simulada` });
+        g.curve(f, { color: 'c1', label: `Beta(${i}, 1): ` + (i === 1 ? '1' : `${i}v${'⁰¹²³⁴⁵⁶⁷⁸⁹'[i - 1]}`) });
+      });
+      if (!V) { out.set('Pulsa <b>Simular</b>.'); return; }
+      const cols = []; for (let k = 0; k < n; k++) cols.push(col(k));
+      const means = cols.map(S.mean), sds = cols.map(S.sd);
+      let maxc = 0;
+      for (let a = 0; a < n; a++) for (let c = a + 1; c < n; c++) {
+        let s = 0; for (let t = 0; t < N; t++) s += (cols[a][t] - means[a]) * (cols[c][t] - means[c]);
+        maxc = Math.max(maxc, Math.abs(s / (N - 1) / (sds[a] * sds[c])));
+      }
+      let both = 0; for (let t = 0; t < N; t++) if (cols[0][t] <= 0.5 && cols[n - 1][t] <= 0.5) both++;
+      const pa = S.prop(cols[0], x => x <= 0.5), pb = S.prop(cols[n - 1], x => x <= 0.5);
+      out.set(`n = ${n} · ${N.toLocaleString('es')} muestras<br>` +
+        'Medias simuladas vs. exactas $\\frac{i}{i+1}$: ' + means.map((m, k) => `V${k + 1}: <b>${fmt(m, 3)}</b>/${fmt((k + 1) / (k + 2), 3)}`).join(' · ') + '<br>' +
+        `Mayor |correlación| entre pares $V_a,V_b$: <b>${fmt(maxc, 3)}</b> (≈ 0, como debe ser)<br>` +
+        `$\\P(V_1\\le\\tfrac12,\\ V_{${n}}\\le\\tfrac12)$: simulada <b>${fmt(both / N, 4)}</b> · producto de marginales simuladas <b>${fmt(pa * pb, 4)}</b> · exacta $\\tfrac12\\cdot(\\tfrac12)^{${n}}=$ <b>${fmt(Math.pow(0.5, n + 1), 4)}</b>`);
+    }
+    sl.n = UI.slider(sp.controls, { tex: 'n', min: 2, max: 8, step: 1, value: n, onInput: v => { n = Math.round(v); if (i > n) { i = n; sl.i.set(i); } simulate(); } });
+    sl.i = UI.slider(sp.controls, { tex: 'i', min: 1, max: 8, step: 1, value: i, onInput: v => { i = Math.min(Math.round(v), n); sl.i.set(i); render(); } });
+    UI.button(sp.controls, 'Simular', simulate, { primary: true });
+    render();
+    onFirstOpen(sp.root, simulate);
+  })();
+})();
+</script>
+</body>
+</html>

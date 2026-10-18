@@ -1,0 +1,1206 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clase 5 · Teorema del límite central</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/theme.js"></script>
+<style>
+  /* solo para esta página */
+  .tl-svg { width: 100%; height: auto; display: block; margin: 8px 0; font-family: var(--font-ui); }
+  .tl-svg text { fill: var(--ink); font-size: 13px; }
+  .tl-svg .mut { fill: var(--muted); }
+  .num { font-family: var(--font-mono); font-size: .9em; }
+  table.tabla td.izq { text-align: left; }
+</style>
+</head>
+<body data-page="clase-05" data-root="../">
+<main id="contenido">
+
+  <header class="page-head">
+    <p class="kicker">Clase 5</p>
+    <h1>El teorema del límite central (TLC)</h1>
+    <p class="lead">Por qué la media de muchas observaciones casi siempre tiene forma de campana, cuándo puedes
+      fiarte de esa campana y cómo usarla para aproximar probabilidades de sumas, medias y conteos.</p>
+  </header>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="motivacion">Motivación: el experimento que pide la clase</h2>
+    <p>La clase empieza con un experimento de computadora. Tómalo en serio: es la mejor forma de <em>ver</em> el teorema
+      antes de leerlo. El PDF pide:</p>
+    <ul>
+      <li>Simular $M = 1000$ réplicas de una muestra exponencial de tamaño $n = 25$.</li>
+      <li>Calcular la media muestral $\bar X$ de cada réplica.</li>
+      <li>Graficar el histograma de las $M = 1000$ medias. ¿Cómo luce?</li>
+    </ul>
+    <p>Fíjate en lo que eso significa: cada réplica son 25 números exponenciales y produce <b>un solo</b> número, su media.
+      Repitiendo 1000 veces obtienes 1000 medias, y el histograma de esas medias es un retrato de la
+      <b>distribución muestral</b> de $\bar X$ (la idea de la Clase 3).</p>
+    <div class="box idea"><span class="box-title">Antes de mirar, predice</span>
+      <p>La exponencial es muy asimétrica: casi todo cerca de 0 y una cola larga a la derecha (gráfico pequeño de abajo).
+        ¿Crees que el histograma de las medias también tendrá esa forma de "tobogán"? ¿Dónde estará centrado? ¿Qué tan ancho será?</p>
+    </div>
+
+    <div class="sim" id="sim-motiv">
+      <p class="sim-title">Simulación (a): histograma de $M$ medias muestrales</p>
+      <p class="sim-desc">Por defecto está exactamente el experimento del PDF: población $\text{Exp}(\beta=1)$, $n=25$, $M=1000$.
+        Luego cambia la población, $n$ y $M$, o pasa a la escala estandarizada $W_n=(\bar X-\mu)/(\sigma/\sqrt n)$ para comparar con $N(0,1)$.</p>
+      <div class="controls c-a"></div>
+      <div class="controls c-b"></div>
+      <p class="small muted" style="margin:6px 0 0">Así es <b>una</b> observación (la población):</p>
+      <div class="plot plot-pop"></div>
+      <p class="small muted" style="margin:6px 0 0">Así se reparten las <b>$M$ medias</b>:</p>
+      <div class="plot plot-main"></div>
+      <div class="out"></div>
+    </div>
+
+    <div class="box nota"><span class="box-title">Respuesta: ¿cómo luce?</span>
+      <ul>
+        <li><b>Forma:</b> de campana, casi simétrica. La asimetría de la exponencial casi desapareció (queda un leve sesgo a la derecha).</li>
+        <li><b>Centro:</b> en $\mu=\beta=1$, la media de la población: $\E[\bar X]=\mu$.</li>
+        <li><b>Ancho:</b> mucho más angosto que la población: la desviación estándar de $\bar X$ es $\sigma/\sqrt{n}=1/\sqrt{25}=0.2$.</li>
+      </ul>
+      <p>Para la exponencial podemos comprobarlo con fórmulas: por el Formulario 2, $\sum_{i=1}^{25} X_i\sim\text{Gamma}(25,\beta)$, así que
+        $\bar X\sim\text{Gamma}(25,\beta/25)$ (la curva punteada de la simulación). Su asimetría es $2/\sqrt{25}=0.4$, contra $2$ de la población.
+        La campana normal $N(\mu,\sigma^2/n)$ (curva continua) ya se le parece mucho. <b>Eso</b> es lo que el TLC garantiza en general.</p>
+    </div>
+    <div class="box cuidado"><span class="box-title">Error muy común</span>
+      <p>El TLC <b>no</b> dice que "con $n$ grande los datos se vuelven normales". El histograma de los 25 datos de cualquier réplica
+        sigue pareciéndose a la exponencial (gráfico pequeño). Lo que se vuelve normal es la distribución de la <b>media</b> (o de la suma).</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="teorema">Teorema 5: el enunciado preciso</h2>
+    <div class="box teorema"><span class="box-title">Teorema 5 (Teorema del límite central)</span>
+      <p>Sean $Y_1,Y_2,\dots,Y_n$ variables i.i.d. con $\E[Y_i]=\mu$ y $\Var[Y_i]=\sigma^2&lt;\infty$. Defina</p>
+      $$W_n=\frac{\sum_{i=1}^n Y_i-n\mu}{\sigma\sqrt n}=\frac{\bar Y-\mu}{\sigma/\sqrt n},\qquad \bar Y=\frac1n\sum_{i=1}^n Y_i .$$
+      <p>Entonces la distribución acumulada de $W_n$ converge a la de una normal estándar cuando $n\to\infty$:</p>
+      $$\lim_{n\to\infty}\P(W_n\le w)=\int_{-\infty}^{w}\frac{1}{\sqrt{2\pi}}e^{-t^2/2}\,dt=\Phi(w),\qquad\text{para todo } w\in\R .$$
+      <p>En la notación del Formulario 2: $W_n\dto Z$, con $Z\sim N(0,1)$.</p>
+    </div>
+
+    <h3>Leámoslo despacio</h3>
+    <ol class="pasos">
+      <li><b>Hipótesis:</b> independencia, misma distribución, media finita y <b>varianza finita</b>. Nada más.
+        <b>No</b> se pide que las $Y_i$ sean normales, ni continuas, ni simétricas: sirve para Bernoulli, Poisson, exponencial, Beta…</li>
+      <li><b>$W_n$ es $\bar Y$ estandarizada.</b> Como $\E[\bar Y]=\mu$ y $\Var[\bar Y]=\sigma^2/n$, restar $\mu$ y dividir por $\sigma/\sqrt n$
+        deja una variable con media 0 y varianza 1 <em>para todo $n$</em>. Sin estandarizar no hay límite interesante:
+        $\bar Y$ se aplasta sobre $\mu$ (ley de los grandes números) y la suma se escapa a $\pm\infty$.</li>
+      <li><b>Las dos fórmulas de $W_n$ son la misma.</b> Multiplica numerador y denominador de $\frac{\bar Y-\mu}{\sigma/\sqrt n}$ por $n$:
+        $\frac{n\bar Y-n\mu}{n\sigma/\sqrt n}=\frac{\sum Y_i-n\mu}{\sigma\sqrt n}$.</li>
+      <li><b>Conclusión:</b> habla de <b>probabilidades acumuladas</b> $\P(W_n\le w)$, no de densidades.
+        Por eso vale aunque $W_n$ sea discreta (por ejemplo, si las $Y_i$ son Bernoulli $W_n$ nunca tiene densidad, y aun así su acumulada se acerca a $\Phi$).</li>
+    </ol>
+
+    <div class="box definicion"><span class="box-title">Definición (Formulario 2): convergencia en distribución</span>
+      <p>$X_n\dto X$ si $\displaystyle\lim_{n\to\infty}F_{X_n}(x)=F_X(x)$ en todo punto $x$ donde $F_X$ es continua.</p>
+      <p>Como $\Phi$ es continua en todos lados, en el TLC la convergencia vale <b>para todo $w$</b>, y en consecuencia, para cualquier $a&lt;b$,</p>
+      $$\P(a&lt;W_n\le b)=F_{W_n}(b)-F_{W_n}(a)\ \longrightarrow\ \Phi(b)-\Phi(a).$$
+    </div>
+    <div class="box nota"><span class="box-title">¿Por qué el "punto de continuidad"?</span>
+      <p>Toma $X_n=1/n$ (constante). Obviamente "$X_n\to0$", pero $F_{X_n}(0)=\P(1/n\le0)=0$ para todo $n$, mientras que $F_X(0)=1$ si $X\equiv0$.
+        En $x=0$, donde $F_X$ salta, no hay convergencia; en cualquier otro $x$ sí. La definición ignora esos saltos a propósito.
+        Con la normal no hay saltos, así que no hay que preocuparse.</p>
+    </div>
+
+    <p>La siguiente simulación muestra literalmente lo que dice el teorema: la acumulada de $W_n$ (exacta y simulada) pegándose a $\Phi$ cuando $n$ crece.</p>
+
+    <div class="sim" id="sim-cdf">
+      <p class="sim-title">Simulación (b): la acumulada de $W_n$ se acerca a $\Phi$</p>
+      <p class="sim-desc">Curva azul: $\Phi(w)$. Naranja: la acumulada <b>exacta</b> de $W_n$ (se conoce porque la suma es Gamma, Binomial o Poisson).
+        Rosa: la acumulada <b>empírica</b> de 2000 valores simulados de $W_n$. La barra roja marca la mayor distancia vertical.
+        Pulsa "Animar" para ver $n$ crecer.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="prueba">¿Por qué es cierto? La idea de la prueba con la FGM</h2>
+    <p>El PDF remite a la pág. 377 de Wackerly. Esa prueba supone además que la FGM de las $Y_i$ existe cerca de $t=0$, y usa el criterio del
+      Formulario 2: <em>si $M_{X_n}(t)\to M_X(t)$ entonces $X_n\dto X$</em>. Aquí va resumida, explicando cada paso.</p>
+
+    <details class="prueba" open><summary>Prueba (versión FGM, como en Wackerly)</summary><div>
+      <ol class="pasos">
+        <li><b>Centrar y escalar cada observación.</b> Sea $Z_i=(Y_i-\mu)/\sigma$. Las $Z_i$ son i.i.d., con $\E[Z_i]=0$ y $\E[Z_i^2]=\Var[Z_i]=1$, y
+          $$W_n=\frac{\sum_{i=1}^n (Y_i-\mu)}{\sigma\sqrt n}=\frac{1}{\sqrt n}\sum_{i=1}^n Z_i .$$</li>
+        <li><b>FGM de una suma de independientes = producto de FGM</b> (método FGM, Clase 2). Sea $m(t)=M_{Z_i}(t)$:
+          $$M_{W_n}(t)=\E\Big[e^{\frac{t}{\sqrt n}\sum Z_i}\Big]=\prod_{i=1}^n \E\big[e^{\frac{t}{\sqrt n}Z_i}\big]=\Big[m\big(\tfrac{t}{\sqrt n}\big)\Big]^n .$$</li>
+        <li><b>Taylor de $m$ alrededor de 0</b> (con resto de Lagrange): $m(s)=m(0)+m'(0)\,s+\tfrac12 m''(\xi)\,s^2$, con $\xi$ entre $0$ y $s$.
+          Como $m(0)=1$ y $m'(0)=\E[Z_i]=0$:
+          $$m\big(\tfrac{t}{\sqrt n}\big)=1+\frac{m''(\xi_n)\,t^2/2}{n},\qquad \xi_n\ \text{entre } 0 \text{ y } t/\sqrt n .$$</li>
+        <li><b>El límite.</b> Llama $a_n=m''(\xi_n)\,t^2/2$. Cuando $n\to\infty$, $\xi_n\to0$ y $m''(\xi_n)\to m''(0)=\E[Z_i^2]=1$ (continuidad de $m''$), así que $a_n\to t^2/2$. Por el límite clásico
+          $\lim\big(1+\tfrac{a_n}{n}\big)^n=e^{\lim a_n}$:
+          $$M_{W_n}(t)=\Big(1+\frac{a_n}{n}\Big)^n\ \longrightarrow\ e^{t^2/2}=M_Z(t),\qquad Z\sim N(0,1).$$</li>
+        <li><b>Conclusión.</b> Por el criterio de la FGM (Formulario 2), $W_n\dto N(0,1)$. $\blacksquare$</li>
+      </ol>
+    </div></details>
+
+    <div class="box idea"><span class="box-title">Lo que la prueba te enseña</span>
+      <ul>
+        <li><b>Solo sobreviven $\mu$ y $\sigma^2$.</b> En el desarrollo entraron $m(0)=1$, $m'(0)=0$ (media) y $m''(0)=1$ (varianza).
+          El siguiente término de Taylor, el del tercer momento, aparece como $\frac{\E[Z^3]\,t^3}{6\,n^{3/2}}\cdot n=\frac{\alpha_3\,t^3}{6\sqrt n}$, donde $\alpha_3$ es la asimetría:
+          se va a cero, pero <b>despacio</b> (como $1/\sqrt n$) y tanto más despacio cuanto mayor sea $\alpha_3$. Eso explica la regla $n\ge30$ (más abajo).</li>
+        <li><b>Dónde se usa $\sigma^2&lt;\infty$:</b> sin segundo momento no hay término $t^2/2$ y la prueba se cae (ver Cauchy).</li>
+        <li><b>La hipótesis extra de la FGM no es necesaria.</b> La prueba general es idéntica pero con la función característica $\varphi(t)=\E[e^{itY}]$,
+          que existe siempre. Así que el TLC vale para toda población con varianza finita, tenga o no FGM (por ejemplo, la lognormal no tiene FGM).</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="formas">Cómo se usa: formas equivalentes y receta</h2>
+    <p>En la práctica nunca se toma el límite: se usa el TLC como <b>aproximación</b> para un $n$ fijo "grande".
+      El Formulario 2 lo escribe así ($\overset{a}{\sim}$ = "se distribuye aproximadamente como"):</p>
+    $$Y_i \text{ i.i.d.}\ \Longrightarrow\ \bar Y\ \overset{a}{\sim}\ N\!\left(\mu,\ \frac{\sigma^2}{n}\right),\qquad
+      S_n=\sum_{i=1}^n Y_i\ \overset{a}{\sim}\ N\!\left(n\mu,\ n\sigma^2\right).$$
+    <p>Las tres versiones ($W_n$, $\bar Y$ y $S_n$) son <b>la misma afirmación</b>, porque $\bar Y$ y $S_n=n\bar Y$ son funciones lineales crecientes de $W_n$:</p>
+    $$\P(\bar Y\le y)=\P\Big(W_n\le \tfrac{y-\mu}{\sigma/\sqrt n}\Big)\approx\Phi\Big(\tfrac{y-\mu}{\sigma/\sqrt n}\Big),\qquad
+      \P(S_n\le s)=\P\Big(W_n\le \tfrac{s-n\mu}{\sigma\sqrt n}\Big)\approx\Phi\Big(\tfrac{s-n\mu}{\sigma\sqrt n}\Big).$$
+
+    <div class="box cuidado"><span class="box-title">Sobre la notación del PDF</span>
+      <p>En las observaciones el PDF escribe "$W_n\sim N(0,1)$" y "$\bar Y\sim N(\mu,\sigma^2/n)$ cuando $n$ es suficientemente grande".
+        Léelo como <b>aproximadamente</b> ($\overset{a}{\sim}$, como en el Formulario 2). Para $n$ fijo, $W_n$ casi nunca es exactamente normal
+        (solo lo es si las $Y_i$ ya eran normales, Clase 3).</p>
+    </div>
+
+    <div class="box nota"><span class="box-title">Receta en 4 pasos</span>
+      <ol>
+        <li>Identifica las $Y_i$ i.i.d. y si te preguntan por la <b>suma</b> o por la <b>media</b>.</li>
+        <li>Calcula $\mu=\E[Y_i]$ y $\sigma^2=\Var[Y_i]$ de <b>una sola</b> observación (Formulario 2).</li>
+        <li>Media y varianza de lo que te piden: $\bar Y$: $(\mu,\ \sigma^2/n)$; $S_n$: $(n\mu,\ n\sigma^2)$.</li>
+        <li>Estandariza y usa $\Phi$ (tabla Z: da $\Phi(z)$ para $z\ge0$; para $z&lt;0$ usa $\Phi(z)=1-\Phi(-z)$).
+          Si la variable es entera, aplica antes la <a href="#continuidad">corrección por continuidad</a>.</li>
+      </ol>
+    </div>
+    <p>Un caso particular importantísimo: si $Y_i\sim\text{Ber}(p)$, entonces $S_n\sim\text{Bin}(n,p)$ y el TLC dice
+      $\text{Bin}(n,p)\overset{a}{\sim}N\big(np,\,np(1-p)\big)$ (teorema de De Moivre–Laplace). La regla práctica usual es pedir $np\ge5$ y $n(1-p)\ge5$.</p>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="n30">¿Qué tan grande debe ser $n$? La regla $n\ge30$</h2>
+    <p>El PDF dice: "usualmente, un valor de $n$ mayor o igual a 30 asegurará que la distribución de $W_n$ puede aproximarse lo suficiente a una normal".
+      Es una regla de dedo, no un teorema. Lo que realmente importa es la <b>asimetría</b> de la población,
+      $\alpha_3=\E\big[(Y-\mu)^3/\sigma^3\big]$ (Formulario 2). El término de corrección que vimos en la prueba da la llamada aproximación de Edgeworth:</p>
+    $$\P(W_n\le w)\ \approx\ \Phi(w)\;-\;\frac{\alpha_3}{6\sqrt n}\,(w^2-1)\,\varphi(w).$$
+    <p>El error es proporcional a $\alpha_3/\sqrt n$. Para que dos poblaciones tengan el mismo error, $n$ tiene que crecer como $\alpha_3^2$:
+      <b>si duplicas la asimetría, necesitas cuatro veces más datos.</b></p>
+    <p>La tabla usa la familia Gamma, donde todo se calcula <b>exactamente</b> (la suma de Gammas es Gamma), más la uniforme (suma exacta de Irwin–Hall).
+      "Distancia" es $\sup_w|\P(W_n\le w)-\Phi(w)|$, el peor error posible al usar la normal.</p>
+    <div class="table-wrap"><table class="tabla">
+      <thead><tr><th>Población</th><th>$\alpha_3$</th><th>distancia con $n=30$</th><th>$\P(W_{30}>1.645)$<br><span class="small">(normal: 0.05)</span></th><th>$\P(W_{30}&lt;-1.645)$<br><span class="small">(normal: 0.05)</span></th><th>$n$ mínimo para distancia $&lt;0.01$</th></tr></thead>
+      <tbody>
+        <tr><td class="izq">Uniforme $U(0,1)$</td><td>0</td><td>0.0009</td><td>≈ 0.05</td><td>≈ 0.05</td><td>3</td></tr>
+        <tr><td class="izq">Gamma, forma 16</td><td>0.5</td><td>0.0061</td><td>0.0525</td><td>0.0472</td><td>12</td></tr>
+        <tr><td class="izq">Gamma, forma 4</td><td>1</td><td>0.0121</td><td>0.0549</td><td>0.0441</td><td>45</td></tr>
+        <tr class="hl"><td class="izq hl">Exponencial (Gamma, forma 1)</td><td class="hl">2</td><td class="hl">0.0243</td><td class="hl">0.0589</td><td class="hl">0.0372</td><td class="hl">177</td></tr>
+        <tr><td class="izq">Gamma, forma 0.25</td><td>4</td><td>0.0486</td><td>0.0649</td><td>0.0201</td><td>708</td></tr>
+        <tr><td class="izq">Gamma, forma 0.04</td><td>10</td><td>0.1367</td><td>0.0711</td><td>0 (¡$W_{30}\ge-1.10$!)</td><td>4422</td></tr>
+      </tbody>
+    </table></div>
+    <div class="box nota"><span class="box-title">Conclusiones</span>
+      <ul>
+        <li>Población simétrica (uniforme, Beta(2,2), normal…): la normal funciona casi de inmediato, $n\approx5$ basta.</li>
+        <li>Asimetría moderada ($|\alpha_3|\lesssim1$): $n\ge30$ va bien.</li>
+        <li>Exponencial ($\alpha_3=2$): con $n=30$ el error es de unos 2 puntos porcentuales y se nota en las colas
+          (la cola derecha real es más pesada: 0.059 en vez de 0.05).</li>
+        <li>Muy asimétrica (lognormal $\alpha_3\approx6.2$, tiempos de espera raros, ingresos…): $n=30$ <b>no</b> alcanza. Pruébalo en la simulación (a) con la opción "lognormal".</li>
+        <li>Para la Bernoulli, $\alpha_3=(1-2p)/\sqrt{p(1-p)}$ es enorme si $p$ está cerca de 0 o de 1: por eso la regla $np\ge5$, $n(1-p)\ge5$ en vez de $n\ge30$.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="continuidad">Variables discretas: la corrección por continuidad</h2>
+    <p>Si $S_n$ solo toma valores enteros (conteos: Binomial, Poisson, número de lanzamientos…), la normal reparte la probabilidad de cada entero $k$
+      en un intervalo. Piensa en el histograma de $S_n$ con barras de ancho 1: la barra del valor $k$ ocupa $[k-0.5,\,k+0.5]$, y su área es $\P(S_n=k)$.
+      Para aproximar esa barra con el área bajo la campana, hay que integrar de $k-0.5$ a $k+0.5$, no de $k$ a $k$ (eso daría 0).</p>
+    <div class="box definicion"><span class="box-title">Regla de la corrección por continuidad (variable entera $X$)</span>
+      <p>Primero escribe el evento con $\le$ o $\ge$ y extremos enteros; luego <b>ensancha medio punto hacia afuera</b> y estandariza con $\mu_X,\sigma_X$:</p>
+      <div class="table-wrap"><table class="tabla">
+        <thead><tr><th>Evento</th><th>Equivale a</th><th>Aproximación</th></tr></thead>
+        <tbody>
+          <tr><td>$X\le k$</td><td>$X\le k+0.5$</td><td>$\Phi\big(\frac{k+0.5-\mu_X}{\sigma_X}\big)$</td></tr>
+          <tr><td>$X&lt;k$</td><td>$X\le k-1$</td><td>$\Phi\big(\frac{k-0.5-\mu_X}{\sigma_X}\big)$</td></tr>
+          <tr><td>$X\ge k$</td><td>$X\ge k-0.5$</td><td>$1-\Phi\big(\frac{k-0.5-\mu_X}{\sigma_X}\big)$</td></tr>
+          <tr><td>$X>k$</td><td>$X\ge k+1$</td><td>$1-\Phi\big(\frac{k+0.5-\mu_X}{\sigma_X}\big)$</td></tr>
+          <tr><td>$X=k$</td><td>$k-0.5&lt;X\le k+0.5$</td><td>$\Phi\big(\frac{k+0.5-\mu_X}{\sigma_X}\big)-\Phi\big(\frac{k-0.5-\mu_X}{\sigma_X}\big)$</td></tr>
+          <tr><td>$a\le X\le b$</td><td>$a-0.5\le X\le b+0.5$</td><td>$\Phi\big(\frac{b+0.5-\mu_X}{\sigma_X}\big)-\Phi\big(\frac{a-0.5-\mu_X}{\sigma_X}\big)$</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div class="box nota"><span class="box-title">¿Cuándo se usa y cuándo no?</span>
+      <ul>
+        <li><b>Sí:</b> cuando la variable que aproximas es entera (sumas de Bernoulli, Poisson, geométricas…). Mejora mucho la aproximación, sobre todo si $\sigma_X$ es pequeña.</li>
+        <li><b>No:</b> cuando la variable es continua (sumas o medias de exponenciales, uniformes, Beta…). Ahí $\P(X\le k)=\P(X&lt;k)$ y no hay "medio punto" que agregar.</li>
+        <li>Si la variable vive en una rejilla de paso $h$ (por ejemplo $\bar X$ de Bernoulli toma valores $k/n$, paso $h=1/n$), la corrección es $\pm h/2$.</li>
+        <li>Pierde importancia cuando $\sigma_X$ es grande: $0.5/\sigma_X\to0$. Pero no estorba nunca: úsala siempre con variables enteras.</li>
+      </ul>
+    </div>
+
+    <div class="sim" id="sim-cc">
+      <p class="sim-title">Simulación (c): normal vs. Binomial/Poisson, con y sin corrección</p>
+      <p class="sim-desc">Elige la distribución y el intervalo $[a,b]$ de enteros; se calcula $\P(a\le X\le b)$ exacta y aproximada.
+        Si $a$ es el mínimo del soporte (0) o $b$ el máximo ($n$), ese extremo se toma como $\mp\infty$. Pon $a=b$ para ver $\P(X=a)$: ¡sin corrección da 0!</p>
+      <div class="controls c-a"></div>
+      <div class="controls c-b"></div>
+      <div class="controls c-c"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="cauchy">Si la varianza es infinita: la Cauchy rompe el TLC</h2>
+    <p>La hipótesis $\sigma^2&lt;\infty$ no es decorativa. La distribución de Cauchy, $f(y)=\frac{1}{\pi(1+y^2)}$, tiene colas tan pesadas que
+      $\E|Y|=\infty$: no tiene media ni varianza (ni FGM). Con ella pasa algo sorprendente:</p>
+    <div class="box teorema"><span class="box-title">Hecho</span>
+      <p>Si $Y_1,\dots,Y_n\iid\text{Cauchy}(0,1)$, entonces $\bar Y\sim\text{Cauchy}(0,1)$ <b>para todo $n$</b>.</p>
+      <p class="small">Prueba (con la función característica, porque no hay FGM): $\varphi_Y(t)=e^{-|t|}$, luego
+        $\varphi_{\bar Y}(t)=\big[\varphi_Y(t/n)\big]^n=\big(e^{-|t|/n}\big)^n=e^{-|t|}$, la misma.</p>
+    </div>
+    <p>Promediar mil datos de Cauchy da exactamente la misma incertidumbre que tener un solo dato. Ni se concentra (falla la ley de los grandes números)
+      ni se vuelve normal (falla el TLC). La razón intuitiva: de vez en cuando aparece un valor gigantesco que domina toda la suma.</p>
+
+    <div class="sim" id="sim-cauchy">
+      <p class="sim-title">Simulación (e): la media acumulada $\bar Y_k$ con $k=1,\dots,3000$</p>
+      <p class="sim-desc">Cinco trayectorias de la media acumulada. Con la normal se encierran en la banda $\pm2/\sqrt k$ que predice el TLC;
+        con la Cauchy saltan para siempre. En la simulación (a) elige "Cauchy" para ver que el histograma de $\bar X$ no se angosta al crecer $n$.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+    <div class="box nota"><span class="box-title">Matiz</span>
+      <p>Hay casos intermedios: la $t$ de Student con 2 grados de libertad tiene media 0 pero varianza infinita. Ahí $\bar Y\to0$ (sí hay ley de los grandes
+        números), pero $W_n$ no puede ni definirse porque no hay $\sigma$. Moraleja: antes de usar el TLC, pregúntate si la varianza es finita.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="ej-1-2">Ejemplos 1 y 2: diferencia de dos medias</h2>
+
+    <div class="box ejercicio" id="ejemplo-1">
+      <span class="box-title">Ejemplo 1 (Clase 5)</span>
+      <p>Suponga que $X_1,X_2,\dots,X_n$ y que $Y_1,Y_2,\dots,Y_n$ son muestras aleatorias independientes de poblaciones con medias $\mu_1$ y $\mu_2$
+        y varianzas $\sigma_1^2$ y $\sigma_2^2$, respectivamente. Demuestre que la variable aleatoria</p>
+      $$U_n=\frac{(\bar X-\bar Y)-(\mu_1-\mu_2)}{\sqrt{\dfrac{\sigma_1^2+\sigma_2^2}{n}}}$$
+      <p>satisface las condiciones del teorema 5 y por tanto que la distribución de $U_n$ converge hacia una función de distribución normal estándar cuando $n\to\infty$.</p>
+      <details class="pista"><summary>Pista 1</summary><div>
+        <p>El TLC habla de <b>una</b> sucesión i.i.d. Aquí tienes dos. Como ambas muestras tienen el mismo tamaño $n$, junta cada $X_i$ con su $Y_i$.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 2</summary><div>
+        <p>Define $D_i=X_i-Y_i$. ¿Quién es $\bar D$? ¿Cuánto valen $\E[D_i]$ y $\Var[D_i]$?</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Nueva sucesión.</b> Sea $D_i=X_i-Y_i$, $i=1,\dots,n$.</li>
+          <li><b>Las $D_i$ son i.i.d.</b> Los pares $(X_1,Y_1),\dots,(X_n,Y_n)$ son independientes entre sí (cada muestra es aleatoria y las muestras son independientes entre sí)
+            y todos tienen la misma distribución conjunta. Como $D_i$ depende solo del par $i$, las $D_i$ son independientes e idénticamente distribuidas.</li>
+          <li><b>Media.</b> $\E[D_i]=\E[X_i]-\E[Y_i]=\mu_1-\mu_2=:\mu_D$.</li>
+          <li><b>Varianza finita.</b> Como $X_i$ y $Y_i$ son independientes, $\Cov(X_i,Y_i)=0$ y
+            $$\Var[D_i]=\Var[X_i]+\Var[Y_i]-2\Cov(X_i,Y_i)=\sigma_1^2+\sigma_2^2=:\sigma_D^2&lt;\infty .$$
+            ¡Ojo! Las varianzas se <b>suman</b> aunque se restan las variables.</li>
+          <li><b>La media de las $D_i$.</b> $\bar D=\frac1n\sum(X_i-Y_i)=\frac1n\sum X_i-\frac1n\sum Y_i=\bar X-\bar Y$.</li>
+          <li><b>Reconocer $W_n$.</b> Sustituyendo,
+            $$U_n=\frac{\bar D-\mu_D}{\sqrt{\sigma_D^2/n}}=\frac{\bar D-\mu_D}{\sigma_D/\sqrt n},$$
+            que es exactamente el $W_n$ del Teorema 5 aplicado a $D_1,\dots,D_n$, que cumplen todas sus hipótesis.</li>
+          <li><b>Conclusión.</b> Por el TLC, $\lim_{n\to\infty}\P(U_n\le u)=\Phi(u)$ para todo $u$, es decir, $U_n\dto N(0,1)$. $\blacksquare$</li>
+        </ol>
+        <p class="small muted">Comentario: el truco de emparejar necesita tamaños iguales. Con $n_1\ne n_2$ el resultado análogo
+          $\frac{(\bar X-\bar Y)-(\mu_1-\mu_2)}{\sqrt{\sigma_1^2/n_1+\sigma_2^2/n_2}}\dto N(0,1)$ también es cierto cuando $n_1,n_2\to\infty$, pero se prueba de otra forma.</p>
+      </div></details>
+    </div>
+
+    <div class="box ejercicio" id="ejemplo-2">
+      <span class="box-title">Ejemplo 2 (Clase 5) <span class="badge star">★ reto</span></span>
+      <p>Se diseña un experimento para determinar si el operador A o el operador B obtienen el trabajo de operar una nueva máquina. Se toma el tiempo de cada
+        operador en 50 intentos independientes que comprenden la realización de cierto trabajo usando la máquina. Si las medias muestrales para los 50 intentos
+        difieren en más de 1 segundo, el operador con el menor tiempo medio obtiene el trabajo. De otro modo, el experimento es considerado como terminado en empate.
+        Si las desviaciones estándar de los tiempos para ambos operadores se suponen de 2 segundos, ¿cuál es la probabilidad de que el operador A obtenga el trabajo
+        aún cuando ambos operadores tengan igual capacidad?</p>
+      <details class="pista"><summary>Pista 1</summary><div>
+        <p>Traduce a símbolos. "Igual capacidad" significa $\mu_A=\mu_B$. ¿Qué tiene que pasar con $\bar X_A$ y $\bar X_B$ para que gane A?</p>
+      </div></details>
+      <details class="pista"><summary>Pista 2</summary><div>
+        <p>A gana si su media es menor <b>y</b> la diferencia supera 1 s: $\bar X_B-\bar X_A>1$. Usa el Ejemplo 1 con $n=50$, $\sigma_1=\sigma_2=2$.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Modelo.</b> $X_{A,1},\dots,X_{A,50}$: tiempos de A; $X_{B,1},\dots,X_{B,50}$: tiempos de B. Muestras independientes,
+            $\E[X_{A,i}]=\mu_A$, $\E[X_{B,i}]=\mu_B$, $\sigma_A=\sigma_B=2$. No sabemos la distribución de los tiempos (¡no hace falta!).</li>
+          <li><b>El evento.</b> A obtiene el trabajo si su tiempo medio es el menor y la diferencia es mayor que 1 s:
+            $$\{\text{A gana}\}=\{\bar X_B-\bar X_A>1\}=\{\bar X_A-\bar X_B&lt;-1\}.$$</li>
+          <li><b>Igual capacidad</b> $\Rightarrow\mu_A-\mu_B=0$.</li>
+          <li><b>TLC vía Ejemplo 1.</b> Con $n=50$:
+            $$\sqrt{\frac{\sigma_A^2+\sigma_B^2}{n}}=\sqrt{\frac{4+4}{50}}=\sqrt{0.16}=0.4,\qquad U=\frac{(\bar X_A-\bar X_B)-0}{0.4}\ \overset{a}{\sim}\ N(0,1).$$</li>
+          <li><b>Estandarizar.</b>
+            $$\P(\bar X_A-\bar X_B&lt;-1)=\P\Big(U&lt;\frac{-1}{0.4}\Big)=\P(U&lt;-2.5)\approx\Phi(-2.5)=1-\Phi(2.5)=1-0.9938=0.0062 .$$
+            (Tabla Z: fila 2.5, columna 0.00.) No hay corrección por continuidad: los tiempos son continuos.</li>
+          <li><b>Respuesta:</b> $\P(\text{A gana})\approx0.0062$. Es decir, si son igual de buenos, es muy raro que uno "gane" por azar;
+            la probabilidad de que <em>alguno</em> gane es $2(0.0062)=0.0124$ y la de empate $\approx0.9876$.</li>
+        </ol>
+        <p><b>¿Qué tan buena es la aproximación?</b> Depende de la distribución real de los tiempos, que el enunciado no da. Lo comprobamos numéricamente
+          (integración exacta) con dos modelos de desviación 2: si los tiempos son Gamma con media 10 s (poco asimétricos), la probabilidad exacta es
+          $0.00622$; si fueran exponenciales con media 2 s (muy asimétricos), $0.00656$. La aproximación $0.0062$ es buena en ambos casos, aunque estamos
+          en una cola ($z=-2.5$), donde el error relativo es mayor.</p>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="ej-3">Ejemplo 3: un límite que sale del TLC</h2>
+    <div class="box ejercicio" id="ejemplo-3">
+      <span class="box-title">Ejemplo 3 (Clase 5)</span>
+      <p>Usando el teorema de límite central para variables aleatorias con distribución de Poisson, demuestre que</p>
+      $$\lim_{n\to+\infty}e^{-n}\left(1+\frac{n}{1!}+\frac{n^2}{2!}+\cdots+\frac{n^n}{n!}\right)=\frac12 .$$
+      <details class="pista"><summary>Pista 1</summary><div>
+        <p>$e^{-n}\frac{n^k}{k!}$ es la probabilidad de algo. ¿De qué distribución, con qué parámetro, en qué valor?</p>
+      </div></details>
+      <details class="pista"><summary>Pista 2</summary><div>
+        <p>La suma es $\P(S_n\le n)$ con $S_n\sim\text{Pois}(n)$, y $S_n$ se puede ver como suma de $n$ Poisson(1) independientes. Estandariza.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Reescribir con sumatoria</b> (son $n+1$ términos, desde $k=0$):
+            $$e^{-n}\Big(1+\frac{n}{1!}+\cdots+\frac{n^n}{n!}\Big)=\sum_{k=0}^n e^{-n}\frac{n^k}{k!}.$$</li>
+          <li><b>Reconocer una probabilidad.</b> $e^{-n}n^k/k!$ es $\P(S=k)$ para $S\sim\text{Pois}(n)$. Sumar de $k=0$ a $n$ da
+            $\P(S\le n)$. Hay que probar que $\lim_{n\to\infty}\P(S_n\le n)=\tfrac12$ con $S_n\sim\text{Pois}(n)$.</li>
+          <li><b>Construir $S_n$ como suma i.i.d.</b> Sean $X_1,X_2,\dots\iid\text{Pois}(1)$, con $\mu=1$ y $\sigma^2=1&lt;\infty$. Por la aditividad de la Poisson
+            (Formulario 2, o el Ejemplo 7a), $S_n=\sum_{k=1}^n X_k\sim\text{Pois}(n)$. Así la expresión es $\P(S_n\le n)$ con una $S_n$ a la que sí se le aplica el TLC.</li>
+          <li><b>TLC.</b> $Y_n=\dfrac{S_n-n\mu}{\sigma\sqrt n}=\dfrac{S_n-n}{\sqrt n}\dto Z\sim N(0,1)$.</li>
+          <li><b>Estandarizar el evento</b> (restar $n$ y dividir por $\sqrt n>0$ no cambia la desigualdad):
+            $$\P(S_n\le n)=\P\Big(\frac{S_n-n}{\sqrt n}\le\frac{n-n}{\sqrt n}\Big)=\P(Y_n\le0).$$</li>
+          <li><b>Pasar al límite.</b> Como $\Phi$ es continua en 0, la convergencia en distribución da
+            $\lim_{n\to\infty}\P(Y_n\le0)=\Phi(0)=\tfrac12$. Por lo tanto
+            $$\lim_{n\to+\infty}e^{-n}\Big(1+\frac{n}{1!}+\frac{n^2}{2!}+\cdots+\frac{n^n}{n!}\Big)=\frac12 .\qquad\blacksquare$$</li>
+        </ol>
+        <p class="small muted">Observa el truco: el problema tiene un solo $n$, pero lo usamos a la vez como número de sumandos y como parámetro de la Poisson.
+          Eso funciona porque Poisson$(n)$ = suma de $n$ Poisson$(1)$.</p>
+      </div></details>
+    </div>
+
+    <h3>¿Qué tan rápido converge? Mírala numéricamente</h3>
+    <p>Sea $a_n=e^{-n}\sum_{k=0}^n n^k/k!=\P(S_n\le n)$. El límite es $\tfrac12$, pero la convergencia es <b>lenta</b>:</p>
+    <div class="table-wrap"><table class="tabla">
+      <thead><tr><th>$n$</th><th>$a_n=\P(S_n\le n)$</th><th>$\P(S_n&lt;n)$</th><th>$a_n-\tfrac12$</th><th>$\sqrt n\,(a_n-\tfrac12)$</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>0.73576</td><td>0.36788</td><td>0.23576</td><td>0.2358</td></tr>
+        <tr><td>2</td><td>0.67668</td><td>0.40601</td><td>0.17668</td><td>0.2499</td></tr>
+        <tr><td>5</td><td>0.61596</td><td>0.44049</td><td>0.11596</td><td>0.2593</td></tr>
+        <tr><td>10</td><td>0.58304</td><td>0.45793</td><td>0.08304</td><td>0.2626</td></tr>
+        <tr><td>20</td><td>0.55909</td><td>0.47026</td><td>0.05909</td><td>0.2643</td></tr>
+        <tr><td>50</td><td>0.53752</td><td>0.48119</td><td>0.03752</td><td>0.2653</td></tr>
+        <tr><td>100</td><td>0.52656</td><td>0.48670</td><td>0.02656</td><td>0.2656</td></tr>
+        <tr><td>200</td><td>0.51879</td><td>0.49060</td><td>0.01879</td><td>0.2658</td></tr>
+        <tr><td>1000</td><td>0.50841</td><td>0.49579</td><td>0.00841</td><td>0.2659</td></tr>
+      </tbody>
+    </table></div>
+    <p>La última columna se estabiliza en $0.2659\approx\frac{2}{3\sqrt{2\pi}}$, o sea $a_n\approx\frac12+\frac{0.266}{\sqrt n}$:
+      el error baja como $1/\sqrt n$. Para que $a_n$ esté a menos de $0.01$ de $\tfrac12$ hace falta $n\approx708$. ¿Por qué tan lento?</p>
+    <ul>
+      <li><b>El átomo en $n$.</b> $\P(S_n\le n)$ incluye el valor $S_n=n$, cuya probabilidad es $\P(S_n=n)\approx\frac{1}{\sqrt{2\pi n}}$ (Ejemplo 7).
+        Por eso $\P(S_n\le n)$ queda arriba de $\tfrac12$ y $\P(S_n&lt;n)$ abajo; ambas tienden a $\tfrac12$ pero a ritmo $1/\sqrt n$.
+        Con la corrección por continuidad, $\Phi(0.5/\sqrt n)\approx\frac12+\frac{1/2}{\sqrt{2\pi n}}$, ya capturas la mayor parte.</li>
+      <li><b>La asimetría.</b> La Poisson(1) tiene $\alpha_3=1$; el término de Edgeworth aporta otro $\frac{1/6}{\sqrt{2\pi n}}$. En total $\frac12+\frac{2/3}{\sqrt{2\pi n}}$, justo lo que muestra la tabla.</li>
+    </ul>
+
+    <div class="sim" id="sim-ej3">
+      <p class="sim-title">La sucesión $a_n$ para $n=1,\dots,200$</p>
+      <p class="sim-desc">Puntos azules: $a_n=\P(S_n\le n)$. Naranjas: $\P(S_n&lt;n)$. Línea punteada: la predicción $\frac12+\frac{2/3}{\sqrt{2\pi n}}$. Mueve $n$ para leer valores.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="ej-4">Ejemplo 4: impurezas con distribución Beta(3, 2)</h2>
+    <div class="box ejercicio" id="ejemplo-4">
+      <span class="box-title">Ejemplo 4 (Clase 5)</span>
+      <p>La proporción de impurezas en las muestras de agua recolectadas en un tramo de río tiene distribución Beta(3, 2). Se recogen 36 muestras de forma
+        independiente. Encuentre una aproximación a las siguientes probabilidades:</p>
+      <p>a) que la proporción media de impurezas sea superior a 0.58.<br>
+         b) que el número de observaciones en las que la proporción de impurezas excede 0.58 sea a lo mucho 24.</p>
+      <details class="pista"><summary>Pista 1</summary><div>
+        <p>En a) la variable es $\bar X$ (media de 36 Beta). En b) la variable es un <b>conteo</b>: cada muestra "excede 0.58" o no. ¿Qué distribución tiene un conteo de éxitos independientes?</p>
+      </div></details>
+      <details class="pista"><summary>Pista 2</summary><div>
+        <p>Para b) necesitas $p=\P(X>0.58)$ con $X\sim\text{Beta}(3,2)$. Integra la densidad $f(x)=12x^2(1-x)$. Luego $Y\sim\text{Bin}(36,p)$ y como es entera, usa corrección por continuidad.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <h4>a) $\P(\bar X>0.58)$</h4>
+        <ol class="pasos">
+          <li><b>Momentos de una observación</b> (Formulario 2 con $\alpha=3$, $\beta=2$):
+            $$\mu=\frac{\alpha}{\alpha+\beta}=\frac35=0.6,\qquad\sigma^2=\frac{\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)}=\frac{6}{25\cdot6}=0.04,\qquad\sigma=0.2 .$$</li>
+          <li><b>Momentos de $\bar X$</b> con $n=36$: $\E[\bar X]=0.6$ y $\sigma/\sqrt n=0.2/6=0.0\overline{3}$.</li>
+          <li><b>TLC y estandarización:</b>
+            $$\P(\bar X>0.58)=\P\Big(\frac{\bar X-0.6}{0.2/6}>\frac{0.58-0.6}{0.2/6}\Big)\approx\P(Z>-0.6)=\Phi(0.6)=0.7257 .$$
+            ($\bar X$ es continua: no hay corrección por continuidad.)</li>
+          <li><b>Verificación:</b> calculando la distribución exacta de la suma de 36 Beta(3,2) (convolución numérica) se obtiene $0.72698$.
+            La aproximación $0.7257$ yerra en $0.0013$: muy buena, porque la Beta(3,2) es casi simétrica ($\alpha_3=-0.29$).</li>
+        </ol>
+        <h4>b) $\P(\text{a lo mucho 24 muestras exceden }0.58)$</h4>
+        <ol class="pasos">
+          <li><b>Probabilidad de "éxito".</b> La densidad es $f(x)=\frac{x^{2}(1-x)}{B(3,2)}$ con $B(3,2)=\frac{\Gamma(3)\Gamma(2)}{\Gamma(5)}=\frac{2\cdot1}{24}=\frac1{12}$, o sea
+            $f(x)=12x^2(1-x)$. Su acumulada es
+            $$F(x)=\int_0^x 12(t^2-t^3)\,dt=4x^3-3x^4,\qquad F(0.58)=4(0.58)^3-3(0.58)^4=0.44095 .$$
+            Entonces $p=\P(X>0.58)=1-0.44095=0.55905$.</li>
+          <li><b>El conteo.</b> Sea $Y$ el número de las 36 muestras que exceden 0.58. Cada muestra es un ensayo de Bernoulli independiente con éxito $p$, así que
+            $Y=\sum_{i=1}^{36}\1\{X_i>0.58\}\sim\text{Bin}(36,\,0.55905)$. Es una suma de 36 Bernoulli i.i.d.: el TLC aplica.</li>
+          <li><b>Momentos:</b> $\E[Y]=np=20.126$, $\Var[Y]=np(1-p)=8.874$, $\sigma_Y=2.979$. Se cumple $np\ge5$ y $n(1-p)=15.9\ge5$.</li>
+          <li><b>"A lo mucho 24"</b> es $\P(Y\le24)$. Con corrección por continuidad ($Y$ es entera, $Y\le24\iff Y\le24.5$):
+            $$\P(Y\le24)\approx\Phi\Big(\frac{24.5-20.126}{2.979}\Big)=\Phi(1.468)=0.9290 .$$</li>
+          <li><b>Sin corrección</b> habrías obtenido $\Phi\big(\frac{24-20.126}{2.979}\big)=\Phi(1.301)=0.9033$.</li>
+          <li><b>Exacto (binomial):</b> $\P(Y\le24)=\sum_{k=0}^{24}\binom{36}{k}p^k(1-p)^{36-k}=0.9306$.</li>
+        </ol>
+        <div class="table-wrap"><table class="tabla">
+          <thead><tr><th></th><th>sin corrección</th><th>con corrección</th><th>exacto</th></tr></thead>
+          <tbody><tr><td>$\P(Y\le24)$</td><td>0.9033 (error 0.027)</td><td>0.9290 (error 0.002)</td><td>0.9306</td></tr></tbody>
+        </table></div>
+        <p>La corrección por continuidad reduce el error más de diez veces. Con la tabla Z (redondeando $z$ a 1.47 y 1.30) obtendrías 0.9292 y 0.9032.</p>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="ej-5">Ejemplo 5: lanzar una moneda hasta 450 caras</h2>
+    <div class="box ejercicio" id="ejemplo-5">
+      <span class="box-title">Ejemplo 5 (Clase 5)</span>
+      <p>Se lanza una moneda balanceada de forma independiente, hasta que se obtienen 450 caras. Estime la probabilidad de que como máximo 960 lanzamientos sean necesarios.</p>
+      <details class="pista"><summary>Pista 1 (camino de las geométricas)</summary><div>
+        <p>Sea $T$ el número total de lanzamientos. Pártelo: lanzamientos hasta la 1.ª cara, luego hasta la 2.ª, … Cada trozo es una geométrica.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 2 (camino binomial)</summary><div>
+        <p>"Necesito como máximo 960 lanzamientos para juntar 450 caras" es lo mismo que "en los primeros 960 lanzamientos salen al menos 450 caras".</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa (dos caminos)</summary><div>
+        <h4>Camino 1: suma de geométricas (binomial negativa)</h4>
+        <ol class="pasos">
+          <li><b>Descomponer.</b> $T=G_1+G_2+\cdots+G_{450}$, donde $G_j$ = número de lanzamientos desde la cara $j-1$ hasta la cara $j$ (incluida).
+            Por independencia de los lanzamientos, $G_j\iid\text{Geo}(p=\tfrac12)$, con soporte $\{1,2,\dots\}$, y $T\sim\text{Bneg}(450,\tfrac12)$ (Formulario 2).</li>
+          <li><b>Momentos de una geométrica</b> (Formulario 2): $\E[G]=1/p=2$, $\Var[G]=(1-p)/p^2=0.5/0.25=2$.</li>
+          <li><b>Momentos de $T$:</b> $\E[T]=450\cdot2=900$, $\Var[T]=450\cdot2=900$, $\sigma_T=30$.</li>
+          <li><b>TLC</b> ($T$ es suma de 450 i.i.d. con varianza finita): $T\overset{a}{\sim}N(900,\,30^2)$.</li>
+          <li><b>Con corrección</b> ($T$ es entera; $T\le960\iff T\le960.5$):
+            $$\P(T\le960)\approx\Phi\Big(\frac{960.5-900}{30}\Big)=\Phi(2.017)=0.9781 .$$
+            Sin corrección: $\Phi\big(\frac{960-900}{30}\big)=\Phi(2)=0.9772$.</li>
+        </ol>
+        <h4>Camino 2: binomial "al menos 450 caras en 960"</h4>
+        <ol class="pasos">
+          <li><b>Equivalencia de eventos.</b> Sea $X$ el número de caras en los primeros 960 lanzamientos. Si la cara 450 llega en el lanzamiento $T\le960$,
+            entonces en los primeros 960 hay al menos 450 caras. Recíprocamente, si en los primeros 960 hay $\ge450$ caras, la cara 450 ya llegó, o sea $T\le960$. Por tanto
+            $$\{T\le960\}=\{X\ge450\},\qquad X\sim\text{Bin}(960,\tfrac12).$$</li>
+          <li><b>Momentos:</b> $\E[X]=480$, $\Var[X]=960\cdot\tfrac12\cdot\tfrac12=240$, $\sigma_X=15.492$.</li>
+          <li><b>Con corrección</b> ($X\ge450\iff X\ge449.5$):
+            $$\P(X\ge450)\approx1-\Phi\Big(\frac{449.5-480}{15.492}\Big)=1-\Phi(-1.969)=\Phi(1.969)=0.9755 .$$
+            Sin corrección: $1-\Phi\big(\frac{450-480}{15.492}\big)=\Phi(1.936)=0.9736$.</li>
+        </ol>
+        <h4>Comparación con el valor exacto</h4>
+        <div class="table-wrap"><table class="tabla">
+          <thead><tr><th>Método</th><th>sin corrección</th><th>con corrección</th></tr></thead>
+          <tbody>
+            <tr><td class="izq">Camino 1: $T\overset{a}{\sim}N(900,900)$</td><td>0.9772</td><td>0.9781</td></tr>
+            <tr><td class="izq">Camino 2: $X\overset{a}{\sim}N(480,240)$</td><td>0.9736</td><td><b>0.9755</b></td></tr>
+            <tr><td class="izq">Exacto: $\P(T\le960)=\P(X\ge450)$</td><td colspan="2">0.97554</td></tr>
+          </tbody>
+        </table></div>
+        <p><b>¿Por qué el camino 2 con corrección es casi perfecto</b> (0.97551 vs 0.97554) y el camino 1 se pasa? La $\text{Bin}(960,\tfrac12)$ es <b>simétrica</b>
+          ($\alpha_3=0$), mientras que la geométrica es asimétrica a la derecha ($\alpha_3=2.12$), y $T$ hereda una asimetría $2.12/\sqrt{450}=0.10$:
+          su cola derecha real es más pesada que la de la normal, así que la normal sobreestima $\P(T\le960)$. Ambas respuestas, ≈ 0.98, son aceptables.</p>
+      </div></details>
+    </div>
+
+    <div class="sim" id="sim-ej5">
+      <p class="sim-title">Simulación (d1): lanzar la moneda hasta 450 caras, muchas veces</p>
+      <p class="sim-desc">Cada repetición lanza una moneda real (virtual) hasta juntar 450 caras y anota $T$. Las repeticiones se acumulan con cada clic.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="ej-6">Ejemplo 6: las baterías de Juan</h2>
+    <div class="box ejercicio" id="ejemplo-6">
+      <span class="box-title">Ejemplo 6 (Clase 5)</span>
+      <p>La duración en meses de una batería utilizada por Juan en su reproductor se distribuye uniformemente en (1, 2). Suponga que Juan reemplaza la batería
+        por una nueva inmediatamente después de que se gasta. Estime la probabilidad de que utilicen más de 27 baterías en un período de 42 meses.</p>
+      <details class="pista"><summary>Pista 1</summary><div>
+        <p>Sea $S_k=L_1+\cdots+L_k$ la suma de las duraciones de las primeras $k$ baterías. ¿En qué instante se instala la batería número $k+1$?</p>
+      </div></details>
+      <details class="pista"><summary>Pista 2</summary><div>
+        <p>"Más de 27 baterías" = "al menos 28 baterías". La batería 28 se llega a usar dentro de los 42 meses si y solo si se instala antes del mes 42. ¿Cuándo se instala?</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Modelo.</b> $L_1,L_2,\dots\iid U(1,2)$ son las duraciones. La batería 1 se pone en el mes 0; la batería $k+1$ se pone en el instante
+            $S_k=L_1+\cdots+L_k$ (cuando muere la $k$-ésima).</li>
+          <li><b>Traducir el evento con cuidado.</b> Sea $N$ el número de baterías utilizadas en $[0,42]$ (cuenta la que esté puesta en el mes 42, porque se usó).
+            Entonces
+            $$N>27\iff N\ge28\iff\text{la batería 28 se instala antes del mes 42}\iff S_{27}&lt;42 .$$
+            <svg class="tl-svg" viewBox="0 0 640 118" role="img" aria-label="Línea de tiempo: baterías 1 a 27 terminan en S27, antes del mes 42; la batería 28 se instala en S27 y está en uso en el mes 42.">
+              <line x1="20" y1="60" x2="625" y2="60" style="stroke:var(--muted)" stroke-width="1.5"/>
+              <rect x="20" y="44" width="40" height="32" rx="3" style="fill:var(--plot-c1)" opacity=".75"/>
+              <rect x="62" y="44" width="46" height="32" rx="3" style="fill:var(--plot-c6)" opacity=".75"/>
+              <rect x="110" y="44" width="36" height="32" rx="3" style="fill:var(--plot-c1)" opacity=".75"/>
+              <text x="40" y="65" text-anchor="middle" style="fill:var(--surface)">1</text>
+              <text x="85" y="65" text-anchor="middle" style="fill:var(--surface)">2</text>
+              <text x="128" y="65" text-anchor="middle" style="fill:var(--surface)">3</text>
+              <text x="200" y="65" text-anchor="middle" class="mut">· · ·</text>
+              <rect x="300" y="44" width="62" height="32" rx="3" style="fill:var(--plot-c6)" opacity=".75"/>
+              <rect x="364" y="44" width="52" height="32" rx="3" style="fill:var(--plot-c1)" opacity=".75"/>
+              <rect x="418" y="44" width="90" height="32" rx="3" style="fill:var(--plot-c3)" opacity=".85"/>
+              <text x="331" y="65" text-anchor="middle" style="fill:var(--surface)">26</text>
+              <text x="390" y="65" text-anchor="middle" style="fill:var(--surface)">27</text>
+              <text x="463" y="65" text-anchor="middle" style="fill:var(--surface)">28</text>
+              <line x1="470" y1="20" x2="470" y2="96" style="stroke:var(--bad)" stroke-width="2" stroke-dasharray="5 4"/>
+              <text x="20" y="96" text-anchor="middle">0</text>
+              <text x="417" y="96" text-anchor="middle">S₂₇</text>
+              <text x="470" y="112" text-anchor="middle" style="fill:var(--bad)">mes 42</text>
+              <text x="470" y="15" text-anchor="middle" class="mut">la batería 28 se instala en S₂₇ &lt; 42 ⇒ se usa</text>
+            </svg>
+            Fíjate que <b>no</b> hace falta que la batería 28 se gaste dentro de los 42 meses: basta con que se haya puesto.</li>
+          <li><b>Momentos de una duración</b> (Formulario 2): $\E[L]=\frac{1+2}{2}=1.5$, $\Var[L]=\frac{(2-1)^2}{12}=\frac1{12}$.</li>
+          <li><b>Momentos de $S_{27}$:</b> $\E[S_{27}]=27(1.5)=40.5$, $\Var[S_{27}]=\frac{27}{12}=2.25$, $\sigma=1.5$.</li>
+          <li><b>TLC</b> (suma de 27 uniformes i.i.d.; la uniforme es simétrica, así que la normal ya es excelente):
+            $$\P(N>27)=\P(S_{27}&lt;42)\approx\Phi\Big(\frac{42-40.5}{1.5}\Big)=\Phi(1)=0.8413 .$$
+            $S_{27}$ es continua: no se aplica corrección por continuidad (la corrección es para la variable que aproximas, y aquí aproximas $S_{27}$, no $N$).</li>
+          <li><b>Exacto:</b> $S_{27}-27$ es una suma de 27 uniformes $U(0,1)$ (distribución de Irwin–Hall), y
+            $\P(S_{27}&lt;42)=\frac{1}{27!}\sum_{k=0}^{15}(-1)^k\binom{27}{k}(15-k)^{27}=0.84044$. La aproximación 0.8413 yerra en menos de 0.001.</li>
+        </ol>
+        <div class="box cuidado"><span class="box-title">Las dos lecturas equivocadas típicas</span>
+          <ul>
+            <li><b>"Se gastaron más de 27"</b> → $\P(S_{28}\le42)$. Eso pide que la batería 28 también muera antes del mes 42. Como $\E[S_{28}]=42$ y $S_{28}$ es simétrica,
+              esta probabilidad es exactamente $0.5$. Responde otra pregunta.</li>
+            <li><b>Usar $\P(S_{27}>42)$</b> (=0.16): confunde "más baterías" con "más tiempo". Más baterías en el mismo tiempo significa baterías que duran <b>poco</b>, o sea $S_{27}$ pequeño.</li>
+          </ul>
+          <p>La simulación (d2) cuenta directamente las baterías y confirma que $\{N>27\}$ y $\{S_{27}&lt;42\}$ son el mismo evento.</p>
+        </div>
+      </div></details>
+    </div>
+
+    <div class="sim" id="sim-ej6">
+      <p class="sim-title">Simulación (d2): contar baterías en 42 meses</p>
+      <p class="sim-desc">Cada repetición pone baterías $U(1,2)$ una tras otra hasta pasar el mes 42 y cuenta cuántas se usaron ($N$). Barras verdes: $N\ge28$.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="ej-7">Ejemplo 7: de Poisson a la fórmula de Stirling</h2>
+    <div class="box cuidado"><span class="box-title">Errata del PDF</span>
+      <p>En el Ejemplo 7 la primera parte está marcada "a)" pero la segunda aparece como una viñeta sin letra. Aquí la llamamos <b>b)</b>.</p>
+    </div>
+    <div class="box ejercicio" id="ejemplo-7">
+      <span class="box-title">Ejemplo 7 (Clase 5) <span class="badge star">★ reto</span></span>
+      <p>Sean $X_1,X_2,\dots$ variables aleatorias independientes con distribución Poisson de media y varianza igual a 1. Para todo $n>0$, sea $S_n:=\sum_{i=1}^n X_i$.</p>
+      <p>a) Demostrar que $S_n$ es Poisson con media y varianza igual a $n$.<br>
+         b) Mostrar cómo el TLC sugiere la aproximación $\ \forall n\in\mathbb Z_+:\ n!\approx\sqrt{2\pi n}\left(\dfrac{n}{e}\right)^n .$</p>
+      <details class="pista"><summary>Pista 1</summary><div>
+        <p>a) Método FGM: $M_{X_i}(t)=e^{\lambda(e^t-1)}$ con $\lambda=1$. b) Escribe $\P(S_n=n)$ con la fórmula de la Poisson: ahí aparece $n!$.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 2</summary><div>
+        <p>b) Como $S_n$ es entera, $\{S_n=n\}=\{n-\tfrac12&lt;S_n\le n+\tfrac12\}$ (corrección por continuidad). Aproxima con la normal; el intervalo es tan angosto que el área es "base × altura".</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <h4>a) $S_n\sim\text{Pois}(n)$</h4>
+        <ol class="pasos">
+          <li><b>FGM de cada sumando</b> (Formulario 2, $\lambda=1$): $M_{X_i}(t)=e^{e^t-1}$.</li>
+          <li><b>Independencia ⇒ producto:</b>
+            $$M_{S_n}(t)=\prod_{i=1}^n M_{X_i}(t)=\big(e^{e^t-1}\big)^n=e^{n(e^t-1)} .$$</li>
+          <li><b>Unicidad.</b> $e^{n(e^t-1)}$ es la FGM de una $\text{Pois}(n)$. Como la FGM determina la distribución, $S_n\sim\text{Pois}(n)$, con
+            $\E[S_n]=\Var[S_n]=n$. $\blacksquare$</li>
+        </ol>
+        <h4>b) Stirling desde el TLC</h4>
+        <ol class="pasos">
+          <li><b>La probabilidad que contiene $n!$.</b> Por a),
+            $$\P(S_n=n)=e^{-n}\frac{n^n}{n!}.$$</li>
+          <li><b>Escribirla como intervalo.</b> $S_n$ es entera, así que $\{S_n=n\}=\{n-\tfrac12&lt;S_n\le n+\tfrac12\}$. Estandarizando con
+            $W_n=\frac{S_n-n}{\sqrt n}$ (aquí $\mu=\sigma=1$):
+            $$\P(S_n=n)=\P\Big(-\frac{1}{2\sqrt n}&lt;W_n\le\frac{1}{2\sqrt n}\Big).$$</li>
+          <li><b>Aproximar con la normal</b> (TLC):
+            $$\P(S_n=n)\approx\Phi\Big(\frac{1}{2\sqrt n}\Big)-\Phi\Big(-\frac{1}{2\sqrt n}\Big)=\int_{-1/(2\sqrt n)}^{1/(2\sqrt n)}\varphi(z)\,dz .$$</li>
+          <li><b>Base × altura.</b> El intervalo tiene ancho $1/\sqrt n$ y está pegado al 0, donde $\varphi(z)\approx\varphi(0)=\frac1{\sqrt{2\pi}}$. Entonces
+            $$\P(S_n=n)\approx\frac{1}{\sqrt n}\cdot\frac{1}{\sqrt{2\pi}}=\frac{1}{\sqrt{2\pi n}} .$$</li>
+          <li><b>Despejar $n!$:</b>
+            $$e^{-n}\frac{n^n}{n!}\approx\frac{1}{\sqrt{2\pi n}}\quad\Longrightarrow\quad n!\approx\sqrt{2\pi n}\;n^n e^{-n}=\sqrt{2\pi n}\left(\frac ne\right)^n .\qquad\blacksquare$$</li>
+        </ol>
+        <div class="box nota"><span class="box-title">¿Por qué el PDF dice "sugiere" y no "demuestra"?</span>
+          <p>El TLC garantiza $\P(a&lt;W_n\le b)\to\Phi(b)-\Phi(a)$ para $a,b$ <b>fijos</b>. Aquí el intervalo $(-\frac{1}{2\sqrt n},\frac{1}{2\sqrt n}]$ se encoge con $n$
+            y ambas probabilidades tienden a 0; el TLC solo dice que su diferencia tiende a 0, no que su <b>cociente</b> tienda a 1. Para eso hace falta el
+            <em>teorema del límite local</em> (una versión del TLC para la función de probabilidad puntual). La fórmula de Stirling sí es cierta:
+            $n!/\big(\sqrt{2\pi n}(n/e)^n\big)\to1$, con error relativo $\approx\frac{1}{12n}$.</p>
+        </div>
+        <div class="table-wrap"><table class="tabla">
+          <thead><tr><th>$n$</th><th>$n!$</th><th>$\sqrt{2\pi n}\,(n/e)^n$</th><th>cociente</th><th>error relativo</th><th>$\frac{1}{12n}$</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>1</td><td>0.9221</td><td>0.92214</td><td>7.79 %</td><td>8.33 %</td></tr>
+            <tr><td>2</td><td>2</td><td>1.9190</td><td>0.95950</td><td>4.05 %</td><td>4.17 %</td></tr>
+            <tr><td>3</td><td>6</td><td>5.8362</td><td>0.97270</td><td>2.73 %</td><td>2.78 %</td></tr>
+            <tr><td>5</td><td>120</td><td>118.02</td><td>0.98349</td><td>1.65 %</td><td>1.67 %</td></tr>
+            <tr><td>10</td><td>3 628 800</td><td>3 598 696</td><td>0.99170</td><td>0.830 %</td><td>0.833 %</td></tr>
+            <tr><td>20</td><td>$2.4329\times10^{18}$</td><td>$2.4228\times10^{18}$</td><td>0.99584</td><td>0.416 %</td><td>0.417 %</td></tr>
+            <tr><td>50</td><td>$3.0414\times10^{64}$</td><td>$3.0363\times10^{64}$</td><td>0.99833</td><td>0.167 %</td><td>0.167 %</td></tr>
+            <tr><td>100</td><td>$9.3326\times10^{157}$</td><td>$9.3248\times10^{157}$</td><td>0.99917</td><td>0.083 %</td><td>0.083 %</td></tr>
+          </tbody>
+        </table></div>
+        <p>El cociente tiende a 1 (el error <b>relativo</b> desaparece) aunque la diferencia absoluta $n!-\text{Stirling}$ crece sin límite.</p>
+      </div></details>
+    </div>
+
+    <div class="sim" id="sim-ej7">
+      <p class="sim-title">La barra $\P(S_n=n)$ contra la altura de la campana</p>
+      <p class="sim-desc">Barras: $\text{Pois}(n)$. Curva: $N(n,n)$. La barra verde, de ancho 1 centrada en $n$, tiene área $\P(S_n=n)$; la campana en ese punto mide $\frac{1}{\sqrt{2\pi n}}$.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="lebensztayn">Ejercicios del folleto de Lebensztayn</h2>
+    <div class="box nota"><span class="box-title">Pendiente</span>
+      <p>El PDF termina con "Ejercicios: 58, 60, 62 y 63 del folleto de Lebensztayn". Los enunciados no están en las fuentes de esta guía,
+        así que no los inventamos: se resolverán aquí (con pistas, solución y verificación) cuando se agregue el folleto a la carpeta del curso.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="autoevaluacion">Autoevaluación</h2>
+    <div id="quiz-1"></div>
+    <div id="quiz-2"></div>
+    <div id="quiz-3"></div>
+    <div id="quiz-4"></div>
+    <h3>Calcula y comprueba</h3>
+    <p>1) $Y_1,\dots,Y_{64}\iid\text{Exp}(\beta=2)$ (media 2). Aproxima $\P(\bar Y>2.5)$ con el TLC.</p>
+    <div id="nc-1"></div>
+    <p>2) $X\sim\text{Bin}(100,\,0.5)$. Aproxima $\P(X\ge60)$ <b>con</b> corrección por continuidad.</p>
+    <div id="nc-2"></div>
+    <p>3) $S$ es la suma de 48 variables $U(0,1)$ independientes. Aproxima $\P(S>26)$.</p>
+    <div id="nc-3"></div>
+    <details class="solucion"><summary>Soluciones de los tres cálculos</summary><div>
+      <ol class="pasos">
+        <li>$\mu=2$, $\sigma=2$, $\sigma/\sqrt{64}=0.25$. $\P(\bar Y>2.5)\approx1-\Phi\big(\frac{2.5-2}{0.25}\big)=1-\Phi(2)=0.0228$.
+          (Exacto, con $\bar Y\sim\text{Gamma}(64,\,2/64)$: 0.0290. La exponencial es asimétrica y estamos en la cola derecha: la normal la subestima.)</li>
+        <li>$\mu=50$, $\sigma=5$. $\P(X\ge60)=\P(X\ge59.5)\approx1-\Phi\big(\frac{59.5-50}{5}\big)=1-\Phi(1.9)=0.0287$. (Exacto: 0.0284; sin corrección: 0.0228.)</li>
+        <li>$\E[S]=48(0.5)=24$, $\Var[S]=48/12=4$, $\sigma=2$. $\P(S>26)\approx1-\Phi(1)=0.1587$ (simulación con $2\times10^6$ réplicas: 0.1591).</li>
+      </ol>
+    </div></details>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="resumen">Resumen para llevar</h2>
+    <div class="box nota"><span class="box-title">Lo esencial de la Clase 5</span>
+      <ul>
+        <li><b>TLC:</b> $Y_i$ i.i.d. con $\sigma^2&lt;\infty$ ⇒ $W_n=\frac{\bar Y-\mu}{\sigma/\sqrt n}=\frac{S_n-n\mu}{\sigma\sqrt n}\dto N(0,1)$: $\P(W_n\le w)\to\Phi(w)$ para todo $w$.</li>
+        <li><b>En la práctica:</b> $\bar Y\overset{a}{\sim}N(\mu,\sigma^2/n)$ y $S_n\overset{a}{\sim}N(n\mu,n\sigma^2)$. Calcula $\mu,\sigma^2$ de <b>una</b> observación.</li>
+        <li><b>$n\ge30$</b> es regla de dedo; el $n$ necesario crece como $\alpha_3^2$. Simétrica: poco $n$; muy asimétrica: mucho más.</li>
+        <li><b>Variable entera</b> ⇒ corrección por continuidad: ensancha $\pm0.5$ hacia afuera.</li>
+        <li><b>Traduce los eventos con cuidado:</b> "≤ 960 lanzamientos para 450 caras" = "≥ 450 caras en 960"; "más de 27 baterías en 42 meses" = $S_{27}&lt;42$.</li>
+        <li><b>Sin varianza finita no hay TLC:</b> la media de Cauchy es Cauchy para todo $n$.</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../assets/js/stats.js"></script>
+<script src="../assets/js/plot.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+(function () {
+  'use strict';
+  const S = EM.stats, D = S.dist, fmt = S.fmt, ui = EM.ui;
+  const Zn = D.normal(0, 1), phi = Zn.pdf, Phi = Zn.cdf;
+  const rng = S.rng;
+  const SQ = Math.sqrt;
+  const show = (el, on) => { if (el) el.style.display = on ? '' : 'none'; };
+  const labelOf = api => api.input.closest('label');
+  // Φ que acepta ±∞
+  const PhiX = z => z === Infinity ? 1 : z === -Infinity ? 0 : Phi(z);
+  // valor máximo de f en [a,b] (muestreo)
+  function fmax(f, a, b, n = 300) { let m = 0; for (let i = 0; i <= n; i++) { const y = f(a + (b - a) * i / n); if (isFinite(y) && y > m) m = y; } return m; }
+
+  /* Histograma propio: si opts.delta existe (variable en rejilla a + k·delta),
+     las clases se alinean para que cada valor posible quede en el CENTRO de una clase. */
+  function histo(vals, lo, hi, opts) {
+    let w, e0;
+    if (opts.delta) {
+      const m = Math.max(1, Math.round((hi - lo) / opts.nb / opts.delta));
+      w = m * opts.delta;
+      const k0 = Math.floor((lo - opts.a) / opts.delta);
+      e0 = opts.a + (k0 - 0.5) * opts.delta;
+    } else { w = (hi - lo) / opts.nb; e0 = lo; }
+    const nb = Math.max(1, Math.ceil((hi - e0) / w));
+    const c = new Array(nb).fill(0);
+    for (let i = 0; i < vals.length; i++) { const k = Math.floor((vals[i] - e0) / w); if (k >= 0 && k < nb) c[k]++; }
+    const N = vals.length || 1;
+    return { centers: c.map((_, k) => e0 + (k + 0.5) * w), dens: c.map(x => x / (N * w)), w };
+  }
+
+  /* ================= Simulación (a): motivación ================= */
+  (function () {
+    const root = document.getElementById('sim-motiv');
+    const E1 = Math.E;
+    function makePop(key, p) {
+      switch (key) {
+        case 'exp': return { name: 'Exp(β = 1)', mu: 1, sd: 1, skew: 2, lo: 0, plo: 0, phi: 5, rand: () => -Math.log(rng()), pdf: x => x < 0 ? 0 : Math.exp(-x) };
+        case 'unif': return { name: 'U(0, 1)', mu: 0.5, sd: SQ(1 / 12), skew: 0, lo: 0, plo: -0.2, phi: 1.2, rand: () => rng(), pdf: x => (x >= 0 && x <= 1) ? 1 : 0 };
+        case 'bern': { const sd = SQ(p * (1 - p)); return { name: `Ber(${p.toFixed(2)})`, mu: p, sd, skew: (1 - 2 * p) / sd, lattice: true, lo: 0, plo: -0.6, phi: 1.6, rand: () => rng() < p ? 1 : 0, pmf: k => k === 0 ? 1 - p : k === 1 ? p : 0, sup: [0, 1] }; }
+        case 'beta': { const B = D.beta(3, 2); return { name: 'Beta(3, 2)', mu: 0.6, sd: 0.2, skew: -2 / 7, lo: 0, plo: 0, phi: 1, rand: () => B.rand(), pdf: B.pdf }; }
+        case 'pois': { const P = D.poisson(1); return { name: 'Pois(1)', mu: 1, sd: 1, skew: 1, lattice: true, lo: 0, plo: -0.6, phi: 6.6, rand: () => S.rpois(1), pmf: P.pmf, sup: [0, 6] }; }
+        case 'lnorm': return { name: 'lognormal(0, 1)', mu: Math.exp(0.5), sd: SQ((E1 - 1) * E1), skew: (E1 + 2) * SQ(E1 - 1), lo: 0, plo: 0, phi: 8, rand: () => Math.exp(S.rnorm01()), pdf: x => x <= 0 ? 0 : Math.exp(-0.5 * Math.log(x) ** 2) / (x * SQ(2 * Math.PI)) };
+        case 'cauchy': { const C = D.cauchy(0, 1); return { name: 'Cauchy(0, 1)', cauchy: true, mu: NaN, sd: NaN, skew: NaN, plo: -8, phi: 8, rand: () => C.rand(), pdf: C.pdf }; }
+      }
+    }
+    const st = { pop: 'exp', p: 0.2, n: 25, M: 1000, scale: 'xbar' };
+    let means = new Float64Array(0), pop = makePop('exp');
+    const cA = root.querySelector('.c-a'), cB = root.querySelector('.c-b');
+    ui.select(cA, { label: 'Población', value: 'exp', options: [
+      { value: 'exp', label: 'Exponencial (β = 1)' }, { value: 'unif', label: 'Uniforme (0, 1)' }, { value: 'bern', label: 'Bernoulli(p)' },
+      { value: 'beta', label: 'Beta(3, 2)' }, { value: 'pois', label: 'Poisson(1)' }, { value: 'lnorm', label: 'Lognormal (muy asimétrica)' },
+      { value: 'cauchy', label: 'Cauchy (varianza infinita)' }],
+      onChange: v => { st.pop = v; show(labelOf(spP), v === 'bern'); simulate(); } });
+    ui.select(cA, { label: 'Graficar', value: 'xbar', options: [
+      { value: 'xbar', label: 'las medias X̄ (como pide el PDF)' }, { value: 'w', label: 'W = (X̄ − μ)/(σ/√n)' }],
+      onChange: v => { st.scale = v; render(); } });
+    const spP = ui.slider(cB, { tex: 'p', min: 0.02, max: 0.98, step: 0.01, value: 0.2, fmt: v => v.toFixed(2), onInput: v => { st.p = v; simulate(); } });
+    ui.slider(cB, { tex: 'n', min: 1, max: 100, step: 1, value: 25, onInput: v => { st.n = v; simulate(); } });
+    ui.slider(cB, { tex: 'M', min: 100, max: 2000, step: 100, value: 1000, onInput: v => { st.M = v; simulate(); } });
+    ui.button(cB, 'Simular otra vez', simulate, { primary: true });
+    show(labelOf(spP), false);
+
+    const pPop = EM.plot.create(root.querySelector('.plot-pop'), { height: 140, xlabel: 'y', legend: false });
+    const pMain = EM.plot.create(root.querySelector('.plot-main'), { height: w => w < 520 ? 270 : 330, legendPos: 'tr' });
+    const out = ui.readout(root.querySelector('.out'));
+
+    function simulate() {
+      pop = makePop(st.pop, st.p);
+      const n = st.n, M = st.M;
+      means = new Float64Array(M);
+      for (let r = 0; r < M; r++) { let s = 0; for (let i = 0; i < n; i++) s += pop.rand(); means[r] = s / n; }
+      render();
+    }
+
+    function render() {
+      const n = st.n, M = means.length;
+      // --- población ---
+      if (pop.lattice) {
+        const ks = []; for (let k = pop.sup[0]; k <= pop.sup[1]; k++) ks.push(k);
+        const ys = ks.map(pop.pmf);
+        pPop.setRange({ xmin: pop.plo, xmax: pop.phi, ymin: 0, ymax: Math.max(...ys) * 1.2 });
+        pPop.draw(g => g.bars(ks, ys, { width: 0.5, color: 'c1' }));
+      } else {
+        const ym = fmax(pop.pdf, pop.plo + 1e-6, pop.phi);
+        pPop.setRange({ xmin: pop.plo, xmax: pop.phi, ymin: 0, ymax: Math.min(ym, 2.5) * 1.2 });
+        pPop.draw(g => { g.area(pop.pdf, pop.plo, pop.phi, { color: 'c1', alpha: 0.18 }); g.curve(pop.pdf, { color: 'c1' }); });
+      }
+      // --- medias ---
+      const useW = st.scale === 'w' && !pop.cauchy;
+      const se = pop.sd / SQ(n);
+      const disp = useW ? Array.from(means, x => (x - pop.mu) / se) : means;
+      let xmin, xmax;
+      if (pop.cauchy) { xmin = -8; xmax = 8; }
+      else if (useW) { xmin = -4.5; xmax = 4.5; }
+      else { xmin = Math.max(pop.lo - (pop.lattice ? 0.5 / n : 0), pop.mu - 4.5 * se); xmax = pop.mu + 4.5 * se; }
+      const nb = Math.round(Math.min(50, Math.max(15, SQ(M) * 1.2)));
+      let hopt = { nb };
+      if (pop.lattice) hopt = useW ? { nb, delta: 1 / (pop.sd * SQ(n)), a: -n * pop.mu / (pop.sd * SQ(n)) } : { nb, delta: 1 / n, a: 0 };
+      const h = histo(disp, xmin, xmax, hopt);
+      // curvas
+      const curves = [];
+      if (pop.cauchy) curves.push({ f: pop.pdf, color: 'c4', label: 'Cauchy(0,1): la ley de X̄ para todo n' });
+      else if (useW) {
+        curves.push({ f: phi, color: 'c1', label: 'N(0, 1)' });
+        if (st.pop === 'exp') { const G = D.gamma(n, 1 / n); curves.push({ f: w => se * G.pdf(1 + w * se), color: 'c3', dash: [6, 4], label: 'exacta (Gamma)' }); }
+      } else {
+        const N = D.normal(pop.mu, se);
+        curves.push({ f: N.pdf, color: 'c1', label: 'N(μ, σ²/n)' });
+        if (st.pop === 'exp') { const G = D.gamma(n, 1 / n); curves.push({ f: G.pdf, color: 'c3', dash: [6, 4], label: 'exacta: Gamma(n, β/n)' }); }
+      }
+      let ym = Math.max(...h.dens);
+      curves.forEach(c => { ym = Math.max(ym, fmax(c.f, xmin, xmax)); });
+      pMain.setRange({ xmin, xmax, ymin: 0, ymax: ym * 1.3, xlabel: pop.cauchy || !useW ? 'x̄' : 'w' });
+      pMain.draw(g => {
+        g.bars(h.centers, h.dens, { width: h.w * 0.97, color: 'c2', alpha: 0.5, label: `histograma de ${M} medias` });
+        curves.forEach(c => g.curve(c.f, { color: c.color, dash: c.dash, label: c.label }));
+      });
+      // --- lectura ---
+      const outside = disp.reduce((s, x) => s + (x < xmin || x > xmax ? 1 : 0), 0) / M;
+      if (pop.cauchy) {
+        const q1 = S.quantile(means, 0.25), q3 = S.quantile(means, 0.75), med = S.quantile(means, 0.5);
+        out.set(`Población ${pop.name}, $n=${n}$, $M=${M}$. No existen $\\mu$ ni $\\sigma$, así que no hay $W_n$: se grafica $\\bar X$.<br>
+          Mediana de las medias: <b>${fmt(med, 3)}</b> · rango intercuartílico: <b>${fmt(q3 - q1, 3)}</b> (el de UN solo dato Cauchy es 2: ¡no se achica con $n$!) ·
+          medias fuera del gráfico ($|\\bar x|>8$): <b>${fmt(100 * outside, 2)} %</b>`);
+        return;
+      }
+      const mm = S.mean(means), sdm = SQ(S.var(means));
+      const pW1 = means.reduce((s, x) => s + ((x - pop.mu) / se <= 1 + 1e-12 ? 1 : 0), 0) / M;
+      out.set(`Población ${pop.name}: $\\mu=${fmt(pop.mu, 4)}$, $\\sigma=${fmt(pop.sd, 4)}$, asimetría $\\alpha_3=${fmt(pop.skew, 3)}$; con $n=${n}$, la de $\\bar X$ es $\\alpha_3/\\sqrt n=${fmt(pop.skew / SQ(n), 3)}$.<br>
+        Promedio de las ${M} medias: <b>${fmt(mm, 4)}</b> (teórico $\\mu=${fmt(pop.mu, 4)}$) ·
+        desv. estándar de las medias: <b>${fmt(sdm, 4)}</b> (teórico $\\sigma/\\sqrt n=${fmt(se, 4)}$) ·
+        proporción con $W_n\\le1$: <b>${fmt(pW1, 3)}</b> (normal: $\\Phi(1)=0.8413$)` + (outside > 0 ? ` · fuera del gráfico: ${fmt(100 * outside, 2)} %` : ''));
+    }
+    simulate();
+  })();
+
+  /* ================= Simulación (b): acumulada de W_n ================= */
+  (function () {
+    const root = document.getElementById('sim-cdf');
+    const POPS = {
+      exp: { name: 'Exp(1)', mu: 1, sd: 1, cont: true, cdfS: (n, s) => S.gammaP(n, Math.max(0, s)), randS: n => S.rgammaShape(n) },
+      bern: { name: 'Ber(0.2)', mu: 0.2, sd: 0.4, cdfS: (n, s) => D.binom(n, 0.2).cdf(s), randS: n => S.rbinom(n, 0.2), maxS: n => n },
+      pois: { name: 'Pois(1)', mu: 1, sd: 1, cdfS: (n, s) => D.poisson(n).cdf(s), randS: n => S.rpois(n), maxS: n => Math.ceil(n + 10 * SQ(n) + 10) },
+    };
+    const st = { pop: 'exp', n: 5 };
+    const MSIM = 2000;
+    let Ws = new Float64Array(0);
+    const ctr = root.querySelector('.controls');
+    ui.select(ctr, { label: 'Población', value: 'exp', options: [
+      { value: 'exp', label: 'Exponencial (β = 1)' }, { value: 'bern', label: 'Bernoulli(0.2)' }, { value: 'pois', label: 'Poisson(1)' }],
+      onChange: v => { st.pop = v; simulate(); } });
+    const sn = ui.slider(ctr, { tex: 'n', min: 1, max: 200, step: 1, value: 5, onInput: v => { stop(); st.n = v; simulate(); } });
+    ui.button(ctr, 'Animar n = 1 → 200', animate, { primary: true });
+    const plot = EM.plot.create(root.querySelector('.plot'), { xmin: -3.5, xmax: 3.5, ymin: 0, ymax: 1.02, height: 300, xlabel: 'w', legendPos: 'tl' });
+    const out = ui.readout(root.querySelector('.out'));
+
+    let timer = null;
+    const SEQ = [1, 2, 3, 4, 5, 7, 10, 15, 20, 30, 50, 75, 100, 150, 200];
+    function stop() { if (timer) { clearTimeout(timer); timer = null; } }
+    function animate() {
+      stop(); let i = 0;
+      const step = () => { st.n = SEQ[i]; sn.set(st.n); simulate(); i++; if (i < SEQ.length) timer = setTimeout(step, 700); else timer = null; };
+      step();
+    }
+    function simulate() {
+      const P = POPS[st.pop], n = st.n, c = n * P.mu, s = P.sd * SQ(n);
+      Ws = new Float64Array(MSIM);
+      for (let i = 0; i < MSIM; i++) Ws[i] = (P.randS(n) - c) / s;
+      Ws.sort();
+      render();
+    }
+    function ecdf(x) { let lo = 0, hi = Ws.length; while (lo < hi) { const m = (lo + hi) >> 1; if (Ws[m] <= x) lo = m + 1; else hi = m; } return lo / Ws.length; }
+    function render() {
+      const P = POPS[st.pop], n = st.n, c = n * P.mu, s = P.sd * SQ(n);
+      const FW = w => P.cdfS(n, c + w * s);
+      // distancia máxima exacta
+      let dmax = 0, wstar = 0, Fa = 0;
+      if (P.cont) {
+        for (let i = 0; i <= 1200; i++) { const w = -5 + 10 * i / 1200, F = FW(w), d = Math.abs(F - Phi(w)); if (d > dmax) { dmax = d; wstar = w; Fa = F; } }
+      } else {
+        const kmin = Math.max(0, Math.floor(c - 7 * s)), kmax = Math.min(P.maxS(n), Math.ceil(c + 7 * s));
+        let Fprev = P.cdfS(n, kmin - 1);
+        for (let k = kmin; k <= kmax; k++) {
+          const F = P.cdfS(n, k), w = (k - c) / s, ph = Phi(w);
+          if (Math.abs(F - ph) > dmax) { dmax = Math.abs(F - ph); wstar = w; Fa = F; }
+          if (Math.abs(Fprev - ph) > dmax) { dmax = Math.abs(Fprev - ph); wstar = w; Fa = Fprev; }
+          Fprev = F;
+        }
+      }
+      let demp = 0;
+      for (let i = 0; i < Ws.length; i++) { const ph = Phi(Ws[i]); demp = Math.max(demp, Math.abs((i + 1) / Ws.length - ph), Math.abs(i / Ws.length - ph)); }
+      plot.draw(g => {
+        g.curve(ecdf, { color: 'c4', width: 1.6, label: `empírica (M = ${MSIM})` });
+        g.curve(FW, { color: 'c2', width: 2.4, label: 'exacta de W_n' });
+        g.curve(Phi, { color: 'c1', width: 2, dash: [6, 4], label: 'Φ(w)' });
+        if (wstar > -3.5 && wstar < 3.5) g.line(wstar, Phi(wstar), wstar, Fa, { color: 'bad', width: 3.5 });
+      });
+      let extra = '';
+      if (st.pop === 'exp') extra = ` La aproximación de Edgeworth predice $\\approx 0.133/\\sqrt n=${fmt(0.133 / SQ(n), 4)}$.`;
+      else extra = ' Como $W_n$ es discreta, su acumulada es una escalera; parte de la distancia son los saltos, que también se encogen como $1/\\sqrt n$.';
+      out.set(`${P.name}, $n=${n}$: distancia máxima exacta $\\sup_w|F_{W_n}(w)-\\Phi(w)|=$ <b>${fmt(dmax, 4)}</b> (barra roja).${extra}<br>
+        Distancia de la empírica a $\\Phi$: <b>${fmt(demp, 4)}</b> (incluye ruido de simulación del orden de $1/\\sqrt{M}\\approx0.02$).`);
+    }
+    simulate();
+  })();
+
+  /* ================= Simulación (c): corrección por continuidad ================= */
+  (function () {
+    const root = document.getElementById('sim-cc');
+    const st = { fam: 'binom', n: 20, p: 0.3, lam: 10, a: 3, b: 8, show: 'cc' };
+    const cA = root.querySelector('.c-a'), cB = root.querySelector('.c-b'), cC = root.querySelector('.c-c');
+    ui.select(cA, { label: 'Distribución', value: 'binom', options: [{ value: 'binom', label: 'Binomial(n, p)' }, { value: 'pois', label: 'Poisson(λ)' }],
+      onChange: v => { st.fam = v; params(); } });
+    ui.select(cA, { label: 'Área normal', value: 'cc', options: [{ value: 'cc', label: 'con corrección' }, { value: 'sin', label: 'sin corrección' }, { value: 'both', label: 'ambas' }],
+      onChange: v => { st.show = v; render(); } });
+    const sN = ui.slider(cB, { tex: 'n', min: 1, max: 100, step: 1, value: st.n, onInput: v => { st.n = v; params(); } });
+    const sP = ui.slider(cB, { tex: 'p', min: 0.02, max: 0.98, step: 0.01, value: st.p, fmt: v => v.toFixed(2), onInput: v => { st.p = v; params(); } });
+    const sL = ui.slider(cB, { tex: '\\lambda', min: 0.5, max: 60, step: 0.5, value: st.lam, fmt: v => v.toFixed(1), onInput: v => { st.lam = v; params(); } });
+    const sA = ui.slider(cC, { tex: 'a', min: 0, max: 20, step: 1, value: st.a, onInput: v => { st.a = v; if (st.a > st.b) { st.b = st.a; sB.set(st.b); } render(); } });
+    const sB = ui.slider(cC, { tex: 'b', min: 0, max: 20, step: 1, value: st.b, onInput: v => { st.b = v; if (st.b < st.a) { st.a = st.b; sA.set(st.a); } render(); } });
+    const plot = EM.plot.create(root.querySelector('.plot'), { height: 300, xlabel: 'k', legendPos: 'tr' });
+    const out = ui.readout(root.querySelector('.out'));
+
+    const dist = () => st.fam === 'binom' ? D.binom(st.n, st.p) : D.poisson(st.lam);
+    const kmax = () => st.fam === 'binom' ? st.n : Math.ceil(st.lam + 6 * SQ(st.lam) + 4);
+    function params() {
+      show(labelOf(sN), st.fam === 'binom'); show(labelOf(sP), st.fam === 'binom'); show(labelOf(sL), st.fam === 'pois');
+      const K = kmax();
+      sA.input.max = K; sB.input.max = K;
+      if (st.b > K) st.b = K;
+      if (st.a > st.b) st.a = st.b;
+      sA.set(st.a); sB.set(st.b);
+      render();
+    }
+    function render() {
+      const X = dist(), mu = X.mean, sd = SQ(X.var), K = kmax(), a = st.a, b = st.b;
+      const N = D.normal(mu, sd);
+      const exact = X.cdf(b) - (a > 0 ? X.cdf(a - 1) : 0);
+      const loInf = a <= 0, hiInf = st.fam === 'binom' && b >= K;
+      const sinLo = loInf ? -Infinity : (a - mu) / sd, sinHi = hiInf ? Infinity : (b - mu) / sd;
+      const ccLo = loInf ? -Infinity : (a - 0.5 - mu) / sd, ccHi = hiInf ? Infinity : (b + 0.5 - mu) / sd;
+      const sin = PhiX(sinHi) - PhiX(sinLo), cc = PhiX(ccHi) - PhiX(ccLo);
+      const xmin = Math.max(-1, Math.floor(Math.min(a - 1.5, mu - 4 * sd))), xmax = Math.min(K + 1, Math.ceil(Math.max(b + 1.5, mu + 4 * sd)));
+      const kin = [], pin = [], kout = [], pout = [];
+      let ym = N.pdf(mu);
+      for (let k = Math.max(0, Math.ceil(xmin)); k <= Math.min(K, Math.floor(xmax)); k++) {
+        const pk = X.pmf(k); ym = Math.max(ym, pk);
+        if (k >= a && k <= b) { kin.push(k); pin.push(pk); } else { kout.push(k); pout.push(pk); }
+      }
+      plot.setRange({ xmin, xmax, ymin: 0, ymax: ym * 1.35 });
+      plot.draw(g => {
+        g.bars(kout, pout, { width: 0.96, color: 'muted', alpha: 0.3 });
+        g.bars(kin, pin, { width: 0.96, color: 'c1', alpha: 0.55, label: 'P(X = k), k en [a, b]' });
+        const L = z => z === -Infinity ? xmin : z === Infinity ? xmax : mu + z * sd;
+        if (st.show !== 'cc') g.area(N.pdf, L(sinLo), L(sinHi), { color: 'c4', alpha: 0.35, label: 'área sin corrección' });
+        if (st.show !== 'sin') g.area(N.pdf, L(ccLo), L(ccHi), { color: 'c3', alpha: 0.3, label: 'área con corrección' });
+        g.curve(N.pdf, { color: 'c2', label: `N(${fmt(mu, 2)}, ${fmt(sd * sd, 2)})` });
+      });
+      const nm = st.fam === 'binom' ? `X\\sim\\text{Bin}(${st.n},\\,${st.p.toFixed(2)})` : `X\\sim\\text{Pois}(${st.lam})`;
+      const ev = a === b ? `\\P(X=${a})` : `\\P(${a}\\le X\\le ${b})`;
+      out.set(`$${nm}$: $\\mu=${fmt(mu, 3)}$, $\\sigma=${fmt(sd, 3)}$.<br>
+        Exacta $${ev}=$ <b>${fmt(exact, 4)}</b> ·
+        sin corrección: <b>${fmt(sin, 4)}</b> (error ${fmt(sin - exact, 4)}) ·
+        con corrección: <b>${fmt(cc, 4)}</b> (error ${fmt(cc - exact, 4)})`);
+    }
+    params();
+  })();
+
+  /* ================= Simulación (e): Cauchy ================= */
+  (function () {
+    const root = document.getElementById('sim-cauchy');
+    const NK = 3000, NP = 5;
+    const st = { pop: 'cauchy' };
+    let paths = [];
+    const ctr = root.querySelector('.controls');
+    ui.select(ctr, { label: 'Población', value: 'cauchy', options: [{ value: 'cauchy', label: 'Cauchy(0, 1)' }, { value: 'normal', label: 'Normal N(0, 1)' }],
+      onChange: v => { st.pop = v; simulate(); } });
+    ui.button(ctr, 'Nuevas trayectorias', () => simulate(), { primary: true });
+    const plot = EM.plot.create(root.querySelector('.plot'), { xmin: 0, xmax: NK, ymin: -4, ymax: 4, height: 280, xlabel: 'k', legendPos: 'tr' });
+    const out = ui.readout(root.querySelector('.out'));
+    const C = D.cauchy(0, 1);
+    function simulate() {
+      paths = [];
+      for (let j = 0; j < NP; j++) {
+        const m = new Float64Array(NK); let s = 0;
+        for (let k = 0; k < NK; k++) { s += st.pop === 'cauchy' ? C.rand() : S.rnorm01(); m[k] = s / (k + 1); }
+        paths.push(m);
+      }
+      render();
+    }
+    function render() {
+      const cols = ['c1', 'c2', 'c3', 'c4', 'c5'];
+      plot.draw(g => {
+        g.curve(k => 2 / SQ(Math.max(k, 1)), { color: 'muted', dash: [5, 4], width: 1.4, label: '±2/√k (banda del TLC si σ = 1)' });
+        g.curve(k => -2 / SQ(Math.max(k, 1)), { color: 'muted', dash: [5, 4], width: 1.4 });
+        paths.forEach((m, j) => g.curve(x => { const k = Math.max(1, Math.min(NK, Math.round(x))); return m[k - 1]; }, { color: cols[j], width: 1.5, n: 900 }));
+      });
+      const last = paths.map(m => fmt(m[NK - 1], 3)).join(', ');
+      out.set(st.pop === 'cauchy'
+        ? `Valores de $\\bar Y_{3000}$ en las 5 trayectorias: <b>${last}</b>. Repite varias veces: no se acercan a nada. Mira los saltos bruscos: un solo dato gigantesco mueve toda la media.`
+        : `Valores de $\\bar Y_{3000}$ en las 5 trayectorias: <b>${last}</b>. Todas cerca de 0, dentro de $\\pm 2/\\sqrt{3000}\\approx\\pm0.037$.`);
+    }
+    simulate();
+  })();
+
+  /* ================= Ejemplo 3: la sucesión a_n ================= */
+  (function () {
+    const root = document.getElementById('sim-ej3');
+    const NMAX = 200;
+    const an = [], bn = [], ns = [];
+    for (let n = 1; n <= NMAX; n++) { const P = D.poisson(n); const a = P.cdf(n); ns.push(n); an.push(a); bn.push(a - P.pmf(n)); }
+    const pred = n => 0.5 + (2 / 3) / SQ(2 * Math.PI * n);
+    let sel = 10;
+    const plot = EM.plot.create(root.querySelector('.plot'), { xmin: 0, xmax: NMAX, ymin: 0.3, ymax: 0.8, height: 280, xlabel: 'n', legendPos: 'tr' });
+    ui.slider(root.querySelector('.controls'), { tex: 'n', min: 1, max: NMAX, step: 1, value: sel, onInput: v => { sel = v; render(); } });
+    const out = ui.readout(root.querySelector('.out'));
+    function render() {
+      plot.draw(g => {
+        g.hline(0.5, { color: 'ink', dash: [], width: 1 });
+        g.curve(pred, { color: 'c3', dash: [6, 4], from: 1, label: '½ + (2/3)/√(2πn)' });
+        g.points(ns, an, { color: 'c1', r: 2.2, label: 'a_n = P(S_n ≤ n)' });
+        g.points(ns, bn, { color: 'c2', r: 2.2, label: 'P(S_n < n)' });
+        g.vline(sel, { color: 'muted' });
+      });
+      const a = an[sel - 1];
+      out.set(`$n=${sel}$: $a_n=e^{-n}\\sum_{k=0}^{n} n^k/k! =$ <b>${fmt(a, 5)}</b> · $a_n-\\tfrac12=$ <b>${fmt(a - 0.5, 5)}</b> ·
+        $\\sqrt n\\,(a_n-\\tfrac12)=$ <b>${fmt(SQ(sel) * (a - 0.5), 4)}</b> (límite $\\tfrac{2}{3\\sqrt{2\\pi}}=0.2660$) · $\\P(S_n&lt;n)=$ <b>${fmt(bn[sel - 1], 5)}</b>`);
+    }
+    render();
+  })();
+
+  /* ================= Simulación (d1): Ejemplo 5 ================= */
+  (function () {
+    const root = document.getElementById('sim-ej5');
+    const REPS = 500;
+    const T = [];
+    const ctr = root.querySelector('.controls');
+    ui.button(ctr, `Repetir el experimento ${REPS} veces más`, () => { run(REPS); }, { primary: true });
+    ui.button(ctr, 'Reiniciar', () => { T.length = 0; run(REPS); });
+    const plot = EM.plot.create(root.querySelector('.plot'), { xmin: 800, xmax: 1010, ymin: 0, ymax: 0.02, height: 280, xlabel: 'T = lanzamientos', legendPos: 'tl' });
+    const out = ui.readout(root.querySelector('.out'));
+    const N = D.normal(900, 30);
+    const exact = D.binom(960, 0.5).sf(449);
+    function run(reps) {
+      for (let r = 0; r < reps; r++) { let h = 0, t = 0; while (h < 450) { t++; if (rng() < 0.5) h++; } T.push(t); }
+      render();
+    }
+    function render() {
+      const h = histo(T, 800, 1010, { nb: 42, delta: 1, a: 0 });
+      const ym = Math.max(N.pdf(900), ...h.dens) * 1.25;
+      plot.setRange({ ymax: ym });
+      plot.draw(g => {
+        g.area(N.pdf, 800, 960.5, { color: 'c3', alpha: 0.15 });
+        g.bars(h.centers, h.dens, { width: h.w * 0.97, color: 'c2', alpha: 0.55, label: 'T simulados' });
+        g.curve(N.pdf, { color: 'c1', label: 'N(900, 30²)' });
+        g.vline(960.5, { color: 'bad', label: '960' });
+      });
+      const R = T.length, ph = T.reduce((s, t) => s + (t <= 960 ? 1 : 0), 0) / R, se = SQ(ph * (1 - ph) / R);
+      out.set(`Repeticiones: <b>${R}</b> · frecuencia de $T\\le960$: <b>${fmt(ph, 4)}</b> (± ${fmt(2 * se, 3)}) ·
+        media de $T$: ${fmt(S.mean(T), 1)} (teórica 900) · desv. est.: ${fmt(SQ(S.var(T)), 1)} (teórica 30)<br>
+        TLC camino 1 (geométricas): ${fmt(Phi(2), 4)} sin corrección, <b>${fmt(Phi(60.5 / 30), 4)}</b> con corrección ·
+        TLC camino 2 (binomial, con corrección): <b>${fmt(1 - Phi((449.5 - 480) / SQ(240)), 4)}</b> · exacto: <b>${fmt(exact, 5)}</b>`);
+    }
+    run(REPS);
+  })();
+
+  /* ================= Simulación (d2): Ejemplo 6 ================= */
+  (function () {
+    const root = document.getElementById('sim-ej6');
+    const REPS = 4000, L = 42;
+    const cnt = {}; let R = 0, cN = 0, c27 = 0, c28 = 0, mism = 0;
+    const ctr = root.querySelector('.controls');
+    ui.button(ctr, `Simular ${REPS} períodos más`, () => run(REPS), { primary: true });
+    ui.button(ctr, 'Reiniciar', () => { for (const k in cnt) delete cnt[k]; R = cN = c27 = c28 = mism = 0; run(REPS); });
+    const plot = EM.plot.create(root.querySelector('.plot'), { xmin: 22.5, xmax: 34.5, ymin: 0, ymax: 0.4, height: 260, xlabel: 'N = baterías usadas', legendPos: 'tr' });
+    const out = ui.readout(root.querySelector('.out'));
+    function run(reps) {
+      for (let r = 0; r < reps; r++) {
+        // duraciones L_1..L_42 (como cada una dura ≥ 1 mes, 42 alcanzan siempre)
+        let s = 0, N = 0, S27 = 0, S28 = 0;
+        for (let k = 1; k <= L; k++) {
+          s += 1 + rng();
+          if (N === 0 && s >= 42) N = k;          // la batería k está puesta en el mes 42
+          if (k === 27) S27 = s;
+          if (k === 28) { S28 = s; if (N) break; }
+        }
+        R++; cnt[N] = (cnt[N] || 0) + 1;
+        const e1 = N > 27, e2 = S27 < 42;
+        if (e1) cN++; if (e2) c27++; if (S28 < 42) c28++; if (e1 !== e2) mism++;
+      }
+      render();
+    }
+    function render() {
+      const ks = [], ps = [], kg = [], pg = [];
+      for (let k = 23; k <= 34; k++) { const p = (cnt[k] || 0) / R; if (k >= 28) { kg.push(k); pg.push(p); } else { ks.push(k); ps.push(p); } }
+      plot.draw(g => {
+        g.bars(ks, ps, { width: 0.8, color: 'muted', alpha: 0.5, label: 'N ≤ 27' });
+        g.bars(kg, pg, { width: 0.8, color: 'c3', alpha: 0.8, label: 'N ≥ 28 (más de 27)' });
+      });
+      out.set(`Períodos simulados: <b>${R}</b> · frecuencia de $N>27$: <b>${fmt(cN / R, 4)}</b> · frecuencia de $S_{27}&lt;42$: <b>${fmt(c27 / R, 4)}</b>
+        (repeticiones en que los dos eventos difieren: <b>${mism}</b>) · frecuencia de $S_{28}&lt;42$ (lectura equivocada): ${fmt(c28 / R, 4)}<br>
+        TLC: $\\Phi(1)=$ <b>0.8413</b> · exacto (Irwin–Hall): <b>0.8404</b>`);
+    }
+    run(REPS);
+  })();
+
+  /* ================= Ejemplo 7: barra P(S_n = n) ================= */
+  (function () {
+    const root = document.getElementById('sim-ej7');
+    let n = 10;
+    ui.slider(root.querySelector('.controls'), { tex: 'n', min: 1, max: 150, step: 1, value: n, onInput: v => { n = v; render(); } });
+    const plot = EM.plot.create(root.querySelector('.plot'), { height: 260, xlabel: 'k', legendPos: 'tr' });
+    const out = ui.readout(root.querySelector('.out'));
+    // a·10^b a partir de log10
+    function sci(l10) { const e = Math.floor(l10), m = Math.pow(10, l10 - e); return e < 6 ? fmt(Math.pow(10, l10), 4) : `${m.toFixed(4)}\\times10^{${e}}`; }
+    function render() {
+      const P = D.poisson(n), N = D.normal(n, SQ(n)), sd = SQ(n);
+      const lo = Math.max(-0.5, Math.floor(n - 4 * sd) - 0.5), hi = Math.ceil(n + 4 * sd) + 0.5;
+      const ks = [], ps = [];
+      for (let k = Math.max(0, Math.ceil(lo)); k <= hi; k++) if (k !== n) { ks.push(k); ps.push(P.pmf(k)); }
+      const pn = P.pmf(n), h = 1 / SQ(2 * Math.PI * n);
+      plot.setRange({ xmin: lo, xmax: hi, ymin: 0, ymax: Math.max(pn, h) * 1.35 });
+      plot.draw(g => {
+        g.bars(ks, ps, { width: 1, color: 'c1', alpha: 0.35 });
+        g.bars([n], [pn], { width: 1, color: 'c3', alpha: 0.85, label: 'P(S_n = n)' });
+        g.curve(N.pdf, { color: 'c2', label: 'N(n, n)' });
+        g.hline(h, { color: 'c2', dash: [3, 3] });
+      });
+      const lf = S.lgamma(n + 1) / Math.LN10, ls = (0.5 * Math.log(2 * Math.PI * n) + n * Math.log(n) - n) / Math.LN10;
+      const ratio = Math.exp((ls - lf) * Math.LN10);
+      out.set(`$\\P(S_n=n)=e^{-n}n^n/n!=$ <b>${fmt(pn, 5)}</b> · altura de la campana $\\frac{1}{\\sqrt{2\\pi n}}=$ <b>${fmt(h, 5)}</b> · cociente <b>${fmt(pn / h, 5)}</b><br>
+        Por tanto $n!\\approx\\sqrt{2\\pi n}(n/e)^n$: con $n=${n}$, $n!=${sci(lf)}$ y Stirling $=${sci(ls)}$ (cociente ${fmt(ratio, 5)}, error relativo ${fmt(100 * (1 - ratio), 3)} %; $\\frac{1}{12n}=${fmt(100 / (12 * n), 3)}$ %)`);
+    }
+    render();
+  })();
+
+  /* ================= Autoevaluación ================= */
+  ui.quiz('#quiz-1', {
+    question: '1. ¿Qué afirma exactamente el TLC?',
+    options: [
+      'Que si $n\\ge30$ los datos $Y_1,\\dots,Y_n$ tienen distribución normal.',
+      'Que la acumulada de $(\\bar Y-\\mu)/(\\sigma/\\sqrt n)$ tiende a $\\Phi$, si las $Y_i$ son i.i.d. con varianza finita.',
+      'Que $\\bar Y=\\mu$ cuando $n$ es grande.',
+      'Que solo vale si la población es normal.'],
+    answer: 1,
+    explain: 'Lo que se vuelve normal es la distribución de la media estandarizada (o de la suma), no los datos. Si la población ya es normal, $\\bar Y$ es normal exacta para todo $n$ (Clase 3); el TLC es para cuando no lo es.',
+  });
+  ui.quiz('#quiz-2', {
+    question: '2. ¿Para cuál población es MENOS confiable la aproximación normal de $\\bar Y$ con $n=30$?',
+    options: ['Uniforme $U(0,1)$', 'Beta(3, 2)', 'Exponencial', 'Lognormal(0, 1)'],
+    answer: 3,
+    explain: 'El error va como $\\alpha_3/\\sqrt n$. Asimetrías: uniforme 0, Beta(3,2) −0.29, exponencial 2, lognormal ≈ 6.2. La lognormal necesitaría del orden de $(6.2/2)^2\\approx10$ veces más datos que la exponencial.',
+  });
+  ui.quiz('#quiz-3', {
+    question: '3. $X$ es entera con media $\\mu$ y desviación $\\sigma$. Con corrección por continuidad, $\\P(X&lt;15)\\approx$',
+    options: ['$\\Phi\\big(\\frac{15-\\mu}{\\sigma}\\big)$', '$\\Phi\\big(\\frac{15.5-\\mu}{\\sigma}\\big)$', '$\\Phi\\big(\\frac{14.5-\\mu}{\\sigma}\\big)$', '$1-\\Phi\\big(\\frac{14.5-\\mu}{\\sigma}\\big)$'],
+    answer: 2,
+    explain: '$X&lt;15$ es $X\\le14$ (entera), y "$\\le14$" se ensancha a $\\le14.5$.',
+  });
+  ui.quiz('#quiz-4', {
+    question: '4. Promedias $n=10\\,000$ datos i.i.d. de una Cauchy(0,1). ¿Qué distribución tiene $\\bar Y$?',
+    options: ['Aproximadamente $N(0,\\,1/10\\,000)$', 'Exactamente Cauchy(0,1), igual que un solo dato', 'Aproximadamente $N(0,1)$', 'Es constante igual a 0'],
+    answer: 1,
+    explain: 'La Cauchy no tiene media ni varianza: el TLC no aplica. Con la función característica, $\\varphi_{\\bar Y}(t)=(e^{-|t|/n})^n=e^{-|t|}$.',
+  });
+  ui.numcheck('#nc-1', { prompt: '$\\P(\\bar Y>2.5)\\approx$', answer: 0.0228, tol: 0.0015, hint: 'estandariza con $\\sigma/\\sqrt{n}=2/8$.' });
+  ui.numcheck('#nc-2', { prompt: '$\\P(X\\ge60)\\approx$', answer: 0.0287, tol: 0.0015, hint: '$\\mu=50$, $\\sigma=5$; $X\\ge60\\iff X\\ge59.5$.' });
+  ui.numcheck('#nc-3', { prompt: '$\\P(S>26)\\approx$', answer: 0.1587, tol: 0.0015, hint: '$\\Var[U(0,1)]=1/12$; suma de 48 ⇒ varianza 4.' });
+})();
+</script>
+</body>
+</html>

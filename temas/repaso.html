@@ -1,0 +1,1227 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Repaso exprés de Estadística I</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/theme.js"></script>
+<style>
+  /* Diagrama de relaciones (SVG inline, sensible al tema) */
+  .diagrama { margin: 18px 0; }
+  .diagrama figure { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 8px 4px; }
+  .diagrama figcaption { font: 600 13px var(--font-ui); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; padding: 0 6px 6px; }
+  .diagrama svg { width: 100%; height: auto; display: block; }
+  .dg-node { fill: var(--surface-2); stroke: var(--c, var(--accent)); stroke-width: 1.6; }
+  .dg-disc { --c: var(--plot-c1); }
+  .dg-cont { --c: var(--plot-c3); }
+  .dg-t { fill: var(--ink); font: 600 15px var(--font-ui); text-anchor: middle; dominant-baseline: middle; }
+  .dg-s { fill: var(--muted); font: 12px var(--font-ui); text-anchor: middle; dominant-baseline: middle; }
+  .dg-e { stroke: var(--muted); stroke-width: 1.6; fill: none; }
+  .dg-e.dash { stroke-dasharray: 5 4; }
+  .dg-l { fill: var(--accent); font: 600 12.5px var(--font-ui); text-anchor: middle; }
+  .dg-head { fill: var(--muted); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
+  .chips a { font: 600 12px var(--font-ui); padding: 2px 9px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); text-decoration: none; }
+  table.tabla td.tl, table.tabla th.tl { text-align: left; }
+  table.tabla.fgm td { white-space: nowrap; }
+</style>
+</head>
+<body data-page="repaso" data-root="../">
+<main id="contenido">
+
+  <header class="page-head">
+    <p class="kicker">Fundamentos</p>
+    <h1>Repaso exprés de Estadística I</h1>
+    <p class="lead">Todo lo de Estadística I que Estadística Matemática da por sabido —y nada más—, con la notación de los Formularios 1 y 2 de ESPOL. Si al terminar puedes hacer cada autoevaluación sin mirar, estás listo para la Clase 1.</p>
+  </header>
+
+  <div class="box idea">
+    <span class="box-title">Cómo usar esta página</span>
+    <p>No la leas de corrido como un libro. Cada sección empieza con la <b>intuición</b>, luego la <b>definición</b>, un <b>ejemplo resuelto</b> paso a paso, una <b>simulación</b> para que lo veas y una <b>autoevaluación</b>. Si una autoevaluación te sale bien a la primera, pasa a la siguiente sección. Al final (§9) tienes un mapa de qué necesitas para cada clase.</p>
+    <p class="small muted">Abreviaturas: v.a. = variable aleatoria; fdp = función de densidad de probabilidad; FGM = función generadora de momentos; iid = independientes e idénticamente distribuidas.</p>
+  </div>
+
+  <!-- =============================================================== -->
+  <section>
+    <h2 id="va">1. Variable aleatoria, fdp y acumulada</h2>
+
+    <div class="box idea">
+      <span class="box-title">Intuición</span>
+      <p>Una <b>variable aleatoria</b> es simplemente un <b>número que depende del azar</b>: el número de caras en 4 lanzamientos, el tiempo que dura un foco, la estatura de alguien elegido al azar. Formalmente es una función $X:\Omega\to\R$ que a cada resultado del experimento le asigna un número.</p>
+      <p>Hay dos sabores: <b>discretas</b> (toman valores aislados que se pueden contar: $0,1,2,\dots$) y <b>continuas</b> (toman cualquier valor de un intervalo). Las discretas reparten la probabilidad en <i>puntos</i>; las continuas la reparten como una <i>densidad</i>, igual que una masa repartida a lo largo de una varilla.</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="box definicion">
+        <span class="box-title">Discreta: función de probabilidad</span>
+        <p>$p_X(x)=\P(X=x)$, con $p_X(x)\ge 0$ y $\displaystyle\sum_{x\in S_X}\P(X=x)=1$.</p>
+        <p>$S_X$ es el <b>soporte</b>: los valores donde $\P(X=x)>0$.</p>
+        <p>$\P(X\in A)=\displaystyle\sum_{x\in A}\P(X=x)$.</p>
+      </div>
+      <div class="box definicion">
+        <span class="box-title">Continua: fdp</span>
+        <p>$f_X(x)\ge 0$ con $\displaystyle\int_{-\infty}^{\infty} f_X(x)\,dx=1$.</p>
+        <p>Las probabilidades son <b>áreas</b>: $\P(a&lt;X\le b)=\displaystyle\int_a^b f_X(x)\,dx$.</p>
+        <p>Cada punto suelto tiene probabilidad $0$: $\P(X=a)=0$.</p>
+      </div>
+    </div>
+
+    <div class="box definicion">
+      <span class="box-title">Función de distribución acumulada (para ambos tipos)</span>
+      $$F_X(x)=\P(X\le x),\qquad x\in\R.$$
+      <ul>
+        <li>Es no decreciente, va de $0$ (en $-\infty$) a $1$ (en $+\infty$) y es continua por la derecha.</li>
+        <li><b>Continua:</b> $F_X(x)=\displaystyle\int_{-\infty}^{x} f_X(t)\,dt$ &nbsp;y&nbsp; $f_X(x)=\dfrac{d}{dx}F_X(x)$ (teorema fundamental del cálculo).</li>
+        <li><b>Discreta:</b> $F_X$ es una escalera; el tamaño de cada escalón es la probabilidad del punto: $\P(X=x)=F(x)-F(x^-)$.</li>
+        <li>Para cualquier v.a.: $\P(a&lt;X\le b)=F_X(b)-F_X(a)$.</li>
+      </ul>
+    </div>
+
+    <div class="box definicion">
+      <span class="box-title">Cuantil (Formulario 2)</span>
+      <p>El cuantil $p$ es el número $x_p$ tal que $F_X(x_p)=\P(X\le x_p)=p$. Es "el valor que deja un área $p$ a su izquierda". La <b>mediana</b> es $x_{0.5}$. Si $F$ es continua y creciente, $x_p=F^{-1}(p)$. En una discreta (escalera) se toma el menor $x$ con $F(x)\ge p$.</p>
+    </div>
+
+    <div class="box cuidado">
+      <span class="box-title">Dos trampas clásicas</span>
+      <ul>
+        <li><b>$f_X(x)$ no es una probabilidad.</b> Puede ser mayor que 1: con $f(x)=2x$ en $[0,1]$, $f(0.9)=1.8$. Sólo las <i>áreas</i> bajo $f$ son probabilidades.</li>
+        <li><b>"$&lt;$" vs "$\le$"</b>: en continuas da igual ($\P(X=a)=0$); en discretas <b>no</b>: si $X\sim\text{Bin}(4,\,0.5)$, $\P(X\le 2)=0.6875$ pero $\P(X&lt;2)=0.3125$.</li>
+      </ul>
+    </div>
+
+    <div class="box ejemplo" id="ejemplo-1">
+      <span class="box-title">Ejemplo 1 · La densidad $f(x)=2x$ (es la del Ejercicio 1 de la Clase 1)</span>
+      <p>Sea $f_X(x)=2x$ para $0\le x\le 1$ y $0$ en otro caso. (a) Verifica que es fdp. (b) Halla $F_X$. (c) Calcula $\P(0.5&lt;X\le 0.8)$. (d) Halla la mediana y el cuantil $x_p$ en general.</p>
+      <details class="solucion"><summary>Solución paso a paso</summary><div>
+        <ol class="pasos">
+          <li><b>Es fdp</b> porque $2x\ge 0$ en $[0,1]$ y $\displaystyle\int_0^1 2x\,dx=\big[x^2\big]_0^1=1$.</li>
+          <li><b>Acumulada.</b> Hay que dar $F$ en <i>toda</i> la recta, por tramos. Si $x&lt;0$ no hay área acumulada: $F=0$. Si $0\le x\le 1$, acumulamos desde donde empieza el soporte: $F_X(x)=\displaystyle\int_0^x 2t\,dt=x^2$. Si $x&gt;1$ ya acumulamos todo: $F=1$.
+            $$F_X(x)=\begin{cases}0,&x&lt;0\\ x^2,&0\le x\le 1\\ 1,&x&gt;1\end{cases}$$
+            Comprobación: $F'(x)=2x=f(x)$ en $(0,1)$. ✓</li>
+          <li><b>Probabilidad de un intervalo</b> con la acumulada (sin integrar de nuevo): $\P(0.5&lt;X\le 0.8)=F(0.8)-F(0.5)=0.64-0.25=0.39$.</li>
+          <li><b>Cuantil.</b> Resolvemos $F(x_p)=p$: $x_p^2=p\Rightarrow x_p=\sqrt p$ (raíz positiva porque $x_p\in[0,1]$). Mediana: $x_{0.5}=\sqrt{0.5}\approx 0.7071$. Fíjate que la mediana está a la derecha de $0.5$: la densidad pone más masa cerca de 1.</li>
+        </ol>
+        <p class="small muted">Esto mismo —calcular $F$ por tramos y derivar— es el <b>método de la distribución acumulada</b> de la Clase 1, sólo que allí la $F$ es la de una <i>función</i> de $X$.</p>
+      </div></details>
+    </div>
+
+    <div class="sim" id="sim-acum">
+      <p class="sim-title">La acumulada es un área: arrastra $x$</p>
+      <p class="sim-desc">Arrastra sobre cualquiera de los dos gráficos (o usa el deslizador). A la izquierda, el área sombreada bajo $f$ hasta $x$; a la derecha, ese mismo número como altura de $F_X(x)$. El segundo deslizador marca el cuantil $x_p$.</p>
+      <div class="controls"></div>
+      <div class="grid-2"><div class="plot pdf"></div><div class="plot cdf"></div></div>
+      <div class="out"></div>
+    </div>
+
+    <h3>Autoevaluación</h3>
+    <div id="q-va"></div>
+  </section>
+
+  <!-- =============================================================== -->
+  <section>
+    <h2 id="esperanza">2. Esperanza, varianza y Chebyshev</h2>
+
+    <div class="box idea">
+      <span class="box-title">Intuición</span>
+      <p>La <b>esperanza</b> $\E(X)$ es el <b>centro de masa</b> de la distribución: si recortaras la gráfica de $f$ en cartón, es el punto donde se equilibra. También es el promedio a largo plazo de muchas repeticiones (eso es la ley de los grandes números, §8). La <b>varianza</b> mide qué tan lejos de ese centro suelen caer los valores (en unidades al cuadrado); la desviación estándar $\sigma=\sqrt{\Var(X)}$ vuelve a las unidades originales.</p>
+    </div>
+
+    <div class="box definicion">
+      <span class="box-title">Definiciones (Formularios 1 y 2)</span>
+      $$\E(X)=\sum_{x\in S_X}x\,\P(X=x)\quad\text{o}\quad \E(X)=\int_{-\infty}^{\infty}x f_X(x)\,dx,$$
+      $$\E[g(X)]=\sum_{x}g(x)\P(X=x)\quad\text{o}\quad\int_{-\infty}^{\infty} g(x)f_X(x)\,dx,$$
+      $$\Var(X)=\E\big[(X-\E X)^2\big]=\E(X^2)-[\E(X)]^2 .$$
+    </div>
+
+    <div class="box nota">
+      <span class="box-title">¿Por qué $\E[g(X)]$ es tan útil?</span>
+      <p>Para calcular la <i>media</i> de $g(X)$ <b>no necesitas la distribución de $g(X)$</b>: integras $g(x)$ contra la densidad de $X$. En la Clase 1 vas a buscar la <i>distribución completa</i> de $U=g(X)$; esta fórmula te sirve para comprobar tu respuesta: la media de tu $f_U$ debe coincidir con $\E[g(X)]$.</p>
+    </div>
+
+    <div class="box teorema">
+      <span class="box-title">Propiedades que usarás a cada rato</span>
+      <ol>
+        <li>$\E(aX+b)=a\E(X)+b$ &nbsp;y&nbsp; $\Var(aX+b)=a^2\Var(X)$ (sumar una constante mueve, no dispersa; el signo de $a$ desaparece al elevar al cuadrado).</li>
+        <li>$\E(X+Y)=\E(X)+\E(Y)$ <b>siempre</b> (aunque no sean independientes).</li>
+        <li>$\Var(X+Y)=\Var(X)+\Var(Y)+2\Cov(X,Y)$. Si $X$ y $Y$ son independientes, $\Cov=0$ y las varianzas se suman.</li>
+        <li>Si $X$ y $Y$ son independientes: $\E(XY)=\E(X)\E(Y)$ y, en general, $\E[g(X)h(Y)]=\E[g(X)]\,\E[h(Y)]$.</li>
+        <li>Consecuencia para la media muestral de $X_1,\dots,X_n$ iid con media $\mu$ y varianza $\sigma^2$: $\E(\bar X)=\mu$, $\Var(\bar X)=\sigma^2/n$.</li>
+      </ol>
+    </div>
+
+    <div class="box cuidado">
+      <span class="box-title">$\E[g(X)]\neq g(\E X)$ en general</span>
+      <p>Sólo es igual cuando $g$ es lineal. Con $f(x)=2x$: $\E(1/X)=2$, pero $1/\E(X)=1/(2/3)=1.5$.</p>
+    </div>
+
+    <div class="box ejemplo" id="ejemplo-2">
+      <span class="box-title">Ejemplo 2 · Momentos de $f(x)=2x$ y de $U=3X-1$</span>
+      <p>Con $f_X(x)=2x$ en $[0,1]$: calcula $\E(X)$, $\Var(X)$, $\E(1/X)$ y luego $\E(U)$, $\Var(U)$ para $U=3X-1$.</p>
+      <details class="solucion"><summary>Solución paso a paso</summary><div>
+        <ol class="pasos">
+          <li>$\E(X)=\displaystyle\int_0^1 x\cdot 2x\,dx=\frac{2}{3}$.</li>
+          <li>$\E(X^2)=\displaystyle\int_0^1 x^2\cdot 2x\,dx=\frac{2}{4}=\frac12$, así que $\Var(X)=\frac12-\left(\frac23\right)^2=\frac{9-8}{18}=\frac1{18}$.</li>
+          <li>$\E(1/X)=\displaystyle\int_0^1 \frac1x\,2x\,dx=\int_0^1 2\,dx=2$ (el $x$ se cancela: por eso existe aunque $1/x$ explote en 0).</li>
+          <li>Por linealidad, sin buscar la densidad de $U$: $\E(U)=3\cdot\frac23-1=1$ y $\Var(U)=9\cdot\frac1{18}=\frac12$.</li>
+          <li><b>Comprobación con la Clase 1.</b> Allí se obtiene $f_U(u)=\frac29(u+1)$ en $[-1,2]$. Su media: $\displaystyle\int_{-1}^{2}u\,\tfrac29(u+1)\,du=\tfrac29\Big[\tfrac{u^3}3+\tfrac{u^2}2\Big]_{-1}^{2}=\tfrac29\cdot\tfrac{27}{6}=1$. ✓ Coincide.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <div class="box teorema">
+      <span class="box-title">Desigualdad de Chebyshev</span>
+      <p>Si $X$ tiene media $\mu$ y varianza $\sigma^2$ finitas, para todo $k&gt;0$:</p>
+      $$\P(|X-\mu|\ge k)\le\frac{\sigma^2}{k^2}\qquad\Longleftrightarrow\qquad \P(|X-\mu|\ge k\sigma)\le\frac{1}{k^2}.$$
+      <p><b>Intuición:</b> la varianza es un "presupuesto" de dispersión. Si mucha probabilidad estuviera lejos de $\mu$, la varianza sería grande. Por eso a lo más $1/4$ de la probabilidad puede estar a $2\sigma$ o más, y a lo más $1/9$ a $3\sigma$ o más, <b>sea cual sea la distribución</b>.</p>
+    </div>
+    <div class="box cuidado">
+      <span class="box-title">Ojo con la letra $k$ del Formulario 2</span>
+      <p>El formulario escribe $\P(|X-\mu|\ge k)\le\sigma^2/k^2$: ahí $k$ es una <b>distancia</b> (en las unidades de $X$). Muchos libros escriben $\P(|X-\mu|\ge k\sigma)\le 1/k^2$, donde $k$ es un <b>número de desviaciones estándar</b>. Son la misma desigualdad con $k$ distinto; fíjate cuál te dan.</p>
+    </div>
+
+    <div class="sim" id="sim-cheb">
+      <p class="sim-title">Chebyshev frente a la probabilidad real</p>
+      <p class="sim-desc">La curva roja es la cota $1/k^2$; la azul, la probabilidad exacta $\P(|X-\mu|\ge k\sigma)$ para el modelo elegido. "Simular" estima esa probabilidad con 50 000 valores. La cota siempre está por encima… y casi siempre muy por encima: es <i>universal</i>, no precisa.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+
+    <h3>Autoevaluación</h3>
+    <div id="q-esp"></div>
+  </section>
+
+  <!-- =============================================================== -->
+  <section>
+    <h2 id="fgm">3. Función generadora de momentos (FGM)</h2>
+
+    <div class="box idea">
+      <span class="box-title">Intuición</span>
+      <p>La FGM es una "huella digital" de la distribución: una sola función de $t$ que <b>contiene todos los momentos</b> $\E(X),\E(X^2),\dots$ y que, además, <b>identifica</b> a la distribución. Su gran superpoder: convierte <b>sumas</b> de v.a. independientes en <b>productos</b>, que son facilísimos. Por eso la Clase 2 entera (el "método FGM") se apoya en ella.</p>
+    </div>
+
+    <div class="box definicion">
+      <span class="box-title">Definición</span>
+      $$M_X(t)=\E\big(e^{tX}\big)=\sum_x e^{tx}\P(X=x)\quad\text{o}\quad\int_{-\infty}^{\infty}e^{tx}f_X(x)\,dx,$$
+      <p>siempre que exista (sea finita) para todo $t$ en un intervalo alrededor de $0$. Siempre $M_X(0)=\E(e^0)=1$.</p>
+    </div>
+
+    <div class="box teorema">
+      <span class="box-title">Momentos por derivadas: ¿por qué funciona?</span>
+      <p>Expande $e^{tX}$ en serie de Taylor y toma esperanza término a término:</p>
+      $$M_X(t)=\E\Big(1+tX+\frac{t^2X^2}{2!}+\frac{t^3X^3}{3!}+\cdots\Big)=1+t\,\E(X)+\frac{t^2}{2!}\E(X^2)+\cdots$$
+      <p>Cada derivada en $t=0$ "pela" un término: $\dfrac{d^k}{dt^k}M_X(t)\Big|_{t=0}=\E(X^k)$. En particular $\Var(X)=M_X''(0)-[M_X'(0)]^2$.</p>
+    </div>
+
+    <div class="box ejemplo" id="ejemplo-3">
+      <span class="box-title">Ejemplo 3 · FGM de la exponencial y sus momentos</span>
+      <p>Sea $X\sim\text{Exp}(\beta)$, $f_X(x)=\frac1\beta e^{-x/\beta}$, $x&gt;0$ (β = media). Halla $M_X(t)$, $\E(X)$ y $\Var(X)$.</p>
+      <details class="solucion"><summary>Solución paso a paso</summary><div>
+        <ol class="pasos">
+          <li>Junta los exponentes: $M_X(t)=\displaystyle\int_0^\infty e^{tx}\frac1\beta e^{-x/\beta}dx=\frac1\beta\int_0^\infty e^{-x\left(\frac1\beta-t\right)}dx$.</li>
+          <li>La integral $\int_0^\infty e^{-cx}dx=1/c$ sólo converge si $c&gt;0$, es decir si $t&lt;1/\beta$. Entonces $M_X(t)=\dfrac{1/\beta}{1/\beta-t}=\dfrac{1}{1-\beta t}=(1-\beta t)^{-1}$, $t&lt;1/\beta$.</li>
+          <li>$M_X'(t)=\beta(1-\beta t)^{-2}\Rightarrow \E(X)=M'(0)=\beta$. &nbsp; $M_X''(t)=2\beta^2(1-\beta t)^{-3}\Rightarrow\E(X^2)=2\beta^2$.</li>
+          <li>$\Var(X)=2\beta^2-\beta^2=\beta^2$. Coincide con el Formulario 2. ✓</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <div class="box teorema" id="unicidad">
+      <span class="box-title">Teorema de unicidad (la clave del método FGM)</span>
+      <p>Si $M_X(t)=M_Y(t)$ para todo $t$ en un intervalo abierto que contiene a $0$, entonces $X$ y $Y$ <b>tienen la misma distribución</b>.</p>
+      <p>Traducción práctica: si calculas la FGM de algo y <b>reconoces</b> su forma en la tabla de abajo, ya sabes su distribución. Por ejemplo, si te sale $(1-3t)^{-4}$, la variable es $G(4,\,3)$; no hace falta ninguna integral más.</p>
+    </div>
+
+    <div class="box teorema">
+      <span class="box-title">Dos propiedades operativas</span>
+      <ol>
+        <li><b>Transformación lineal:</b> $M_{aX+b}(t)=\E\big(e^{t(aX+b)}\big)=e^{bt}M_X(at)$.</li>
+        <li><b>Suma de independientes:</b> si $X_1,\dots,X_n$ son independientes y $U=X_1+\cdots+X_n$,
+          $$M_U(t)=\E\big(e^{tX_1}\cdots e^{tX_n}\big)=M_{X_1}(t)\cdots M_{X_n}(t).$$
+          El paso clave: la esperanza de un producto de funciones de v.a. <b>independientes</b> es el producto de esperanzas (§2, propiedad 4). Si son iid, $M_U(t)=[M_X(t)]^n$.</li>
+      </ol>
+    </div>
+
+    <div class="box ejemplo" id="ejemplo-4">
+      <span class="box-title">Ejemplo 4 · El método FGM en miniatura</span>
+      <p>(a) $X\sim\text{Pois}(2)$ y $Y\sim\text{Pois}(3)$ independientes. ¿Qué distribución tiene $U=X+Y$? (b) Si $X\sim N(\mu,\sigma^2)$, ¿qué distribución tiene $aX+b$?</p>
+      <details class="solucion"><summary>Solución paso a paso</summary><div>
+        <ol class="pasos">
+          <li>(a) De la tabla, $M_X(t)=e^{2(e^t-1)}$ y $M_Y(t)=e^{3(e^t-1)}$. Por independencia, $M_U(t)=e^{2(e^t-1)}e^{3(e^t-1)}=e^{5(e^t-1)}$.</li>
+          <li>Esa es <b>exactamente</b> la FGM de una Poisson de parámetro 5. Por unicidad, $U\sim\text{Pois}(5)$. (Por ejemplo, $\P(U=5)=e^{-5}5^5/5!\approx 0.1755$.)</li>
+          <li>(b) $M_{aX+b}(t)=e^{bt}M_X(at)=e^{bt}e^{\mu a t+\frac{\sigma^2}{2}a^2t^2}=e^{(a\mu+b)t+\frac{a^2\sigma^2}{2}t^2}$.</li>
+          <li>Es la FGM de una normal con media $a\mu+b$ y varianza $a^2\sigma^2$. Por unicidad, $aX+b\sim N(a\mu+b,\,a^2\sigma^2)$ (fórmula del Formulario 2).</li>
+        </ol>
+        <p class="small muted">La Clase 2 hace lo mismo con combinaciones de normales, con sumas de Gamma y con $Z^2$: <a href="clase-02.html">ver Clase 2</a>.</p>
+      </div></details>
+    </div>
+
+    <div class="box cuidado">
+      <span class="box-title">Nombre confuso en el Formulario 2</span>
+      <p>La celda "<b>Método de los momentos</b>: $X$ ind. $Y\Rightarrow M_{X+Y}(t)=M_X(t)M_Y(t)$" se refiere al <b>método de la FGM</b> para hallar distribuciones. No lo confundas con el "método de los momentos" para <i>estimar</i> parámetros, que es otra cosa y aparece más adelante en el curso.</p>
+    </div>
+
+    <h3 id="tabla-fgm">Tabla de modelos: soporte, media, varianza y FGM</h3>
+    <p>Las parametrizaciones son las del formulario (ver §4 antes de usar otras fuentes).</p>
+    <div class="table-wrap">
+      <table class="tabla fgm">
+        <thead><tr><th class="tl">Modelo</th><th class="tl">$\P(X=x)$ o $f_X(x)$</th><th>$\E(X)$</th><th>$\Var(X)$</th><th class="tl">$M_X(t)$</th></tr></thead>
+        <tbody>
+          <tr><td class="tl">$\text{Ber}(p)$</td><td class="tl">$p^x(1-p)^{1-x},\ x\in\{0,1\}$</td><td>$p$</td><td>$p(1-p)$</td><td class="tl">$pe^t+1-p$</td></tr>
+          <tr><td class="tl">$\text{Bin}(n,p)$</td><td class="tl">$\binom nx p^x(1-p)^{n-x},\ x=0,\dots,n$</td><td>$np$</td><td>$np(1-p)$</td><td class="tl">$(pe^t+1-p)^n$</td></tr>
+          <tr><td class="tl">$\text{Geo}(p)$</td><td class="tl">$p(1-p)^{x-1},\ x=1,2,\dots$</td><td>$1/p$</td><td>$(1-p)/p^2$</td><td class="tl">$\dfrac{pe^t}{1-(1-p)e^t},\ t&lt;-\ln(1-p)$</td></tr>
+          <tr><td class="tl">$\text{Bneg}(r,p)$</td><td class="tl">$\binom{x-1}{r-1}p^r(1-p)^{x-r},\ x=r,r+1,\dots$</td><td>$r/p$</td><td>$r(1-p)/p^2$</td><td class="tl">$\left[\dfrac{pe^t}{1-(1-p)e^t}\right]^r$</td></tr>
+          <tr><td class="tl">$\text{Hiper}(N,a,n)$</td><td class="tl">$\binom ax\binom{N-a}{n-x}\big/\binom Nn$</td><td>$n\frac aN$</td><td>$n\frac aN\left(1-\frac aN\right)\frac{N-n}{N-1}$</td><td class="tl">sin forma cerrada útil</td></tr>
+          <tr><td class="tl">$\text{Pois}(\lambda)$</td><td class="tl">$e^{-\lambda}\lambda^x/x!,\ x=0,1,\dots$</td><td>$\lambda$</td><td>$\lambda$</td><td class="tl">$e^{\lambda(e^t-1)}$</td></tr>
+          <tr><td class="tl">Unif. discreta</td><td class="tl">$1/k,\ x\in\{x_1,\dots,x_k\}$</td><td>$\frac1k\sum x_i$</td><td>$\frac1k\sum x_i^2-\bar x^2$</td><td class="tl">$\frac1k\sum_{i} e^{tx_i}$</td></tr>
+          <tr><td class="tl">$U(a,b)$</td><td class="tl">$\frac1{b-a},\ a&lt;x&lt;b$</td><td>$\frac{a+b}2$</td><td>$\frac{(b-a)^2}{12}$</td><td class="tl">$\dfrac{e^{tb}-e^{ta}}{t(b-a)}$ ($t\ne0$)</td></tr>
+          <tr><td class="tl">$N(\mu,\sigma^2)$</td><td class="tl">$\frac{1}{\sqrt{2\pi\sigma^2}}e^{-(x-\mu)^2/(2\sigma^2)}$</td><td>$\mu$</td><td>$\sigma^2$</td><td class="tl">$e^{\mu t+\sigma^2t^2/2}$</td></tr>
+          <tr><td class="tl">$\text{Exp}(\beta)$</td><td class="tl">$\frac1\beta e^{-x/\beta},\ x&gt;0$</td><td>$\beta$</td><td>$\beta^2$</td><td class="tl">$(1-\beta t)^{-1},\ t&lt;1/\beta$</td></tr>
+          <tr><td class="tl">$G(\alpha,\beta)$</td><td class="tl">$\frac{1}{\beta^\alpha\Gamma(\alpha)}x^{\alpha-1}e^{-x/\beta},\ x&gt;0$</td><td>$\alpha\beta$</td><td>$\alpha\beta^2$</td><td class="tl">$(1-\beta t)^{-\alpha},\ t&lt;1/\beta$</td></tr>
+          <tr><td class="tl">$\chi^2_{(\nu)}=G(\frac\nu2,2)$</td><td class="tl">$\frac{1}{2^{\nu/2}\Gamma(\nu/2)}x^{\nu/2-1}e^{-x/2},\ x&gt;0$</td><td>$\nu$</td><td>$2\nu$</td><td class="tl">$(1-2t)^{-\nu/2},\ t&lt;\frac12$</td></tr>
+          <tr><td class="tl">$\text{Beta}(\alpha,\beta)$</td><td class="tl">$\frac{x^{\alpha-1}(1-x)^{\beta-1}}{B(\alpha,\beta)},\ 0&lt;x&lt;1$</td><td>$\frac{\alpha}{\alpha+\beta}$</td><td>$\frac{\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)}$</td><td class="tl">sin forma cerrada útil; usa $\E(X^k)=\frac{B(\alpha+k,\beta)}{B(\alpha,\beta)}$</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sim" id="sim-fgm">
+      <p class="sim-title">La FGM y sus derivadas en $t=0$</p>
+      <p class="sim-desc">Curva azul: $M_X(t)$. Su <b>pendiente</b> en $t=0$ es $\E(X)$ (recta naranja); la parábola verde $1+\E(X)t+\E(X^2)t^2/2$ usa el segundo momento. "Muestrear" dibuja la FGM empírica $\hat M(t)=\frac1n\sum e^{tX_i}$ con 2000 datos: la FGM no es más que un promedio.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+
+    <h3>Autoevaluación</h3>
+    <div id="q-fgm"></div>
+  </section>
+
+  <!-- =============================================================== -->
+  <section>
+    <h2 id="catalogo">4. Catálogo interactivo de modelos</h2>
+
+    <p>Cada modelo responde a una "historia". Si reconoces la historia, reconoces el modelo:</p>
+    <div class="table-wrap">
+      <table class="tabla text-left">
+        <thead><tr><th>Modelo</th><th>Historia típica</th></tr></thead>
+        <tbody>
+          <tr><td>Bernoulli$(p)$</td><td>Un solo ensayo: éxito (1) con prob. $p$ o fracaso (0).</td></tr>
+          <tr><td>Binomial$(n,p)$</td><td>Número de éxitos en $n$ ensayos independientes con la misma $p$.</td></tr>
+          <tr><td>Geométrica$(p)$</td><td>Número de <b>ensayos</b> hasta el primer éxito (incluido). Soporte $\{1,2,\dots\}$.</td></tr>
+          <tr><td>Binomial negativa$(r,p)$</td><td>Número de <b>ensayos</b> hasta el $r$-ésimo éxito. Soporte $\{r,r+1,\dots\}$.</td></tr>
+          <tr><td>Hipergeométrica$(N,a,n)$</td><td>Éxitos al sacar $n$ objetos <b>sin reemplazo</b> de una urna con $N$ objetos, $a$ de ellos "éxitos".</td></tr>
+          <tr><td>Poisson$(\lambda)$</td><td>Número de eventos en un intervalo (llamadas por hora, fallas por km) con promedio $\lambda$.</td></tr>
+          <tr><td>Uniforme$(a,b)$</td><td>Un punto "al azar" en $(a,b)$: todos los subintervalos de igual largo son igual de probables.</td></tr>
+          <tr><td>Normal$(\mu,\sigma^2)$</td><td>Suma de muchos efectos pequeños (TLC); errores de medición.</td></tr>
+          <tr><td>Exponencial$(\beta)$</td><td>Tiempo de espera hasta el primer evento de un proceso de Poisson; sin memoria.</td></tr>
+          <tr><td>Gamma$(\alpha,\beta)$</td><td>Tiempo hasta el $\alpha$-ésimo evento (si $\alpha$ es entero): suma de $\alpha$ exponenciales.</td></tr>
+          <tr><td>Beta$(\alpha,\beta)$</td><td>Proporciones y probabilidades en $(0,1)$; también los estadísticos de orden de uniformes (Clase 2).</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sim" id="sim-cat">
+      <p class="sim-title">Catálogo: elige modelo y parámetros</p>
+      <p class="sim-desc">Mueve los parámetros y mira cómo cambian la forma, la media (línea vertical) y la varianza. Los datos de la lectura salen de las fórmulas del formulario.</p>
+      <div class="controls modelo"></div>
+      <div class="controls params"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+
+    <div class="box cuidado" id="parametrizaciones">
+      <span class="box-title">⚠ Parametrizaciones: la fuente nº 1 de errores del curso</span>
+      <p>El Formulario 2 usa <b>β como ESCALA (= media)</b>. Pero los deberes y muchos libros hablan de "exponencial <b>de parámetro λ</b>", y ahí $\lambda$ es la <b>TASA</b> $=1/\text{media}$. Son la misma familia escrita distinto:</p>
+      <div class="table-wrap">
+        <table class="tabla">
+          <thead><tr><th>Modelo</th><th>Formulario (β escala)</th><th>Otra forma (λ tasa)</th><th>Conversión</th></tr></thead>
+          <tbody>
+            <tr><td>Exponencial</td><td>$\frac1\beta e^{-x/\beta}$, $\E=\beta$</td><td>$\lambda e^{-\lambda x}$, $\E=1/\lambda$</td><td>$\beta=1/\lambda$</td></tr>
+            <tr><td>Gamma</td><td>$G(\alpha,\beta)$: $\frac{x^{\alpha-1}e^{-x/\beta}}{\beta^\alpha\Gamma(\alpha)}$, $\E=\alpha\beta$</td><td>$\text{Gamma}(r,\lambda)$: $\frac{\lambda^r x^{r-1}e^{-\lambda x}}{\Gamma(r)}$, $\E=r/\lambda$</td><td>$\alpha=r,\ \beta=1/\lambda$</td></tr>
+            <tr><td>FGM Exp</td><td>$(1-\beta t)^{-1}$</td><td>$\dfrac{\lambda}{\lambda-t}$</td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><b>Regla de supervivencia:</b> cada vez que leas "parámetro λ", escribe al margen "λ = tasa, media = 1/λ, β = 1/λ" <i>antes</i> de hacer cualquier cuenta. Ejemplo: "exponencial de parámetro 2" tiene media $0.5$, no $2$. En la Lista 1.1 (ej. 6) y en los ejercicios 8 y 9 de la Clase 2 aparece la versión con tasa.</p>
+      <p class="small">Otras dos trampas del mismo tipo: (1) la Geométrica y la Binomial negativa del formulario cuentan <b>ensayos</b>; R, Python (scipy <code>nbinom</code>) y algunos libros cuentan <b>fracasos</b> (soporte desde 0). (2) $N(\mu,\sigma^2)$ lleva la <b>varianza</b>; $N(0,4)$ tiene $\sigma=2$.</p>
+    </div>
+
+    <h3>Autoevaluación</h3>
+    <div id="q-cat"></div>
+  </section>
+
+  <!-- =============================================================== -->
+  <section>
+    <h2 id="gamma-beta">5. Funciones Gamma y Beta: el truco del núcleo</h2>
+
+    <div class="box definicion">
+      <span class="box-title">Función Gamma</span>
+      $$\Gamma(\alpha)=\int_0^\infty x^{\alpha-1}e^{-x}\,dx,\qquad \alpha&gt;0.$$
+      <ul>
+        <li>$\Gamma(\alpha+1)=\alpha\,\Gamma(\alpha)$ (integración por partes). Con $\Gamma(1)=1$ sale $\Gamma(n)=(n-1)!$ para $n$ entero: es un factorial "continuo".</li>
+        <li>$\Gamma(1/2)=\sqrt\pi$, y por la recurrencia $\Gamma(3/2)=\frac12\sqrt\pi$, $\Gamma(5/2)=\frac34\sqrt\pi$.</li>
+      </ul>
+    </div>
+    <div class="box definicion">
+      <span class="box-title">Función Beta</span>
+      $$B(\alpha,\beta)=\int_0^1 x^{\alpha-1}(1-x)^{\beta-1}\,dx=\frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)},\qquad\alpha,\beta&gt;0.$$
+    </div>
+
+    <div class="box idea">
+      <span class="box-title">El truco del núcleo (lo usarás muchísimo)</span>
+      <p>Toda fdp integra 1. Por lo tanto, si dentro de una integral ves el <b>núcleo</b> de una densidad conocida (la parte que depende de $x$), la integral vale <b>lo que le falta para ser 1</b>, es decir, el inverso de la constante de normalización:</p>
+      $$\int_0^\infty x^{\alpha-1}e^{-x/\beta}\,dx=\beta^\alpha\Gamma(\alpha),\qquad \int_0^1 x^{\alpha-1}(1-x)^{\beta-1}\,dx=B(\alpha,\beta),\qquad\int_{-\infty}^{\infty}e^{-\frac{(x-\mu)^2}{2\sigma^2}}dx=\sqrt{2\pi\sigma^2}.$$
+      <p>Receta: (1) identifica el exponente de $x$ → da $\alpha$ (¡es exponente $+1$!); (2) identifica el coeficiente en la exponencial → da $\beta$; (3) escribe la constante que falta. Nada de integrar por partes tres veces.</p>
+    </div>
+
+    <div class="box ejemplo" id="ejemplo-5">
+      <span class="box-title">Ejemplo 5 · Tres integrales "imposibles" en una línea</span>
+      <p>(a) $\displaystyle\int_0^\infty x^3e^{-x/2}dx$. &nbsp; (b) $\displaystyle\int_0^1 x^2(1-x)^3dx$. &nbsp; (c) $k$ tal que $f(x)=k\,x^2e^{-3x}$, $x&gt;0$, sea fdp. &nbsp; (d) $\E(X^k)$ si $X\sim G(\alpha,\beta)$.</p>
+      <details class="solucion"><summary>Solución paso a paso</summary><div>
+        <ol class="pasos">
+          <li>(a) $x^3=x^{4-1}$ → $\alpha=4$; $e^{-x/2}$ → $\beta=2$. Es el núcleo de $G(4,2)$, así que la integral vale $\beta^\alpha\Gamma(\alpha)=2^4\cdot 3!=16\cdot 6=96$.</li>
+          <li>(b) $x^{3-1}(1-x)^{4-1}$ → núcleo de $\text{Beta}(3,4)$: $B(3,4)=\dfrac{\Gamma(3)\Gamma(4)}{\Gamma(7)}=\dfrac{2!\,3!}{6!}=\dfrac{12}{720}=\dfrac1{60}$.</li>
+          <li>(c) $e^{-3x}=e^{-x/(1/3)}$ → $\beta=1/3$, y $x^2$ → $\alpha=3$. Entonces $\int_0^\infty x^2e^{-3x}dx=(1/3)^3\Gamma(3)=2/27$ y $k=27/2$. (Es decir, $X\sim G(3,1/3)$, o "Gamma$(3,\lambda=3)$" con tasa.)</li>
+          <li>(d) Mete $x^k$ en el núcleo: $\E(X^k)=\dfrac{1}{\beta^\alpha\Gamma(\alpha)}\displaystyle\int_0^\infty x^{(\alpha+k)-1}e^{-x/\beta}dx=\dfrac{\beta^{\alpha+k}\Gamma(\alpha+k)}{\beta^\alpha\Gamma(\alpha)}=\beta^k\dfrac{\Gamma(\alpha+k)}{\Gamma(\alpha)}$.
+            Con $k=1$: $\beta\,\alpha$; con $k=2$: $\beta^2\alpha(\alpha+1)$, así $\Var=\alpha(\alpha+1)\beta^2-\alpha^2\beta^2=\alpha\beta^2$. ✓</li>
+        </ol>
+        <p class="small muted">Dónde reaparece: en la Clase 1 (Ejemplo 4, $Y_1/(Y_1+Y_2)$ resulta Beta), en la Clase 2 (los $Y_{(i)}$ de uniformes son Beta) y en la Clase 4 (la densidad de la $F$ se normaliza con $B(\nu_1/2,\nu_2/2)$).</p>
+      </div></details>
+    </div>
+
+    <div class="sim" id="sim-gamma">
+      <p class="sim-title">La función Gamma interpola el factorial</p>
+      <p class="sim-desc">Los puntos son $(n-1)!$ en los enteros; la curva es $\Gamma(x)$. Mueve $x$ para leer valores (por ejemplo $x=0.5$ da $\sqrt\pi\approx1.7725$).</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+
+    <h3>Autoevaluación</h3>
+    <div id="q-gb"></div>
+  </section>
+
+  <!-- =============================================================== -->
+  <section>
+    <h2 id="relaciones">6. Relaciones entre distribuciones</h2>
+
+    <p>Los modelos no son islas. Casi todas las flechas de abajo se demuestran en dos líneas con la FGM (§3): multiplicas FGM y reconoces el resultado.</p>
+
+    <div class="diagrama grid-2">
+      <figure>
+        <figcaption>Discretas</figcaption>
+        <svg viewBox="0 0 400 300" role="img" aria-label="Relaciones entre distribuciones discretas">
+          <defs><marker id="dg-arr-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+          <!-- fila 1 -->
+          <rect class="dg-node dg-disc" x="5" y="15" width="130" height="46" rx="10"/><text class="dg-t" x="70" y="38">Ber(p)</text>
+          <rect class="dg-node dg-disc" x="265" y="15" width="130" height="46" rx="10"/><text class="dg-t" x="330" y="38">Bin(n, p)</text>
+          <line class="dg-e" x1="137" y1="38" x2="262" y2="38" marker-end="url(#dg-arr-a)"/><text class="dg-l" x="200" y="30">Σ de n iid</text>
+          <!-- fila 2 -->
+          <rect class="dg-node dg-disc" x="5" y="125" width="130" height="50" rx="10"/><text class="dg-t" x="70" y="143">Pois(λᵢ)</text><text class="dg-s" x="70" y="162">independientes</text>
+          <rect class="dg-node dg-disc" x="265" y="125" width="130" height="50" rx="10"/><text class="dg-t" x="330" y="150">Pois(Σλᵢ)</text>
+          <line class="dg-e" x1="137" y1="150" x2="262" y2="150" marker-end="url(#dg-arr-a)"/><text class="dg-l" x="200" y="142">Σ</text>
+          <!-- aproximación binomial -> Poisson -->
+          <path class="dg-e dash" d="M300,62 C300,95 120,90 90,122" marker-end="url(#dg-arr-a)"/>
+          <text class="dg-s" x="215" y="100">aprox.: n grande, p chico, λ = np</text>
+          <!-- fila 3 -->
+          <rect class="dg-node dg-disc" x="5" y="235" width="130" height="50" rx="10"/><text class="dg-t" x="70" y="253">Geo(p)</text><text class="dg-s" x="70" y="272">= Bneg(1, p)</text>
+          <rect class="dg-node dg-disc" x="265" y="235" width="130" height="50" rx="10"/><text class="dg-t" x="330" y="260">Bneg(r, p)</text>
+          <line class="dg-e" x1="137" y1="260" x2="262" y2="260" marker-end="url(#dg-arr-a)"/><text class="dg-l" x="200" y="252">Σ de r iid</text>
+        </svg>
+      </figure>
+      <figure>
+        <figcaption>Continuas</figcaption>
+        <svg viewBox="0 0 400 400" role="img" aria-label="Relaciones entre distribuciones continuas">
+          <defs><marker id="dg-arr-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+          <!-- fila 1 -->
+          <rect class="dg-node dg-cont" x="5" y="10" width="130" height="50" rx="10"/><text class="dg-t" x="70" y="28">Exp(β)</text><text class="dg-s" x="70" y="47">= G(1, β)</text>
+          <rect class="dg-node dg-cont" x="265" y="10" width="130" height="50" rx="10"/><text class="dg-t" x="330" y="35">G(n, β)</text>
+          <line class="dg-e" x1="137" y1="35" x2="262" y2="35" marker-end="url(#dg-arr-b)"/><text class="dg-l" x="200" y="27">Σ de n iid</text>
+          <!-- fila 2 -->
+          <rect class="dg-node dg-cont" x="5" y="100" width="130" height="50" rx="10"/><text class="dg-t" x="70" y="118">G(αᵢ, β)</text><text class="dg-s" x="70" y="137">independientes</text>
+          <rect class="dg-node dg-cont" x="265" y="100" width="130" height="50" rx="10"/><text class="dg-t" x="330" y="125">G(Σαᵢ, β)</text>
+          <line class="dg-e" x1="137" y1="125" x2="262" y2="125" marker-end="url(#dg-arr-b)"/><text class="dg-l" x="200" y="117">Σ (mismo β)</text>
+          <!-- fila 3 -->
+          <rect class="dg-node dg-cont" x="5" y="190" width="130" height="46" rx="10"/><text class="dg-t" x="70" y="213">N(μ, σ²)</text>
+          <rect class="dg-node dg-cont" x="265" y="190" width="130" height="46" rx="10"/><text class="dg-t" x="330" y="213">N(0, 1)</text>
+          <line class="dg-e" x1="137" y1="213" x2="262" y2="213" marker-end="url(#dg-arr-b)"/><text class="dg-l" x="200" y="205">Z = (X − μ)/σ</text>
+          <!-- fila 4 -->
+          <rect class="dg-node dg-cont" x="5" y="290" width="130" height="46" rx="10"/><text class="dg-t" x="70" y="313">χ²₍₁₎</text>
+          <line class="dg-e" x1="300" y1="238" x2="110" y2="288" marker-end="url(#dg-arr-b)"/><text class="dg-l" x="225" y="275">Z²</text>
+          <rect class="dg-node dg-cont" x="265" y="290" width="130" height="64" rx="10"/><text class="dg-t" x="330" y="310">χ²₍ν₎</text><text class="dg-s" x="330" y="333">= G(ν/2, 2)</text>
+          <line class="dg-e" x1="137" y1="313" x2="262" y2="313" marker-end="url(#dg-arr-b)"/><text class="dg-l" x="200" y="305">Σ de ν iid</text>
+          <text class="dg-s" x="200" y="385">χ²₍₂₎ = G(1, 2) = Exp(β = 2) &nbsp;·&nbsp; Beta(1, 1) = U(0, 1)</text>
+        </svg>
+      </figure>
+    </div>
+
+    <div class="box teorema">
+      <span class="box-title">Por qué son ciertas (todas con FGM)</span>
+      <ul>
+        <li><b>Bernoulli → Binomial:</b> $M_U(t)=(pe^t+1-p)^n$, que es la FGM $\text{Bin}(n,p)$.</li>
+        <li><b>Exponencial → Gamma:</b> $X_i\iid\text{Exp}(\beta)$ ⇒ $M_U(t)=[(1-\beta t)^{-1}]^n=(1-\beta t)^{-n}$ ⇒ $U\sim G(n,\beta)$.</li>
+        <li><b>Suma de Gamma con el mismo β:</b> $\prod(1-\beta t)^{-\alpha_i}=(1-\beta t)^{-\sum\alpha_i}$. Si los β son distintos, <b>no</b> sale Gamma.</li>
+        <li><b>χ² es una Gamma:</b> $G(\nu/2,2)$ tiene FGM $(1-2t)^{-\nu/2}$, que es la de $\chi^2_{(\nu)}$ (observación de la Clase 2). Por eso las χ² independientes se suman sumando grados de libertad.</li>
+        <li><b>Estandarizar:</b> con $a=1/\sigma$, $b=-\mu/\sigma$ en $aX+b\sim N(a\mu+b,a^2\sigma^2)$ sale $N(0,1)$.</li>
+        <li><b>$Z^2\sim\chi^2_{(1)}$</b> es el Ejercicio 2(b) de la Clase 2 (se resuelve con acumulada o con FGM).</li>
+        <li><b>Suma de Poisson:</b> $\prod e^{\lambda_i(e^t-1)}=e^{(\sum\lambda_i)(e^t-1)}$.</li>
+      </ul>
+    </div>
+
+    <div class="sim" id="sim-rel">
+      <p class="sim-title">Compruébalo simulando</p>
+      <p class="sim-desc">Se generan 8000 sumas (o cuadrados) según la relación elegida; el histograma/las barras son lo simulado y la curva/los puntos, la distribución que predice el diagrama.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+
+    <h3>Autoevaluación</h3>
+    <div id="q-rel"></div>
+  </section>
+
+  <!-- =============================================================== -->
+  <section>
+    <h2 id="conjuntas">7. Distribuciones conjuntas</h2>
+
+    <div class="box idea">
+      <span class="box-title">Intuición</span>
+      <p>Con dos v.a. la densidad conjunta $f_{XY}(x,y)$ es una "superficie" sobre el plano, y las probabilidades son <b>volúmenes</b>: $\P\big((X,Y)\in A\big)=\iint_A f_{XY}(x,y)\,dx\,dy$. Casi toda la dificultad no está en la función sino en la <b>región</b>: saber leer el soporte y poner bien los límites. Esa es justamente la habilidad que pide la Clase 1 (método de la acumulada en el caso $n$-variado).</p>
+    </div>
+
+    <div class="box definicion">
+      <span class="box-title">Las definiciones del Formulario 2 (versión continua; en la discreta cambia ∫ por Σ)</span>
+      <ul>
+        <li><b>Marginal:</b> $f_X(x)=\displaystyle\int_{-\infty}^{\infty}f_{XY}(x,y)\,dy$ ("aplasta" la superficie sobre el eje $x$).</li>
+        <li><b>Condicional:</b> $f_{X|Y}(x|y)=\dfrac{f_{XY}(x,y)}{f_Y(y)}$ (la rebanada en $Y=y$, re-normalizada para que integre 1).</li>
+        <li><b>Independencia:</b> $f_{XY}(x,y)=f_X(x)f_Y(y)$ para <b>todo</b> $(x,y)$.</li>
+        <li><b>Esperanza:</b> $\E[g(X,Y)]=\displaystyle\iint g(x,y)f_{XY}(x,y)\,dx\,dy$.</li>
+        <li><b>Covarianza y correlación:</b> $\Cov(X,Y)=\E(XY)-\E(X)\E(Y)$, &nbsp; $\rho=\text{Corr}(X,Y)=\dfrac{\Cov(X,Y)}{\sqrt{\Var(X)\Var(Y)}}\in[-1,1]$.</li>
+        <li><b>Esperanza condicional:</b> $\E[X|Y=y]=\displaystyle\int x\,f_{X|Y}(x|y)\,dx$, y se cumple $\E\big[\E(X|Y)\big]=\E(X)$.</li>
+      </ul>
+    </div>
+
+    <div class="box cuidado">
+      <span class="box-title">Independencia: atajos y trampas</span>
+      <ul>
+        <li><b>Prueba rápida del soporte:</b> si el soporte <b>no</b> es un rectángulo (producto de intervalos), por ejemplo un triángulo $0&lt;x&lt;y&lt;1$, las variables <b>no</b> son independientes: saber $x$ restringe los valores posibles de $y$.</li>
+        <li>Si el soporte es un rectángulo y $f_{XY}(x,y)=g(x)h(y)$ (se factoriza), sí son independientes.</li>
+        <li>Independientes ⇒ $\Cov=0$. <b>Al revés no</b> en general (ej.: $X\sim N(0,1)$, $Y=X^2$ tienen $\Cov=0$ y son totalmente dependientes). La excepción importante: si $(X,Y)$ es normal bivariada, $\Cov=0$ ⇒ independencia (Ejercicio 7 de la Clase 1).</li>
+      </ul>
+    </div>
+
+    <div class="box nota" id="limites">
+      <span class="box-title">Receta para poner los límites de integración leyendo el soporte</span>
+      <ol class="pasos">
+        <li><b>Dibuja</b> el soporte (y, si es una probabilidad, la región del evento dentro de él). Sin dibujo, los límites salen mal.</li>
+        <li><b>Elige la variable de afuera</b> (la última que integras). Sus límites son <b>constantes</b>: lo más a la izquierda y lo más a la derecha que llega la región sobre su eje.</li>
+        <li><b>Fija un valor de la variable de afuera</b> y traza la recta (vertical si fijaste $x$, horizontal si fijaste $y$). Los puntos donde esa recta <b>entra</b> y <b>sale</b> de la región son los límites de la variable de adentro; pueden depender de la de afuera.</li>
+        <li>Si al mover la recta la frontera de entrada o de salida <b>cambia de fórmula</b>, parte la integral en dos.</li>
+        <li>Para una marginal: la variable que <i>no</i> integras queda fija; los límites son los del paso 3, y fuera del soporte la marginal vale 0.</li>
+      </ol>
+    </div>
+
+    <div class="box ejemplo" id="ejemplo-6">
+      <span class="box-title">Ejemplo 6 · $f_{XY}(x,y)=k$ en $0&lt;x&lt;y&lt;1$, completamente resuelto</span>
+      <p>Sea $f_{XY}(x,y)=k$ si $0&lt;x&lt;y&lt;1$ y $0$ en otro caso. (a) Halla $k$. (b) Marginales. (c) ¿Son independientes? (d) $\Cov(X,Y)$ y $\rho$. (e) $f_{Y|X}$ y $\E(Y|X=x)$. (f) $\P(X+Y&lt;1)$ en los dos órdenes de integración.</p>
+      <details class="solucion"><summary>Solución paso a paso</summary><div>
+        <ol class="pasos">
+          <li><b>Soporte.</b> $0&lt;x&lt;y&lt;1$ significa: $y$ entre 0 y 1, y $x$ entre 0 y $y$. Es el triángulo de vértices $(0,0)$, $(0,1)$, $(1,1)$: la parte del cuadrado unitario <b>por encima</b> de la diagonal $y=x$. (Míralo en la figura interactiva de abajo.)</li>
+          <li><b>(a)</b> La densidad es constante, así que el volumen es $k\times$área$=k\cdot\frac12=1\Rightarrow k=2$.</li>
+          <li><b>(b) Marginal de $X$.</b> Fija $x\in(0,1)$ y traza una vertical: entra al triángulo en la diagonal $y=x$ y sale por arriba en $y=1$. Entonces $f_X(x)=\displaystyle\int_x^1 2\,dy=2(1-x)$, $0&lt;x&lt;1$.<br>
+            <b>Marginal de $Y$.</b> Fija $y$ y traza una horizontal: entra en $x=0$ y sale en la diagonal $x=y$. $f_Y(y)=\displaystyle\int_0^y 2\,dx=2y$, $0&lt;y&lt;1$. (Ambas integran 1 ✓.)</li>
+          <li><b>(c)</b> $f_X(x)f_Y(y)=4y(1-x)\ne 2$ (por ejemplo en $(0.5,\,0.6)$ da $1.2$). <b>No</b> son independientes, como ya anunciaba el soporte triangular.</li>
+          <li><b>(d)</b> $\E(X)=\int_0^1 x\,2(1-x)dx=\frac13$, $\E(Y)=\int_0^1 y\,2y\,dy=\frac23$.
+            $\E(XY)=\displaystyle\int_0^1\!\!\int_0^y 2xy\,dx\,dy=\int_0^1 y\cdot y^2\,dy=\frac14$.
+            $\Cov(X,Y)=\frac14-\frac13\cdot\frac23=\frac1{36}$. Además $\E(X^2)=\frac16$, $\E(Y^2)=\frac12$, así $\Var(X)=\frac16-\frac19=\frac1{18}$ y $\Var(Y)=\frac12-\frac49=\frac1{18}$. Entonces $\rho=\dfrac{1/36}{1/18}=\dfrac12$. Positiva: si $X$ (el de abajo) es grande, $Y$ (que está por encima) también.</li>
+          <li><b>(e)</b> $f_{Y|X}(y|x)=\dfrac{2}{2(1-x)}=\dfrac1{1-x}$ para $x&lt;y&lt;1$: dado $X=x$, $Y$ es <b>uniforme en $(x,1)$</b>. Por eso $\E(Y|X=x)=\dfrac{1+x}2$. Chequeo: $\E\big[\E(Y|X)\big]=\E\big(\frac{1+X}{2}\big)=\frac{1+1/3}{2}=\frac23=\E(Y)$ ✓.</li>
+          <li><b>(f) Orden "$dy$ adentro" (verticales).</b> La región $\{x+y&lt;1\}\cap$soporte es el triángulo $(0,0),(0,1),(\frac12,\frac12)$. $x$ va de 0 a $\frac12$ (donde la diagonal corta a $x+y=1$); para $x$ fijo, $y$ va de $x$ a $1-x$:
+            $$\P(X+Y&lt;1)=\int_0^{1/2}\!\!\int_x^{1-x}2\,dy\,dx=\int_0^{1/2}2(1-2x)\,dx=\frac12.$$</li>
+          <li><b>Orden "$dx$ adentro" (horizontales).</b> $y$ va de 0 a 1, pero la frontera derecha cambia de fórmula en $y=\frac12$: abajo es la diagonal $x=y$, arriba es la recta $x=1-y$. Hay que partir:
+            $$\int_0^{1/2}\!\!\int_0^{y}2\,dx\,dy+\int_{1/2}^{1}\!\!\int_0^{1-y}2\,dx\,dy=\frac14+\frac14=\frac12.\ ✓$$
+            Moraleja: el orden no cambia el resultado, pero un orden puede ahorrarte partir la integral.</li>
+        </ol>
+        <p class="small muted">Dato que conecta con la Clase 2: esta es la densidad conjunta de $(Y_{(1)},Y_{(2)})$, el mínimo y el máximo de dos uniformes $(0,1)$ independientes ($n!\,f(y_1)f(y_2)=2\cdot1\cdot1$ en $y_1&lt;y_2$). La simulación de abajo la genera exactamente así.</p>
+      </div></details>
+    </div>
+
+    <div class="sim" id="sim-soporte">
+      <p class="sim-title">Leer los límites en el soporte</p>
+      <p class="sim-desc">Elige el orden de integración y mueve el corte: el segmento morado muestra dónde <b>entra</b> y <b>sale</b> la recta de la región, es decir, los límites de la integral de adentro. "Simular" genera 20 000 pares (mín, máx) de dos uniformes y estima las cantidades del ejemplo.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+
+    <h3>Autoevaluación</h3>
+    <div id="q-conj"></div>
+  </section>
+
+  <!-- =============================================================== -->
+  <section>
+    <h2 id="convergencia">8. Convergencias y ley de los grandes números</h2>
+
+    <div class="box idea">
+      <span class="box-title">Intuición</span>
+      <p>Una sucesión de v.a. $X_1,X_2,\dots$ puede "acercarse" a algo de varias maneras. Las dos que necesitas: que sus <b>valores</b> se peguen a un número con probabilidad cada vez mayor (en probabilidad; la LGN), o que su <b>distribución</b> (su histograma) se parezca cada vez más a una distribución fija (en distribución; el TLC).</p>
+    </div>
+
+    <div class="box definicion">
+      <span class="box-title">Tipos de convergencia (Formulario 2)</span>
+      <ul>
+        <li><b>En probabilidad:</b> $X_n\pto X$ si para todo $\varepsilon&gt;0$, $\displaystyle\lim_{n\to\infty}\P(|X_n-X|&gt;\varepsilon)=0$.</li>
+        <li><b>En distribución:</b> $X_n\dto X$ si $\lim F_{X_n}(x)=F_X(x)$ en todo punto de continuidad de $F_X$. Basta que $\lim M_{X_n}(t)=M_X(t)$ cerca de 0 (¡otra vez la FGM!).</li>
+        <li><b>Casi segura:</b> $X_n\xrightarrow{c.s.}X$ si $\P(\lim X_n=X)=1$ (cada trayectoria converge). Es la más fuerte: c.s. ⇒ en probabilidad ⇒ en distribución.</li>
+        <li><b>Funciones continuas</b> preservan ambas: si $X_n\pto X$ y $g$ es continua, $g(X_n)\pto g(X)$ (igual con $\dto$).</li>
+      </ul>
+    </div>
+
+    <div class="box teorema">
+      <span class="box-title">Ley (débil) de los grandes números y su prueba en una línea</span>
+      <p>Si $X_1,\dots,X_n$ son iid con media $\mu$ finita, entonces $\bar X_n\pto\mu$. Si además $\sigma^2&lt;\infty$, se prueba con Chebyshev (§2) aplicado a $\bar X_n$, que tiene media $\mu$ y varianza $\sigma^2/n$:</p>
+      $$\P(|\bar X_n-\mu|\ge\varepsilon)\le\frac{\sigma^2/n}{\varepsilon^2}=\frac{\sigma^2}{n\varepsilon^2}\xrightarrow[n\to\infty]{}0.$$
+      <p>La ley <b>fuerte</b> dice algo más: $\bar X_n\to\mu$ casi seguramente (cada trayectoria de la simulación de abajo termina pegándose a $\mu$).</p>
+    </div>
+
+    <div class="sim" id="sim-lgn">
+      <p class="sim-title">La media acumulada se pega a μ</p>
+      <p class="sim-desc">Arriba: 6 trayectorias de $\bar X_n$ con $n=1,\dots,1000$ y la franja $\mu\pm\varepsilon$. Abajo: proporción de 200 trayectorias que están <b>fuera</b> de la franja en cada $n$ (estimación de $\P(|\bar X_n-\mu|&gt;\varepsilon)$) frente a la cota de Chebyshev. Prueba la <b>Cauchy</b>: no tiene media, y la LGN no aplica.</p>
+      <div class="controls"></div>
+      <div class="plot paths"></div>
+      <div class="plot frac"></div>
+      <div class="out"></div>
+    </div>
+
+    <div class="box nota">
+      <span class="box-title">Anticipo: el teorema del límite central</span>
+      <p>La LGN dice <i>a dónde</i> va $\bar X_n$ (a $\mu$). El TLC dice <i>cómo se reparte alrededor</i>: para $n$ grande, $\bar X_n\overset{a}{\sim}N\!\left(\mu,\frac{\sigma^2}{n}\right)$, o sea $\dfrac{\bar X_n-\mu}{\sigma/\sqrt n}\dto N(0,1)$, sea cual sea la distribución de las $X_i$ (con varianza finita). En el Formulario 2 también aparece como $S_n\overset{a}{\sim}N(n\mu,n\sigma^2)$. Lo verás a fondo en la <a href="clase-05.html">Clase 5</a>.</p>
+    </div>
+    <div class="box cuidado">
+      <span class="box-title">Notación del Formulario 2 que se presta a confusión</span>
+      <ul>
+        <li>En "Teorema del límite central", $S_n$ es la <b>suma</b> $S_n=X_1+\cdots+X_n$, <b>no</b> la desviación estándar muestral $S$. El formulario no lo define.</li>
+        <li>En "Distribución de la varianza muestral" dice "$X_1\overset{iid}{\sim}N(\mu,\sigma^2)$": es un error tipográfico, debe leerse $X_i\overset{iid}{\sim}N(\mu,\sigma^2)$, $i=1,\dots,n$.</li>
+      </ul>
+    </div>
+
+    <h3>Autoevaluación</h3>
+    <div id="q-conv"></div>
+  </section>
+
+  <!-- =============================================================== -->
+  <section>
+    <h2 id="mapa">9. Lo que vas a necesitar en cada clase</h2>
+    <div class="table-wrap">
+      <table class="tabla text-left">
+        <thead><tr><th>Clase</th><th>Qué usa de este repaso</th><th>Repasa</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><a href="clase-01.html"><b>Clase 1</b></a><br><span class="small muted">Acumulada y Jacobiano</span></td>
+            <td>Calcular $F$ por tramos y derivar ($f=F'$); leer soportes 2D y poner límites (Ejemplo 1 de la clase: $Y_1+Y_2$); Exp con <b>β media</b> (Ejercicios 2 y 5); "Cov = 0 ⇒ indep." sólo para normales (Ejercicio 7); núcleo Beta (Ejemplo 4).</td>
+            <td><div class="chips"><a href="#va">§1</a><a href="#limites">§7 límites</a><a href="#parametrizaciones">§4 β vs λ</a><a href="#gamma-beta">§5</a></div></td>
+          </tr>
+          <tr>
+            <td><a href="clase-02.html"><b>Clase 2</b></a><br><span class="small muted">Método FGM, estadísticos de orden</span></td>
+            <td>Tabla de FGM, <b>unicidad</b> y producto de FGM (Ejercicios 1–5); $\chi^2=G(\nu/2,2)$; $F$ y $1-F$ para mínimo y máximo; reconocer Beta en $Y_{(i)}$ de uniformes (Ejercicio 7); exponencial "de parámetro λ" = tasa (Ejercicios 8 y 9).</td>
+            <td><div class="chips"><a href="#fgm">§3</a><a href="#tabla-fgm">tabla FGM</a><a href="#relaciones">§6</a><a href="#parametrizaciones">§4 β vs λ</a></div></td>
+          </tr>
+          <tr>
+            <td><a href="clase-03.html"><b>Clase 3</b></a><br><span class="small muted">χ² y t</span></td>
+            <td>$\E(\bar X)=\mu$, $\Var(\bar X)=\sigma^2/n$; estandarizar; suma de χ²; independencia; cuantiles $x_p$ (las tablas dan área acumulada).</td>
+            <td><div class="chips"><a href="#esperanza">§2</a><a href="#relaciones">§6</a><a href="#va">§1 cuantiles</a></div></td>
+          </tr>
+          <tr>
+            <td><a href="clase-04.html"><b>Clase 4</b></a><br><span class="small muted">Distribución F</span></td>
+            <td>Cociente de χ² independientes; funciones Gamma y Beta en la constante de la densidad $F$; cuantiles y colas.</td>
+            <td><div class="chips"><a href="#gamma-beta">§5</a><a href="#va">§1</a></div></td>
+          </tr>
+          <tr>
+            <td><a href="clase-05.html"><b>Clase 5</b></a><br><span class="small muted">TLC</span></td>
+            <td>Convergencia en distribución, LGN, $\Var(\bar X)$; Binomial como suma de Bernoulli; Poisson; corrección por continuidad ("$&lt;$" vs "$\le$" en discretas).</td>
+            <td><div class="chips"><a href="#convergencia">§8</a><a href="#relaciones">§6</a><a href="#va">§1 trampas</a></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Para explorar más las distribuciones (incluidas χ², t y F) usa el <a href="../herramientas/distribuciones.html">laboratorio de distribuciones</a>, y para las tablas, <a href="../herramientas/tablas.html">cómo leer las tablas</a>.</p>
+  </section>
+
+</main>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../assets/js/stats.js"></script>
+<script src="../assets/js/plot.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+(function () {
+  'use strict';
+  const S = EM.stats, D = S.dist, fmt = S.fmt, ui = EM.ui;
+  const $ = s => document.querySelector(s);
+  const lch = S.lchoose;
+  const isInt = Number.isInteger;
+
+  /* ---------- funciones de probabilidad que no están en EM.stats ---------- */
+  const pmfBern = p => x => x === 0 ? 1 - p : x === 1 ? p : 0;
+  const pmfGeo = p => x => (isInt(x) && x >= 1) ? p * Math.pow(1 - p, x - 1) : 0;
+  const pmfBneg = (r, p) => x => (isInt(x) && x >= r) ? Math.exp(lch(x - 1, r - 1) + r * Math.log(p) + (x - r) * Math.log(1 - p)) : 0;
+  const pmfHiper = (N, a, n) => x => {
+    const lo = Math.max(0, n - (N - a)), hi = Math.min(a, n);
+    return (isInt(x) && x >= lo && x <= hi) ? Math.exp(lch(a, x) + lch(N - a, n - x) - lch(N, n)) : 0;
+  };
+  // derivada numérica (diferencias centrales)
+  const d1 = (f, x, h = 1e-4) => (f(x + h) - f(x - h)) / (2 * h);
+  const d2 = (f, x, h = 1e-3) => (f(x + h) - 2 * f(x) + f(x - h)) / (h * h);
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  // arrastre sobre un canvas: llama cb(xDatos)
+  function draggable(plot, cb) {
+    let on = false;
+    const go = ev => cb(plot.eventToData(ev).x);
+    plot.canvas.addEventListener('pointerdown', ev => { on = true; plot.canvas.setPointerCapture?.(ev.pointerId); go(ev); });
+    plot.canvas.addEventListener('pointermove', ev => { if (on) go(ev); });
+    ['pointerup', 'pointercancel', 'pointerleave'].forEach(t => plot.canvas.addEventListener(t, () => { on = false; }));
+    plot.canvas.style.cursor = 'ew-resize';
+  }
+
+  /* =====================================================================
+     §1  Acumulada como área + cuantil
+     ===================================================================== */
+  (function () {
+    const root = $('#sim-acum'), ctr = root.querySelector('.controls');
+    const Z = D.normal(0, 1), E1 = D.exp(1), B = D.binom(4, 0.5);
+    const M = {
+      tri: { label: 'f(x) = 2x en [0, 1]', lo: -0.25, hi: 1.25, ymax: 2.2, pdf: x => (x >= 0 && x <= 1) ? 2 * x : 0, cdf: x => x <= 0 ? 0 : x >= 1 ? 1 : x * x, q: p => Math.sqrt(p), x0: 0.6 },
+      exp: { label: 'Exp(β = 1)', lo: -0.5, hi: 6, ymax: 1.1, pdf: E1.pdf, cdf: E1.cdf, q: E1.q, x0: 1 },
+      norm: { label: 'N(0, 1)', lo: -4, hi: 4, ymax: 0.45, pdf: Z.pdf, cdf: Z.cdf, q: Z.q, x0: 0.5 },
+      bin: { label: 'Bin(4, 0.5)  (discreta)', lo: -0.8, hi: 4.8, ymax: 0.45, disc: true, pmf: B.pmf, cdf: B.cdf, q: B.q, x0: 2 },
+    };
+    let m = M.tri, x = m.x0, p = 0.5;
+    ui.select(ctr, { label: 'Modelo', options: Object.entries(M).map(([k, v]) => ({ value: k, label: v.label })), value: 'tri', onChange: k => { m = M[k]; x = m.x0; sx.input.min = m.lo; sx.input.max = m.hi; sx.set(x); setup(); render(); } });
+    const sx = ui.slider(ctr, { tex: 'x', min: M.tri.lo, max: M.tri.hi, step: 0.01, value: x, fmt: v => v.toFixed(2), onInput: v => { x = v; render(); } });
+    ui.slider(ctr, { tex: 'p', min: 0.01, max: 0.99, step: 0.01, value: p, fmt: v => v.toFixed(2), onInput: v => { p = v; render(); } });
+    const pf = EM.plot.create(root.querySelector('.pdf'), { height: 250, xlabel: 'x', ylabel: 'f(x)' });
+    const pF = EM.plot.create(root.querySelector('.cdf'), { height: 250, ymin: 0, ymax: 1.08, xlabel: 'x', ylabel: 'F(x)' });
+    const out = ui.readout(root.querySelector('.out'));
+    const setX = v => { x = clamp(v, m.lo, m.hi); sx.set(x); render(); };
+    draggable(pf, setX); draggable(pF, setX);
+    function setup() { pf.setRange({ xmin: m.lo, xmax: m.hi, ymin: 0, ymax: m.ymax }); pF.setRange({ xmin: m.lo, xmax: m.hi }); }
+    function render() {
+      const Fx = m.cdf(x), xp = m.q(p);
+      pf.draw(g => {
+        if (m.disc) {
+          const ks = [0, 1, 2, 3, 4];
+          g.bars(ks, ks.map(m.pmf), { color: 'muted', alpha: 0.35, width: 0.6 });
+          const kin = ks.filter(k => k <= x + 1e-9);
+          g.bars(kin, kin.map(m.pmf), { color: 'accent', alpha: 0.75, width: 0.6, label: 'P(X ≤ x)' });
+        } else {
+          g.area(m.pdf, m.lo, x, { color: 'accent', alpha: 0.35, label: 'área = F(x)' });
+          g.curve(m.pdf, { color: 'c1' });
+        }
+        g.vline(x, { label: 'x', color: 'accent' });
+        g.vline(xp, { color: 'c2', dash: [2, 3], label: 'xₚ', labelY: m.ymax * 0.85 });
+      });
+      pF.draw(g => {
+        if (m.disc) {
+          for (let k = -1; k <= 4; k++) {
+            const y = m.cdf(k), a = Math.max(k, m.lo), b = Math.min(k + 1, m.hi);
+            g.line(a, y, b, y, { color: 'c1', width: 2.4 });
+            if (k >= 0) { g.points([k], [y], { color: 'c1', r: 4, alpha: 1 }); g.line(k, m.cdf(k - 1), k, y, { color: 'c1', width: 1, dash: [2, 3] }); }
+          }
+        } else g.curve(m.cdf, { color: 'c1' });
+        g.hline(p, { color: 'c2', dash: [2, 3] });
+        g.line(xp, 0, xp, p, { color: 'c2', dash: [2, 3] });
+        g.line(m.lo, Fx, x, Fx, { color: 'accent', dash: [5, 4] });
+        g.line(x, 0, x, Fx, { color: 'accent', dash: [5, 4] });
+        g.points([x], [Fx], { color: 'accent', r: 5, alpha: 1 });
+      });
+      let extra = '';
+      if (m.disc) {
+        const k = Math.floor(x + 1e-9);
+        extra = `<br>Escalón en $x=${k >= 0 && k <= 4 ? k : '\\text{—}'}$: $\\P(X=${k})=F(${k})-F(${k}^-)=$ <b>${fmt(m.pmf(k), 4)}</b>. Fíjate que $F$ se mantiene constante entre enteros.`;
+      }
+      out.set(`$F_X(${x.toFixed(2)})=\\P(X\\le ${x.toFixed(2)})=$ <b>${fmt(Fx, 4)}</b> (área / barras resaltadas a la izquierda de $x$).` +
+        `<br>Cuantil: $x_{${p.toFixed(2)}}=$ <b>${fmt(xp, 4)}</b>, porque $F_X(x_p)${m.disc ? '\\ge' : '='} ${p.toFixed(2)}$${m.disc ? ' (en una discreta: el menor $x$ con $F(x)\\ge p$)' : ''}.` + extra);
+    }
+    setup(); render();
+  })();
+
+  ui.quiz('#q-va', {
+    question: 'Si $F_X(x)=1-e^{-x/2}$ para $x>0$ (y 0 si $x\\le 0$), ¿cuál es $f_X(x)$ para $x>0$?',
+    options: ['$e^{-x/2}$', '$\\tfrac12 e^{-x/2}$', '$-\\tfrac12 e^{-x/2}$', '$1-\\tfrac12e^{-x/2}$'],
+    answer: 1,
+    explain: '$f=F\'$: la derivada de $-e^{-x/2}$ es $\\tfrac12e^{-x/2}$. Es la $\\text{Exp}(\\beta=2)$ del formulario.',
+  });
+  ui.quiz('#q-va', {
+    question: 'En una v.a. discreta, $F_X$ salta de $0.5$ a $0.7$ en $x=3$. ¿Qué significa?',
+    options: ['$\\P(X\\le 3)=0.2$', '$\\P(X=3)=0.2$', '$\\P(X&lt;3)=0.7$', 'Nada: $F$ debe ser continua'],
+    answer: 1,
+    explain: 'El tamaño del escalón es la probabilidad del punto: $\\P(X=3)=F(3)-F(3^-)=0.7-0.5=0.2$. Además $\\P(X\\le 3)=0.7$ y $\\P(X&lt;3)=0.5$.',
+  });
+  ui.numcheck('#q-va', { prompt: 'Si $f_X(x)=3x^2$ en $(0,1)$, la mediana $x_{0.5}$ es:', answer: Math.cbrt(0.5), tol: 0.002, hint: 'F(x)=x³; resuelve x³ = 0.5' });
+
+  /* =====================================================================
+     §2  Chebyshev
+     ===================================================================== */
+  (function () {
+    const root = $('#sim-cheb'), ctr = root.querySelector('.controls');
+    const Z = D.normal(0, 1), P4 = D.poisson(4);
+    const M = {
+      unif: { label: 'Uniforme(0, 1)', mu: 0.5, sd: Math.sqrt(1 / 12), exact: c => Math.max(0, 1 - 2 * c), rand: () => Math.random() },
+      exp: { label: 'Exp(β = 1)', mu: 1, sd: 1, exact: c => Math.exp(-(1 + c)) + (c < 1 ? 1 - Math.exp(-(1 - c)) : 0), rand: () => -Math.log(S.rng()) },
+      norm: { label: 'N(0, 1)', mu: 0, sd: 1, exact: c => 2 * Z.sf(c), rand: () => S.rnorm01() },
+      pois: { label: 'Poisson(4)', mu: 4, sd: 2, exact: c => { let s = 0; for (let j = 0; j < 60; j++) if (Math.abs(j - 4) >= c - 1e-12) s += P4.pmf(j); return s; }, rand: () => S.rpois(4) },
+    };
+    let m = M.exp, k = 2, mc = null;
+    ui.select(ctr, { label: 'Modelo', options: Object.entries(M).map(([key, v]) => ({ value: key, label: v.label })), value: 'exp', onChange: key => { m = M[key]; mc = null; render(); } });
+    ui.slider(ctr, { tex: 'k', min: 1, max: 4, step: 0.05, value: k, fmt: v => v.toFixed(2), onInput: v => { k = v; mc = null; render(); } });
+    ui.button(ctr, 'Simular 50 000', () => {
+      const N = 50000, c = k * m.sd; let hits = 0;
+      for (let i = 0; i < N; i++) if (Math.abs(m.rand() - m.mu) >= c - 1e-12) hits++;
+      mc = hits / N; render();
+    }, { primary: true });
+    const pl = EM.plot.create(root.querySelector('.plot'), { xmin: 1, xmax: 4, ymin: 0, ymax: 1.05, height: 260, xlabel: 'k (desviaciones estándar)', ylabel: 'probabilidad' });
+    const out = ui.readout(root.querySelector('.out'));
+    function render() {
+      const ex = m.exact(k * m.sd);
+      pl.draw(g => {
+        g.curve(t => Math.min(1, 1 / (t * t)), { color: 'bad', label: 'cota 1/k²' });
+        g.curve(t => m.exact(t * m.sd), { color: 'c1', label: 'P(|X−μ| ≥ kσ) exacta', n: 600 });
+        g.vline(k, { color: 'muted' });
+        g.points([k], [ex], { color: 'c1', r: 5, alpha: 1 });
+        if (mc !== null) g.points([k], [mc], { color: 'c2', r: 6, alpha: 0.9, label: 'simulada' });
+      });
+      out.set(`$\\mu=${fmt(m.mu, 3)}$, $\\sigma=${fmt(m.sd, 4)}$, distancia $k\\sigma=${fmt(k * m.sd, 4)}$.<br>` +
+        `Exacta: $\\P(|X-\\mu|\\ge ${k.toFixed(2)}\\sigma)=$ <b>${fmt(ex, 4)}</b> &nbsp;·&nbsp; cota de Chebyshev $1/k^2=$ <b>${fmt(1 / (k * k), 4)}</b>` +
+        (mc !== null ? ` &nbsp;·&nbsp; simulada: <b>${fmt(mc, 4)}</b>` : '') +
+        `<br><span class="muted">La cota es ${ex > 0 ? '≈ ' + fmt(1 / (k * k) / ex, 3) + ' veces' : 'infinitamente'} más grande que la probabilidad real.</span>`);
+    }
+    render();
+  })();
+
+  ui.numcheck('#q-esp', { prompt: 'Si $\\E(X)=2$ y $\\Var(X)=3$, y $Y=5-2X$, entonces $\\Var(Y)=$', answer: 12, tol: 1e-6, hint: 'Var(aX+b)=a²Var(X); el 5 no dispersa' });
+  ui.numcheck('#q-esp', { prompt: 'Con los mismos datos, $\\E(Y)=$', answer: 1, tol: 1e-6, hint: 'E(aX+b)=aE(X)+b' });
+  ui.quiz('#q-esp', {
+    question: 'Para cualquier $X$ con varianza finita, ¿qué garantiza Chebyshev sobre $\\P(|X-\\mu|&lt;2\\sigma)$?',
+    options: ['Que es exactamente $0.95$', 'Que es al menos $3/4$', 'Que es a lo más $1/4$', 'Nada, sólo vale para la normal'],
+    answer: 1,
+    explain: '$\\P(|X-\\mu|\\ge 2\\sigma)\\le 1/4$, y el complemento es $\\P(|X-\\mu|&lt;2\\sigma)\\ge 3/4$. El $0.95$ es el valor de la normal, no una garantía general.',
+  });
+
+  /* =====================================================================
+     §3  FGM: curva, tangente, FGM empírica
+     ===================================================================== */
+  (function () {
+    const root = $('#sim-fgm'), ctr = root.querySelector('.controls');
+    const M = {
+      exp: { label: 'Exp(β = 1)', M: t => 1 / (1 - t), t0: -0.6, t1: 0.45, EX: 1, EX2: 2, rand: () => -Math.log(S.rng()) },
+      pois: { label: 'Poisson(2)', M: t => Math.exp(2 * (Math.exp(t) - 1)), t0: -0.6, t1: 0.6, EX: 2, EX2: 6, rand: () => S.rpois(2) },
+      norm: { label: 'N(1, 0.5²)', M: t => Math.exp(t + 0.125 * t * t), t0: -1, t1: 1, EX: 1, EX2: 1.25, rand: () => 1 + 0.5 * S.rnorm01() },
+      bern: { label: 'Bernoulli(0.3)', M: t => 0.3 * Math.exp(t) + 0.7, t0: -1, t1: 1, EX: 0.3, EX2: 0.3, rand: () => (Math.random() < 0.3 ? 1 : 0) },
+    };
+    let m = M.exp, emp = null;
+    ui.select(ctr, { label: 'Modelo', options: Object.entries(M).map(([k, v]) => ({ value: k, label: v.label })), value: 'exp', onChange: k => { m = M[k]; emp = null; render(); } });
+    ui.button(ctr, 'Muestrear 2000', () => {
+      const xs = Array.from({ length: 2000 }, m.rand);
+      const ts = [], ms = [];
+      for (let i = 0; i <= 24; i++) { const t = m.t0 + (m.t1 - m.t0) * i / 24; ts.push(t); ms.push(S.mean(xs.map(v => Math.exp(t * v)))); }
+      emp = { ts, ms }; render();
+    }, { primary: true });
+    const pl = EM.plot.create(root.querySelector('.plot'), { height: 270, xlabel: 't', ylabel: 'M(t)', legendPos: 'tl' });
+    const out = ui.readout(root.querySelector('.out'));
+    function render() {
+      const ymax = Math.max(m.M(m.t1), m.M(m.t0)) * 1.1;
+      pl.setRange({ xmin: m.t0, xmax: m.t1, ymin: 0, ymax });
+      pl.draw(g => {
+        g.curve(t => 1 + m.EX * t + m.EX2 * t * t / 2, { color: 'c3', dash: [3, 3], label: '1 + E(X)t + E(X²)t²/2' });
+        g.curve(t => 1 + m.EX * t, { color: 'c2', dash: [6, 4], label: 'tangente: 1 + E(X)t' });
+        g.curve(m.M, { color: 'c1', label: 'M(t)' });
+        if (emp) g.points(emp.ts, emp.ms, { color: 'c4', r: 3.5, alpha: 0.9, label: 'M̂(t) empírica' });
+        g.points([0], [1], { color: 'ink', r: 4, alpha: 1 });
+      });
+      const a = d1(m.M, 0), b = d2(m.M, 0);
+      out.set(`$M(0)=$ <b>${fmt(m.M(0), 4)}</b> &nbsp;·&nbsp; $M'(0)\\approx$ <b>${fmt(a, 4)}</b> $=\\E(X)$ &nbsp;·&nbsp; $M''(0)\\approx$ <b>${fmt(b, 4)}</b> $=\\E(X^2)$` +
+        `<br>$\\Var(X)=M''(0)-M'(0)^2\\approx$ <b>${fmt(b - a * a, 4)}</b> <span class="muted">(derivadas numéricas; los valores teóricos son $\\E X=${m.EX}$, $\\E X^2=${m.EX2}$)</span>`);
+    }
+    render();
+  })();
+
+  ui.quiz('#q-fgm', {
+    question: 'Una v.a. tiene $M_X(t)=(1-3t)^{-4}$, $t&lt;1/3$. ¿Cuál es su distribución?',
+    options: ['$\\text{Exp}(3)$', '$G(4,\\,3)$', '$G(3,\\,4)$', '$\\chi^2_{(4)}$'],
+    answer: 1,
+    explain: 'Comparando con $(1-\\beta t)^{-\\alpha}$: $\\alpha=4$, $\\beta=3$. Por unicidad $X\\sim G(4,3)$, con $\\E X=12$ y $\\Var X=36$.',
+  });
+  ui.quiz('#q-fgm', {
+    question: 'Si $X_1,\\dots,X_{10}\\iid\\text{Ber}(0.3)$, ¿qué FGM tiene $U=\\sum X_i$?',
+    options: ['$10(0.3e^t+0.7)$', '$(0.3e^t+0.7)^{10}$', '$e^{3(e^t-1)}$', '$0.3e^{10t}+0.7$'],
+    answer: 1,
+    explain: 'Independientes ⇒ se multiplican las FGM: $(0.3e^t+0.7)^{10}$, que es la de $\\text{Bin}(10,0.3)$.',
+  });
+  ui.numcheck('#q-fgm', { prompt: 'Si $M_X(t)=e^{2t+8t^2}$, entonces $\\Var(X)=$', answer: 16, tol: 1e-6, hint: 'compara con e^{μt+σ²t²/2}: σ²/2 = 8' });
+
+  /* =====================================================================
+     §4  Catálogo
+     ===================================================================== */
+  (function () {
+    const root = $('#sim-cat');
+    const cm = root.querySelector('.modelo'), cp = root.querySelector('.params');
+    const T = s => s; // marcador visual: cadenas TeX
+    const MODELS = {
+      bern: { name: 'Bernoulli', disc: true, ps: [['p', 'p', 0.05, 0.95, 0.05, 0.3]],
+        make: ({ p }) => ({ f: pmfBern(p), lo: 0, hi: 1, mean: p, var: p * (1 - p) }),
+        tex: ({ p }) => [T(`\\P(X=x)=${p}^x(1-${p})^{1-x},\\ x\\in\\{0,1\\}`), T(`pe^t+1-p`)] },
+      bin: { name: 'Binomial', disc: true, ps: [['n', 'n', 1, 40, 1, 10], ['p', 'p', 0.05, 0.95, 0.05, 0.3]],
+        make: ({ n, p }) => ({ f: D.binom(n, p).pmf, lo: 0, hi: n, mean: n * p, var: n * p * (1 - p) }),
+        tex: () => ['\\binom nx p^x(1-p)^{n-x},\\ x=0,\\dots,n', '(pe^t+1-p)^n'] },
+      geo: { name: 'Geométrica', disc: true, ps: [['p', 'p', 0.05, 0.95, 0.05, 0.3]],
+        make: ({ p }) => { const f = pmfGeo(p); let hi = 1; while (1 - Math.pow(1 - p, hi) < 0.995) hi++; return { f, lo: 1, hi: Math.max(hi, 5), mean: 1 / p, var: (1 - p) / (p * p) }; },
+        tex: () => ['p(1-p)^{x-1},\\ x=1,2,\\dots', '\\frac{pe^t}{1-(1-p)e^t}'] },
+      bneg: { name: 'Binomial negativa', disc: true, ps: [['r', 'r', 1, 15, 1, 3], ['p', 'p', 0.05, 0.95, 0.05, 0.4]],
+        make: ({ r, p }) => { const f = pmfBneg(r, p); let hi = r, c = 0; while (c < 0.995 && hi < 2000) { c += f(hi); hi++; } return { f, lo: r, hi: Math.max(hi, r + 4), mean: r / p, var: r * (1 - p) / (p * p) }; },
+        tex: () => ['\\binom{x-1}{r-1}p^r(1-p)^{x-r},\\ x=r,r+1,\\dots', '\\left[\\frac{pe^t}{1-(1-p)e^t}\\right]^r'] },
+      hiper: { name: 'Hipergeométrica', disc: true, ps: [['N', 'N', 5, 60, 1, 30], ['a', 'a', 1, 60, 1, 12], ['n', 'n', 1, 60, 1, 10]],
+        fix: v => { v.a = Math.min(v.a, v.N); v.n = Math.min(v.n, v.N); return v; },
+        make: ({ N, a, n }) => ({ f: pmfHiper(N, a, n), lo: Math.max(0, n - (N - a)), hi: Math.min(a, n), mean: n * a / N, var: n * (a / N) * (1 - a / N) * (N - n) / (N - 1 || 1) }),
+        tex: () => ['\\binom ax\\binom{N-a}{n-x}\\big/\\binom Nn,\\ \\max\\{0,a+n-N\\}\\le x\\le\\min\\{a,n\\}', '\\text{sin forma cerrada útil}'] },
+      pois: { name: 'Poisson', disc: true, ps: [['λ', '\\lambda', 0.2, 25, 0.1, 4]],
+        make: ({ λ }) => { const P = D.poisson(λ); return { f: P.pmf, lo: 0, hi: Math.max(6, P.q(0.999)), mean: λ, var: λ }; },
+        tex: () => ['e^{-\\lambda}\\lambda^x/x!,\\ x=0,1,\\dots', 'e^{\\lambda(e^t-1)}'] },
+      unif: { name: 'Uniforme', ps: [['a', 'a', -5, 4, 0.5, 0], ['b', 'b', -4, 10, 0.5, 2]],
+        fix: v => { if (v.b <= v.a) v.b = v.a + 0.5; return v; },
+        make: ({ a, b }) => { const U = D.uniform(a, b); return { f: U.pdf, lo: Math.min(-5.5, a - 0.5), hi: Math.max(10.5, b + 0.5), mean: U.mean, var: U.var, ycap: 1 / (b - a) * 1.25 }; },
+        tex: () => ['\\frac{1}{b-a},\\ a&lt;x&lt;b', '\\frac{e^{tb}-e^{ta}}{t(b-a)}'] },
+      norm: { name: 'Normal', ps: [['μ', '\\mu', -4, 4, 0.1, 0], ['σ', '\\sigma', 0.3, 3, 0.05, 1]],
+        make: ({ μ, σ }) => { const Nn = D.normal(μ, σ); return { f: Nn.pdf, lo: -10, hi: 10, mean: μ, var: σ * σ, ycap: Nn.pdf(μ) * 1.15 }; },
+        tex: () => ['\\frac{1}{\\sqrt{2\\pi\\sigma^2}}e^{-(x-\\mu)^2/(2\\sigma^2)}', 'e^{\\mu t+\\sigma^2t^2/2}'] },
+      exp: { name: 'Exponencial', ps: [['β', '\\beta\\ (\\text{media})', 0.2, 5, 0.1, 1]],
+        make: ({ β }) => { const E = D.exp(β); return { f: E.pdf, lo: 0, hi: Math.max(5, E.q(0.995)), mean: β, var: β * β, ycap: 1 / β * 1.1 }; },
+        tex: () => ['\\frac1\\beta e^{-x/\\beta}=\\lambda e^{-\\lambda x},\\ x&gt;0', '(1-\\beta t)^{-1}=\\frac{\\lambda}{\\lambda-t}'] },
+      gamma: { name: 'Gamma', ps: [['α', '\\alpha', 0.5, 12, 0.1, 2], ['β', '\\beta\\ (\\text{escala})', 0.2, 4, 0.1, 1]],
+        make: ({ α, β }) => { const G = D.gamma(α, β); let ym = 0; for (let i = 1; i <= 400; i++) ym = Math.max(ym, G.pdf(G.q(0.995) * i / 400)); return { f: G.pdf, lo: 0, hi: Math.max(4, G.q(0.995)), mean: α * β, var: α * β * β, ycap: ym * 1.15 }; },
+        tex: () => ['\\frac{1}{\\beta^\\alpha\\Gamma(\\alpha)}x^{\\alpha-1}e^{-x/\\beta},\\ x&gt;0', '(1-\\beta t)^{-\\alpha}'] },
+      beta: { name: 'Beta', ps: [['α', '\\alpha', 0.5, 10, 0.1, 2], ['β', '\\beta', 0.5, 10, 0.1, 5]],
+        make: ({ α, β }) => { const Bt = D.beta(α, β); let ym = 0; for (let i = 1; i < 400; i++) ym = Math.max(ym, Bt.pdf(i / 400)); return { f: Bt.pdf, lo: -0.05, hi: 1.05, mean: Bt.mean, var: Bt.var, ycap: Math.min(ym * 1.15, 8) }; },
+        tex: () => ['\\frac{x^{\\alpha-1}(1-x)^{\\beta-1}}{B(\\alpha,\\beta)},\\ 0&lt;x&lt;1', '\\text{sin forma cerrada útil}'] },
+    };
+    const pl = EM.plot.create(root.querySelector('.plot'), { height: 280, xlabel: 'x' });
+    const out = ui.readout(root.querySelector('.out'));
+    let key = 'bin', vals = {};
+    ui.select(cm, { label: 'Modelo', options: Object.entries(MODELS).map(([k, v]) => ({ value: k, label: v.name })), value: key, onChange: k => { key = k; build(); } });
+    function build() {
+      cp.innerHTML = ''; vals = {};
+      for (const [nm, tx, mn, mx, st, v0] of MODELS[key].ps) {
+        vals[nm] = v0;
+        ui.slider(cp, { tex: tx, min: mn, max: mx, step: st, value: v0, fmt: v => (st < 1 ? (+v).toFixed(st < 0.1 ? 2 : 1) : String(v)), onInput: v => { vals[nm] = v; render(); } });
+      }
+      render();
+    }
+    function render() {
+      const mod = MODELS[key];
+      const v = mod.fix ? mod.fix(Object.assign({}, vals)) : vals;
+      const d = mod.make(v);
+      if (mod.disc) {
+        const ks = []; for (let k = d.lo; k <= d.hi; k++) ks.push(k);
+        const ys = ks.map(d.f);
+        const xmin = Math.min(-0.8, d.lo - 0.8), xmax = d.hi + 0.8;
+        pl.setRange({ xmin, xmax, ymin: 0, ymax: Math.max(...ys) * 1.18 || 1, ylabel: 'P(X = x)' });
+        pl.draw(g => {
+          g.bars(ks, ys, { color: 'c1', alpha: 0.8, width: Math.min(0.7, Math.max(0.15, 0.7 * 40 / ks.length)) });
+          g.vline(d.mean, { color: 'c2', label: 'E(X)' });
+          const sd = Math.sqrt(d.var);
+          g.line(d.mean - sd, Math.max(...ys) * 1.08, d.mean + sd, Math.max(...ys) * 1.08, { color: 'c2', width: 3 });
+        });
+      } else {
+        pl.setRange({ xmin: d.lo, xmax: d.hi, ymin: 0, ymax: d.ycap, ylabel: 'f(x)' });
+        pl.draw(g => {
+          g.area(d.f, d.lo, d.hi, { color: 'c1', alpha: 0.15 });
+          g.curve(d.f, { color: 'c1', n: 800 });
+          g.vline(d.mean, { color: 'c2', label: 'E(X)' });
+          const sd = Math.sqrt(d.var);
+          g.line(d.mean - sd, d.ycap * 0.9, d.mean + sd, d.ycap * 0.9, { color: 'c2', width: 3 });
+        });
+      }
+      const [ftex, mtex] = mod.tex(v);
+      let note = '';
+      if (key === 'exp') note = `<br><b>En "tasa":</b> $\\lambda=1/\\beta=$ <b>${fmt(1 / v.β, 4)}</b>. Una "exponencial de parámetro $\\lambda=${fmt(1 / v.β, 3)}$" es esta misma: su media es $1/\\lambda=${fmt(v.β, 3)}$.`;
+      if (key === 'gamma') note = `<br><b>En "tasa":</b> $\\text{Gamma}(r=${fmt(v.α, 3)},\\ \\lambda=${fmt(1 / v.β, 4)})$ es la misma distribución ($\\lambda=1/\\beta$). ${Math.abs(v.α - 1) < 1e-9 ? 'Con $\\alpha=1$ es la exponencial.' : ''}`;
+      if (key === 'hiper' && (v.a !== vals.a || v.n !== vals.n)) note = '<br><span class="muted">(Se ajustó $a\\le N$, $n\\le N$.)</span>';
+      if (key === 'unif' && v.b !== vals.b) note = '<br><span class="muted">(Se ajustó $b&gt;a$.)</span>';
+      out.set(`${mod.disc ? '$\\P(X=x)=' : '$f_X(x)='}${ftex}$ &nbsp;·&nbsp; $M_X(t)=${mtex}$` +
+        `<br>$\\E(X)=$ <b>${fmt(d.mean, 4)}</b> &nbsp;·&nbsp; $\\Var(X)=$ <b>${fmt(d.var, 4)}</b> &nbsp;·&nbsp; $\\sigma=$ <b>${fmt(Math.sqrt(d.var), 4)}</b> <span class="muted">(barra naranja: $\\E X\\pm\\sigma$)</span>` + note);
+    }
+    build();
+  })();
+
+  ui.quiz('#q-cat', {
+    question: 'Un deber dice: "$X$ es exponencial de parámetro $\\lambda=2$". ¿Cuánto vale $\\E(X)$?',
+    options: ['$2$', '$1/2$', '$4$', '$1/4$'],
+    answer: 1,
+    explain: '"Parámetro λ" = tasa. $f(x)=2e^{-2x}$, que en la notación del formulario es $\\text{Exp}(\\beta=1/2)$: media $1/2$, varianza $1/4$.',
+  });
+  ui.quiz('#q-cat', {
+    question: 'Sacas 5 cartas sin reemplazo de una baraja de 52 y cuentas los corazones. ¿Qué modelo es?',
+    options: ['Binomial$(5,1/4)$', 'Hipergeométrica$(N=52,a=13,n=5)$', 'Geométrica$(1/4)$', 'Poisson$(5/4)$'],
+    answer: 1,
+    explain: 'Sin reemplazo ⇒ los ensayos no son independientes ⇒ hipergeométrica. (La binomial sería con reemplazo.)',
+  });
+  ui.numcheck('#q-cat', { prompt: '$X\\sim\\text{Gamma}(r=3,\\lambda=2)$ con $\\lambda$ <b>tasa</b>. $\\E(X)=$', answer: 1.5, tol: 1e-6, hint: 'β = 1/λ = 1/2 y E = αβ' });
+
+  /* =====================================================================
+     §5  Función Gamma
+     ===================================================================== */
+  (function () {
+    const root = $('#sim-gamma'), ctr = root.querySelector('.controls');
+    let x = 0.5;
+    ui.slider(ctr, { tex: 'x', min: 0.2, max: 5.5, step: 0.05, value: x, fmt: v => v.toFixed(2), onInput: v => { x = v; render(); } });
+    const pl = EM.plot.create(root.querySelector('.plot'), { xmin: 0, xmax: 5.7, ymin: 0, ymax: 26, height: 250, xlabel: 'x', ylabel: 'Γ(x)' });
+    const out = ui.readout(root.querySelector('.out'));
+    function render() {
+      pl.draw(g => {
+        g.curve(t => t > 0.04 ? S.gamma(t) : NaN, { color: 'c1', label: 'Γ(x)' });
+        g.points([1, 2, 3, 4, 5], [1, 1, 2, 6, 24], { color: 'c2', r: 5, alpha: 1, label: '(n−1)!' });
+        g.points([x], [S.gamma(x)], { color: 'accent', r: 5, alpha: 1 });
+        g.vline(x, { color: 'muted' });
+      });
+      let extra = '';
+      if (Math.abs(x - 0.5) < 1e-9) extra = ' $=\\sqrt\\pi$';
+      else if (Math.abs(x - 1.5) < 1e-9) extra = ' $=\\tfrac12\\sqrt\\pi$';
+      else if (Math.abs(x - Math.round(x)) < 1e-9) extra = ` $=(${Math.round(x)}-1)!$`;
+      out.set(`$\\Gamma(${x.toFixed(2)})=$ <b>${fmt(S.gamma(x), 5)}</b>${extra} &nbsp;·&nbsp; comprobación de la recurrencia: $${x.toFixed(2)}\\,\\Gamma(${x.toFixed(2)})=$ <b>${fmt(x * S.gamma(x), 5)}</b> $=\\Gamma(${(x + 1).toFixed(2)})=$ <b>${fmt(S.gamma(x + 1), 5)}</b>`);
+    }
+    render();
+  })();
+
+  ui.numcheck('#q-gb', { prompt: '$\\displaystyle\\int_0^\\infty x^5e^{-2x}\\,dx=$', answer: 15 / 8, tol: 1e-3, hint: 'núcleo de G(6, 1/2): β^α Γ(α) = (1/2)^6 · 5!' });
+  ui.numcheck('#q-gb', { prompt: '$\\displaystyle\\int_0^1 x^4(1-x)\\,dx=$', answer: 1 / 30, tol: 1e-4, hint: 'B(5, 2) = 4!·1!/6!' });
+  ui.quiz('#q-gb', {
+    question: '$\\Gamma(7/2)$ vale:',
+    options: ['$6!$', '$\\tfrac{15}{8}\\sqrt\\pi$', '$\\tfrac52\\sqrt\\pi$', '$\\tfrac{7}{2}\\sqrt\\pi$'],
+    answer: 1,
+    explain: '$\\Gamma(7/2)=\\tfrac52\\cdot\\tfrac32\\cdot\\tfrac12\\cdot\\Gamma(1/2)=\\tfrac{15}{8}\\sqrt\\pi\\approx 3.323$.',
+  });
+
+  /* =====================================================================
+     §6  Relaciones: simulación
+     ===================================================================== */
+  (function () {
+    const root = $('#sim-rel'), ctr = root.querySelector('.controls');
+    const R = () => S.rng();
+    const REL = {
+      bern: { label: 'Σ de n Bernoulli(0.3) → Bin(n, 0.3)', disc: true, nmax: 20, n0: 10,
+        gen: n => { let s = 0; for (let i = 0; i < n; i++) if (Math.random() < 0.3) s++; return s; },
+        target: n => D.binom(n, 0.3).pmf, range: n => [0, n], tex: n => `\\text{Bin}(${n},\\,0.3)` },
+      geo: { label: 'Σ de r Geo(0.4) → Bneg(r, 0.4)', disc: true, nmax: 10, n0: 3,
+        gen: n => { let s = 0; for (let i = 0; i < n; i++) s += Math.ceil(Math.log(R()) / Math.log(0.6)) || 1; return s; },
+        target: n => pmfBneg(n, 0.4), range: n => [n, Math.ceil(n / 0.4 + 4 * Math.sqrt(n * 0.6) / 0.4) + 2], tex: n => `\\text{Bneg}(${n},\\,0.4)` },
+      pois: { label: 'Σ de n Poisson(0.8) → Pois(0.8n)', disc: true, nmax: 20, n0: 5,
+        gen: n => { let s = 0; for (let i = 0; i < n; i++) s += S.rpois(0.8); return s; },
+        target: n => D.poisson(0.8 * n).pmf, range: n => [0, Math.ceil(0.8 * n + 4 * Math.sqrt(0.8 * n)) + 2], tex: n => `\\text{Pois}(${fmt(0.8 * n, 2)})` },
+      exp: { label: 'Σ de n Exp(β = 1) → G(n, 1)', nmax: 20, n0: 3,
+        gen: n => { let s = 0; for (let i = 0; i < n; i++) s -= Math.log(R()); return s; },
+        target: n => D.gamma(n, 1).pdf, range: n => [0, n + 4.5 * Math.sqrt(n) + 1], tex: n => `G(${n},\\,1)` },
+      chi: { label: 'Σ de ν cuadrados Z² → χ²(ν) = G(ν/2, 2)', nmax: 15, n0: 1,
+        gen: n => { let s = 0; for (let i = 0; i < n; i++) { const z = S.rnorm01(); s += z * z; } return s; },
+        target: n => D.chi2(n).pdf, range: n => [0, n + 4.5 * Math.sqrt(2 * n) + 1], tex: n => `\\chi^2_{(${n})}=G(${fmt(n / 2, 2)},\\,2)` },
+    };
+    let key = 'exp', n = REL.exp.n0, data = [];
+    const sel = ui.select(ctr, { label: 'Relación', options: Object.entries(REL).map(([k, v]) => ({ value: k, label: v.label })), value: key, onChange: k => { key = k; n = REL[k].n0; sl.input.max = REL[k].nmax; sl.set(n); sim(); } });
+    const sl = ui.slider(ctr, { tex: 'n', min: 1, max: REL.exp.nmax, step: 1, value: n, fmt: v => String(v), onInput: v => { n = v; sim(); } });
+    ui.button(ctr, 'Volver a simular', () => sim(), { primary: true });
+    const pl = EM.plot.create(root.querySelector('.plot'), { height: 270, xlabel: 'valor de la suma' });
+    const out = ui.readout(root.querySelector('.out'));
+    function sim() {
+      const r = REL[key], M = 8000;
+      data = new Array(M); for (let i = 0; i < M; i++) data[i] = r.gen(n);
+      const [a, b] = r.range(n), f = r.target(n);
+      if (r.disc) {
+        const ks = [], emp = [], th = [];
+        const cnt = new Map(); for (const v of data) cnt.set(v, (cnt.get(v) || 0) + 1);
+        for (let k = a; k <= b; k++) { ks.push(k); emp.push((cnt.get(k) || 0) / M); th.push(f(k)); }
+        pl.setRange({ xmin: a - 0.8, xmax: b + 0.8, ymin: 0, ymax: Math.max(...emp, ...th) * 1.18, ylabel: 'probabilidad' });
+        pl.draw(g => { g.bars(ks, emp, { color: 'c2', alpha: 0.6, width: 0.75, label: 'simulado' }); g.points(ks, th, { color: 'c1', r: 4, alpha: 1, label: 'teórico' }); });
+      } else {
+        let ym = 0; for (let i = 1; i <= 300; i++) ym = Math.max(ym, f(a + (b - a) * i / 300));
+        pl.setRange({ xmin: a, xmax: b, ymin: 0, ymax: Math.min(ym * 1.3, 1.2), ylabel: 'densidad' });
+        pl.draw(g => { g.hist(data, { bins: 50, color: 'c2', label: 'simulado' }); g.curve(f, { color: 'c1', label: 'teórico' }); });
+      }
+      const m = S.mean(data), v = S.var(data);
+      const T = { bern: [0.3 * n, 0.21 * n], geo: [n / 0.4, n * 0.6 / 0.16], pois: [0.8 * n, 0.8 * n], exp: [n, n], chi: [n, 2 * n] }[key];
+      out.set(`Predicción: $${r.tex(n)}$, con media <b>${fmt(T[0], 4)}</b> y varianza <b>${fmt(T[1], 4)}</b>.<br>Simulado (8000 réplicas): media <b>${fmt(m, 4)}</b>, varianza <b>${fmt(v, 4)}</b>.`);
+    }
+    sim();
+  })();
+
+  ui.quiz('#q-rel', {
+    question: '$X\\sim G(2,3)$ y $Y\\sim G(5,3)$ independientes. ¿Distribución de $X+Y$?',
+    options: ['$G(7,6)$', '$G(7,3)$', '$G(10,3)$', 'No se puede saber'],
+    answer: 1,
+    explain: 'Mismo β ⇒ se suman los α: $(1-3t)^{-2}(1-3t)^{-5}=(1-3t)^{-7}$ ⇒ $G(7,3)$.',
+  });
+  ui.quiz('#q-rel', {
+    question: '¿Qué es $\\chi^2_{(2)}$?',
+    options: ['$G(2,2)$', '$\\text{Exp}(\\beta=2)$', '$N(0,2)$', '$\\text{Exp}(\\beta=1/2)$'],
+    answer: 1,
+    explain: '$\\chi^2_{(2)}=G(1,2)$, y una Gamma con $\\alpha=1$ es exponencial: $\\text{Exp}(\\beta=2)$, media 2 (tasa $1/2$).',
+  });
+  ui.numcheck('#q-rel', { prompt: 'Si $X_1,\\dots,X_5\\iid\\text{Exp}(\\beta=2)$, $\\Var\\big(\\sum X_i\\big)=$', answer: 20, tol: 1e-6, hint: 'la suma es G(5, 2): Var = αβ²' });
+
+  /* =====================================================================
+     §7  Soporte y límites (f = 2 en 0 < x < y < 1)
+     ===================================================================== */
+  (function () {
+    const root = $('#sim-soporte'), ctr = root.querySelector('.controls');
+    const EV = {
+      none: { label: 'Marginal (todo el soporte)', poly: null, prob: null },
+      sum: { label: 'Evento X + Y < 1', poly: [[0, 0], [0.5, 0.5], [0, 1]], prob: 0.5, pred: (x, y) => x + y < 1 },
+      rect: { label: 'Evento X < 1/4, Y < 1/2', poly: [[0, 0], [0.25, 0.25], [0.25, 0.5], [0, 0.5]], prob: 3 / 16, pred: (x, y) => x < 0.25 && y < 0.5 },
+    };
+    let ev = 'none', orden = 'v', c = 0.3, pts = null, est = null;
+    ui.select(ctr, { label: 'Región', options: Object.entries(EV).map(([k, v]) => ({ value: k, label: v.label })), value: ev, onChange: k => { ev = k; est = pts ? estimate() : null; render(); } });
+    ui.select(ctr, { label: 'Orden', options: [{ value: 'v', label: 'x afuera (cortes verticales)' }, { value: 'h', label: 'y afuera (cortes horizontales)' }], value: orden, onChange: k => { orden = k; render(); } });
+    ui.slider(ctr, { label: 'corte', min: 0.01, max: 0.99, step: 0.01, value: c, fmt: v => v.toFixed(2), onInput: v => { c = v; render(); } });
+    ui.button(ctr, 'Simular 20 000', () => {
+      const N = 20000; pts = { x: new Float64Array(N), y: new Float64Array(N) };
+      for (let i = 0; i < N; i++) { const u = Math.random(), v = Math.random(); pts.x[i] = Math.min(u, v); pts.y[i] = Math.max(u, v); }
+      est = estimate(); render();
+    }, { primary: true });
+    const pl = EM.plot.create(root.querySelector('.plot'), { xmin: -0.08, xmax: 1.08, ymin: -0.08, ymax: 1.08, height: w => Math.min(420, Math.max(280, w * 0.75)), xlabel: 'x', ylabel: 'y' });
+    const out = ui.readout(root.querySelector('.out'));
+    function estimate() {
+      const N = pts.x.length; let sx = 0, sy = 0, sxx = 0, syy = 0, sxy = 0, h = 0;
+      const pr = EV[ev].pred;
+      for (let i = 0; i < N; i++) { const x = pts.x[i], y = pts.y[i]; sx += x; sy += y; sxx += x * x; syy += y * y; sxy += x * y; if (pr && pr(x, y)) h++; }
+      const mx = sx / N, my = sy / N, vx = sxx / N - mx * mx, vy = syy / N - my * my, cv = sxy / N - mx * my;
+      return { mx, my, cv, r: cv / Math.sqrt(vx * vy), p: pr ? h / N : null };
+    }
+    // límites del segmento de corte dentro de la región elegida
+    function seg() {
+      if (orden === 'v') { // x = c fijo, y de lo a hi
+        let lo = c, hi = 1;
+        if (ev === 'sum') hi = 1 - c;
+        if (ev === 'rect') { hi = 0.5; if (c >= 0.25) hi = -1; }
+        return hi > lo ? [lo, hi] : null;
+      } // y = c fijo, x de lo a hi
+      let lo = 0, hi = c;
+      if (ev === 'sum') hi = Math.min(c, 1 - c);
+      if (ev === 'rect') { hi = Math.min(c, 0.25); if (c >= 0.5) hi = -1; }
+      return hi > lo ? [lo, hi] : null;
+    }
+    function render() {
+      const s = seg();
+      pl.draw(g => {
+        g.polygon([[0, 0], [1, 1], [0, 1]], { color: 'c1', alpha: 0.16, stroke: 'c1', width: 1.6 });
+        if (EV[ev].poly) g.polygon(EV[ev].poly, { color: 'c2', alpha: 0.35, stroke: 'c2', width: 1.4 });
+        if (pts) { const n = 1500; g.points(Array.from(pts.x.slice(0, n)), Array.from(pts.y.slice(0, n)), { color: 'ink', r: 1.3, alpha: 0.35 }); }
+        g.line(0, 0, 1, 1, { color: 'muted', dash: [4, 4], width: 1 });
+        g.text('y = x', 0.78, 0.7, { color: 'muted', size: 12 });
+        g.text('soporte: 0 < x < y < 1', 0.03, 1.03, { color: 'c1', size: 12, bold: true });
+        if (ev === 'sum') g.line(0, 1, 1, 0, { color: 'c2', dash: [4, 4], width: 1 });
+        if (orden === 'v') {
+          g.line(c, -0.08, c, 1.08, { color: 'muted', dash: [2, 4], width: 1 });
+          if (s) { g.line(c, s[0], c, s[1], { color: 'c5', width: 4 }); g.points([c, c], s, { color: 'c5', r: 4.5, alpha: 1 }); }
+        } else {
+          g.line(-0.08, c, 1.08, c, { color: 'muted', dash: [2, 4], width: 1 });
+          if (s) { g.line(s[0], c, s[1], c, { color: 'c5', width: 4 }); g.points(s, [c, c], { color: 'c5', r: 4.5, alpha: 1 }); }
+        }
+      });
+      const cs = c.toFixed(2);
+      let txt;
+      if (orden === 'v') {
+        const fr = { none: ['x', '1'], sum: ['x', '1-x'], rect: ['x', '1/2'] }[ev];
+        txt = `Fijo $x=${cs}$: la vertical entra en $y=${fr[0]}$ y sale en $y=${fr[1]}$.`;
+        if (!s) txt += ` <b>Aquí no corta la región</b> (por eso $x$ sólo recorre ${ev === 'sum' ? '$(0,\\,1/2)$' : '$(0,\\,1/4)$'}).`;
+        else if (ev === 'none') txt += `<br>$f_X(${cs})=\\int_{${cs}}^{1}2\\,dy=2(1-${cs})=$ <b>${fmt(2 * (1 - c), 4)}</b>.`;
+        else txt += `<br>Integral de adentro: $\\int_{${fmt(s[0], 3)}}^{${fmt(s[1], 3)}}2\\,dy=$ <b>${fmt(2 * (s[1] - s[0]), 4)}</b>. ${ev === 'sum' ? 'Total: $\\int_0^{1/2}\\!\\int_x^{1-x}2\\,dy\\,dx=\\tfrac12$.' : 'Total: $\\int_0^{1/4}\\!\\int_x^{1/2}2\\,dy\\,dx=\\tfrac{3}{16}$.'}`;
+      } else {
+        if (ev === 'none') txt = `Fijo $y=${cs}$: la horizontal entra en $x=0$ y sale en la diagonal $x=y$.<br>$f_Y(${cs})=\\int_0^{${cs}}2\\,dx=2\\cdot${cs}=$ <b>${fmt(2 * c, 4)}</b>.`;
+        else if (ev === 'sum') txt = `Fijo $y=${cs}$: entra en $x=0$ y sale en ${c < 0.5 ? '$x=y$ (la diagonal)' : '$x=1-y$ (la recta del evento)'}. <b>La frontera de salida cambia en $y=1/2$</b> ⇒ hay que partir la integral: $\\int_0^{1/2}\\!\\int_0^{y}2\\,dx\\,dy+\\int_{1/2}^{1}\\!\\int_0^{1-y}2\\,dx\\,dy=\\tfrac14+\\tfrac14$.`;
+        else txt = s ? `Fijo $y=${cs}$: entra en $x=0$ y sale en ${c < 0.25 ? '$x=y$' : '$x=1/4$'}. La salida cambia en $y=1/4$ ⇒ dos integrales: $\\int_0^{1/4}\\!\\int_0^{y}2\\,dx\\,dy+\\int_{1/4}^{1/2}\\!\\int_0^{1/4}2\\,dx\\,dy=\\tfrac1{16}+\\tfrac18=\\tfrac3{16}$.` : `Fijo $y=${cs}$: la horizontal ya no corta el evento (pide $y&lt;1/2$).`;
+        if (s && ev !== 'none') txt += `<br>Integral de adentro en este corte: <b>${fmt(2 * (s[1] - s[0]), 4)}</b>.`;
+      }
+      if (est) txt += `<br><span class="muted">Simulación (20 000 pares mín/máx de dos U(0,1)):</span> $\\bar x=$ <b>${fmt(est.mx, 4)}</b> (teórico 1/3), $\\bar y=$ <b>${fmt(est.my, 4)}</b> (2/3), cov <b>${fmt(est.cv, 4)}</b> (1/36 ≈ 0.0278), corr <b>${fmt(est.r, 3)}</b> (0.5)` + (est.p !== null ? `, proporción en el evento <b>${fmt(est.p, 4)}</b> (exacto ${fmt(EV[ev].prob, 4)})` : '') + '.';
+      out.set(txt);
+    }
+    render();
+  })();
+
+  ui.numcheck('#q-conj', { prompt: 'Con $f_{XY}=2$ en $0&lt;x&lt;y&lt;1$: $\\P(X&lt;1/4,\\ Y&lt;1/2)=$', answer: 3 / 16, tol: 1e-3, hint: '∫₀^{1/4} ∫ₓ^{1/2} 2 dy dx' });
+  ui.quiz('#q-conj', {
+    question: 'En el mismo ejemplo, ¿cuál es la distribución de $X$ dado $Y=y$?',
+    options: ['$U(0,1)$', '$U(0,y)$', '$U(y,1)$', '$\\text{Beta}(1,2)$'],
+    answer: 1,
+    explain: '$f_{X|Y}(x|y)=\\dfrac{2}{2y}=\\dfrac1y$ para $0&lt;x&lt;y$: uniforme en $(0,y)$, con $\\E(X|Y=y)=y/2$.',
+  });
+  ui.quiz('#q-conj', {
+    question: 'Si $f_{XY}(x,y)=6e^{-2x-3y}$ para $x&gt;0$, $y&gt;0$, entonces $X$ y $Y$…',
+    options: ['son independientes', 'no son independientes porque la densidad depende de x y de y', 'tienen correlación 1', 'no se puede saber sin integrar'],
+    answer: 0,
+    explain: 'El soporte es un "rectángulo" $(0,\\infty)^2$ y $6e^{-2x-3y}=(2e^{-2x})(3e^{-3y})$ se factoriza ⇒ independientes ($X\\sim\\text{Exp}(\\beta=1/2)$, $Y\\sim\\text{Exp}(\\beta=1/3)$).',
+  });
+
+  /* =====================================================================
+     §8  Ley de los grandes números
+     ===================================================================== */
+  (function () {
+    const root = $('#sim-lgn'), ctr = root.querySelector('.controls');
+    const NMAX = 1000, P = 200, SHOW = 6;
+    const M = {
+      bern: { label: 'Bernoulli(0.3)', mu: 0.3, s2: 0.21, y: [0, 0.8], rand: () => (Math.random() < 0.3 ? 1 : 0) },
+      unif: { label: 'Uniforme(0, 1)', mu: 0.5, s2: 1 / 12, y: [0.2, 0.8], rand: () => Math.random() },
+      exp: { label: 'Exp(β = 2)', mu: 2, s2: 4, y: [0, 4.5], rand: () => -2 * Math.log(S.rng()) },
+      cauchy: { label: 'Cauchy (sin media)', mu: 0, s2: NaN, y: [-4, 4], rand: () => Math.tan(Math.PI * (Math.random() - 0.5)) },
+    };
+    let key = 'exp', eps = 0.2, cum = null;
+    ui.select(ctr, { label: 'Modelo', options: Object.entries(M).map(([k, v]) => ({ value: k, label: v.label })), value: key, onChange: k => { key = k; eps = Math.min(eps, 0.5); gen(); } });
+    ui.slider(ctr, { tex: '\\varepsilon', min: 0.02, max: 0.5, step: 0.01, value: eps, fmt: v => v.toFixed(2), onInput: v => { eps = v; render(); } });
+    ui.button(ctr, 'Nuevas trayectorias', () => gen(), { primary: true });
+    const p1 = EM.plot.create(root.querySelector('.paths'), { xmin: 0, xmax: NMAX, height: 250, xlabel: 'n', ylabel: 'X̄ₙ' });
+    const p2 = EM.plot.create(root.querySelector('.frac'), { xmin: 0, xmax: NMAX, ymin: 0, ymax: 1.05, height: 200, xlabel: 'n', ylabel: 'P(|X̄ₙ − μ| > ε)' });
+    const out = ui.readout(root.querySelector('.out'));
+    function gen() {
+      const m = M[key]; cum = new Float64Array(P * NMAX);
+      for (let j = 0; j < P; j++) { let s = 0; for (let i = 0; i < NMAX; i++) { s += m.rand(); cum[j * NMAX + i] = s / (i + 1); } }
+      render();
+    }
+    function render() {
+      const m = M[key];
+      const frac = new Float64Array(NMAX);
+      for (let i = 0; i < NMAX; i++) { let c = 0; for (let j = 0; j < P; j++) if (Math.abs(cum[j * NMAX + i] - m.mu) > eps) c++; frac[i] = c / P; }
+      const cols = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6'];
+      p1.setRange({ ymin: m.y[0], ymax: m.y[1] });
+      p1.draw(g => {
+        g.polygon([[0, m.mu - eps], [NMAX, m.mu - eps], [NMAX, m.mu + eps], [0, m.mu + eps]], { color: 'accent', alpha: 0.12 });
+        for (let j = 0; j < SHOW; j++) g.curve(x => { const i = Math.max(0, Math.min(NMAX - 1, Math.round(x) - 1)); return cum[j * NMAX + i]; }, { color: cols[j], width: 1.4, from: 1, to: NMAX, n: NMAX });
+        g.hline(m.mu, { color: 'ink', dash: [6, 4] });
+      });
+      p2.draw(g => {
+        if (isFinite(m.s2)) g.curve(n => Math.min(1, m.s2 / (n * eps * eps)), { color: 'bad', dash: [5, 4], label: 'cota de Chebyshev σ²/(nε²)', from: 1 });
+        g.curve(x => frac[Math.max(0, Math.min(NMAX - 1, Math.round(x) - 1))], { color: 'c1', label: 'proporción fuera de la franja', from: 1, n: NMAX });
+      });
+      const at = n => frac[n - 1];
+      out.set(`Proporción de las ${P} trayectorias fuera de $\\mu\\pm\\varepsilon$: con $n=10$ <b>${fmt(at(10), 3)}</b>, $n=100$ <b>${fmt(at(100), 3)}</b>, $n=1000$ <b>${fmt(at(1000), 3)}</b>.` +
+        (key === 'cauchy' ? '<br><b>Cauchy:</b> la proporción no baja a 0. Su "media" no existe ($\\E|X|=\\infty$) y $\\bar X_n$ vuelve a ser Cauchy para todo $n$: los saltos gigantes nunca se diluyen.' :
+          `<br>Cota de Chebyshev en $n=1000$: $\\sigma^2/(n\\varepsilon^2)=$ <b>${fmt(Math.min(1, m.s2 / (1000 * eps * eps)), 4)}</b> (válida, pero holgada).`));
+    }
+    gen();
+  })();
+
+  ui.quiz('#q-conv', {
+    question: 'En la simulación, con la Cauchy $\\bar X_n$ no se estabiliza. ¿Contradice eso la LGN?',
+    options: ['Sí, la LGN es falsa para muestras grandes', 'No: la LGN exige media finita y la Cauchy no la tiene', 'No: es sólo mala suerte en la simulación', 'Sí, porque la Cauchy es simétrica'],
+    answer: 1,
+    explain: 'La hipótesis de la LGN es $\\E|X|&lt;\\infty$. La Cauchy tiene colas tan pesadas que $\\E|X|=\\infty$; de hecho $\\bar X_n$ tiene la misma distribución Cauchy que una sola observación.',
+  });
+  ui.numcheck('#q-conv', { prompt: 'Con $\\sigma=2$, $n=100$, $\\varepsilon=0.5$, la cota de Chebyshev para $\\P(|\\bar X_n-\\mu|\\ge\\varepsilon)$ es:', answer: 0.16, tol: 1e-4, hint: 'σ²/(nε²) = 4/(100·0.25)' });
+  ui.quiz('#q-conv', {
+    question: 'Si $X_i\\iid$ con media $\\mu$ y varianza $\\sigma^2$, ¿qué afirma el TLC (y no la LGN)?',
+    options: ['$\\bar X_n\\pto\\mu$', '$\\dfrac{\\bar X_n-\\mu}{\\sigma/\\sqrt n}\\dto N(0,1)$', '$\\Var(\\bar X_n)=\\sigma^2$', '$\\bar X_n=\\mu$ para $n$ grande'],
+    answer: 1,
+    explain: 'La LGN da el límite ($\\mu$); el TLC da la forma de la distribución alrededor del límite, a escala $\\sigma/\\sqrt n$. Ver <a href="clase-05.html">Clase 5</a>.',
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estadística Matemática · Guía</title>
+<meta name="description" content="Guía interactiva de Estadística Matemática (FCNM–ESPOL): transformaciones, estadísticos de orden, χ², t, F y TLC con simulaciones y ejercicios resueltos.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="assets/css/style.css">
+<script src="assets/js/theme.js"></script>
+<style>
+  .hero { padding: 8px 0 4px; }
+  .hero h1 { font-size: clamp(30px, 5vw, 44px); }
+  .progress { display: flex; align-items: center; gap: 12px; font-family: var(--font-ui); font-size: 14px; color: var(--muted); margin: 10px 0 0; }
+  .bar { flex: 1; max-width: 320px; height: 8px; border-radius: 99px; background: var(--surface-2); overflow: hidden; }
+  .bar > i { display: block; height: 100%; width: 0; background: var(--good); transition: width .3s; }
+  .group-title { font-family: var(--font-ui); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 26px 0 0; }
+  .traps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+  .traps .box { margin: 0; }
+  .steps-mini { counter-reset: s; list-style: none; padding: 0; display: grid; gap: 8px; }
+  .steps-mini li { counter-increment: s; padding-left: 34px; position: relative; }
+  .steps-mini li::before { content: counter(s); position: absolute; left: 0; top: 1px; width: 24px; height: 24px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); font: 700 13px/24px var(--font-ui); text-align: center; }
+</style>
+</head>
+<body data-page="inicio" data-root="">
+<main id="contenido">
+
+  <header class="page-head hero">
+    <p class="kicker">FCNM · ESPOL · II PAO 2026</p>
+    <h1>Estadística Matemática, explicada con calma</h1>
+    <p class="lead">Las clases del curso reescritas desde cero, con cada ejemplo y ejercicio resuelto paso a paso, simulaciones para ver los teoremas y guías para los deberes.</p>
+    <div class="progress"><span id="prog-txt">Progreso</span><div class="bar"><i id="prog-bar"></i></div></div>
+  </header>
+
+  <section>
+    <h2 id="como-usar">Cómo usar esta guía</h2>
+    <ol class="steps-mini">
+      <li>Si Estadística I está borrosa, empieza por el <a href="temas/repaso.html">repaso exprés</a>. Ahí están los modelos, la FGM y las distribuciones conjuntas.</li>
+      <li>Sigue las clases en orden. Cada página va de la intuición a la fórmula, después al ejemplo resuelto y por último a la simulación.</li>
+      <li>En los ejercicios, intenta tú primero. Abre las <b>pistas</b> una a una y deja la <b>solución</b> para cuando ya lo hayas intentado.</li>
+      <li>Ten abierta la página de <a href="herramientas/tablas.html">tablas</a> cuando trabajes con χ², t o F.</li>
+      <li>Al terminar una sección, márcala como estudiada al pie de la página. El progreso se guarda en este navegador.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2 id="trampas">Tres trampas que conviene conocer desde ya</h2>
+    <div class="traps">
+      <div class="box cuidado">
+        <span class="box-title">1 · Las colas “al revés”</span>
+        <p>Las tablas ESPOL dan el valor con <b>área a la izquierda</b> $q$: $\P(X\le x)=q$. En clase se escribe el valor crítico con <b>área $\alpha$ a la derecha</b>, como $F_{(\nu_1,\nu_2,\alpha)}$ o $t_{\alpha}$.</p>
+        <p><b>Regla:</b> el valor crítico de cola derecha $\alpha$ está en la columna $1-\alpha$ de la tabla. <a href="herramientas/tablas.html">Ver más →</a></p>
+      </div>
+      <div class="box cuidado">
+        <span class="box-title">2 · β o λ: dos parametrizaciones</span>
+        <p>El formulario usa $\text{Exp}(\beta)$ con <b>media $\beta$</b> y $\text{Gamma}(\alpha,\beta)$ con <b>escala $\beta$</b>. Los deberes dicen “exponencial de parámetro $\lambda$”, que es la <b>tasa</b>: la media es $1/\lambda$.</p>
+        <p>Conversión: $\beta = 1/\lambda$</p>
+      </div>
+      <div class="box cuidado">
+        <span class="box-title">3 · Estadísticos de orden</span>
+        <p>En clase se escriben $Y_{(1)}\le\dots\le Y_{(n)}$. En la Lista 1.1 se escriben $Y_1\le\dots\le Y_n$, <b>sin paréntesis</b>. Ahí $Y_1$ es el mínimo, no la primera observación.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 id="ruta">Ruta de estudio</h2>
+    <div id="ruta-cards"></div>
+  </section>
+
+  <section>
+    <h2 id="fuentes">Fuentes que cubre</h2>
+    <p class="small muted">Las carpetas están junto a esta guía: <code>Clases/</code>, <code>Formularios/</code>, <code>Tablas/</code> y <code>Deberes/Ejercicios/</code>. La guía se actualiza cada vez que se agrega una clase, una tabla o un deber nuevo.</p>
+    <div class="table-wrap">
+      <table class="tabla text-left">
+        <thead><tr><th>Fuente</th><th>Dónde se trabaja</th></tr></thead>
+        <tbody>
+          <tr><td>Formularios 1 y 2 (Estadística I)</td><td><a href="temas/repaso.html">Repaso exprés</a> (la notación de toda la guía sale de aquí)</td></tr>
+          <tr><td>Clase 01: funciones de v.a.</td><td><a href="temas/clase-01.html">Clase 1</a></td></tr>
+          <tr><td>Clase 02: FGM y estadísticos de orden</td><td><a href="temas/clase-02.html">Clase 2</a></td></tr>
+          <tr><td>Clase 03: distribuciones muestrales, χ² y t</td><td><a href="temas/clase-03.html">Clase 3</a></td></tr>
+          <tr><td>Clase 04: distribución F</td><td><a href="temas/clase-04.html">Clase 4</a></td></tr>
+          <tr><td>Clase 05: teorema del límite central</td><td><a href="temas/clase-05.html">Clase 5</a></td></tr>
+          <tr><td>Tablas χ², t, F, K-S</td><td><a href="herramientas/tablas.html">Cómo leer las tablas</a> (transcritas e interactivas)</td></tr>
+          <tr><td>Lista 1.1 (entrega 20/10/2026)</td><td><a href="deberes/lista-1-1.html">Guía del deber</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="assets/js/stats.js"></script>
+<script src="assets/js/plot.js"></script>
+<script src="assets/js/site.js"></script>
+<script src="assets/js/ui.js"></script>
+<script>
+(function () {
+  const { el, store } = EM.ui;
+  const host = document.getElementById('ruta-cards');
+  let total = 0, done = 0;
+  for (const g of EM.SITE) {
+    if (g.group === 'Inicio') continue;
+    host.append(el('div', { class: 'group-title' }, g.group));
+    const cards = el('div', { class: 'cards' });
+    for (const it of g.items) {
+      const ok = store.get('em-done-' + it.id) === '1';
+      total++; if (ok) done++;
+      const parts = it.title.split(' · ');
+      cards.append(el('a', { class: 'card' + (ok ? ' done' : ''), href: it.href },
+        el('span', { class: 'tag' }, (ok ? '✓ ' : '') + (parts.length > 1 ? parts[0] : g.group)),
+        el('h3', {}, parts.length > 1 ? parts.slice(1).join(' · ') : it.title),
+        el('p', {}, it.desc || '')));
+    }
+    host.append(cards);
+  }
+  document.getElementById('prog-txt').textContent = `Progreso: ${done}/${total} secciones`;
+  document.getElementById('prog-bar').style.width = (total ? 100 * done / total : 0) + '%';
+})();
+</script>
+</body>
+</html>

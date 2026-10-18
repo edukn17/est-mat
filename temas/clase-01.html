@@ -1,0 +1,1212 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clase 1 · Funciones de v.a.</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/theme.js"></script>
+<style>
+  /* Diagrama de decisión "¿Qué método uso?" (propio de esta página) */
+  .flow { font-family: var(--font-ui); font-size: 15px; line-height: 1.45; margin: 18px 0; }
+  .flow-node { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 10px 14px; margin: 0; }
+  .flow-q { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; text-align: center; }
+  .flow-res { border-left: 4px solid var(--good); }
+  .flow-res.alt { border-left-color: var(--box-warn); }
+  .flow-res b { display: block; margin-bottom: 2px; }
+  .flow-arrow { text-align: center; color: var(--muted); font-size: 18px; line-height: 1; margin: 6px 0; }
+  .flow-split { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-top: 4px; }
+  .flow-col { display: flex; flex-direction: column; gap: 0; }
+  .flow-tag { display: inline-block; font: 700 12px var(--font-ui); text-transform: uppercase; letter-spacing: .05em; color: var(--accent); margin: 4px 0 6px; }
+  .flow-sub { display: grid; grid-template-columns: 1fr; gap: 8px; }
+  .flow .si, .flow .no { font: 700 11px var(--font-ui); padding: 1px 7px; border-radius: 999px; margin-right: 6px; }
+  .flow .si { background: color-mix(in srgb, var(--good) 18%, var(--surface)); color: var(--good); }
+  .flow .no { background: color-mix(in srgb, var(--bad) 15%, var(--surface)); color: var(--bad); }
+  .sim .plot-cap { font: 600 12px var(--font-ui); color: var(--muted); margin: 6px 0 -4px; }
+</style>
+</head>
+<body data-page="clase-01" data-root="../">
+<main id="contenido">
+
+  <header class="page-head">
+    <p class="kicker">Clase 1</p>
+    <h1>Funciones de variables aleatorias</h1>
+    <p class="lead">Conoces la distribución de $Y$ y te preguntan por la de $U=h(Y)$. Al terminar esta página sabrás hacerlo con dos herramientas: el método de la distribución acumulada y el método del Jacobiano (en 1, 2 y $n$ dimensiones), y sabrás cuál elegir.</p>
+  </header>
+
+  <!-- ================================================================= -->
+  <section>
+    <h2 id="idea">¿Qué problema resolvemos?</h2>
+    <p>Tienes una variable aleatoria $Y$ con densidad $f_Y(y)$ conocida (o un vector $(Y_1,\dots,Y_n)$ con densidad conjunta conocida) y te interesa una <b>función</b> de ella: el área $U=\pi Y^2$ de un círculo de radio aleatorio, el promedio $U=(Y_1+Y_2)/2$ de dos tiempos de vida, la proporción $U=Y_1/(Y_1+Y_2)$… En general <b>$U=h(Y)$ no tiene la misma distribución que $Y$</b>, y hay que deducirla.</p>
+
+    <div class="box idea"><span class="box-title">Intuición: la probabilidad se traslada, no se crea ni se destruye</span>
+      <p>Toda la clase sale de una sola igualdad: para cualquier conjunto $A$,</p>
+      $$\P(U\in A)=\P\big(Y\in\{y:\ h(y)\in A\}\big).$$
+      <p>Es decir: para saber cuánta probabilidad tiene $U$ en $A$, buscas <b>qué valores de $Y$ caen en $A$ después de transformarlos</b> (la <em>preimagen</em> de $A$) y mides esa probabilidad con la distribución de $Y$, que sí conoces. Los dos métodos de hoy son dos formas de organizar esta cuenta:</p>
+      <ul>
+        <li><b>Acumulada:</b> tomas $A=(-\infty,u]$, calculas $F_U(u)=\P(U\le u)$ y derivas.</li>
+        <li><b>Jacobiano:</b> tomas $A$ un intervalo (o rectángulo) diminuto y miras cuánto se estira o encoge al pasarlo por $h$.</li>
+      </ul>
+    </div>
+
+    <p>La clase menciona tres métodos:</p>
+    <ol>
+      <li><b>Método de la distribución acumulada</b> (esta página).</li>
+      <li><b>Método de la transformación del Jacobiano</b> (esta página).</li>
+      <li><b>Método de la función generadora de momentos</b> (Clase 2).</li>
+    </ol>
+
+    <div class="box nota"><span class="box-title">Repaso exprés de lo que vas a usar</span>
+      <ul>
+        <li>$F_Y(y)=\P(Y\le y)$ y, si $Y$ es continua, $f_Y(y)=F_Y'(y)$. Por eso <b>derivar la acumulada da la densidad</b>.</li>
+        <li>$\P(a&lt;Y\le b)=F_Y(b)-F_Y(a)=\int_a^b f_Y(y)\,dy$.</li>
+        <li><b>Soporte</b>: conjunto donde $f_Y&gt;0$. Fuera de él la densidad vale 0, y casi todos los errores de esta clase son por olvidar el soporte.</li>
+        <li>Exponencial con media $\beta$ (notación del Formulario 2): $f(y)=\frac1\beta e^{-y/\beta}$, $F(y)=1-e^{-y/\beta}$, $y&gt;0$.</li>
+        <li>Si $Y_1,Y_2$ son independientes: $f_{Y_1,Y_2}(y_1,y_2)=f_{Y_1}(y_1)\,f_{Y_2}(y_2)$.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================= -->
+  <section>
+    <h2 id="acumulada">Método de la distribución acumulada (una variable)</h2>
+    <p>Es el método más general: funciona siempre, aunque $h$ no sea monótona o aunque $U$ no sea continua. La receta para $U=h(Y)$:</p>
+    <ol class="pasos">
+      <li><b>Soporte de $U$.</b> Mira qué valores toma $h(y)$ cuando $y$ recorre el soporte de $Y$. Eso te dice dónde $F_U$ vale 0, dónde vale 1 y dónde hay que calcular.</li>
+      <li><b>Escribe</b> $F_U(u)=\P(U\le u)=\P(h(Y)\le u)$.</li>
+      <li><b>Despeja $Y$ dentro de la probabilidad:</b> convierte el evento $\{h(Y)\le u\}$ en un evento sobre $Y$, por ejemplo $\{Y\le h^{-1}(u)\}$. <em>Si $h$ es decreciente, la desigualdad se voltea.</em></li>
+      <li><b>Calcula</b> esa probabilidad con $F_Y$ (o integrando $f_Y$).</li>
+      <li><b>Deriva:</b> $f_U(u)=F_U'(u)$, y escribe explícitamente el soporte.</li>
+    </ol>
+
+    <div class="box ejercicio" id="ej-1">
+      <span class="box-title">Ejercicio 1 (Clase 1)</span>
+      <p>Suponga que $Y$ tiene función de densidad dada por</p>
+      $$f(y)=\begin{cases}2y, & 0\le y\le 1,\\ 0, & \text{resto de } y.\end{cases}$$
+      <p>Encuentre la función de densidad de $U=3Y-1$.</p>
+      <details class="pista"><summary>Pista 1</summary><div><p>Si $y\in[0,1]$, ¿entre qué valores se mueve $3y-1$? Ese es el soporte de $U$.</p></div></details>
+      <details class="pista"><summary>Pista 2</summary><div><p>$\{3Y-1\le u\}=\{Y\le (u+1)/3\}$. Necesitas $F_Y(y)=\int_0^y 2t\,dt$.</p></div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Soporte.</b> $h(y)=3y-1$ es creciente; $h(0)=-1$ y $h(1)=2$. Entonces $U\in[-1,2]$: $F_U(u)=0$ si $u&lt;-1$ y $F_U(u)=1$ si $u&gt;2$.</li>
+          <li><b>Acumulada de $Y$.</b> Para $0\le y\le 1$: $F_Y(y)=\int_0^y 2t\,dt=y^2$ (y $F_Y=0$ si $y&lt;0$, $F_Y=1$ si $y&gt;1$).</li>
+          <li><b>Despejar.</b> Para $-1\le u\le 2$:
+            $$F_U(u)=\P(3Y-1\le u)=\P\Big(Y\le \tfrac{u+1}{3}\Big)=F_Y\Big(\tfrac{u+1}{3}\Big)=\Big(\tfrac{u+1}{3}\Big)^2 .$$
+            (Usamos que $\frac{u+1}{3}\in[0,1]$ justamente porque $u\in[-1,2]$; por eso aplicamos el tramo $F_Y(y)=y^2$.)</li>
+          <li><b>Derivar.</b> Por la regla de la cadena:
+            $$f_U(u)=\frac{d}{du}\Big(\tfrac{u+1}{3}\Big)^2=2\cdot\tfrac{u+1}{3}\cdot\tfrac13=\frac{2}{9}(u+1),\qquad -1\le u\le 2,$$
+            y $f_U(u)=0$ fuera de ese intervalo.</li>
+          <li><b>Control.</b> $\int_{-1}^{2}\frac29(u+1)\,du=\frac19(u+1)^2\Big|_{-1}^{2}=\frac99=1$. ✓ (Compara con el histograma en el <a href="#sim-hist">laboratorio</a>.)</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <div class="box ejercicio" id="ej-2">
+      <span class="box-title">Ejercicio 2 (Clase 1)</span>
+      <p>Sea $X$ una v.a. Exponencial con media 1. Encuentre la fdp de $Y=e^{-2X}$.</p>
+      <details class="pista"><summary>Pista 1</summary><div><p>Si $x&gt;0$, entonces $e^{-2x}\in(0,1)$. Ese es el soporte de $Y$.</p></div></details>
+      <details class="pista"><summary>Pista 2</summary><div><p>Toma logaritmo y luego divide entre $-2$: <b>al dividir por un negativo la desigualdad se voltea</b>, así que terminarás con $\P(X\ge \text{algo})$.</p></div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Datos.</b> $X\sim\text{Exp}(\beta=1)$: $f_X(x)=e^{-x}$, $F_X(x)=1-e^{-x}$, $x&gt;0$.</li>
+          <li><b>Soporte.</b> $x\mapsto e^{-2x}$ es decreciente, vale 1 en $x=0$ y tiende a 0 cuando $x\to\infty$. Luego $Y\in(0,1)$: $F_Y(y)=0$ si $y\le0$ y $F_Y(y)=1$ si $y\ge1$.</li>
+          <li><b>Despejar.</b> Para $0&lt;y&lt;1$ (ahí $\ln y&lt;0$):
+            $$F_Y(y)=\P(e^{-2X}\le y)=\P(-2X\le \ln y)=\P\Big(X\ge -\tfrac{\ln y}{2}\Big).$$
+            El logaritmo es creciente (no voltea), dividir entre $-2$ sí voltea.</li>
+          <li><b>Calcular.</b> $\P(X\ge a)=e^{-a}$ para $a&gt;0$, con $a=-\frac{\ln y}2&gt;0$:
+            $$F_Y(y)=e^{\ln y/2}=\sqrt{y},\qquad 0&lt;y&lt;1.$$</li>
+          <li><b>Derivar.</b>
+            $$f_Y(y)=\frac{1}{2\sqrt y},\qquad 0&lt;y&lt;1 \quad(\text{y } 0 \text{ en otro caso}).$$
+            La densidad se va a infinito cerca de 0, pero su integral es finita: $\int_0^1\frac{dy}{2\sqrt y}=\sqrt y\big|_0^1=1$ ✓. (Es una $\text{Beta}(1/2,\,1)$.)</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <div class="sim" id="sim-hist">
+      <p class="sim-title">Laboratorio: ¿acertamos la densidad?</p>
+      <p class="sim-desc">Elige un ejercicio. Se simulan 40 000 valores de $U$ <em>directamente con la definición</em> (generando $Y$ y aplicando $h$), y se compara el histograma con la densidad que dedujimos a mano. Si la curva no calza con las barras, la cuenta está mal.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+
+    <div class="box ejercicio" id="ej-3">
+      <span class="box-title">Ejercicio 3 (Clase 1) <span class="badge star">★ reto</span></span>
+      <p>Un punto es escogido al azar en un triángulo con base $b$ y altura $h$. Determine la densidad de la distancia del punto a la base del triángulo.</p>
+      <details class="pista"><summary>Pista 1</summary><div><p>"Al azar" = uniforme: $\P(\text{punto}\in A)=\dfrac{\text{área}(A)}{\text{área del triángulo}}$. Así, una probabilidad se vuelve un cociente de áreas.</p></div></details>
+      <details class="pista"><summary>Pista 2</summary><div><p>Es más fácil calcular $\P(D&gt;d)$: los puntos a distancia mayor que $d$ de la base forman un triangulito <b>semejante</b> al original, de altura $h-d$.</p></div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Modelo.</b> Pon la base sobre el eje horizontal; la distancia a la base es la coordenada vertical $D$ del punto. Como el punto es uniforme en el triángulo $T$ (área $bh/2$), $\P(\text{punto}\in A)=\text{área}(A\cap T)/(bh/2)$.</li>
+          <li><b>Soporte.</b> $0&lt;D&lt;h$.</li>
+          <li><b>Complemento.</b> $\{D&gt;d\}$ es la parte de $T$ por encima de la recta horizontal a altura $d$: un triángulo semejante a $T$ con altura $h-d$, es decir, $T$ escalado por el factor $\frac{h-d}{h}$. Las áreas escalan con el <b>cuadrado</b> del factor, así que
+            $$\P(D&gt;d)=\Big(\frac{h-d}{h}\Big)^2,\qquad 0\le d\le h.$$</li>
+          <li><b>Acumulada.</b> $F_D(d)=1-\Big(1-\dfrac dh\Big)^2$ para $0\le d\le h$ (0 antes, 1 después).</li>
+          <li><b>Densidad.</b> $$f_D(d)=F_D'(d)=2\Big(1-\frac dh\Big)\frac1h=\frac{2(h-d)}{h^2},\qquad 0&lt;d&lt;h.$$</li>
+          <li><b>Comprobación con otra idea.</b> La probabilidad de caer en una franja delgada $[d,d+\Delta d]$ es (ancho de la franja)·$\Delta d$/área. El ancho a altura $d$ es $b\frac{h-d}{h}$ (semejanza), luego $f_D(d)=\dfrac{b(h-d)/h}{bh/2}=\dfrac{2(h-d)}{h^2}$. ✓</li>
+        </ol>
+        <p><b>Observa:</b> el resultado no depende de $b$ ni de dónde esté el vértice superior (el triángulo no tiene que ser isósceles). Además $\E[D]=\int_0^h d\,\frac{2(h-d)}{h^2}\,dd=\frac h3$: el centroide está a un tercio de la altura.</p>
+      </div></details>
+    </div>
+
+    <div class="sim" id="sim-tri">
+      <p class="sim-title">Ejercicio 3: la región $\{D\le d\}$ dentro del triángulo</p>
+      <p class="sim-desc">Mueve $d$. La parte sombreada son los puntos a distancia $\le d$ de la base; su fracción del área total es $F_D(d)$. A la derecha, esa misma probabilidad es el área bajo $f_D$.</p>
+      <div class="controls"></div>
+      <div class="grid-2"><div class="plot p1"></div><div class="plot p2"></div></div>
+      <div class="out"></div>
+    </div>
+
+    <div class="box ejercicio" id="ej-4">
+      <span class="box-title">Ejercicio 4 (Clase 1) — Transformada integral de probabilidad</span>
+      <p>Sea $X$ una variable aleatoria con función de densidad $f(x)$ y distribución acumulada $F(x)$. Pruebe que la distribución de $U=F(X)$ es $U(0,1)$.</p>
+      <details class="pista"><summary>Pista 1</summary><div><p>$F$ toma valores en $[0,1]$, así que el soporte de $U$ es $[0,1]$. Calcula $\P(F(X)\le u)$ para $0&lt;u&lt;1$.</p></div></details>
+      <details class="pista"><summary>Pista 2</summary><div><p>Si $F$ es estrictamente creciente, "aplicar $F^{-1}$" a ambos lados de $F(X)\le u$ no cambia la desigualdad.</p></div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Soporte.</b> $0\le F(x)\le1$ siempre, así que $F_U(u)=0$ para $u&lt;0$ y $F_U(u)=1$ para $u\ge1$.</li>
+          <li><b>Caso $F$ estrictamente creciente en el soporte</b> (lo usual). Entonces $F$ tiene inversa y, para $0&lt;u&lt;1$,
+            $$F_U(u)=\P(F(X)\le u)=\P\big(X\le F^{-1}(u)\big)=F\big(F^{-1}(u)\big)=u.$$
+            El paso del medio es válido porque $F$ creciente conserva el orden: $F(X)\le u \iff X\le F^{-1}(u)$.</li>
+          <li><b>Conclusión.</b> $F_U(u)=u$ en $[0,1]$ es la acumulada de la $U(0,1)$; derivando, $f_U(u)=1$ en $(0,1)$. ∎</li>
+          <li><b>Si $F$ tiene tramos planos</b> (zonas sin probabilidad): define $x_u=\max\{x: F(x)=u\}$ (existe porque $F$ es continua al tener $X$ densidad). Entonces $\{F(X)\le u\}=\{X\le x_u\}$ salvo un conjunto de probabilidad 0, y $\P(X\le x_u)=F(x_u)=u$. El resultado no cambia.</li>
+        </ol>
+        <div class="box cuidado"><span class="box-title">Cuidado</span><p>La hipótesis "$X$ tiene densidad" (es continua) es esencial. Si $X$ es discreta, $F(X)$ solo toma unos pocos valores y no puede ser uniforme.</p></div>
+      </div></details>
+    </div>
+
+    <div class="box ejercicio" id="ej-5">
+      <span class="box-title">Ejercicio 5 (Clase 1) — Transformada inversa</span>
+      <p>Sea $U$ una v.a. uniforme en el intervalo $(0,1)$. Encuentre una transformación $h(U)$ tal que $h(U)$ posea una distribución exponencial con media $\beta$.</p>
+      <details class="pista"><summary>Pista 1</summary><div><p>Es el Ejercicio 4 al revés: si $F(X)\sim U(0,1)$, entonces $X=F^{-1}(U)$ debería tener acumulada $F$.</p></div></details>
+      <details class="pista"><summary>Pista 2</summary><div><p>Despeja $x$ en $u=1-e^{-x/\beta}$.</p></div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Objetivo.</b> Queremos $F(x)=1-e^{-x/\beta}$, $x&gt;0$ (Exp con media $\beta$).</li>
+          <li><b>Invertir $F$.</b> $u=1-e^{-x/\beta}\iff e^{-x/\beta}=1-u\iff x=-\beta\ln(1-u)$. Proponemos $h(u)=F^{-1}(u)=-\beta\ln(1-u)$.</li>
+          <li><b>Verificar con el método de la acumulada.</b> $h$ es creciente y lleva $(0,1)$ a $(0,\infty)$. Para $x&gt;0$:
+            $$\P\big(-\beta\ln(1-U)\le x\big)=\P\big(\ln(1-U)\ge -x/\beta\big)=\P\big(1-U\ge e^{-x/\beta}\big)=\P\big(U\le 1-e^{-x/\beta}\big)=1-e^{-x/\beta}.$$
+            (Dividir entre $-\beta$ voltea la desigualdad; $e^{(\cdot)}$ es creciente y no voltea; y $\P(U\le c)=c$ para $c\in(0,1)$.) ✓</li>
+          <li><b>Variante.</b> Como $1-U$ también es $U(0,1)$, sirve igual $h(U)=-\beta\ln U$ (esta es decreciente).</li>
+        </ol>
+        <p>Este truco —generar $U(0,1)$ y aplicar $F^{-1}$— es el <b>método de la transformada inversa</b>, la forma estándar de simular cualquier distribución continua. Lo ves funcionando en el simulador de abajo.</p>
+      </div></details>
+    </div>
+
+    <div class="sim" id="sim-pit">
+      <p class="sim-title">Ejercicios 4 y 5: $F(X)\sim U(0,1)$ y $F^{-1}(U)\sim F$</p>
+      <p class="sim-desc">Arriba a la izquierda: cada uniforme $u$ (eje vertical) se "refleja" en la curva de $F$ y cae en $x=F^{-1}(u)$. Arriba a la derecha: el histograma de 10 000 valores $F^{-1}(U)$ reproduce la densidad. Abajo: si generas $X$ de la distribución y calculas $F(X)$, el histograma es plano (Ejercicio 4).</p>
+      <div class="controls"></div>
+      <div class="grid-2"><div><p class="plot-cap">Transformada inversa: u → x = F⁻¹(u)</p><div class="plot p1"></div></div><div><p class="plot-cap">Histograma de F⁻¹(U) vs. f(x)</p><div class="plot p2"></div></div></div>
+      <p class="plot-cap">Histograma de F(X) con X generada de la distribución</p>
+      <div class="plot p3"></div>
+      <div class="out"></div>
+    </div>
+
+    <h3>Autoevaluación rápida</h3>
+    <div id="q-acum"></div>
+  </section>
+
+  <!-- ================================================================= -->
+  <section>
+    <h2 id="n-variado">Acumulada con varias variables (Ejemplo 1)</h2>
+    <p>Si $U$ depende de varias variables, $U=h(Y_1,\dots,Y_n)$, la idea es idéntica pero la "preimagen" ahora es una <b>región</b> del espacio $(y_1,\dots,y_n)$. La clase lo resume en cuatro pasos:</p>
+    <ol class="pasos">
+      <li>Encuentre la región $U=u$ en el espacio de $(y_1,y_2,\dots,y_n)$ (una recta o curva en 2D).</li>
+      <li>Encuentre la región $U\le u$ (de qué lado de esa curva están los puntos).</li>
+      <li>Encuentre $F_U(u)=\P(U\le u)$ integrando $f(y_1,\dots,y_n)$ sobre la región $U\le u$ <b>intersecada con el soporte</b>.</li>
+      <li>Encuentre $f_U(u)$ derivando $F_U(u)$.</li>
+    </ol>
+    <div class="box idea"><span class="box-title">Por qué los límites de integración cambian con $u$</span>
+      <p>La región $\{U\le u\}$ se mueve al mover $u$, y su <b>forma</b> al cortarla con el soporte puede cambiar (un triángulo, luego un pentágono…). Cada forma distinta da una fórmula distinta de $F_U$: por eso la respuesta suele venir "por tramos". El primer trabajo es siempre dibujar.</p>
+    </div>
+
+    <div class="box ejemplo" id="ejemplo-1">
+      <span class="box-title">Ejemplo 1 (Clase 1; Wackerly Ej. 6.3)</span>
+      <p>Suponga que $Y_1$ y $Y_2$ tienen una densidad conjunta dada por</p>
+      $$f(y_1,y_2)=\begin{cases}1, & 0\le y_1\le1,\ 0\le y_2\le 1,\\ 0, & \text{resto de }(y_1,y_2).\end{cases}$$
+      <p>Encuentre la función de densidad de $U=Y_1+Y_2$.</p>
+      <details class="pista"><summary>Pista</summary><div><p>Como la densidad vale 1 en el cuadrado, $F_U(u)$ es simplemente el <b>área</b> de la parte del cuadrado que queda debajo de la recta $y_1+y_2=u$. Mueve el deslizador del simulador de abajo y mira cuándo esa parte es un triángulo y cuándo no.</p></div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Región $U=u$:</b> la recta $y_1+y_2=u$ (pendiente $-1$). <b>Región $U\le u$:</b> el semiplano por debajo de esa recta.</li>
+          <li><b>Soporte de $U$:</b> en el cuadrado, $0\le y_1+y_2\le2$. Luego $F_U(u)=0$ si $u&lt;0$ (la recta pasa por debajo del cuadrado) y $F_U(u)=1$ si $u&gt;2$ (todo el cuadrado queda debajo).</li>
+          <li><b>Caso $0\le u\le1$.</b> La recta corta los ejes en $(u,0)$ y $(0,u)$; la región es un triángulo. Integrando (primero en $y_1$, de 0 hasta la recta $y_1=u-y_2$; luego $y_2$ de 0 a $u$):
+            $$F_U(u)=\int_0^u\!\!\int_0^{u-y_2}1\,dy_1\,dy_2=\int_0^u (u-y_2)\,dy_2=\Big[uy_2-\tfrac{y_2^2}{2}\Big]_0^u=\frac{u^2}{2}.$$
+            Geométricamente: triángulo de catetos $u$ ⇒ área $u^2/2$.</li>
+          <li><b>Caso $1&lt;u\le2$.</b> La recta ya pasó la diagonal; la región es el cuadrado <b>menos</b> el triangulito de la esquina $(1,1)$, cuyos catetos miden $2-u$:
+            $$F_U(u)=1-\int_{u-1}^{1}\!\!\int_{u-y_2}^{1}dy_1\,dy_2=1-\int_{u-1}^1(1-u+y_2)\,dy_2=1-\frac{(2-u)^2}{2}=-\frac{u^2}{2}+2u-1.$$
+            Los límites cambiaron porque ahora la recta entra al cuadrado por el lado derecho ($y_1=1$, en $y_2=u-1$) en vez de por abajo.</li>
+          <li><b>Resumen y derivada.</b>
+            $$F_U(u)=\begin{cases}0,&u&lt;0\\ u^2/2,&0\le u\le1\\ 1-(2-u)^2/2,&1&lt;u\le2\\ 1,&u&gt;2\end{cases}\qquad\Longrightarrow\qquad f_U(u)=\begin{cases}u,&0\le u\le1\\ 2-u,&1&lt;u\le2\\ 0,&\text{en otro caso.}\end{cases}$$
+            Es la <b>distribución triangular</b> en $[0,2]$: la suma de dos uniformes no es uniforme; los valores centrales son más probables (hay más combinaciones que suman 1 que combinaciones que suman 0).</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <div class="sim" id="sim-region">
+      <p class="sim-title">Ejemplo 1: la región $\{y_1+y_2\le u\}$ y su área $F_U(u)$</p>
+      <p class="sim-desc">Mueve $u$: la recta $y_1+y_2=u$ barre el cuadrado y el área sombreada es $F_U(u)$, el punto sobre la curva de la derecha. Pulsa "Lanzar puntos" para estimar esa área con 3000 puntos uniformes.</p>
+      <div class="controls"></div>
+      <div class="grid-2"><div class="plot p1"></div><div class="plot p2"></div></div>
+      <div class="out"></div>
+    </div>
+    <div id="q-nvar"></div>
+  </section>
+
+  <!-- ================================================================= -->
+  <section>
+    <h2 id="no-monotonas">Transformaciones no monótonas: $Y^2$, $|X-c|$</h2>
+    <p>Hasta ahora $h$ era monótona y bastaba "despejar". Si $h$ sube y baja, un mismo valor $u$ tiene <b>varias preimágenes</b>, y el evento $\{h(Y)\le u\}$ puede ser un intervalo "por los dos lados". El caso clásico (Wackerly, pág. 304) es $U=Y^2$.</p>
+
+    <div class="box teorema"><span class="box-title">El caso $U=Y^2$ por el método de la acumulada</span>
+      <p>Si $u\le0$: $F_U(u)=\P(Y^2\le u)=0$. Si $u&gt;0$:</p>
+      $$F_U(u)=\P(Y^2\le u)=\P(-\sqrt u\le Y\le\sqrt u)=\int_{-\sqrt u}^{\sqrt u}f_Y(y)\,dy=F_Y(\sqrt u)-F_Y(-\sqrt u).$$
+      <p>Derivando con la regla de la cadena ($\frac{d}{du}\sqrt u=\frac1{2\sqrt u}$ y $\frac{d}{du}(-\sqrt u)=-\frac1{2\sqrt u}$):</p>
+      $$f_U(u)=f_Y(\sqrt u)\frac{1}{2\sqrt u}-f_Y(-\sqrt u)\Big(-\frac1{2\sqrt u}\Big)=\frac{f_Y(\sqrt u)+f_Y(-\sqrt u)}{2\sqrt u},\qquad u&gt;0.$$
+      <p>Fíjate en que los dos términos <b>se suman</b>: el signo menos de $F_Y(-\sqrt u)$ se cancela con el menos de la derivada de $-\sqrt u$.</p>
+    </div>
+
+    <div class="box teorema"><span class="box-title">Regla general: suma sobre las ramas</span>
+      <p>Si el soporte de $Y$ se puede partir en tramos donde $h$ es estrictamente monótona, con inversas $y=h_1^{-1}(u),\ h_2^{-1}(u),\dots$ en cada tramo, entonces</p>
+      $$f_U(u)=\sum_{k:\ u\in h(\text{tramo }k)} f_Y\big(h_k^{-1}(u)\big)\left|\frac{d\,h_k^{-1}(u)}{du}\right|.$$
+      <p>Cada preimagen aporta su "pedazo" de probabilidad. <b>Lo delicado es el soporte:</b> para cada $u$ hay que contar cuántas preimágenes caen dentro del soporte de $Y$; ese número puede cambiar con $u$ (y entonces $f_U$ va por tramos).</p>
+    </div>
+
+    <div class="box ejemplo" id="ejemplo-z2">
+      <span class="box-title">Ejemplo A: $Z\sim N(0,1)$ y $U=Z^2$</span>
+      <p>Las dos raíces $\pm\sqrt u$ están siempre en el soporte $\R$, y $\varphi$ es simétrica, así que</p>
+      $$f_U(u)=\frac{\varphi(\sqrt u)+\varphi(-\sqrt u)}{2\sqrt u}=\frac{2\cdot\frac{1}{\sqrt{2\pi}}e^{-u/2}}{2\sqrt u}=\frac{1}{\sqrt{2\pi}}\,u^{-1/2}e^{-u/2},\qquad u&gt;0.$$
+      <p>Comparando con la Gamma del formulario, $\frac{1}{\Gamma(\alpha)\beta^\alpha}u^{\alpha-1}e^{-u/\beta}$ con $\alpha=\frac12$, $\beta=2$ y $\Gamma(\frac12)=\sqrt\pi$: es $G(\frac12,2)=\chi^2_{(1)}$. <b>El cuadrado de una normal estándar es una ji-cuadrado con 1 grado de libertad</b>; lo usarás en la Clase 3.</p>
+    </div>
+
+    <div class="box ejemplo" id="ejemplo-y2-asim">
+      <span class="box-title">Ejemplo B: $Y\sim U(-1,2)$ y $U=Y^2$ (soporte asimétrico)</span>
+      <p>$f_Y(y)=\frac13$ en $(-1,2)$. Como $y^2\in[0,4)$, el soporte de $U$ es $[0,4)$. Contamos preimágenes:</p>
+      <ul>
+        <li>Si $0&lt;u&lt;1$: $\sqrt u&lt;1$, así que <b>ambas</b> $\pm\sqrt u$ están en $(-1,2)$: $f_U(u)=\dfrac{\frac13+\frac13}{2\sqrt u}=\dfrac{1}{3\sqrt u}$.</li>
+        <li>Si $1&lt;u&lt;4$: $-\sqrt u&lt;-1$ queda <b>fuera</b> del soporte; solo cuenta $+\sqrt u$: $f_U(u)=\dfrac{\frac13+0}{2\sqrt u}=\dfrac{1}{6\sqrt u}$.</li>
+      </ul>
+      <p>Por acumulada: $F_U(u)=\P\big(\max(-1,-\sqrt u)\le Y\le \sqrt u\big)$, que es $\frac{2\sqrt u}{3}$ si $u\le1$ y $\frac{\sqrt u+1}{3}$ si $1&lt;u&lt;4$; derivando se obtiene lo mismo. Control: $\int_0^1\frac{du}{3\sqrt u}+\int_1^4\frac{du}{6\sqrt u}=\frac23+\frac13=1$ ✓.</p>
+    </div>
+
+    <div class="box ejemplo" id="ejemplo-abs">
+      <span class="box-title">Ejemplo C: $X\sim\text{Exp}(1)$ y $U=|X-1|$</span>
+      <p>$|x-1|\le u \iff 1-u\le x\le 1+u$. Pero $X&gt;0$, así que el extremo izquierdo efectivo es $\max(0,1-u)$:</p>
+      $$F_U(u)=\P\big(\max(0,1-u)\le X\le 1+u\big)=\begin{cases}e^{-(1-u)}-e^{-(1+u)}, & 0\le u\le1,\\[2pt] 1-e^{-(1+u)}, & u&gt;1.\end{cases}$$
+      <p>Derivando: $f_U(u)=e^{-(1-u)}+e^{-(1+u)}$ si $0&lt;u&lt;1$ (dos ramas: $x=1-u$ y $x=1+u$), y $f_U(u)=e^{-(1+u)}$ si $u&gt;1$ (la rama $x=1-u$ sería negativa, fuera del soporte). La densidad <b>salta</b> en $u=1$: es normal cuando cambia el número de ramas.</p>
+    </div>
+
+    <div class="box cuidado"><span class="box-title">Cuidado: cuando $h$ es constante en un tramo</span>
+      <p>Si $h$ es plana en un intervalo de probabilidad positiva (por ejemplo un "recorte" como $\max\{a,\min\{b,X\}\}$), todo ese intervalo se manda a <b>un solo punto</b>: $U$ tiene un salto en $F_U$ (un átomo) y <b>no es continua</b>. Ahí la fórmula del Jacobiano no aplica; el método de la acumulada sí, siempre. Es lo que pide el deber, Ejercicio 1(b).</p>
+    </div>
+
+    <div class="sim" id="sim-pre">
+      <p class="sim-title">La preimagen de $\{U\le u\}$ cuando $h$ no es monótona</p>
+      <p class="sim-desc">Arriba izquierda: la gráfica de $h$ y el nivel $u$; en el eje horizontal se marca el conjunto $\{y:\ h(y)\le u\}$ (dentro del soporte). Arriba derecha: esa preimagen sombreada bajo $f_Y$. Abajo: histograma simulado de $U$ con el área bajo $f_U$ hasta $u$. <b>Las dos áreas sombreadas son iguales</b>: es la idea de toda la clase.</p>
+      <div class="controls"></div>
+      <div class="grid-2"><div><p class="plot-cap">u = h(y) y la preimagen</p><div class="plot p1"></div></div><div><p class="plot-cap">f_Y(y) sobre la preimagen</p><div class="plot p2"></div></div></div>
+      <p class="plot-cap">Histograma de U vs. f_U(u)</p>
+      <div class="plot p3"></div>
+      <div class="out"></div>
+    </div>
+    <div id="q-nomono"></div>
+  </section>
+
+  <!-- ================================================================= -->
+  <section>
+    <h2 id="jacobiano-1d">Método de la transformación (Jacobiano) en una variable</h2>
+    <div class="box idea"><span class="box-title">Intuición</span>
+      <p>Un intervalito $[y,\,y+dy]$ tiene probabilidad $\approx f_Y(y)\,|dy|$. La función $h$ lo manda a un intervalito $[u,\,u+du]$ con <b>la misma probabilidad</b>, pero de longitud distinta: si $h$ estira (longitud mayor), la densidad baja; si encoge, sube. Igualando:</p>
+      $$f_U(u)\,|du|=f_Y(y)\,|dy|\quad\Longrightarrow\quad f_U(u)=f_Y(y)\left|\frac{dy}{du}\right|,\qquad y=h^{-1}(u).$$
+      <p>El factor $\left|\frac{dy}{du}\right|$ mide cuánto se encoge la longitud al volver de $u$ a $y$. Las longitudes son positivas: <b>de ahí sale el valor absoluto</b>.</p>
+    </div>
+
+    <div class="box teorema"><span class="box-title">Teorema (método de la transformación)</span>
+      <p>Sea $Y$ una v.a. con densidad $f_Y(y)$. Si $h(y)$ es <b>creciente o bien decreciente</b> para todo $y$ tal que $f_Y(y)&gt;0$, entonces $U=h(Y)$ tiene densidad</p>
+      $$f_U(u)=f_Y\big[h^{-1}(u)\big]\left|\frac{d\,h^{-1}(u)}{du}\right|,$$
+      <p>para $u$ en la imagen del soporte de $Y$ (y $0$ fuera).</p>
+    </div>
+
+    <details class="prueba"><summary>¿De dónde sale? (prueba con el método de la acumulada)</summary><div>
+      <p><b>Si $h$ es creciente:</b> $F_U(u)=\P(h(Y)\le u)=\P(Y\le h^{-1}(u))=F_Y(h^{-1}(u))$. Derivando, $f_U(u)=f_Y(h^{-1}(u))\cdot\frac{dh^{-1}(u)}{du}$, y aquí la derivada es <b>positiva</b>.</p>
+      <p><b>Si $h$ es decreciente:</b> aplicar $h^{-1}$ (también decreciente) voltea la desigualdad: $F_U(u)=\P(Y\ge h^{-1}(u))=1-F_Y(h^{-1}(u))$. Derivando, $f_U(u)=-f_Y(h^{-1}(u))\cdot\frac{dh^{-1}(u)}{du}$, y ahora la derivada es <b>negativa</b>, así que $-\frac{dh^{-1}}{du}=\left|\frac{dh^{-1}}{du}\right|$.</p>
+      <p>Los dos casos se escriben juntos con el valor absoluto. ∎ Si te olvidas del $|\cdot|$ con una $h$ decreciente, te sale una "densidad" negativa: una señal clara de error.</p>
+    </div></details>
+
+    <div class="box nota"><span class="box-title">Resumen del método de las transformaciones (Wackerly)</span>
+      <p>Sea $U=h(Y)$ con $h$ creciente o decreciente en el soporte de $Y$.</p>
+      <ol>
+        <li>Deduzca la función inversa, $y=h^{-1}(u)$.</li>
+        <li>Evalúe $\dfrac{dh^{-1}}{du}=\dfrac{d[h^{-1}(u)]}{du}$.</li>
+        <li>Encuentre $f_U(u)=f_Y[h^{-1}(u)]\left|\dfrac{dh^{-1}}{du}\right|$.</li>
+      </ol>
+      <p>Y un paso 4 que el resumen no dice pero el profesor sí evalúa: <b>escribe el soporte de $U$</b>, que es la imagen por $h$ del soporte de $Y$.</p>
+    </div>
+
+    <div class="box ejemplo" id="ejemplo-2">
+      <span class="box-title">Ejemplo 2 (Clase 1)</span>
+      <p>Para el Ejercicio 1, $U=h(Y)=3Y-1$, entonces tenemos $Y=h^{-1}(U)=(U+1)/3$. Además se tiene $\left|\dfrac{dh^{-1}(u)}{du}\right|=\left|\dfrac{d\big((u+1)/3\big)}{du}\right|=\dfrac13$. Por lo tanto,</p>
+      $$f_U(u)=2\Big(\frac{u+1}{3}\Big)\times\frac13=\frac29(u+1)\times\1\{-1\le u\le2\}.$$
+      <details class="solucion"><summary>Explicación paso a paso</summary><div>
+        <ol class="pasos">
+          <li><b>¿Se puede usar el teorema?</b> $h(y)=3y-1$ es creciente en todo $\R$ (en particular en $[0,1]$). Sí.</li>
+          <li><b>Inversa:</b> $u=3y-1\iff y=\frac{u+1}{3}$.</li>
+          <li><b>Derivada de la inversa:</b> $\frac{d}{du}\frac{u+1}{3}=\frac13$; su valor absoluto es $\frac13$. Significa que $h$ estira las longitudes por 3, así que la densidad se divide entre 3.</li>
+          <li><b>Evaluar $f_Y$ en la inversa:</b> $f_Y\big(\frac{u+1}{3}\big)=2\cdot\frac{u+1}{3}$, válido cuando $0\le\frac{u+1}3\le1$, o sea $-1\le u\le 2$. <em>Así se traduce el soporte</em>: la condición sobre $y$ se reescribe como condición sobre $u$.</li>
+          <li><b>Multiplicar:</b> $f_U(u)=\frac{2(u+1)}{3}\cdot\frac13=\frac29(u+1)$ para $-1\le u\le2$. La indicadora $\1\{-1\le u\le2\}$ es la forma compacta de decir "y 0 fuera". Coincide con el Ejercicio 1. ✓</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <div class="box ejercicio" id="ej-6">
+      <span class="box-title">Ejercicio 6 (Clase 1)</span>
+      <p>Resuelva el ejercicio 2 usando el método de la transformación.</p>
+      <details class="pista"><summary>Pista 1</summary><div><p>$h(x)=e^{-2x}$ es <b>decreciente</b>: el valor absoluto va a importar.</p></div></details>
+      <details class="pista"><summary>Pista 2</summary><div><p>Inversa: $x=-\frac12\ln y$.</p></div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Monotonía.</b> $h'(x)=-2e^{-2x}&lt;0$: $h$ es estrictamente decreciente en $(0,\infty)$. Se puede usar el teorema.</li>
+          <li><b>Inversa.</b> $y=e^{-2x}\iff \ln y=-2x\iff x=h^{-1}(y)=-\frac12\ln y$.</li>
+          <li><b>Derivada.</b> $\dfrac{dh^{-1}(y)}{dy}=-\dfrac{1}{2y}$, negativa (como debe ser: la inversa de una decreciente es decreciente). Valor absoluto: $\dfrac1{2y}$ (pues $y&gt;0$).</li>
+          <li><b>Evaluar $f_X$.</b> $f_X\big(-\tfrac12\ln y\big)=e^{-(-\frac12\ln y)}=e^{\frac12\ln y}=\sqrt y$.</li>
+          <li><b>Soporte.</b> $x&gt;0\iff -\frac12\ln y&gt;0\iff \ln y&lt;0\iff 0&lt;y&lt;1$.</li>
+          <li><b>Resultado.</b> $$f_Y(y)=\sqrt y\cdot\frac1{2y}=\frac{1}{2\sqrt y},\qquad 0&lt;y&lt;1.$$ Igual que en el Ejercicio 2. ✓ Sin el valor absoluto habríamos obtenido $-\frac1{2\sqrt y}$, imposible.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <div class="box cuidado"><span class="box-title">Detalle de notación en el PDF</span>
+      <p>El enunciado del teorema en la clase dice "entonces $U=h(y)$ tiene una función de densidad…". Debe leerse $U=h(Y)$ (mayúscula: la variable aleatoria, no un número).</p>
+    </div>
+    <div id="q-jac1"></div>
+  </section>
+
+  <!-- ================================================================= -->
+  <section>
+    <h2 id="jacobiano-2d">Transformación bivariada usando Jacobiano</h2>
+    <p>Con dos variables la idea es la misma, cambiando "longitud" por "área". Un rectangulito en el plano $(u_1,u_2)$ de área $\Delta u_1\Delta u_2$ viene de una región (casi un paralelogramo) del plano $(y_1,y_2)$ de área $\approx|J|\,\Delta u_1\Delta u_2$. Como la probabilidad se conserva,</p>
+    $$f_{U_1,U_2}(u_1,u_2)\,\Delta u_1\Delta u_2\approx f_{Y_1,Y_2}(y_1,y_2)\,|J|\,\Delta u_1\Delta u_2 .$$
+    <p>El <b>valor absoluto del determinante jacobiano</b> es exactamente el factor de cambio de área (en geometría: $|\det M|$ es el área del paralelogramo generado por las columnas de $M$). El signo de $J$ solo indica si la transformación "da vuelta" la orientación, y eso no importa para áreas: de ahí $|J|$.</p>
+
+    <div class="box teorema"><span class="box-title">Teorema (transformación bivariada)</span>
+      <p>Suponga que $Y_1$ y $Y_2$ son variables aleatorias continuas con densidad conjunta $f_{Y_1,Y_2}(y_1,y_2)$ para $(y_1,y_2)\in A$, siendo $A$ un conjunto abierto de $\R^2$. Si para todo par $(y_1,y_2)$ tal que $f_{Y_1,Y_2}(y_1,y_2)&gt;0$,</p>
+      $$u_1=h_1(y_1,y_2)\quad\text{y}\quad u_2=h_2(y_1,y_2)$$
+      <p>son transformaciones uno a uno (biyectivas) de $(y_1,y_2)\to(u_1,u_2)$ con inversa $y_1=h_1^{-1}(u_1,u_2)$ y $y_2=h_2^{-1}(u_1,u_2)$; si $h_1^{-1}$ y $h_2^{-1}$ tienen derivadas parciales continuas respecto a $u_1$ y $u_2$, y el jacobiano no es 0, entonces</p>
+      $$f_{U_1,U_2}(u_1,u_2)=f_{Y_1,Y_2}\big(h_1^{-1}(u_1,u_2),\,h_2^{-1}(u_1,u_2)\big)\,|J|,\qquad (u_1,u_2)\in A^*,$$
+      <p>donde $A^*$ es la imagen de $A$ y</p>
+      $$J=\frac{\partial(y_1,y_2)}{\partial(u_1,u_2)}=\det\begin{bmatrix}\dfrac{\partial y_1}{\partial u_1}&\dfrac{\partial y_1}{\partial u_2}\\[8pt]\dfrac{\partial y_2}{\partial u_1}&\dfrac{\partial y_2}{\partial u_2}\end{bmatrix}\neq0.$$
+    </div>
+
+    <div class="box nota"><span class="box-title">Tres aclaraciones que el PDF da por obvias</span>
+      <ul>
+        <li><b>$J$ es el jacobiano de la inversa</b> (las $y$ derivadas respecto de las $u$), y al final debe quedar escrito en función de $(u_1,u_2)$. El PDF lo nota $J(y_1,y_2)$ para recordar que son las derivadas de $y$; no significa que dependa de $y$.</li>
+        <li><b>Atajo:</b> si es más fácil derivar la transformación directa, $J=\dfrac{1}{\det\big(\partial(u_1,u_2)/\partial(y_1,y_2)\big)}$, evaluado en $y=y(u)$.</li>
+        <li><b>¿Y si solo me piden una variable $U_1$?</b> El método necesita tantas variables nuevas como viejas (para que haya biyección). Inventa una <b>variable auxiliar</b> $U_2$ que haga la inversa fácil (típicamente $U_2=Y_1$, $Y_2$ o $Y_1+Y_2$), obtén la conjunta y luego <b>integra</b> $u_2$ para la marginal de $U_1$.</li>
+      </ul>
+    </div>
+
+    <h3>La receta, paso a paso</h3>
+    <ol class="pasos">
+      <li><b>Inversa:</b> despeja $y_1,y_2$ en función de $u_1,u_2$. Si no puedes despejar de forma única, la transformación no es biyectiva (hay que partir la región, como en las ramas de $Y^2$).</li>
+      <li><b>Jacobiano:</b> matriz de derivadas parciales de $(y_1,y_2)$ respecto de $(u_1,u_2)$, su determinante y su valor absoluto.</li>
+      <li><b>Soporte nuevo $A^*$:</b> reescribe cada desigualdad que define $A$ (por ejemplo $y_1&gt;0$) sustituyendo $y_1=h_1^{-1}(u_1,u_2)$, y simplifica. Dibuja.</li>
+      <li><b>Sustituye:</b> $f_U=f_Y(\text{inversa})\cdot|J|$ en $A^*$, 0 fuera.</li>
+      <li><b>Marginaliza</b> si hace falta, con límites que salen del dibujo de $A^*$.</li>
+    </ol>
+
+    <div class="sim" id="sim-grid">
+      <p class="sim-title">Cómo $|J|$ mide el cambio de área</p>
+      <p class="sim-desc">Izquierda: una rejilla regular en el espacio nuevo $(u_1,u_2)$ con una celda resaltada. Derecha: la misma rejilla llevada al espacio original con la inversa $y=y(u)$. Mueve la celda: el cociente de áreas (preimagen / celda) coincide con $|J|$ en ese punto, y cuanto más pequeña la celda, mejor.</p>
+      <div class="controls"></div>
+      <div class="grid-2"><div><p class="plot-cap">Espacio nuevo (u₁, u₂)</p><div class="plot p1"></div></div><div><p class="plot-cap">Espacio original (y₁, y₂) = y(u)</p><div class="plot p2"></div></div></div>
+      <div class="out"></div>
+    </div>
+
+    <div class="box ejemplo" id="ejemplo-3">
+      <span class="box-title">Ejemplo 3 (Clase 1; Wackerly Ej. 6.13)</span>
+      <p>Sean $Y_1$ y $Y_2$ v.a.'s independientes con distribución normal estándar. Si $U_1=Y_1+Y_2$ y $U_2=Y_1-Y_2$, ambas $U_1$ y $U_2$ son combinaciones lineales de variables aleatorias independientes distribuidas normalmente. ¿Cuál es la densidad conjunta de $U_1$ y $U_2$?</p>
+      <details class="pista"><summary>Pista</summary><div><p>Suma y resta las dos ecuaciones para despejar: $y_1=\frac{u_1+u_2}2$, $y_2=\frac{u_1-u_2}2$. Luego necesitarás $y_1^2+y_2^2$ en términos de $u_1,u_2$.</p></div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Conjunta de partida.</b> Por independencia, $f_{Y_1,Y_2}(y_1,y_2)=\frac{1}{\sqrt{2\pi}}e^{-y_1^2/2}\cdot\frac{1}{\sqrt{2\pi}}e^{-y_2^2/2}=\frac{1}{2\pi}e^{-(y_1^2+y_2^2)/2}$, en $A=\R^2$.</li>
+          <li><b>Inversa.</b> Sumando $u_1+u_2=2y_1$ y restando $u_1-u_2=2y_2$:
+            $$y_1=\frac{u_1+u_2}{2},\qquad y_2=\frac{u_1-u_2}{2}.$$
+            Hay una única solución para cada $(u_1,u_2)$: la transformación es biyectiva.</li>
+          <li><b>Jacobiano.</b>
+            $$J=\det\begin{bmatrix}\tfrac12&\tfrac12\\[2pt]\tfrac12&-\tfrac12\end{bmatrix}=-\frac14-\frac14=-\frac12,\qquad |J|=\frac12.$$
+            Interpretación: la transformación directa $(y_1,y_2)\mapsto(y_1+y_2,\,y_1-y_2)$ duplica las áreas (gira 45° y escala por $\sqrt2$ en cada dirección), así que la densidad se reparte en el doble de área: se divide por 2.</li>
+          <li><b>Soporte nuevo.</b> $(y_1,y_2)$ recorre todo $\R^2$, y $(u_1,u_2)$ también: $A^*=\R^2$. No hay restricciones que traducir.</li>
+          <li><b>Exponente.</b> $y_1^2+y_2^2=\frac{(u_1+u_2)^2+(u_1-u_2)^2}{4}=\frac{2u_1^2+2u_2^2}{4}=\frac{u_1^2+u_2^2}{2}$ (los productos cruzados $\pm2u_1u_2$ se cancelan).</li>
+          <li><b>Sustituir.</b>
+            $$f_{U_1,U_2}(u_1,u_2)=\frac{1}{2\pi}e^{-\frac{u_1^2+u_2^2}{4}}\cdot\frac12=\frac{1}{4\pi}e^{-\frac{u_1^2+u_2^2}{4}},\qquad (u_1,u_2)\in\R^2.$$</li>
+          <li><b>Leer el resultado.</b> Se factoriza:
+            $$f_{U_1,U_2}(u_1,u_2)=\underbrace{\frac{1}{\sqrt{2\pi\cdot2}}e^{-\frac{u_1^2}{2\cdot2}}}_{N(0,\,2)}\cdot\underbrace{\frac{1}{\sqrt{2\pi\cdot2}}e^{-\frac{u_2^2}{2\cdot2}}}_{N(0,\,2)}.$$
+            Como la conjunta es el producto de una función de $u_1$ por una de $u_2$, <b>$U_1$ y $U_2$ son independientes</b>, cada una $N(0,2)$.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <div class="box ejercicio" id="ej-7">
+      <span class="box-title">Ejercicio 7 (Clase 1)</span>
+      <p>Resuelva el ejercicio anterior, usando el hecho que para dos v.a.'s $X$ y $Y$ normalmente distribuidas se cumple que</p>
+      $$\Cov(X,Y)=0\implies X\text{ y }Y\text{ son independientes.}$$
+      <details class="pista"><summary>Pista 1</summary><div><p>Calcula $\E[U_i]$, $\Var(U_i)$ y $\Cov(U_1,U_2)$ con las propiedades de la esperanza y la covarianza (bilinealidad).</p></div></details>
+      <details class="pista"><summary>Pista 2</summary><div><p>Una combinación lineal de normales independientes es normal. Si además $\Cov=0$, la conjunta es el producto de las marginales.</p></div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Marginales.</b> $U_1=Y_1+Y_2$ y $U_2=Y_1-Y_2$ son combinaciones lineales de normales independientes, luego normales. $\E[U_1]=\E[U_2]=0$. $\Var(U_1)=\Var(Y_1)+\Var(Y_2)=2$ y $\Var(U_2)=\Var(Y_1)+(-1)^2\Var(Y_2)=2$. Así $U_1,U_2\sim N(0,2)$.</li>
+          <li><b>Covarianza.</b> Por bilinealidad:
+            $$\Cov(Y_1+Y_2,\,Y_1-Y_2)=\Var(Y_1)-\Cov(Y_1,Y_2)+\Cov(Y_2,Y_1)-\Var(Y_2)=1-0+0-1=0.$$</li>
+          <li><b>Normalidad conjunta.</b> Toda combinación $aU_1+bU_2=(a+b)Y_1+(a-b)Y_2$ es normal, así que $(U_1,U_2)$ es <b>normal bivariada</b>. En ese caso $\Cov=0$ sí implica independencia.</li>
+          <li><b>Conclusión.</b> $f_{U_1,U_2}(u_1,u_2)=f_{U_1}(u_1)f_{U_2}(u_2)=\frac{1}{4\pi}e^{-(u_1^2+u_2^2)/4}$, igual que con el Jacobiano. ✓</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <div class="box cuidado"><span class="box-title">Cuidado: el enunciado del Ejercicio 7 es incompleto</span>
+      <p>"Dos v.a. normales con covarianza 0 son independientes" es <b>falso</b> si solo se pide que cada una sea normal. Hace falta que sean <b>conjuntamente normales</b> (normal bivariada). Contraejemplo: $X\sim N(0,1)$ y $S=\pm1$ con probabilidad $\frac12$ cada uno, independiente de $X$; sea $Y=SX$. Entonces $Y\sim N(0,1)$ (por simetría), $\Cov(X,Y)=\E[S]\E[X^2]=0$, pero $|Y|=|X|$: no son independientes. En el Ejemplo 3 todo funciona porque $(U_1,U_2)$ es una transformación lineal de normales independientes y por tanto sí es normal bivariada.</p>
+    </div>
+
+    <div class="box ejemplo" id="ejemplo-4">
+      <span class="box-title">Ejemplo 4 (Clase 1; Wackerly Ej. 6.14)</span>
+      <p>Sean $Y_1$ y $Y_2$ v.a.'s independientes con distribución exponencial, ambas con media $\beta&gt;0$. Encuentre la función de densidad de $U=Y_1/(Y_1+Y_2)$.</p>
+      <details class="pista"><summary>Pista 1</summary><div><p>Solo piden una variable: agrega la auxiliar $U_2=Y_1+Y_2$. Con ella la inversa sale en una línea: $y_1=u_1u_2$.</p></div></details>
+      <details class="pista"><summary>Pista 2</summary><div><p>Traduce $y_1&gt;0$ y $y_2&gt;0$ al nuevo espacio para hallar el soporte; luego integra $u_2$ de 0 a $\infty$.</p></div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Conjunta de partida.</b> $f_{Y_1,Y_2}(y_1,y_2)=\frac1\beta e^{-y_1/\beta}\cdot\frac1\beta e^{-y_2/\beta}=\frac{1}{\beta^2}e^{-(y_1+y_2)/\beta}$ en $A=\{y_1&gt;0,\ y_2&gt;0\}$.</li>
+          <li><b>Variable auxiliar.</b> $U_1=\dfrac{Y_1}{Y_1+Y_2}$, $U_2=Y_1+Y_2$. Elegimos $U_2$ así porque aparece en el denominador de $U_1$ y simplifica todo.</li>
+          <li><b>Inversa.</b> $u_1=\frac{y_1}{u_2}\Rightarrow y_1=u_1u_2$; y $y_2=u_2-y_1=u_2(1-u_1)$.</li>
+          <li><b>Jacobiano.</b>
+            $$J=\det\begin{bmatrix}\dfrac{\partial y_1}{\partial u_1}&\dfrac{\partial y_1}{\partial u_2}\\[6pt]\dfrac{\partial y_2}{\partial u_1}&\dfrac{\partial y_2}{\partial u_2}\end{bmatrix}=\det\begin{bmatrix}u_2&u_1\\-u_2&1-u_1\end{bmatrix}=u_2(1-u_1)+u_1u_2=u_2.$$
+            Como $u_2&gt;0$ en el soporte, $|J|=u_2$.</li>
+          <li><b>Soporte nuevo.</b> $y_1&gt;0$ y $y_2&gt;0$ ⇔ $u_1u_2&gt;0$ y $u_2(1-u_1)&gt;0$. Sumándolas, $u_2&gt;0$; y entonces $u_1&gt;0$ y $u_1&lt;1$. Luego $A^*=\{0&lt;u_1&lt;1,\ u_2&gt;0\}$: una franja vertical. (Tiene sentido: una proporción está entre 0 y 1, una suma de positivos es positiva.)</li>
+          <li><b>Conjunta nueva.</b> $y_1+y_2=u_2$, así que
+            $$f_{U_1,U_2}(u_1,u_2)=\frac{1}{\beta^2}e^{-u_2/\beta}\,u_2,\qquad 0&lt;u_1&lt;1,\ u_2&gt;0.$$</li>
+          <li><b>Marginal de $U_1$.</b> Para $0&lt;u_1&lt;1$ fijo, $u_2$ va de 0 a $\infty$ (la franja no depende de $u_1$):
+            $$f_{U_1}(u_1)=\int_0^\infty\frac{u_2}{\beta^2}e^{-u_2/\beta}\,du_2=\frac{\Gamma(2)\beta^2}{\beta^2}=1.$$
+            (Usamos $\int_0^\infty x^{\alpha-1}e^{-x/\beta}dx=\Gamma(\alpha)\beta^\alpha$ con $\alpha=2$, o reconocemos la integral de una densidad $G(2,\beta)$.)</li>
+          <li><b>Respuesta.</b> $f_U(u)=1$ para $0&lt;u&lt;1$: <b>$U\sim U(0,1)$, sin importar $\beta$.</b> De regalo: $U_2\sim G(2,\beta)$ y, como la conjunta se factoriza en $1\cdot\frac{u_2}{\beta^2}e^{-u_2/\beta}$ sobre un rectángulo, $U_1$ y $U_2$ son independientes.</li>
+        </ol>
+        <p>Compruébalo en el <a href="#sim-hist">laboratorio</a> eligiendo "Ejemplo 4". El Ejercicio 6 del deber generaliza esto a Gammas (ahí sale una Beta).</p>
+      </div></details>
+    </div>
+    <div id="q-jac2"></div>
+  </section>
+
+  <!-- ================================================================= -->
+  <section>
+    <h2 id="n-dim">Caso $n$-dimensional</h2>
+    <p>El método del Jacobiano se extiende naturalmente. Sea $\mathbf Y=(Y_1,\dots,Y_n)^\top$ un vector aleatorio con densidad conjunta $f(y_1,\dots,y_n)$ y $\mathbf U=(U_1,\dots,U_n)^\top=\phi(\mathbf Y)$ con $\phi$ biyectiva. El método se resume en 4 pasos:</p>
+    <ol class="pasos">
+      <li>Obtención de la inversa: $\mathbf u=\mathbf u(\mathbf y)\iff\mathbf y=\mathbf y(\mathbf u)$.</li>
+      <li>Cálculo del determinante del Jacobiano de la inversa: $J=\det\dfrac{\partial\mathbf y}{\partial\mathbf u}$ (matriz $n\times n$ con entradas $\partial y_i/\partial u_j$).</li>
+      <li>Estudio del soporte de $\mathbf U$.</li>
+      <li>Densidad de $\mathbf U$: $g(\mathbf u)=f(\mathbf y(\mathbf u))\,|J|$.</li>
+    </ol>
+    <div class="box cuidado"><span class="box-title">Errata del PDF</span>
+      <p>El paso 4 de la clase dice "Densidad de $\mathbf Y$: $g(\mathbf u)=\dots$". Debe decir <b>densidad de $\mathbf U$</b>: $g$ es la densidad del vector nuevo. Además el PDF escribe "$J(\mathbf y)=\frac{\partial\mathbf y}{\partial\mathbf u}$": se refiere al <b>determinante</b> de esa matriz, y en $g$ va su <b>valor absoluto</b>.</p>
+    </div>
+    <div class="box nota"><span class="box-title">Numeración</span>
+      <p>En el PDF de la clase los ejercicios saltan del <b>7 al 10</b>: no existen Ejercicios 8 y 9. No es que falten en esta guía.</p>
+    </div>
+
+    <div class="box ejercicio" id="ej-10">
+      <span class="box-title">Ejercicio 10 (Clase 1)</span>
+      <p>Sean $X_1$, $X_2$ y $X_3$ variables aleatorias con función de densidad conjunta</p>
+      $$f(x_1,x_2,x_3)=\frac{2\,x_1^2\,x_2\,e^{x_1x_2x_3}}{2e-5},\qquad 0&lt;x_1,x_2,x_3&lt;1.$$
+      <p>Obtenga la densidad de $X_1X_2X_3$.</p>
+      <details class="pista"><summary>Pista 1</summary><div><p>Usa $U=X_1X_2X_3$ y dos auxiliares que dejen la inversa trivial: $V=X_1$, $W=X_2$. Entonces $X_3=U/(VW)$.</p></div></details>
+      <details class="pista"><summary>Pista 2</summary><div><p>El soporte nuevo es $0&lt;v&lt;1$, $0&lt;w&lt;1$, $0&lt;u&lt;vw$. Para integrar $(v,w)$ con $u$ fijo, dibuja la región $\{vw&gt;u\}$ dentro del cuadrado (simulador de abajo).</p></div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>(Control) La densidad integra 1.</b> $\int_0^1e^{x_1x_2x_3}dx_3=\frac{e^{x_1x_2}-1}{x_1x_2}$, así que el integrando queda $x_1(e^{x_1x_2}-1)$; integrando en $x_2$: $e^{x_1}-1-x_1$; e integrando en $x_1$: $e-1-1-\frac12=e-\frac52$. Por $\frac{2}{2e-5}$ da 1 ✓.</li>
+          <li><b>Transformación y auxiliares.</b> $U=X_1X_2X_3$, $V=X_1$, $W=X_2$. Elegimos $V,W$ así porque la densidad tiene factores $x_1^2x_2$ que entonces quedan tal cual.</li>
+          <li><b>Inversa.</b> $x_1=v$, $x_2=w$, $x_3=\dfrac{u}{vw}$.</li>
+          <li><b>Jacobiano</b> (filas: $x_1,x_2,x_3$; columnas: $u,v,w$):
+            $$J=\det\begin{bmatrix}0&1&0\\0&0&1\\ \frac1{vw}&-\frac{u}{v^2w}&-\frac{u}{vw^2}\end{bmatrix}=\frac{1}{vw}.$$
+            (Desarrollando por la primera columna: solo queda $\frac1{vw}\cdot\det\begin{bmatrix}1&0\\0&1\end{bmatrix}$.) Como $v,w&gt;0$, $|J|=\frac{1}{vw}$.</li>
+          <li><b>Soporte nuevo.</b> $0&lt;x_1&lt;1\Rightarrow 0&lt;v&lt;1$; $0&lt;x_2&lt;1\Rightarrow0&lt;w&lt;1$; $0&lt;x_3&lt;1\Rightarrow 0&lt;\frac{u}{vw}&lt;1\Rightarrow 0&lt;u&lt;vw$.</li>
+          <li><b>Conjunta nueva.</b>
+            $$g(u,v,w)=\frac{2v^2w\,e^{u}}{2e-5}\cdot\frac1{vw}=\frac{2v\,e^u}{2e-5},\qquad 0&lt;u&lt;vw,\ 0&lt;v,w&lt;1.$$</li>
+          <li><b>Límites para marginalizar.</b> Fija $u\in(0,1)$. Necesitamos $vw&gt;u$ con $v,w&lt;1$. Como $w&lt;1$, hace falta $v&gt;u$; y dado $v$, $w$ va de $u/v$ a 1. Por eso:
+            $$f_U(u)=\int_{u}^{1}\!\int_{u/v}^{1}\frac{2v\,e^u}{2e-5}\,dw\,dv=\frac{2e^u}{2e-5}\int_u^1 v\Big(1-\frac uv\Big)dv=\frac{2e^u}{2e-5}\int_u^1(v-u)\,dv.$$</li>
+          <li><b>Resultado.</b> $\int_u^1(v-u)\,dv=\frac{(1-u)^2}{2}$, luego
+            $$\boxed{f_U(u)=\frac{e^u(1-u)^2}{2e-5},\qquad 0&lt;u&lt;1.}$$
+            Control: con $t=1-u$, $\int_0^1e^u(1-u)^2du=e\int_0^1t^2e^{-t}dt=e\big(2-5e^{-1}\big)=2e-5$ ✓. Acumulada: $F_U(u)=\dfrac{(u^2-4u+5)e^u-5}{2e-5}$; media $\E[U]=\dfrac{4e-11}{2e-5}\approx0.2906$.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <div class="sim" id="sim-ej10">
+      <p class="sim-title">Ejercicio 10: la región de integración $\{(v,w):\ vw&gt;u\}$</p>
+      <p class="sim-desc">Para cada $u$, $f_U(u)$ integra $\frac{2v e^u}{2e-5}$ sobre la zona sombreada (por encima de la hipérbola $w=u/v$). Observa que la zona empieza en $v=u$: de ahí el límite inferior de la integral en $v$.</p>
+      <div class="controls"></div>
+      <div class="grid-2"><div class="plot p1"></div><div class="plot p2"></div></div>
+      <div class="out"></div>
+    </div>
+
+    <div class="box ejercicio" id="ej-11">
+      <span class="box-title">Ejercicio 11 (Clase 1) <span class="badge star">★ reto</span></span>
+      <p>Sean $X$ y $Y$ v.a.'s independientes con distribución común $N(0,1)$. Pruebe que $R=\sqrt{X^2+Y^2}$ y $\Phi=\arctan(Y/X)$ también son independientes, $\Phi\sim U(0,2\pi)$ y que $R$ tiene distribución de Rayleigh, es decir, con densidad dada por</p>
+      $$f_R(r)=r\exp\Big\{-\frac{r^2}{2}\Big\},\qquad r&gt;0.$$
+      <details class="pista"><summary>Pista 1</summary><div><p>Son coordenadas polares: la inversa es $x=r\cos\varphi$, $y=r\sin\varphi$. Calcula el Jacobiano de eso (el famoso "$r\,dr\,d\varphi$").</p></div></details>
+      <details class="pista"><summary>Pista 2</summary><div><p>$x^2+y^2=r^2$. Si la conjunta de $(R,\Phi)$ se escribe como (función de $r$)·(función de $\varphi$) en un rectángulo, son independientes.</p></div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Conjunta de partida.</b> $f_{X,Y}(x,y)=\frac{1}{2\pi}e^{-(x^2+y^2)/2}$, $(x,y)\in\R^2$.</li>
+          <li><b>Biyección.</b> Cada punto del plano (salvo el origen y una semirrecta, que tienen probabilidad 0) tiene un único radio $r&gt;0$ y un único ángulo polar $\varphi\in(0,2\pi)$. La inversa es $x=r\cos\varphi$, $y=r\sin\varphi$. (Sobre por qué $\Phi$ es el ángulo polar y no literalmente $\arctan(Y/X)$, mira la caja de abajo.)</li>
+          <li><b>Jacobiano.</b>
+            $$J=\det\begin{bmatrix}\dfrac{\partial x}{\partial r}&\dfrac{\partial x}{\partial\varphi}\\[6pt]\dfrac{\partial y}{\partial r}&\dfrac{\partial y}{\partial\varphi}\end{bmatrix}=\det\begin{bmatrix}\cos\varphi&-r\sin\varphi\\ \sin\varphi&r\cos\varphi\end{bmatrix}=r\cos^2\varphi+r\sin^2\varphi=r,\qquad |J|=r.$$
+            Geométricamente: un rectangulito $\Delta r\times\Delta\varphi$ se convierte en un trozo de anillo de área $\approx r\,\Delta r\,\Delta\varphi$ (lejos del origen los arcos son más largos).</li>
+          <li><b>Soporte nuevo.</b> $A^*=\{r&gt;0,\ 0&lt;\varphi&lt;2\pi\}$, un rectángulo (infinito).</li>
+          <li><b>Conjunta nueva.</b> Como $x^2+y^2=r^2$:
+            $$f_{R,\Phi}(r,\varphi)=\frac{1}{2\pi}e^{-r^2/2}\cdot r=\underbrace{r\,e^{-r^2/2}}_{g(r)}\cdot\underbrace{\frac{1}{2\pi}}_{h(\varphi)},\qquad r&gt;0,\ 0&lt;\varphi&lt;2\pi.$$</li>
+          <li><b>Marginales e independencia.</b> $\int_0^\infty re^{-r^2/2}dr=\big[-e^{-r^2/2}\big]_0^\infty=1$ y $\int_0^{2\pi}\frac{d\varphi}{2\pi}=1$, así que $f_R(r)=re^{-r^2/2}$ (Rayleigh) y $f_\Phi(\varphi)=\frac1{2\pi}$ ($U(0,2\pi)$). La conjunta es el producto de las marginales en un rectángulo ⇒ <b>$R$ y $\Phi$ son independientes</b>. ∎</li>
+          <li><b>Bonus.</b> $F_R(r)=1-e^{-r^2/2}$, $\P(R&gt;2)=e^{-2}\approx0.1353$ y $\E[R]=\sqrt{\pi/2}\approx1.2533$.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <div class="box cuidado"><span class="box-title">Cuidado con "$\Phi=\arctan(Y/X)$"</span>
+      <p>La función $\arctan$ devuelve valores en $(-\pi/2,\pi/2)$, así que literalmente $\arctan(Y/X)$ <b>no puede</b> ser $U(0,2\pi)$; además no distingue el punto $(x,y)$ de $(-x,-y)$, por lo que $(R,\arctan(Y/X))$ no es una transformación biyectiva. Lo que el enunciado quiere decir es que $\Phi$ es el <b>ángulo polar</b> de $(X,Y)$ (lo que en programación se llama <code>atan2(Y, X)</code>), que cumple $\tan\Phi=Y/X$ y vive en $(0,2\pi)$. Curiosidad: $\arctan(Y/X)$ también es uniforme, pero en $(-\pi/2,\pi/2)$ (porque $Y/X$ es Cauchy estándar; compara con el Ejercicio 3 del deber).</p>
+    </div>
+
+    <div class="sim" id="sim-bm">
+      <p class="sim-title">Ejercicio 11 y Box–Muller</p>
+      <p class="sim-desc"><b>Modo 1:</b> genera pares normales $(X,Y)$ y mira $R$ y $\Phi$: Rayleigh y uniforme, sin correlación. <b>Modo 2 (Box–Muller):</b> el camino inverso. Con dos uniformes, $R=\sqrt{-2\ln U_1}$ (transformada inversa de la Rayleigh, como en el Ejercicio 5) y $\Phi=2\pi U_2$; entonces $X=R\cos\Phi\sim N(0,1)$. Así genera normales esta misma guía.</p>
+      <div class="controls"></div>
+      <div class="grid-2"><div><p class="plot-cap">Nube de puntos (X, Y)</p><div class="plot p1"></div></div><div><p class="plot-cap">Histograma de R vs. Rayleigh</p><div class="plot p2"></div></div></div>
+      <p class="plot-cap p3cap">Histograma de Φ vs. 1/(2π)</p>
+      <div class="plot p3"></div>
+      <div class="out"></div>
+    </div>
+    <div id="q-ndim"></div>
+  </section>
+
+  <!-- ================================================================= -->
+  <section>
+    <h2 id="wackerly">Práctica extra resuelta: Wackerly 6.23–6.25</h2>
+    <p>Estos ejercicios aparecen en el recorte de Wackerly (pág. 316) incluido en el PDF de la clase. Son buenos para mecanizar el método de la transformación.</p>
+
+    <div class="box ejercicio" id="w-6-23">
+      <span class="box-title">Wackerly 6.23</span>
+      <p>En el Ejercicio 6.1 consideramos una variable aleatoria $Y$ con función de densidad de probabilidad dada por</p>
+      $$f(y)=\begin{cases}2(1-y), & 0\le y\le 1,\\ 0, & \text{en cualquier otro punto,}\end{cases}$$
+      <p>y empleamos el método de las funciones de distribución para determinar las funciones de densidad de (a) $U_1=2Y-1$; (b) $U_2=1-2Y$; (c) $U_3=Y^2$. Use el método de las transformaciones para hallar las densidades de $U_1$, $U_2$ y $U_3$.</p>
+      <details class="pista"><summary>Pista</summary><div><p>Las tres son monótonas en $[0,1]$ (¡también $y^2$, porque $y\ge0$!). En (b) la función es decreciente: no olvides el valor absoluto.</p></div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <p><b>(a) $U_1=2Y-1$</b> (creciente). Inversa $y=\frac{u+1}{2}$, $\big|\frac{dy}{du}\big|=\frac12$. Soporte: $y\in[0,1]\iff u\in[-1,1]$.
+          $$f_{U_1}(u)=2\Big(1-\frac{u+1}{2}\Big)\cdot\frac12=\frac{1-u}{2},\qquad -1\le u\le1.$$</p>
+        <p><b>(b) $U_2=1-2Y$</b> (decreciente). Inversa $y=\frac{1-u}{2}$, $\frac{dy}{du}=-\frac12$, $\big|\frac{dy}{du}\big|=\frac12$. Soporte: $u\in[-1,1]$.
+          $$f_{U_2}(u)=2\Big(1-\frac{1-u}{2}\Big)\cdot\frac12=\frac{1+u}{2},\qquad -1\le u\le1.$$
+          Tiene sentido: $U_2=-U_1$, así que su densidad es la de $U_1$ reflejada.</p>
+        <p><b>(c) $U_3=Y^2$.</b> En el soporte $[0,1]$, $y\mapsto y^2$ es creciente (solo hay una rama, $y=+\sqrt u$; la raíz negativa está fuera del soporte). Inversa $y=\sqrt u$, $\frac{dy}{du}=\frac{1}{2\sqrt u}$. Soporte: $u\in(0,1]$.
+          $$f_{U_3}(u)=2(1-\sqrt u)\cdot\frac{1}{2\sqrt u}=\frac{1-\sqrt u}{\sqrt u}=\frac{1}{\sqrt u}-1,\qquad 0&lt;u\le1.$$
+          Control: $\int_0^1(u^{-1/2}-1)\,du=2-1=1$ ✓. Las tres integran 1 (verifícalo).</p>
+      </div></details>
+    </div>
+
+    <div class="box ejercicio" id="w-6-24">
+      <span class="box-title">Wackerly 6.24</span>
+      <p>En el Ejercicio 6.4, consideramos una variable aleatoria $Y$ que poseía una distribución exponencial con media 4 y usamos el método de las funciones de distribución para obtener la función de densidad para $U=3Y+1$. Utilice el método de las transformaciones para deducir la función de densidad para $U$.</p>
+      <details class="pista"><summary>Pista</summary><div><p>$f_Y(y)=\frac14e^{-y/4}$, $y&gt;0$. Inversa $y=\frac{u-1}{3}$.</p></div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li>$h(y)=3y+1$ es creciente; $y&gt;0\iff u&gt;1$: soporte $(1,\infty)$.</li>
+          <li>Inversa $y=\frac{u-1}{3}$, $\big|\frac{dy}{du}\big|=\frac13$.</li>
+          <li>$$f_U(u)=\frac14e^{-\frac{(u-1)/3}{4}}\cdot\frac13=\frac{1}{12}e^{-(u-1)/12},\qquad u&gt;1.$$
+            Es una exponencial de media 12 <b>desplazada</b> en 1 unidad: $U-1=3Y\sim\text{Exp}(12)$. Por ejemplo $\E[U]=3\cdot4+1=13$ y $\P(U&gt;13)=e^{-1}\approx0.3679$.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <div class="box ejercicio" id="w-6-25">
+      <span class="box-title">Wackerly 6.25</span>
+      <p>En el Ejercicio 6.11 consideramos dos componentes electrónicos que operan de modo independiente, cada uno con vida útil gobernada por la distribución exponencial con media 1. Procedimos a usar el método de las funciones de distribución para obtener la distribución del promedio de vida útil para los dos componentes. Utilice el método de las transformaciones para obtener la función de densidad para el promedio de vida útil de los dos componentes.</p>
+      <details class="pista"><summary>Pista 1</summary><div><p>Es una función de <b>dos</b> variables: usa el método bivariado con $U_1=\frac{Y_1+Y_2}{2}$ y una auxiliar $U_2=Y_2$.</p></div></details>
+      <details class="pista"><summary>Pista 2</summary><div><p>El soporte nuevo es $0&lt;u_2&lt;2u_1$: al integrar $u_2$, el límite superior depende de $u_1$.</p></div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Conjunta.</b> $f(y_1,y_2)=e^{-y_1}e^{-y_2}=e^{-(y_1+y_2)}$, $y_1,y_2&gt;0$.</li>
+          <li><b>Transformación.</b> $U_1=\frac{Y_1+Y_2}{2}$, $U_2=Y_2$. Inversa: $y_2=u_2$, $y_1=2u_1-u_2$.</li>
+          <li><b>Jacobiano.</b> $J=\det\begin{bmatrix}2&-1\\0&1\end{bmatrix}=2$, $|J|=2$.</li>
+          <li><b>Soporte.</b> $y_2&gt;0\iff u_2&gt;0$; $y_1&gt;0\iff u_2&lt;2u_1$. Luego $A^*=\{0&lt;u_2&lt;2u_1\}$ (lo que obliga $u_1&gt;0$).</li>
+          <li><b>Conjunta nueva.</b> $y_1+y_2=2u_1$: $f_{U_1,U_2}(u_1,u_2)=2e^{-2u_1}$ en $A^*$.</li>
+          <li><b>Marginal.</b> Para $u_1&gt;0$ fijo, $u_2$ va de 0 a $2u_1$:
+            $$f_{U_1}(u_1)=\int_0^{2u_1}2e^{-2u_1}du_2=4u_1e^{-2u_1},\qquad u_1&gt;0.$$
+            Es una $G(\alpha=2,\ \beta=\frac12)$: $\frac{1}{\Gamma(2)(1/2)^2}u\,e^{-u/(1/2)}=4ue^{-2u}$ ✓. Media $\alpha\beta=1$, como debe ser el promedio de dos vidas de media 1.</li>
+        </ol>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ================================================================= -->
+  <section>
+    <h2 id="que-metodo">¿Qué método uso?</h2>
+    <p>Antes de calcular nada, contesta estas preguntas en orden. Casi todos los ejercicios de transformaciones caen en una de estas casillas.</p>
+
+    <div class="flow" role="group" aria-label="Diagrama de decisión del método">
+      <p class="flow-node flow-q">¿De cuántas variables aleatorias depende $U$?</p>
+      <div class="flow-split">
+        <div class="flow-col">
+          <span class="flow-tag">Una sola: $U=h(Y)$</span>
+          <p class="flow-node flow-q">¿$h$ es estrictamente monótona en el soporte de $Y$?</p>
+          <div class="flow-arrow">↓</div>
+          <div class="flow-sub">
+            <p class="flow-node flow-res"><span class="si">Sí</span><b>Jacobiano 1D</b>$f_U(u)=f_Y(h^{-1}(u))\,\big|\tfrac{d h^{-1}}{du}\big|$. Ej. 1–2, 6; Wackerly 6.23–6.24.</p>
+            <p class="flow-node flow-res"><span class="no">No</span><b>Monótona a trozos → suma por ramas</b>(o acumulada). Cuenta cuántas preimágenes caen en el soporte para cada $u$. $Y^2$, $|X-c|$.</p>
+            <p class="flow-node flow-res alt"><span class="no">No</span><b>Tiene tramos planos o "recortes" → solo acumulada</b>$U$ puede tener átomos (no es continua). $\max\{a,\min\{b,X\}\}$.</p>
+          </div>
+        </div>
+        <div class="flow-col">
+          <span class="flow-tag">Varias: $U=h(Y_1,\dots,Y_n)$</span>
+          <p class="flow-node flow-q">¿Qué te piden?</p>
+          <div class="flow-arrow">↓</div>
+          <div class="flow-sub">
+            <p class="flow-node flow-res"><b>La conjunta de $n$ variables nuevas</b>Jacobiano $n$-dimensional directo. Ejemplo 3, Ej. 11.</p>
+            <p class="flow-node flow-res"><b>Una sola $U$ y la región $\{U\le u\}$ es fácil de dibujar</b>Acumulada: integra sobre la región (sumas o máximos en un cuadrado, cocientes…). Ejemplo 1, Ej. 3.</p>
+            <p class="flow-node flow-res"><b>Una sola $U$ y la región es fea</b>Agrega variables auxiliares, Jacobiano y luego integra las auxiliares. Ejemplo 4, Ej. 10, Wackerly 6.25.</p>
+            <p class="flow-node flow-res alt"><b>Suma de independientes con FGM conocida</b>Método de la FGM (Clase 2): suele ser lo más rápido.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="box cuidado"><span class="box-title">Los errores más comunes (y cómo evitarlos)</span>
+      <ul>
+        <li><b>Olvidar el soporte</b> de $U$ o escribir la densidad "para todo $u$". Siempre termina con "para … y 0 en otro caso".</li>
+        <li><b>Olvidar el valor absoluto</b> con $h$ decreciente (sale una densidad negativa).</li>
+        <li><b>Usar el jacobiano de la transformación directa</b> en lugar del de la inversa. Si calculas $\det\frac{\partial u}{\partial y}$, recuerda que $J$ es su <b>recíproco</b>.</li>
+        <li><b>No voltear la desigualdad</b> al despejar con una función decreciente (por ejemplo, al dividir entre un número negativo).</li>
+        <li><b>Usar el Jacobiano con una $h$ que no es inyectiva</b> (como $Y^2$ en $\R$): hay que sumar las ramas.</li>
+        <li><b>Límites de integración fijos</b> cuando la región depende de $u$ (Ejemplo 1, Ej. 10, Wackerly 6.25): dibuja primero.</li>
+      </ul>
+    </div>
+
+    <h3>Autoevaluación final</h3>
+    <div id="q-final"></div>
+  </section>
+
+  <!-- ================================================================= -->
+  <section>
+    <h2 id="deber">Practica con el deber (Lista 1.1)</h2>
+    <p>Los primeros seis ejercicios del deber usan exactamente las técnicas de esta clase. Aquí solo se indica <b>qué técnica</b> usar; las pistas y soluciones están en la página del deber.</p>
+    <div class="table-wrap"><table class="tabla text-left">
+      <thead><tr><th>Ejercicio</th><th>Técnica de esta clase</th><th>Modelo resuelto aquí</th></tr></thead>
+      <tbody>
+        <tr><td><a href="../deberes/lista-1-1.html#ej-1">Deber · Ej. 1</a></td><td>(a) $X^2+2$ con $X\ge0$: monótona, acumulada o Jacobiano 1D. (b) $\max\{2,\min\{4,X\}\}$: <b>solo acumulada</b>; $W$ es mixta (átomos en 2 y 4). (c) $|X-4|$: <b>no monótona</b>, dos ramas para $z&lt;4$ y una para $4&lt;z&lt;6$.</td><td><a href="#ej-1">Ej. 1</a>, <a href="#ejemplo-abs">Ejemplo C</a></td></tr>
+        <tr><td><a href="../deberes/lista-1-1.html#ej-2">Deber · Ej. 2</a></td><td>Acumulada geométrica: $\P(D\le d)$ = cociente de <b>volúmenes</b> (punto uniforme en una esfera).</td><td><a href="#ej-3">Ej. 3★</a></td></tr>
+        <tr><td><a href="../deberes/lista-1-1.html#ej-3">Deber · Ej. 3</a></td><td>Jacobiano 1D con $X=\tan\Theta$, monótona en $(-\pi/2,\pi/2)$ (o acumulada).</td><td><a href="#ejemplo-2">Ejemplo 2</a>, <a href="#ej-11">Ej. 11★</a></td></tr>
+        <tr><td><a href="../deberes/lista-1-1.html#ej-4">Deber · Ej. 4</a></td><td>Probabilidades integrando la conjunta sobre regiones; (e) Jacobiano bivariado lineal $U=X+Y$, $V=X-Y$, con soporte triangular que hay que transformar.</td><td><a href="#ejemplo-1">Ejemplo 1</a>, <a href="#ejemplo-3">Ejemplo 3</a></td></tr>
+        <tr><td><a href="../deberes/lista-1-1.html#ej-5">Deber · Ej. 5</a></td><td>Jacobiano bivariado <b>no inyectivo</b> ($|X-Y|$): partir en $\{x&gt;y\}$ y $\{x&lt;y\}$ y sumar los aportes (la "suma por ramas" en 2D). "Parámetro 1" = tasa $\lambda=1$, es decir $\beta=1$.</td><td><a href="#ejemplo-abs">Ejemplo C</a>, <a href="#ejemplo-3">Ejemplo 3</a></td></tr>
+        <tr><td><a href="../deberes/lista-1-1.html#ej-6">Deber · Ej. 6</a></td><td>Jacobiano bivariado con auxiliar, igual que el Ejemplo 4 pero con Gammas. Ojo: $\text{Gamma}(r,\lambda)$ con $\lambda$ <b>tasa</b>, o sea $\beta=1/\lambda$ en la notación del formulario.</td><td><a href="#ejemplo-4">Ejemplo 4</a></td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+</main>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../assets/js/stats.js"></script>
+<script src="../assets/js/plot.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+(function () {
+  'use strict';
+  const S = EM.stats, D = S.dist, fmt = S.fmt, rng = S.rng;
+  const $ = (root, sel) => root.querySelector(sel);
+  const E = Math.E, TWO_E5 = 2 * Math.E - 5;
+  // Correlación muestral (auxiliar local)
+  function corr(a, b) {
+    const n = a.length, ma = S.mean(a), mb = S.mean(b);
+    let sab = 0, saa = 0, sbb = 0;
+    for (let i = 0; i < n; i++) { const x = a[i] - ma, y = b[i] - mb; sab += x * y; saa += x * x; sbb += y * y; }
+    return sab / Math.sqrt(saa * sbb);
+  }
+  // Área de un polígono (fórmula del cordón de zapato)
+  function polyArea(P) {
+    let s = 0;
+    for (let i = 0; i < P.length; i++) { const [x1, y1] = P[i], [x2, y2] = P[(i + 1) % P.length]; s += x1 * y2 - x2 * y1; }
+    return Math.abs(s) / 2;
+  }
+
+  /* ---------------- (b) Laboratorio de densidades ---------------- */
+  (function () {
+    const root = document.getElementById('sim-hist');
+    const out = EM.ui.readout($(root, '.out'));
+    const p = EM.plot.create($(root, '.plot'), { xmin: -1.3, xmax: 2.3, ymin: 0, ymax: 0.8, height: 280, xlabel: 'u' });
+    // muestreador del Ej. 10 por aceptación-rechazo (cota: f ≤ 2e/(2e-5))
+    const fmax10 = 2 * E / TWO_E5;
+    function samp10() {
+      for (;;) {
+        const a = rng(), b = rng(), c = rng();
+        if (rng() * fmax10 < 2 * a * a * b * Math.exp(a * b * c) / TWO_E5) return a * b * c;
+      }
+    }
+    function sampTri() { // triángulo (0,0),(1,0),(0.3,1): D = coordenada vertical
+      let a1 = rng(), a2 = rng(); if (a1 + a2 > 1) { a1 = 1 - a1; a2 = 1 - a2; } return a2;
+    }
+    const C = {
+      ej1: { label: 'Ej. 1 / Ejemplo 2: U = 3Y − 1, f(y) = 2y', r: [-1.3, 2.3], ymax: 0.8, gen: () => 3 * Math.sqrt(rng()) - 1,
+        pdf: u => (u >= -1 && u <= 2) ? 2 * (u + 1) / 9 : 0, tex: 'f_U(u)=\\tfrac29(u+1),\\ -1\\le u\\le 2', mean: 1 },
+      ej2: { label: 'Ej. 2 / Ej. 6: Y = e^(−2X), X ~ Exp(1)', r: [-0.05, 1.05], ymax: 4, gen: () => Math.exp(-2 * D.exp(1).rand()),
+        pdf: u => (u > 0 && u < 1) ? 1 / (2 * Math.sqrt(u)) : 0, tex: 'f_Y(y)=\\frac{1}{2\\sqrt y},\\ 0\\lt y\\lt 1', mean: 1 / 3 },
+      ej3: { label: 'Ej. 3: distancia a la base (b = 1, h = 1)', r: [-0.05, 1.05], ymax: 2.3, gen: sampTri,
+        pdf: u => (u >= 0 && u <= 1) ? 2 * (1 - u) : 0, tex: 'f_D(d)=\\frac{2(h-d)}{h^2}=2(1-d)', mean: 1 / 3 },
+      ejemplo1: { label: 'Ejemplo 1: U = Y₁ + Y₂ uniformes', r: [-0.2, 2.2], ymax: 1.25, gen: () => rng() + rng(),
+        pdf: u => (u < 0 || u > 2) ? 0 : (u <= 1 ? u : 2 - u), tex: 'f_U(u)=u\\ (0\\le u\\le1),\\ 2-u\\ (1\\lt u\\le2)', mean: 1 },
+      ejemplo4: { label: 'Ejemplo 4: U = Y₁/(Y₁+Y₂), Exp(β = 2)', r: [-0.1, 1.1], ymax: 1.6, gen: () => { const a = D.exp(2).rand(), b = D.exp(2).rand(); return a / (a + b); },
+        pdf: u => (u > 0 && u < 1) ? 1 : 0, tex: 'f_U(u)=1,\\ 0\\lt u\\lt 1', mean: 0.5 },
+      ej10: { label: 'Ej. 10: U = X₁X₂X₃', r: [-0.02, 1.02], ymax: 2.7, gen: samp10,
+        pdf: u => (u > 0 && u < 1) ? Math.exp(u) * (1 - u) ** 2 / TWO_E5 : 0, tex: 'f_U(u)=\\frac{e^u(1-u)^2}{2e-5},\\ 0\\lt u\\lt1', mean: (4 * E - 11) / TWO_E5 },
+      zsq: { label: 'Ejemplo A: Z², Z ~ N(0,1)', r: [0, 6], ymax: 1.6, gen: () => S.rnorm01() ** 2,
+        pdf: D.chi2(1).pdf, tex: 'f_U(u)=\\tfrac{1}{\\sqrt{2\\pi}}u^{-1/2}e^{-u/2}\\ (\\chi^2_{(1)})', mean: 1 },
+      w623c: { label: 'Wackerly 6.23c: U = Y², f(y) = 2(1 − y)', r: [-0.02, 1.02], ymax: 5, gen: () => (1 - Math.sqrt(1 - rng())) ** 2,
+        pdf: u => (u > 0 && u <= 1) ? 1 / Math.sqrt(u) - 1 : 0, tex: 'f_{U_3}(u)=u^{-1/2}-1,\\ 0\\lt u\\le1', mean: 1 / 6 },
+      w624: { label: 'Wackerly 6.24: U = 3Y + 1, Y ~ Exp(4)', r: [0, 50], ymax: 0.1, gen: () => 3 * D.exp(4).rand() + 1,
+        pdf: u => u > 1 ? Math.exp(-(u - 1) / 12) / 12 : 0, tex: 'f_U(u)=\\tfrac1{12}e^{-(u-1)/12},\\ u\\gt1', mean: 13 },
+      w625: { label: 'Wackerly 6.25: promedio de dos Exp(1)', r: [0, 4], ymax: 0.85, gen: () => (D.exp(1).rand() + D.exp(1).rand()) / 2,
+        pdf: u => u > 0 ? 4 * u * Math.exp(-2 * u) : 0, tex: 'f_U(u)=4u\\,e^{-2u},\\ u\\gt0\\ (G(2,\\tfrac12))', mean: 1 },
+    };
+    let key = 'ej1', data = [];
+    const N = 40000;
+    function simulate() { const c = C[key]; data = new Array(N); for (let i = 0; i < N; i++) data[i] = c.gen(); render(); }
+    function render() {
+      const c = C[key];
+      p.setRange({ xmin: c.r[0], xmax: c.r[1], ymax: c.ymax });
+      p.draw(g => {
+        g.hist(data, { bins: 50, range: [c.r[0], c.r[1]], color: 'c2', alpha: 0.5, label: 'simulación' });
+        g.curve(c.pdf, { color: 'c1', width: 2.6, label: 'densidad deducida' });
+      });
+      out.set(`$${c.tex}$<br>Media simulada: <b>${fmt(S.mean(data), 4)}</b> &nbsp;·&nbsp; media teórica: <b>${fmt(c.mean, 4)}</b> (con ${N.toLocaleString('es')} valores)`);
+    }
+    const ctr = $(root, '.controls');
+    EM.ui.select(ctr, { label: 'Caso', value: key, options: Object.keys(C).map(k => ({ value: k, label: C[k].label })), onChange: v => { key = v; simulate(); } });
+    EM.ui.button(ctr, 'Simular de nuevo', simulate, { primary: true });
+    simulate();
+  })();
+
+  /* ---------------- Ejercicio 3: triángulo ---------------- */
+  (function () {
+    const root = document.getElementById('sim-tri');
+    const h = 3, b = 4, apex = 1.2;
+    const p1 = EM.plot.create($(root, '.p1'), { xmin: -0.3, xmax: 4.3, ymin: -0.3, ymax: 3.3, equal: true, xticks: 5, yticks: 4 });
+    const p2 = EM.plot.create($(root, '.p2'), { xmin: 0, xmax: 3.2, ymin: 0, ymax: 0.75, height: 260, xlabel: 'd', ylabel: 'f_D(d)' });
+    const out = EM.ui.readout($(root, '.out'));
+    const fD = x => (x >= 0 && x <= h) ? 2 * (h - x) / (h * h) : 0;
+    const xl = y => apex * y / h, xr = y => b + (apex - b) * y / h;
+    let d = 1;
+    function render() {
+      p1.draw(g => {
+        g.polygon([[0, 0], [b, 0], [xr(d), d], [xl(d), d]], { color: 'accent', alpha: 0.35 });
+        g.polygon([[xl(d), d], [xr(d), d], [apex, h]], { color: 'c2', alpha: 0.18 });
+        g.polygon([[0, 0], [b, 0], [apex, h]], { fill: false, stroke: 'ink', width: 1.6 });
+        g.line(-0.3, d, 4.3, d, { color: 'c2', dash: [5, 4], width: 1.4 });
+        g.text('D ≤ d', (xl(d / 2) + xr(d / 2)) / 2, d / 2, { align: 'center', baseline: 'middle', bold: true });
+        g.text('triángulo de altura h − d', apex + 0.15, h + 0.08, { align: 'center', baseline: 'bottom', color: 'muted', size: 11 });
+        g.text('base b', b / 2, -0.05, { align: 'center', baseline: 'top', color: 'muted', size: 11 });
+      });
+      p2.draw(g => {
+        g.area(fD, 0, d, { color: 'accent', alpha: 0.35 });
+        g.curve(fD, { color: 'c1', from: 0, to: h, label: 'f_D(d) = 2(h−d)/h²' });
+        g.vline(d, {});
+      });
+      const F = 1 - ((h - d) / h) ** 2;
+      out.set(`Con $b=${b}$, $h=${h}$: $\\P(D\\le ${fmt(d, 2)})=1-\\big(\\tfrac{h-d}{h}\\big)^2=$ <b>${fmt(F, 4)}</b> &nbsp;(área azul / área total). Área del triangulito de arriba: $\\big(\\tfrac{h-d}{h}\\big)^2=$ <b>${fmt(1 - F, 4)}</b>.`);
+    }
+    EM.ui.slider($(root, '.controls'), { tex: 'd', min: 0, max: h, step: 0.01, value: d, fmt: v => v.toFixed(2), onInput: v => { d = v; render(); } });
+    render();
+  })();
+
+  /* ---------------- (c) Transformada integral / inversa ---------------- */
+  (function () {
+    const root = document.getElementById('sim-pit');
+    const out = EM.ui.readout($(root, '.out'));
+    const DS = {
+      exp: { label: 'Exponencial, β = 1', d: D.exp(1), r: [0, 5], ymax: 1.1 },
+      normal: { label: 'Normal N(0, 1)', d: D.normal(0, 1), r: [-3.5, 3.5], ymax: 0.5 },
+      gamma: { label: 'Gamma G(2, 1)', d: D.gamma(2, 1), r: [0, 9], ymax: 0.45 },
+      beta: { label: 'Beta(2, 5)', d: D.beta(2, 5), r: [0, 1], ymax: 2.9 },
+      cauchy: { label: 'Cauchy estándar', d: D.cauchy(0, 1), r: [-8, 8], ymax: 0.38 },
+    };
+    const p1 = EM.plot.create($(root, '.p1'), { xmin: 0, xmax: 5, ymin: 0, ymax: 1.02, height: 250, xlabel: 'x', ylabel: 'F(x)' });
+    const p2 = EM.plot.create($(root, '.p2'), { xmin: 0, xmax: 5, ymin: 0, ymax: 1.1, height: 250, xlabel: 'x' });
+    const p3 = EM.plot.create($(root, '.p3'), { xmin: 0, xmax: 1, ymin: 0, ymax: 1.6, height: 200, xlabel: 'u = F(x)' });
+    let key = 'exp', us = [], xs = [], Fx = [];
+    const N = 10000;
+    function simulate() {
+      const c = DS[key], dist = c.d;
+      us = new Array(N); xs = new Array(N); Fx = new Array(N);
+      for (let i = 0; i < N; i++) { us[i] = rng(); xs[i] = dist.q(us[i]); Fx[i] = dist.cdf(dist.rand()); }
+      render();
+    }
+    function render() {
+      const c = DS[key], dist = c.d;
+      [p1, p2].forEach(p => p.setRange({ xmin: c.r[0], xmax: c.r[1] }));
+      p2.setRange({ ymax: c.ymax });
+      p1.draw(g => {
+        g.curve(dist.cdf, { color: 'c1', width: 2.6 });
+        for (let i = 0; i < 12; i++) {
+          const u = us[i], x = xs[i];
+          g.line(c.r[0], u, x, u, { color: 'c2', width: 1.1 });
+          g.line(x, u, x, 0, { color: 'c2', width: 1.1, dash: [3, 3] });
+        }
+        g.points(xs.slice(0, 12), new Array(12).fill(0), { color: 'c2', r: 3.5, alpha: 0.9 });
+        g.points(new Array(12).fill(c.r[0]), us.slice(0, 12), { color: 'c3', r: 3.5, alpha: 0.9 });
+      });
+      p2.draw(g => {
+        g.hist(xs, { bins: 50, range: c.r, color: 'c2', alpha: 0.5, label: 'F⁻¹(U)' });
+        g.curve(dist.pdf, { color: 'c1', width: 2.4, label: 'f(x)' });
+      });
+      p3.draw(g => {
+        g.hist(Fx, { bins: 25, range: [0, 1], color: 'c3', alpha: 0.5, label: 'F(X)' });
+        g.hline(1, { color: 'c1', dash: [], width: 2.2 });
+      });
+      const share = S.prop(us, u => u <= 0.3);
+      out.set(`Media de $F^{-1}(U)$: <b>${fmt(S.mean(xs.filter(isFinite)), 3)}</b>${isNaN(dist.mean) ? ' (la Cauchy no tiene media: el valor salta mucho entre simulaciones)' : ` vs. teórica <b>${fmt(dist.mean, 3)}</b>`}. &nbsp;Proporción de $F(X)\\le 0.3$: <b>${fmt(S.prop(Fx, v => v <= 0.3), 3)}</b> (debe ser ≈ 0.3, porque $F(X)\\sim U(0,1)$).`);
+    }
+    const ctr = $(root, '.controls');
+    EM.ui.select(ctr, { label: 'Distribución', value: key, options: Object.keys(DS).map(k => ({ value: k, label: DS[k].label })), onChange: v => { key = v; simulate(); } });
+    EM.ui.button(ctr, 'Nuevas uniformes', simulate, { primary: true });
+    simulate();
+  })();
+
+  /* ---------------- (a) Ejemplo 1: región y área ---------------- */
+  (function () {
+    const root = document.getElementById('sim-region');
+    const p1 = EM.plot.create($(root, '.p1'), { xmin: -0.15, xmax: 1.5, ymin: -0.15, ymax: 1.5, equal: true, xticks: 4, yticks: 4, xlabel: 'y₁', ylabel: 'y₂' });
+    const p2 = EM.plot.create($(root, '.p2'), { xmin: -0.3, xmax: 2.3, ymin: 0, ymax: 1.1, height: 270, xlabel: 'u' });
+    const out = EM.ui.readout($(root, '.out'));
+    const F = u => u <= 0 ? 0 : u <= 1 ? u * u / 2 : u < 2 ? 1 - (2 - u) ** 2 / 2 : 1;
+    const f = u => (u < 0 || u > 2) ? 0 : u <= 1 ? u : 2 - u;
+    function poly(u) {
+      if (u <= 0) return null;
+      if (u <= 1) return [[0, 0], [u, 0], [0, u]];
+      if (u < 2) return [[0, 0], [1, 0], [1, u - 1], [u - 1, 1], [0, 1]];
+      return [[0, 0], [1, 0], [1, 1], [0, 1]];
+    }
+    let u = 0.7, pts = null;
+    function render() {
+      p1.draw(g => {
+        const P = poly(u); if (P) g.polygon(P, { color: 'accent', alpha: 0.32 });
+        g.polygon([[0, 0], [1, 0], [1, 1], [0, 1]], { fill: false, stroke: 'ink', width: 1.6 });
+        if (pts) {
+          const ix = [], iy = [], ox = [], oy = [];
+          pts.forEach(([a, b]) => { if (a + b <= u) { ix.push(a); iy.push(b); } else { ox.push(a); oy.push(b); } });
+          g.points(ox, oy, { color: 'muted', r: 1.6, alpha: 0.5 });
+          g.points(ix, iy, { color: 'c1', r: 1.8, alpha: 0.8 });
+        }
+        g.line(u - 1.7, 1.7, u + 0.2, -0.2, { color: 'c2', width: 2.4 });
+        if (u > 0.05 && u < 2.6) g.text('y₁ + y₂ = u', Math.min(Math.max(u - 0.35, 0.05), 1.15), Math.min(0.35, u) + 0.06 + (u > 1 ? u - 1 : 0) * 0, { color: 'c2', bold: true, size: 12 });
+      });
+      p2.draw(g => {
+        g.curve(f, { color: 'c2', dash: [6, 4], label: 'f_U(u) (triangular)' });
+        g.curve(F, { color: 'c1', width: 2.6, label: 'F_U(u) = área' });
+        g.vline(u, {});
+        g.points([u], [F(u)], { color: 'c1', r: 5, alpha: 1 });
+      });
+      let tramo;
+      if (u < 0) tramo = 'la recta pasa por debajo del cuadrado: $F_U(u)=0$';
+      else if (u <= 1) tramo = `la región es un triángulo de catetos $u$: $F_U(u)=u^2/2=$ <b>${fmt(F(u), 4)}</b>`;
+      else if (u < 2) tramo = `la región es el cuadrado menos un triángulo de catetos $2-u$: $F_U(u)=1-(2-u)^2/2=$ <b>${fmt(F(u), 4)}</b>`;
+      else tramo = 'todo el cuadrado queda debajo: $F_U(u)=1$';
+      let mc = '';
+      if (pts) mc = `<br>Monte Carlo: fracción de los ${pts.length} puntos con $y_1+y_2\\le u$: <b>${fmt(S.prop(pts, q => q[0] + q[1] <= u), 4)}</b>`;
+      out.set(`$u=${fmt(u, 2)}$: ${tramo}.${mc}`);
+    }
+    const ctr = $(root, '.controls');
+    EM.ui.slider(ctr, { tex: 'u', min: -0.2, max: 2.2, step: 0.01, value: u, fmt: v => v.toFixed(2), onInput: v => { u = v; render(); } });
+    EM.ui.button(ctr, 'Lanzar puntos', () => { pts = Array.from({ length: 3000 }, () => [rng(), rng()]); render(); }, { primary: true });
+    render();
+  })();
+
+  /* ---------------- (f) Preimagen de {h(Y) ≤ u} ---------------- */
+  (function () {
+    const root = document.getElementById('sim-pre');
+    const out = EM.ui.readout($(root, '.out'));
+    const Zd = D.normal(0, 1);
+    const C = {
+      unif: { label: 'Y ~ U(−1, 2), U = Y²', h: y => y * y, sup: [-1, 2], yr: [-1.6, 2.6], hmax: 5, umax: 4.2, fY: y => (y > -1 && y < 2) ? 1 / 3 : 0, fYmax: 0.5,
+        pre: u => u <= 0 ? null : [[Math.max(-1, -Math.sqrt(u)), Math.min(2, Math.sqrt(u))]],
+        fU: u => (u <= 0 || u >= 4) ? 0 : (u < 1 ? 1 / (3 * Math.sqrt(u)) : 1 / (6 * Math.sqrt(u))), ur: [0, 4.3], fUmax: 1.5,
+        gen: () => { const y = -1 + 3 * rng(); return y * y; }, tex: 'f_U(u)=\\frac{1}{3\\sqrt u}\\ (0\\lt u\\lt 1),\\quad \\frac{1}{6\\sqrt u}\\ (1\\lt u\\lt 4)' },
+      abs: { label: 'X ~ Exp(1), U = |X − 1|', h: y => Math.abs(y - 1), sup: [0, Infinity], yr: [-0.3, 5], hmax: 4, umax: 3.5, fY: y => y >= 0 ? Math.exp(-y) : 0, fYmax: 1.1,
+        pre: u => u <= 0 ? null : [[Math.max(0, 1 - u), 1 + u]],
+        fU: u => u <= 0 ? 0 : (u < 1 ? Math.exp(-(1 - u)) + Math.exp(-(1 + u)) : Math.exp(-(1 + u))), ur: [0, 4], fUmax: 1.25,
+        gen: () => Math.abs(D.exp(1).rand() - 1), tex: 'f_U(u)=e^{-(1-u)}+e^{-(1+u)}\\ (0\\lt u\\lt1),\\quad e^{-(1+u)}\\ (u\\gt1)' },
+      norm: { label: 'Z ~ N(0, 1), U = Z²', h: y => y * y, sup: [-Infinity, Infinity], yr: [-3.5, 3.5], hmax: 9, umax: 7, fY: Zd.pdf, fYmax: 0.45,
+        pre: u => u <= 0 ? null : [[-Math.sqrt(u), Math.sqrt(u)]],
+        fU: D.chi2(1).pdf, ur: [0, 7], fUmax: 1.2,
+        gen: () => S.rnorm01() ** 2, tex: 'f_U(u)=\\frac{2\\varphi(\\sqrt u)}{2\\sqrt u}=\\frac{u^{-1/2}e^{-u/2}}{\\sqrt{2\\pi}}\\ \\ (\\chi^2_{(1)})' },
+    };
+    const p1 = EM.plot.create($(root, '.p1'), { xmin: -1.6, xmax: 2.6, ymin: -0.3, ymax: 5, height: 240, xlabel: 'y' });
+    const p2 = EM.plot.create($(root, '.p2'), { xmin: -1.6, xmax: 2.6, ymin: 0, ymax: 0.5, height: 240, xlabel: 'y' });
+    const p3 = EM.plot.create($(root, '.p3'), { xmin: 0, xmax: 4.3, ymin: 0, ymax: 1.5, height: 220, xlabel: 'u' });
+    let key = 'unif', u = 0.6, data = [], sl;
+    function simulate() { const c = C[key]; data = Array.from({ length: 40000 }, c.gen); render(); }
+    function integ(f, a, b) { const n = 400, hh = (b - a) / n; let s = 0; for (let i = 0; i < n; i++) s += f(a + (i + 0.5) * hh); return s * hh; }
+    function render() {
+      const c = C[key];
+      p1.setRange({ xmin: c.yr[0], xmax: c.yr[1], ymax: c.hmax });
+      p2.setRange({ xmin: c.yr[0], xmax: c.yr[1], ymax: c.fYmax });
+      p3.setRange({ xmin: c.ur[0], xmax: c.ur[1], ymax: c.fUmax });
+      const pre = c.pre(u);
+      const lo = Math.max(c.sup[0], c.yr[0]), hi = Math.min(c.sup[1], c.yr[1]);
+      p1.draw(g => {
+        g.curve(c.h, { color: 'muted', dash: [4, 4], width: 1.4 });
+        g.curve(c.h, { color: 'c1', from: lo, to: hi, width: 2.6 });
+        g.hline(u, { color: 'c2', dash: [], width: 1.8 });
+        g.text('u', c.yr[1], u, { align: 'right', baseline: 'bottom', color: 'c2', bold: true, dy: -2 });
+        if (pre) pre.forEach(([a, b]) => {
+          g.line(a, 0, b, 0, { color: 'accent', width: 6 });
+          g.line(a, 0, a, c.h(a), { color: 'accent', dash: [3, 3], width: 1.2 });
+          g.line(b, 0, b, c.h(b), { color: 'accent', dash: [3, 3], width: 1.2 });
+        });
+      });
+      p2.draw(g => {
+        if (pre) pre.forEach(([a, b]) => g.area(c.fY, a, b, { color: 'accent', alpha: 0.4 }));
+        g.curve(c.fY, { color: 'c1', width: 2.4 });
+      });
+      p3.draw(g => {
+        g.hist(data, { bins: 60, range: c.ur, color: 'c2', alpha: 0.45, label: 'U simulada' });
+        g.area(c.fU, c.ur[0] + 1e-9, u, { color: 'accent', alpha: 0.35 });
+        g.curve(c.fU, { color: 'c1', width: 2.4, label: 'f_U(u)' });
+        g.vline(u, {});
+      });
+      const Fu = pre ? pre.reduce((s, [a, b]) => s + integ(c.fY, a, Math.min(b, a + 60)), 0) : 0;
+      const preTxt = pre ? pre.map(([a, b]) => `[${fmt(a, 3)},\\ ${fmt(b, 3)}]`).join('\\cup') : '\\varnothing';
+      out.set(`$${c.tex}$<br>Preimagen de $\\{U\\le ${fmt(u, 2)}\\}$: $y\\in ${preTxt}$. &nbsp;$F_U(${fmt(u, 2)})=$ área bajo $f_Y$ = <b>${fmt(Fu, 4)}</b>; proporción simulada: <b>${fmt(S.prop(data, v => v <= u), 4)}</b>.`);
+    }
+    const ctr = $(root, '.controls');
+    EM.ui.select(ctr, { label: 'Caso', value: key, options: Object.keys(C).map(k => ({ value: k, label: C[k].label })), onChange: v => {
+      key = v; const c = C[key]; sl.input.max = c.umax; if (u > c.umax) { u = c.umax / 2; } sl.set(u); simulate(); } });
+    sl = EM.ui.slider(ctr, { tex: 'u', min: 0, max: C[key].umax, step: 0.01, value: u, fmt: v => v.toFixed(2), onInput: v => { u = v; render(); } });
+    simulate();
+  })();
+
+  /* ---------------- (d) Rejilla y |J| ---------------- */
+  (function () {
+    const root = document.getElementById('sim-grid');
+    const out = EM.ui.readout($(root, '.out'));
+    const T = {
+      ej3: { label: 'Ejemplo 3: y₁ = (u₁+u₂)/2, y₂ = (u₁−u₂)/2', ur: [[-2, 2], [-2, 2]], yr: [[-2, 2], [-2, 2]],
+        inv: (a, b) => [(a + b) / 2, (a - b) / 2], J: () => 0.5, Jtex: '|J|=\\tfrac12', ul: ['u₁', 'u₂'], yl: ['y₁', 'y₂'] },
+      ej4: { label: 'Ejemplo 4: y₁ = u₁u₂, y₂ = u₂(1−u₁)', ur: [[0, 1], [0, 3]], yr: [[0, 3], [0, 3]],
+        inv: (a, b) => [a * b, b * (1 - a)], J: (a, b) => b, Jtex: '|J|=u_2', ul: ['u₁', 'u₂'], yl: ['y₁', 'y₂'] },
+      ej11: { label: 'Ej. 11: x = r cos φ, y = r sin φ', ur: [[0, 2], [0, 2 * Math.PI]], yr: [[-2.1, 2.1], [-2.1, 2.1]],
+        inv: (r, t) => [r * Math.cos(t), r * Math.sin(t)], J: r => r, Jtex: '|J|=r', ul: ['r', 'φ'], yl: ['x', 'y'] },
+    };
+    const NG = 8;
+    const p1 = EM.plot.create($(root, '.p1'), { xmin: -2, xmax: 2, ymin: -2, ymax: 2, height: 280, xticks: 4, yticks: 4 });
+    const p2 = EM.plot.create($(root, '.p2'), { xmin: -2, xmax: 2, ymin: -2, ymax: 2, height: 280, xticks: 4, yticks: 4 });
+    let key = 'ej3', c1 = 5, c2 = 5, size = 1;
+    const sliders = [];
+    function cellBoundary(t, a0, b0, da, db, m) { // contorno de la celda mapeado por la inversa
+      const P = [];
+      for (let i = 0; i < m; i++) P.push(t.inv(a0 + da * i / m, b0));
+      for (let i = 0; i < m; i++) P.push(t.inv(a0 + da, b0 + db * i / m));
+      for (let i = 0; i < m; i++) P.push(t.inv(a0 + da * (1 - i / m), b0 + db));
+      for (let i = 0; i < m; i++) P.push(t.inv(a0, b0 + db * (1 - i / m)));
+      return P;
+    }
+    function render() {
+      const t = T[key];
+      const [[a1, b1], [a2, b2]] = t.ur;
+      const g1 = (b1 - a1) / NG, g2 = (b2 - a2) / NG;
+      const da = g1 * size, db = g2 * size;
+      const a0 = a1 + c1 * g1 * (1 - size) / 1 + 0, b0 = a2 + c2 * g2 * (1 - size) / 1 + 0;
+      // posición: c ∈ [0, NG-1] en unidades de rejilla, celda de tamaño 'size' centrada en la celda c
+      const ca = a1 + (c1 + 0.5) * g1 - da / 2, cb = a2 + (c2 + 0.5) * g2 - db / 2;
+      p1.setRange({ xmin: a1, xmax: b1, ymin: a2, ymax: b2, xlabel: t.ul[0], ylabel: t.ul[1] });
+      p2.setRange({ xmin: t.yr[0][0], xmax: t.yr[0][1], ymin: t.yr[1][0], ymax: t.yr[1][1], xlabel: t.yl[0], ylabel: t.yl[1] });
+      const cell = [[ca, cb], [ca + da, cb], [ca + da, cb + db], [ca, cb + db]];
+      const img = cellBoundary(t, ca, cb, da, db, 40);
+      p1.draw(g => {
+        for (let i = 0; i <= NG; i++) {
+          g.line(a1 + i * g1, a2, a1 + i * g1, b2, { color: 'c1', width: 1, dash: [] });
+          g.line(a1, a2 + i * g2, b1, a2 + i * g2, { color: 'c3', width: 1, dash: [] });
+        }
+        g.polygon(cell, { color: 'c2', alpha: 0.55, stroke: 'c2', width: 2 });
+      });
+      p2.draw(g => {
+        for (let i = 0; i <= NG; i++) {
+          const ua = a1 + i * g1, ub = a2 + i * g2;
+          g.param(s => t.inv(ua, s)[0], s => t.inv(ua, s)[1], a2, b2, { color: 'c1', width: 1, n: 120 });
+          g.param(s => t.inv(s, ub)[0], s => t.inv(s, ub)[1], a1, b1, { color: 'c3', width: 1, n: 120 });
+        }
+        g.polygon(img, { color: 'c2', alpha: 0.55, stroke: 'c2', width: 2 });
+      });
+      const AU = da * db, AY = polyArea(img), Jc = t.J(ca + da / 2, cb + db / 2);
+      out.set(`Área de la celda en el espacio nuevo: <b>${fmt(AU, 4)}</b> &nbsp;·&nbsp; área de su preimagen: <b>${fmt(AY, 4)}</b><br>Cociente (preimagen / celda): <b>${fmt(AY / AU, 4)}</b> &nbsp;vs.&nbsp; $${t.Jtex}$ en el centro de la celda: <b>${fmt(Jc, 4)}</b>. Por eso $f_U=f_Y\\cdot|J|$: la misma probabilidad repartida en un área $|J|$ veces distinta.`);
+      void a0; void b0;
+    }
+    const ctr = $(root, '.controls');
+    EM.ui.select(ctr, { label: 'Transformación', value: key, options: Object.keys(T).map(k => ({ value: k, label: T[k].label })), onChange: v => { key = v; render(); } });
+    sliders.push(EM.ui.slider(ctr, { label: 'celda (horizontal)', min: 0, max: NG - 1, step: 0.1, value: c1, fmt: v => v.toFixed(1), onInput: v => { c1 = v; render(); } }));
+    sliders.push(EM.ui.slider(ctr, { label: 'celda (vertical)', min: 0, max: NG - 1, step: 0.1, value: c2, fmt: v => v.toFixed(1), onInput: v => { c2 = v; render(); } }));
+    sliders.push(EM.ui.slider(ctr, { label: 'tamaño', min: 0.1, max: 1, step: 0.05, value: size, fmt: v => v.toFixed(2), onInput: v => { size = v; render(); } }));
+    render();
+  })();
+
+  /* ---------------- Ejercicio 10: región vw > u ---------------- */
+  (function () {
+    const root = document.getElementById('sim-ej10');
+    const out = EM.ui.readout($(root, '.out'));
+    const p1 = EM.plot.create($(root, '.p1'), { xmin: -0.05, xmax: 1.08, ymin: -0.05, ymax: 1.08, equal: true, xticks: 5, yticks: 5, xlabel: 'v', ylabel: 'w' });
+    const p2 = EM.plot.create($(root, '.p2'), { xmin: 0, xmax: 1, ymin: 0, ymax: 2.5, height: 260, xlabel: 'u' });
+    const fU = u => (u > 0 && u < 1) ? Math.exp(u) * (1 - u) ** 2 / TWO_E5 : 0;
+    const FU = u => u <= 0 ? 0 : u >= 1 ? 1 : ((u * u - 4 * u + 5) * Math.exp(u) - 5) / TWO_E5;
+    let u = 0.3;
+    function render() {
+      p1.draw(g => {
+        g.region((v, w) => v > 0 && v < 1 && w > 0 && w < 1 && v * w > u, { color: 'accent', alpha: 0.35, step: 3 });
+        g.polygon([[0, 0], [1, 0], [1, 1], [0, 1]], { fill: false, stroke: 'ink', width: 1.5 });
+        g.curve(v => u / v, { color: 'c2', from: Math.max(u, 0.01), to: 1, width: 2.2 });
+        g.vline(u, { color: 'c2', label: 'v = u' });
+        g.text('w = u/v', 0.98, Math.min(0.97, u + 0.06), { align: 'right', color: 'c2', bold: true, size: 12 });
+      });
+      p2.draw(g => {
+        g.area(fU, 0, u, { color: 'accent', alpha: 0.35 });
+        g.curve(fU, { color: 'c1', width: 2.5, label: 'f_U(u)' });
+        g.vline(u, {});
+      });
+      out.set(`$u=${fmt(u, 2)}$: $\\;v$ va de $u$ a $1$ y, para cada $v$, $w$ va de $u/v$ a $1$. $\\;f_U(u)=\\frac{e^u(1-u)^2}{2e-5}=$ <b>${fmt(fU(u), 4)}</b>, &nbsp;$F_U(u)=$ <b>${fmt(FU(u), 4)}</b>.`);
+    }
+    EM.ui.slider($(root, '.controls'), { tex: 'u', min: 0.01, max: 0.99, step: 0.01, value: u, fmt: v => v.toFixed(2), onInput: v => { u = v; render(); } });
+    render();
+  })();
+
+  /* ---------------- (e) Ej. 11 y Box–Muller ---------------- */
+  (function () {
+    const root = document.getElementById('sim-bm');
+    const out = EM.ui.readout($(root, '.out'));
+    const cap3 = $(root, '.p3cap');
+    const p1 = EM.plot.create($(root, '.p1'), { xmin: -3.5, xmax: 3.5, ymin: -3.5, ymax: 3.5, equal: true, xticks: 6, yticks: 6, xlabel: 'x', ylabel: 'y' });
+    const p2 = EM.plot.create($(root, '.p2'), { xmin: 0, xmax: 4.5, ymin: 0, ymax: 0.75, height: 260, xlabel: 'r' });
+    const p3 = EM.plot.create($(root, '.p3'), { xmin: 0, xmax: 2 * Math.PI, ymin: 0, ymax: 0.25, height: 200, xlabel: 'φ' });
+    const ray = r => r > 0 ? r * Math.exp(-r * r / 2) : 0;
+    let mode = 'polar', X = [], Y = [], R = [], P = [];
+    const N = 30000;
+    function simulate() {
+      X = new Array(N); Y = new Array(N); R = new Array(N); P = new Array(N);
+      for (let i = 0; i < N; i++) {
+        if (mode === 'polar') {
+          const x = S.rnorm01(), y = S.rnorm01();
+          X[i] = x; Y[i] = y; R[i] = Math.hypot(x, y);
+          let ph = Math.atan2(y, x); if (ph < 0) ph += 2 * Math.PI; P[i] = ph;
+        } else {
+          const u1 = rng(), u2 = rng();
+          const r = Math.sqrt(-2 * Math.log(u1)), ph = 2 * Math.PI * u2;
+          R[i] = r; P[i] = ph; X[i] = r * Math.cos(ph); Y[i] = r * Math.sin(ph);
+        }
+      }
+      render();
+    }
+    function render() {
+      p1.draw(g => {
+        g.points(X.slice(0, 1500), Y.slice(0, 1500), { color: 'c1', r: 1.6, alpha: 0.45 });
+        const i = 0, r = R[i], ph = P[i];
+        g.line(0, 0, X[i], Y[i], { color: 'c2', width: 2 });
+        g.param(t => 0.5 * Math.cos(t), t => 0.5 * Math.sin(t), 0, ph, { color: 'c2', width: 1.6 });
+        g.points([X[i]], [Y[i]], { color: 'c2', r: 4.5, alpha: 1 });
+        g.text(`R = ${r.toFixed(2)}, Φ = ${ph.toFixed(2)}`, X[i], Y[i], { color: 'c2', bold: true, size: 12, dx: 6, dy: -6 });
+      });
+      p2.draw(g => {
+        g.hist(R, { bins: 45, range: [0, 4.5], color: 'c2', alpha: 0.5, label: 'R simulada' });
+        g.curve(ray, { color: 'c1', width: 2.4, label: 'r·e^(−r²/2)' });
+      });
+      if (mode === 'polar') {
+        cap3.textContent = 'Histograma de Φ vs. 1/(2π)';
+        p3.setRange({ xmin: 0, xmax: 2 * Math.PI, ymax: 0.25, xlabel: 'φ' });
+        p3.draw(g => { g.hist(P, { bins: 36, range: [0, 2 * Math.PI], color: 'c3', alpha: 0.5, label: 'Φ simulada' }); g.hline(1 / (2 * Math.PI), { color: 'c1', dash: [], width: 2.2 }); });
+      } else {
+        cap3.textContent = 'Histograma de X = R cos Φ vs. N(0, 1)';
+        p3.setRange({ xmin: -4, xmax: 4, ymax: 0.48, xlabel: 'x' });
+        p3.draw(g => { g.hist(X, { bins: 50, range: [-4, 4], color: 'c3', alpha: 0.5, label: 'X = R cos Φ' }); g.curve(D.normal(0, 1).pdf, { color: 'c1', width: 2.4, label: 'φ(x)' }); });
+      }
+      const extra = mode === 'polar'
+        ? `Correlación muestral entre $R$ y $\\Phi$: <b>${fmt(corr(R, P), 3)}</b> (≈ 0, coherente con independencia).`
+        : `Media y varianza de $X$: <b>${fmt(S.mean(X), 3)}</b> y <b>${fmt(S.var(X), 3)}</b> (deben ser ≈ 0 y 1). Correlación entre $X$ e $Y$: <b>${fmt(corr(X, Y), 3)}</b>.`;
+      out.set(`$\\E[R]$ simulada: <b>${fmt(S.mean(R), 4)}</b> vs. $\\sqrt{\\pi/2}=$ <b>${fmt(Math.sqrt(Math.PI / 2), 4)}</b>. &nbsp;$\\P(R\\gt 2)$ simulada: <b>${fmt(S.prop(R, r => r > 2), 4)}</b> vs. $e^{-2}=$ <b>${fmt(Math.exp(-2), 4)}</b>.<br>${extra}`);
+    }
+    const ctr = $(root, '.controls');
+    EM.ui.select(ctr, { label: 'Modo', value: mode, options: [{ value: 'polar', label: '1: normales → (R, Φ)' }, { value: 'bm', label: '2: Box–Muller (uniformes → normales)' }], onChange: v => { mode = v; simulate(); } });
+    EM.ui.button(ctr, 'Simular de nuevo', simulate, { primary: true });
+    simulate();
+  })();
+
+  /* ---------------- Autoevaluación ---------------- */
+  EM.ui.quiz('#q-acum', {
+    question: 'Si $Y\\sim U(0,1)$, ¿cuál es la densidad de $U=-\\ln Y$?',
+    options: ['$f_U(u)=e^{-u}$, $u\\gt 0$', '$f_U(u)=e^{u}$, $u\\lt 0$', '$f_U(u)=1/u$, $u\\gt 0$', '$f_U(u)=-e^{-u}$, $u\\gt0$'],
+    answer: 0,
+    explain: '$F_U(u)=\\P(-\\ln Y\\le u)=\\P(Y\\ge e^{-u})=1-e^{-u}$ para $u\\gt0$; derivando, $e^{-u}$: una $\\text{Exp}(1)$. Es el Ejercicio 5 con $\\beta=1$ y $h(U)=-\\ln U$.',
+  });
+  EM.ui.numcheck('#q-acum', { prompt: 'Ejercicio 1: calcula $\\P(U\\le 0.5)$ con $U=3Y-1$.', answer: 0.25, tol: 0.002, hint: '$F_U(u)=((u+1)/3)^2$' });
+  EM.ui.numcheck('#q-acum', { prompt: 'Ejercicio 3: probabilidad de que el punto esté a menos de media altura de la base, $\\P(D\\le h/2)$.', answer: 0.75, tol: 0.002, hint: '$1-(1/2)^2$' });
+
+  EM.ui.numcheck('#q-nvar', { prompt: 'Ejemplo 1: $\\P(Y_1+Y_2\\le 1.5)=$', answer: 0.875, tol: 0.002, hint: 'cuadrado menos un triángulo de catetos 0.5' });
+  EM.ui.quiz('#q-nvar', {
+    question: 'En el Ejemplo 1, ¿por qué $F_U(u)$ tiene una fórmula para $0\\le u\\le1$ y otra para $1\\lt u\\le 2$?',
+    options: ['Porque la densidad conjunta cambia en $u=1$.', 'Porque la región $\\{y_1+y_2\\le u\\}\\cap[0,1]^2$ cambia de forma: triángulo y luego cuadrado menos triángulo.', 'Porque $Y_1$ y $Y_2$ dejan de ser independientes.', 'Es un error del libro: debería haber una sola fórmula.'],
+    answer: 1,
+    explain: 'La densidad es 1 en todo el cuadrado; lo que cambia es la <b>forma</b> de la región de integración, y por tanto los límites de las integrales.',
+  });
+
+  EM.ui.quiz('#q-nomono', {
+    question: 'Si $Y\\sim U(-1,1)$, ¿cuál es la densidad de $U=Y^2$?',
+    options: ['$f_U(u)=\\frac{1}{4\\sqrt u}$, $0\\lt u\\lt1$', '$f_U(u)=\\frac{1}{2\\sqrt u}$, $0\\lt u\\lt1$', '$f_U(u)=\\frac12$, $0\\lt u\\lt 1$', '$f_U(u)=\\frac{1}{\\sqrt u}$, $0\\lt u\\lt1$'],
+    answer: 1,
+    explain: 'Las dos ramas $\\pm\\sqrt u$ están en el soporte: $f_U(u)=\\frac{\\frac12+\\frac12}{2\\sqrt u}=\\frac{1}{2\\sqrt u}$. Si usas una sola rama obtienes la mitad (y no integra 1).',
+  });
+  EM.ui.numcheck('#q-nomono', { prompt: 'Ejemplo C: con $X\\sim\\text{Exp}(1)$, $\\P(|X-1|\\le 0.5)=$', answer: 0.3834, tol: 0.002, hint: '$e^{-0.5}-e^{-1.5}$' });
+
+  EM.ui.quiz('#q-jac1', {
+    question: '¿Por qué la fórmula del Jacobiano lleva valor absoluto $\\left|\\frac{dh^{-1}}{du}\\right|$?',
+    options: ['Por convención; podría omitirse.', 'Porque si $h$ es decreciente la derivada de la inversa es negativa, y la densidad debe ser $\\ge 0$ (al derivar $1-F_Y(h^{-1}(u))$ aparece un signo menos que lo compensa).', 'Porque $f_Y$ puede ser negativa.', 'Porque así la densidad integra 1 aunque $h$ no sea monótona.'],
+    answer: 1,
+    explain: 'En el caso decreciente, $F_U(u)=1-F_Y(h^{-1}(u))$; el signo menos de esa expresión, multiplicado por la derivada negativa de $h^{-1}$, da algo positivo: exactamente $f_Y\\cdot|dh^{-1}/du|$.',
+  });
+
+  EM.ui.quiz('#q-jac2', {
+    question: 'Si $U_1=Y_1+Y_2$ y $U_2=Y_2$, ¿cuánto vale $|J|$?',
+    options: ['$0$', '$\\tfrac12$', '$1$', '$2$'],
+    answer: 2,
+    explain: 'Inversa: $y_1=u_1-u_2$, $y_2=u_2$. $J=\\det\\begin{bmatrix}1&-1\\\\0&1\\end{bmatrix}=1$. Es un "cizallamiento": deforma la rejilla pero no cambia áreas. Por eso $f_{U_1}(u)=\\int f_{Y_1,Y_2}(u-y,\\,y)\\,dy$ (la convolución).',
+  });
+  EM.ui.quiz('#q-jac2', {
+    question: 'En el Ejemplo 4, ¿por qué el soporte nuevo es la franja $0\\lt u_1\\lt 1$, $u_2\\gt 0$?',
+    options: ['Porque lo dice el enunciado.', 'Porque al sustituir $y_1=u_1u_2\\gt0$ y $y_2=u_2(1-u_1)\\gt0$ se obtiene $u_2\\gt0$ y $0\\lt u_1\\lt1$.', 'Porque $|J|=u_2$ debe ser positivo.', 'Porque las exponenciales son independientes.'],
+    answer: 1,
+    explain: 'El soporte nuevo se obtiene <b>traduciendo cada desigualdad</b> del soporte original con la inversa.',
+  });
+
+  EM.ui.numcheck('#q-ndim', { prompt: 'Ejercicio 11: $\\P(R\\gt 2)=$', answer: Math.exp(-2), tol: 0.002, hint: '$F_R(r)=1-e^{-r^2/2}$' });
+  EM.ui.numcheck('#q-ndim', { prompt: 'Ejercicio 10: $\\P(X_1X_2X_3\\le 0.5)=$ (4 decimales)', answer: 0.8208, tol: 0.002, hint: 'usa $F_U(u)=\\frac{(u^2-4u+5)e^u-5}{2e-5}$' });
+
+  EM.ui.quiz('#q-final', {
+    question: 'Te piden la densidad de $U=\\max(Y_1,Y_2)$ con $Y_1,Y_2$ independientes. ¿Qué método es el más directo?',
+    options: ['Jacobiano 1D', 'Acumulada: $\\P(\\max\\le u)=\\P(Y_1\\le u)\\P(Y_2\\le u)$', 'Jacobiano bivariado con auxiliar', 'FGM'],
+    answer: 1,
+    explain: 'La región $\\{\\max\\le u\\}$ es un cuadrado: la acumulada sale en una línea. Es el punto de partida de los estadísticos de orden (Clase 2).',
+  });
+  EM.ui.quiz('#q-final', {
+    question: 'Sea $X$ con densidad y $U=\\max\\{0,\\min\\{1,X\\}\\}$. ¿Se puede usar la fórmula del Jacobiano?',
+    options: ['Sí, porque $h$ es creciente.', 'No: $h$ es constante en $(-\\infty,0]$ y en $[1,\\infty)$, así que $U$ tiene átomos en 0 y 1; hay que usar la acumulada.', 'Sí, sumando dos ramas.', 'No, porque $h$ no es derivable en 0.'],
+    answer: 1,
+    explain: '$\\P(U=0)=\\P(X\\le0)\\gt0$ en general: $U$ es mixta, no tiene densidad. Este tipo de pregunta aparece en el deber (Ej. 1b).',
+  });
+  EM.ui.quiz('#q-final', {
+    question: 'Calculaste $\\det\\frac{\\partial(u_1,u_2)}{\\partial(y_1,y_2)}=-4$. ¿Qué $|J|$ va en la fórmula $f_U=f_Y(y(u))|J|$?',
+    options: ['$4$', '$-4$', '$\\tfrac14$', '$-\\tfrac14$'],
+    answer: 2,
+    explain: 'El $J$ de la fórmula es el de la <b>inversa</b>: $J=1/(-4)$ y $|J|=\\tfrac14$. La transformación directa cuadruplica áreas, así que la densidad se divide por 4.',
+  });
+})();
+</script>
+</body>
+</html>

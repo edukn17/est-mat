@@ -1,0 +1,963 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Laboratorio de distribuciones</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/theme.js"></script>
+<style>
+  /* Estilos propios de esta página (no tocar assets/) */
+  .sub-title { font-family: var(--font-ui); font-weight: 700; font-size: 12px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); margin: 20px 0 2px; padding-top: 12px; border-top: 1px dashed var(--line); }
+  .ficha { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin: 14px 0; font-family: var(--font-ui); font-size: 15px; }
+  .ficha > div { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; }
+  .ficha b { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 2px; }
+  .tabla3 { margin: 8px 0; }
+  .ir-explorador { font-family: var(--font-ui); font-size: 14px; }
+  .mapa-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); margin: 16px 0 8px; }
+  svg.mapa { display: block; min-width: 720px; width: 100%; height: auto; font-family: var(--font-ui); }
+  .mapa-arista { stroke: var(--muted); stroke-width: 1.6; fill: none; }
+  .mapa-arista.lim { stroke-dasharray: 6 4; }
+  .mapa-punta { fill: var(--muted); }
+  .mapa-etq { font-size: 13px; fill: var(--ink); paint-order: stroke; stroke: var(--surface); stroke-width: 5px; stroke-linejoin: round; }
+  .mapa-nodo rect { fill: color-mix(in srgb, var(--k) 14%, var(--surface)); stroke: var(--k); stroke-width: 1.6; }
+  .mapa-nom { font-size: 15px; font-weight: 700; fill: var(--ink); }
+  .mapa-sub { font-size: 12.5px; fill: var(--muted); }
+  .n-disc { --k: var(--plot-c2); } .n-cont { --k: var(--plot-c1); } .n-fam { --k: var(--plot-c3); }
+  .n-mues { --k: var(--plot-c4); } .n-otro { --k: var(--muted); }
+  svg.mapa a { cursor: pointer; }
+  svg.mapa a:hover rect, svg.mapa a:focus rect { stroke-width: 3; }
+  .leyenda-mapa { display: flex; flex-wrap: wrap; gap: 6px 18px; font: 13px var(--font-ui); color: var(--muted); margin-bottom: 12px; }
+  .leyenda-mapa span::before { content: ''; display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; background: color-mix(in srgb, var(--k) 25%, var(--surface)); border: 1.5px solid var(--k); }
+</style>
+</head>
+<body data-page="distribuciones" data-root="../">
+<main id="contenido">
+
+  <header class="page-head">
+    <p class="kicker">Herramientas</p>
+    <h1>Laboratorio de distribuciones</h1>
+    <p class="lead">Mueve parámetros, calcula probabilidades y cuantiles, simula, y conoce de cerca las tres distribuciones nuevas del curso: la χ², la t de Student y la F de Fisher.</p>
+  </header>
+
+  <p>Arriba tienes un <b>explorador</b> para cualquier modelo del formulario. Debajo, una <b>ficha</b> para cada distribución nueva: de dónde sale (y una simulación que la construye desde cero), su fdp, sus propiedades, dónde aparece en el curso y cómo se lee su tabla. Al final, un <a href="#mapa">mapa</a> que conecta todas.</p>
+
+  <div class="box nota">
+    <span class="box-title">Dos convenciones que usa toda la guía</span>
+    <ol>
+      <li><b>Escala, no tasa.</b> Como en el Formulario 2: $\text{Exp}(\beta)$ tiene <b>media</b> $\beta$ y $G(\alpha,\beta)$ tiene $\E[X]=\alpha\beta$. Si un ejercicio dice "exponencial de parámetro $\lambda$" (tasa), entonces $\beta = 1/\lambda$.</li>
+      <li><b>Tabla ≠ clase.</b> Las tablas de ESPOL dan cuantiles con área <b>a la izquierda</b> (acumulada): $x_q$ cumple $\P(X\le x_q)=q$. En clase el valor crítico deja área $\alpha$ <b>a la derecha</b>. Por eso: valor crítico$(\alpha) = x_{1-\alpha}$. La calculadora de abajo te muestra los dos a la vez.</li>
+    </ol>
+  </div>
+
+  <!-- ===================================================== A) EXPLORADOR -->
+  <section>
+    <h2 id="explorador">Explorador de distribuciones</h2>
+
+    <div class="sim" id="sim-explorador">
+      <p class="sim-title">Elige un modelo y mueve sus parámetros</p>
+      <p class="sim-desc">La curva azul es la fdp (o la función de probabilidad, si es discreta). Cambia a «acumulada» para ver $F_X(x)$.</p>
+      <div class="controls" id="exp-top"></div>
+      <div class="controls" id="exp-params"></div>
+      <div class="plot" id="exp-plot"></div>
+      <div id="exp-model"></div>
+
+      <p class="sub-title">Calculadora</p>
+      <div class="controls" id="exp-calc-mode"></div>
+      <div class="controls" id="exp-calc-int"></div>
+      <div class="controls" id="exp-calc-q"></div>
+      <div id="exp-calc-out"></div>
+
+      <p class="sub-title">Simulación</p>
+      <div class="controls" id="exp-sim"></div>
+      <div id="exp-sim-out"></div>
+    </div>
+
+    <h3>Qué probar</h3>
+    <ul>
+      <li><b>t contra normal:</b> elige t, superpone $N(0,1)$ y baja $\nu$ a 1: las colas de la t quedan muy por encima. Súbelo a 60: ya casi no se distinguen.</li>
+      <li><b>El TLC a simple vista:</b> elige Binomial, Poisson, Gamma o χ² y superpone «Normal con igual media y varianza». Con $n$, $\lambda$, $\alpha$ o $\nu$ grandes, las dos curvas coinciden.</li>
+      <li><b>Tabla contra clase:</b> elige t con $\nu=8$, modo «Cuantil y valor crítico» y $q=0.975$. Sale $x_{0.975}=2.306$, que es el mismo número que $t_{(8),\,0.025}$.</li>
+      <li><b>Una distribución sin media:</b> elige Cauchy y pulsa «Simular» varias veces. La media muestral salta sin control aunque $n$ sea enorme: la Cauchy no tiene media.</li>
+    </ul>
+  </section>
+
+  <!-- ===================================================== B1) CHI CUADRADO -->
+  <section>
+    <h2 id="chi2">χ² (ji-cuadrado)</h2>
+
+    <div class="box idea">
+      <span class="box-title">La idea</span>
+      <p>Toma $\nu$ normales estándar independientes, elévalas al cuadrado y súmalas. El resultado nunca es negativo, se acumula cerca de $\nu$ y tiene una cola larga a la derecha. Es la distribución de una <b>suma de desvíos al cuadrado</b>, y por eso aparece cada vez que estimas una varianza.</p>
+    </div>
+
+    <div class="box definicion">
+      <span class="box-title">Definición (por construcción)</span>
+      <p>Si $Z_1,\dots,Z_\nu \iid N(0,1)$, entonces</p>
+      $$W = Z_1^2 + Z_2^2 + \dots + Z_\nu^2 \sim \chi^2_{(\nu)}.$$
+      <p>$\nu$ son los <b>grados de libertad</b>: el número de cuadrados independientes que sumas.</p>
+    </div>
+
+    <div class="sim" id="sim-chi2">
+      <p class="sim-title">Construye una χ² sumando normales al cuadrado</p>
+      <p class="sim-desc">Cada réplica genera $\nu$ normales estándar, las eleva al cuadrado y las suma. El histograma de 5000 réplicas debe caer sobre la fdp exacta. Con «muestral» se simula, en cambio, $(n-1)S^2/\sigma^2$ con $n=\nu+1$ datos normales.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+
+    <h3>Fórmula y números clave</h3>
+    $$f_W(w) = \frac{1}{2^{\nu/2}\,\Gamma(\nu/2)}\; w^{\nu/2-1}\, e^{-w/2}, \qquad w>0.$$
+    <p>Compárala con la Gamma del formulario: es exactamente $G(\alpha=\nu/2,\ \beta=2)$ (la observación de la Clase 2).</p>
+    <div class="ficha">
+      <div><b>Soporte</b>$w>0$</div>
+      <div><b>Media</b>$\nu$</div>
+      <div><b>Varianza</b>$2\nu$</div>
+      <div><b>Moda</b>$\max(\nu-2,\,0)$</div>
+      <div><b>FGM</b>$(1-2t)^{-\nu/2},\ t&lt;\tfrac12$</div>
+    </div>
+    <p><b>Forma según $\nu$</b> (pulsa «▶ Animar ν» en la simulación):</p>
+    <ul>
+      <li>$\nu=1$: la densidad se dispara en 0 (es $Z^2$: casi siempre es un número pequeño).</li>
+      <li>$\nu=2$: es $\text{Exp}(\beta=2)$, decreciente desde $f(0)=\tfrac12$.</li>
+      <li>$\nu\ge 3$: una joroba con moda en $\nu-2$ y cola larga a la derecha.</li>
+      <li>$\nu$ grande: casi simétrica, $\approx N(\nu,\,2\nu)$. Es una suma de $\nu$ cosas iid, así que actúa el TLC.</li>
+    </ul>
+
+    <h3>Propiedades</h3>
+    <ul>
+      <li><b>Es aditiva.</b> Si $W_1\sim\chi^2_{(\nu_1)}$ y $W_2\sim\chi^2_{(\nu_2)}$ son independientes, entonces $W_1+W_2\sim\chi^2_{(\nu_1+\nu_2)}$. Con la FGM: $(1-2t)^{-\nu_1/2}(1-2t)^{-\nu_2/2}=(1-2t)^{-(\nu_1+\nu_2)/2}$. Sin cuentas: juntas $\nu_1+\nu_2$ cuadrados.</li>
+      <li><b>Es una Gamma:</b> $\chi^2_{(\nu)} = G(\nu/2,\,2)$. Todo lo que sabes de la Gamma vale aquí.</li>
+      <li><b>Un solo cuadrado:</b> si $Z\sim N(0,1)$, entonces $Z^2\sim\chi^2_{(1)}$ (Clase 2, Ejercicio 2b).</li>
+      <li><b>Por qué media $\nu$ y varianza $2\nu$:</b> cada $Z_i^2$ tiene $\E[Z^2]=1$ y $\Var(Z^2)=\E[Z^4]-1=3-1=2$. Al sumar $\nu$ independientes, se suman las medias y las varianzas.</li>
+    </ul>
+
+    <h3>¿Dónde aparece?</h3>
+    <div class="box teorema">
+      <span class="box-title">Teorema (Clase 3, Teorema 2)</span>
+      <p>Si $Y_1,\dots,Y_n \iid N(\mu,\sigma^2)$, entonces $\bar Y$ y $S^2$ son independientes y</p>
+      $$\frac{(n-1)S^2}{\sigma^2} = \frac{1}{\sigma^2}\sum_{i=1}^n (Y_i-\bar Y)^2 \sim \chi^2_{(n-1)}.$$
+    </div>
+    <p><b>¿Por qué $n-1$ y no $n$?</b> Si usaras $\mu$ en vez de $\bar Y$, tendrías $n$ normales estándar al cuadrado y obtendrías $\chi^2_{(n)}$ (Lema 1 de la Clase 3). Pero los desvíos $Y_i-\bar Y$ siempre suman cero: conocidos $n-1$ de ellos, el último queda determinado. Solo $n-1$ son libres, y por eso se pierde un grado de libertad. Elige «muestral» en la simulación: el histograma cae sobre $\chi^2_{(n-1)}$ (azul) y no sobre $\chi^2_{(n)}$ (punteada). Los ejemplos resueltos están en la <a href="../temas/clase-03.html">Clase 3</a>.</p>
+
+    <h3>Cómo se lee su tabla (en 3 líneas)</h3>
+    <ol class="tabla3">
+      <li>Fila = $\nu$. Cada columna es una probabilidad <b>acumulada</b>: la entrada $x$ cumple $\P(\chi^2_{(\nu)}\le x)=$ columna.</li>
+      <li>El valor crítico de clase $\chi^2_{(\nu),\alpha}$ (área $\alpha$ a la derecha) está en la columna $1-\alpha$.</li>
+      <li>Ejemplo: $\chi^2_{(9),\,0.05}$ = fila 9, columna 95.0% = $16.919$. La cola izquierda: $\chi^2_{(9),\,0.95}$ = columna 5.0% = $3.325$.</li>
+    </ol>
+    <p class="small">Explicación completa y tabla interactiva: <a href="tablas.html">Cómo leer las tablas</a>. <a class="ir-explorador" href="#explorador" data-dist="chi2" data-cmp="normal-igual">Abrir χ² en el explorador ↑</a></p>
+
+    <h3>Autoevaluación</h3>
+    <div id="quiz-chi2"></div>
+  </section>
+
+  <!-- ===================================================== B2) t DE STUDENT -->
+  <section>
+    <h2 id="t-student">t de Student</h2>
+
+    <div class="box idea">
+      <span class="box-title">La idea</span>
+      <p>$Z=\dfrac{\bar Y-\mu}{\sigma/\sqrt n}$ es $N(0,1)$, pero solo si conoces $\sigma$. En la práctica no la conoces y la reemplazas por $S$. Ese $S$ también es aleatorio: a veces sale pequeño y el cociente se dispara. El resultado es una campana parecida a la normal pero con <b>colas más pesadas</b>. Cuantos más datos tienes, mejor estima $S$ a $\sigma$, y más se parece la t a la $N(0,1)$.</p>
+    </div>
+
+    <div class="box definicion">
+      <span class="box-title">Definición (Clase 3, Teorema 3)</span>
+      <p>Si $Z\sim N(0,1)$ y $W\sim\chi^2_{(\nu)}$ son independientes, entonces</p>
+      $$T = \frac{Z}{\sqrt{W/\nu}} \sim t_{(\nu)}.$$
+      <p>$W/\nu$ tiene media 1: es un «ruido» en el denominador que, en promedio, no cambia nada pero añade variabilidad.</p>
+    </div>
+
+    <div class="sim" id="sim-t">
+      <p class="sim-title">Construye una t: una normal dividida por una χ² «promediada»</p>
+      <p class="sim-desc">Cada réplica genera $Z$ y $\nu$ normales más para formar $W$; luego calcula $T=Z/\sqrt{W/\nu}$. La punteada es la $N(0,1)$. Con «muestral» se simula $(\bar Y-\mu)/(S/\sqrt n)$ con $n=\nu+1$ datos normales.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+
+    <h3>Fórmula y números clave</h3>
+    $$f(x) = \frac{\Gamma\!\left(\frac{\nu+1}{2}\right)}{\sqrt{\nu\pi}\;\Gamma\!\left(\frac{\nu}{2}\right)}\left(1+\frac{x^2}{\nu}\right)^{-\frac{\nu+1}{2}}, \qquad x\in\R.$$
+    <div class="ficha">
+      <div><b>Soporte</b>$x\in\R$</div>
+      <div><b>Media</b>$0$ (si $\nu>1$)</div>
+      <div><b>Varianza</b>$\dfrac{\nu}{\nu-2}$ (si $\nu>2$)</div>
+      <div><b>Moda</b>$0$</div>
+      <div><b>FGM</b>no existe</div>
+    </div>
+    <p>La varianza $\frac{\nu}{\nu-2}$ es mayor que 1: la t está más dispersa que la normal, y tiende a 1 cuando $\nu$ crece. Con $\nu=2$ la varianza es infinita, y con $\nu=1$ la t es la <b>Cauchy</b>: no tiene ni media. La demostración de la media y la varianza es el Ejemplo 4 de la <a href="../temas/clase-03.html">Clase 3</a>.</p>
+
+    <h3>Colas pesadas y convergencia a la normal</h3>
+    <div class="sim" id="sim-colas">
+      <p class="sim-title">¿Qué tan probable es caer lejos del centro?</p>
+      <p class="sim-desc">La curva es $\P(|T|>c)$ en función de $\nu$; la línea punteada es lo mismo para la normal, $\P(|Z|>c)$. Mueve $c$: cuanto más lejos miras, mayor es la diferencia relativa.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+
+    <h3>Propiedades</h3>
+    <ul>
+      <li><b>Simétrica en 0:</b> $\P(T\le -c)=\P(T>c)$. Por eso $t_{(\nu),\,1-\alpha}=-t_{(\nu),\,\alpha}$ y la tabla solo trae la mitad derecha.</li>
+      <li><b>Colas pesadas:</b> la densidad decae como una potencia, $|x|^{-(\nu+1)}$, y no como $e^{-x^2/2}$. Por eso los valores extremos son mucho más probables que en la normal.</li>
+      <li><b>Converge a la normal:</b> $t_{(\nu)}\to N(0,1)$ cuando $\nu\to\infty$. La fila $\nu=\infty$ de la tabla t es la de los valores $z$.</li>
+      <li><b>Su cuadrado es una F:</b> si $T\sim t_{(\nu)}$, entonces $T^2=\dfrac{Z^2/1}{W/\nu}\sim F_{(1,\nu)}$, porque $Z^2\sim\chi^2_{(1)}$.</li>
+    </ul>
+
+    <h3>¿Dónde aparece?</h3>
+    <div class="box teorema">
+      <span class="box-title">Resultado importante (Clase 3)</span>
+      <p>Si $Y_1,\dots,Y_n \iid N(\mu,\sigma^2)$, tomas $Z=\frac{\bar Y-\mu}{\sigma/\sqrt n}$ y $W=\frac{(n-1)S^2}{\sigma^2}\sim\chi^2_{(n-1)}$, que son independientes:</p>
+      $$T=\frac{Z}{\sqrt{W/(n-1)}}=\frac{\dfrac{\bar Y-\mu}{\sigma/\sqrt n}}{\sqrt{\dfrac{(n-1)S^2/\sigma^2}{n-1}}}=\frac{\bar Y-\mu}{S/\sqrt n}\sim t_{(n-1)}.$$
+    </div>
+    <p>Fíjate en que $\sigma$ se cancela: por eso este cociente sirve justo cuando $\sigma$ es desconocida. Prueba el modo «muestral» con $\nu=4$ ($n=5$): si usaras la normal creerías que $\P(|T|>1.96)=5\%$, pero en realidad es cerca de 12%. Con muestras pequeñas, usar $z$ en vez de $t$ subestima la incertidumbre. Ver <a href="../temas/clase-03.html">Clase 3</a>, Ejemplo 5.</p>
+
+    <h3>Cómo se lee su tabla (en 3 líneas)</h3>
+    <ol class="tabla3">
+      <li>Fila = $\nu$. Las columnas (60%…99.9%) son probabilidad <b>acumulada</b>. Solo está la mitad derecha porque la t es simétrica.</li>
+      <li>$t_{(\nu),\alpha}$ (área $\alpha$ a la derecha) está en la columna $1-\alpha$. Para la cola izquierda, cambia el signo.</li>
+      <li>Ejemplo: $t_{(8),\,0.025}$ = fila 8, columna 97.5% = $2.306$. En la última fila ($\nu=\infty$) están los $z$: $z_{0.025}=1.960$.</li>
+    </ol>
+    <p class="small">Explicación completa: <a href="tablas.html">Cómo leer las tablas</a>. <a class="ir-explorador" href="#explorador" data-dist="t" data-cmp="z">Abrir t vs N(0,1) en el explorador ↑</a></p>
+
+    <h3>Autoevaluación</h3>
+    <div id="quiz-t"></div>
+  </section>
+
+  <!-- ===================================================== B3) F DE FISHER -->
+  <section>
+    <h2 id="f-fisher">F de Fisher</h2>
+
+    <div class="box idea">
+      <span class="box-title">La idea</span>
+      <p>Para comparar la variabilidad de dos poblaciones normales, lo natural es dividir $S_1^2/S_2^2$. Cada varianza muestral, bien escalada, es una χ² dividida por sus grados de libertad, que tiene media 1. Así que el cociente gira alrededor de 1: si sale muy grande, la primera población parece más variable. La F es la distribución de ese cociente.</p>
+    </div>
+
+    <div class="box definicion">
+      <span class="box-title">Definición (Clase 4, Teorema 4)</span>
+      <p>Si $W_1\sim\chi^2_{(\nu_1)}$ y $W_2\sim\chi^2_{(\nu_2)}$ son independientes, entonces</p>
+      $$F=\frac{W_1/\nu_1}{W_2/\nu_2}\sim F_{(\nu_1,\nu_2)}.$$
+      <p>$\nu_1$ son los grados de libertad del <b>numerador</b> y $\nu_2$ los del <b>denominador</b>. El orden importa: $F_{(5,10)}$ y $F_{(10,5)}$ son distribuciones distintas.</p>
+    </div>
+
+    <div class="sim" id="sim-F">
+      <p class="sim-title">Construye una F (y comprueba sus propiedades)</p>
+      <p class="sim-desc">«Construcción»: cociente de dos χ² hechas con normales. «Muestral»: $S_1^2/S_2^2$ con $n_1=\nu_1+1$ y $n_2=\nu_2+1$ datos y $\sigma_1=\sigma_2$. «Recíproco»: $1/X$ con $X\sim F_{(\nu_2,\nu_1)}$. «$T^2$»: el cuadrado de una $t_{(\nu_2)}$.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+
+    <h3>Fórmula y números clave</h3>
+    $$f(x)=\frac{\left(\frac{\nu_1}{\nu_2}\right)^{\nu_1/2}}{B\!\left(\frac{\nu_1}{2},\frac{\nu_2}{2}\right)}\;x^{\nu_1/2-1}\left(1+\frac{\nu_1}{\nu_2}\,x\right)^{-\frac{\nu_1+\nu_2}{2}},\qquad x>0,$$
+    <p>donde $B(\alpha,\beta)=\dfrac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}$ es la función Beta.</p>
+    <div class="box cuidado">
+      <span class="box-title">Errata en el PDF de la Clase 4</span>
+      <p>El PDF escribe el exponente del primer factor como $\nu_2/2$. Lo correcto es $\left(\frac{\nu_1}{\nu_2}\right)^{\nu_1/2}$. Con $\nu_2/2$ la integral no da 1 salvo cuando $\nu_1=\nu_2$: por ejemplo, con $\nu_1=4,\ \nu_2=6$ integra $2/3$ (verificado numéricamente).</p>
+    </div>
+    <div class="ficha">
+      <div><b>Soporte</b>$x>0$</div>
+      <div><b>Media</b>$\dfrac{\nu_2}{\nu_2-2}$ (si $\nu_2>2$)</div>
+      <div><b>Varianza</b>$\dfrac{2\nu_2^2(\nu_1+\nu_2-2)}{\nu_1(\nu_2-2)^2(\nu_2-4)}$ (si $\nu_2>4$)</div>
+      <div><b>Moda</b>$\dfrac{\nu_1-2}{\nu_1}\cdot\dfrac{\nu_2}{\nu_2+2}$ (si $\nu_1>2$; si no, 0)</div>
+    </div>
+    <p><b>Forma:</b> con $\nu_1\le 2$ es decreciente desde 0. Con $\nu_1>2$ tiene una joroba un poco antes de 1 y una cola derecha larga, que es más pesada cuanto menor es $\nu_2$. Si ambos grados de libertad crecen, se concentra alrededor de 1: dos varianzas estimadas con muchos datos casi coinciden.</p>
+
+    <h3>Propiedades</h3>
+    <ul>
+      <li><b>$t^2$ es una F:</b> si $T\sim t_{(\nu)}$, entonces $T^2\sim F_{(1,\nu)}$. Es útil porque la tabla F de ESPOL <b>no tiene columna $\nu_1=1$</b>: usa $F_{(1,\nu),\alpha}=\big(t_{(\nu),\alpha/2}\big)^2$. Ejemplo: $t_{(6),0.025}^2=2.447^2=5.987=F_{(1,6),\,0.05}$.</li>
+      <li><b>Recíproco:</b> si $X\sim F_{(\nu_1,\nu_2)}$, entonces $1/X\sim F_{(\nu_2,\nu_1)}$ (se intercambian numerador y denominador). De ahí
+        $$F_{(\nu_1,\nu_2,\,1-\alpha)}=\frac{1}{F_{(\nu_2,\nu_1,\,\alpha)}}.$$
+        Ejemplo: $F_{(5,10,\,0.95)}=1/F_{(10,5,\,0.05)}=1/4.735=0.211$.</li>
+      <li><b>Relación con la Beta:</b> si $X\sim F_{(\nu_1,\nu_2)}$, entonces $\dfrac{\nu_1X/\nu_2}{1+\nu_1X/\nu_2}\sim\text{Beta}\!\left(\tfrac{\nu_1}{2},\tfrac{\nu_2}{2}\right)$. Así es como se calcula la acumulada de la F (ver la <a href="#familia">familia madre</a>).</li>
+    </ul>
+
+    <h3>¿Dónde aparece?</h3>
+    <div class="box teorema">
+      <span class="box-title">Clase 4, resultado d)</span>
+      <p>Con dos muestras normales independientes de tamaños $n_1$ y $n_2$:</p>
+      $$\frac{\big[(n_1-1)S_1^2/\sigma_1^2\big]/(n_1-1)}{\big[(n_2-1)S_2^2/\sigma_2^2\big]/(n_2-1)}=\frac{S_1^2/\sigma_1^2}{S_2^2/\sigma_2^2}\sim F_{(n_1-1,\;n_2-1)}.$$
+    </div>
+    <p>Si además $\sigma_1^2=\sigma_2^2$, las varianzas se cancelan y queda $S_1^2/S_2^2\sim F_{(n_1-1,n_2-1)}$. Es la base para comparar varianzas. Los ejemplos están en la <a href="../temas/clase-04.html">Clase 4</a>.</p>
+
+    <h3>Cómo se lee su tabla (en 3 líneas)</h3>
+    <ol class="tabla3">
+      <li>Busca el bloque de $\nu_2$ (denominador, filas) y la columna de $\nu_1$ (numerador). ¡No los inviertas!</li>
+      <li>Dentro del bloque, la fila $q$ es la probabilidad <b>acumulada</b>, y solo hay $q\ge 0.5$. El valor crítico $F_{(\nu_1,\nu_2,\alpha)}$ está en la fila $q=1-\alpha$.</li>
+      <li>Ejemplo: $F_{(5,9,\,0.05)}$ = bloque $\nu_2=9$, fila $0.950$, columna 5 = $3.48$. Para la cola izquierda usa el recíproco de arriba.</li>
+    </ol>
+    <p class="small">Explicación completa: <a href="tablas.html">Cómo leer las tablas</a>. <a class="ir-explorador" href="#explorador" data-dist="F">Abrir F en el explorador ↑</a></p>
+
+    <h3>Autoevaluación</h3>
+    <div id="quiz-F"></div>
+  </section>
+
+  <!-- ===================================================== B4) FAMILIA MADRE -->
+  <section>
+    <h2 id="familia">Gamma y Beta: la familia madre</h2>
+    <p>Las distribuciones nuevas no salen de la nada. La χ² es una Gamma, y la F es una Beta transformada. Conviene tener estas dos a mano.</p>
+
+    <h3>Gamma $G(\alpha,\beta)$, con β de escala</h3>
+    $$f_X(x)=\frac{1}{\beta^\alpha\Gamma(\alpha)}\,x^{\alpha-1}e^{-x/\beta},\quad x>0;\qquad \E[X]=\alpha\beta,\quad \Var(X)=\alpha\beta^2,\quad M_X(t)=(1-\beta t)^{-\alpha}.$$
+    <ul>
+      <li>$\alpha$ fija la <b>forma</b> y $\beta$ la <b>escala</b> (multiplicar por $\beta$ estira el eje horizontal).</li>
+      <li>Casos especiales: $G(1,\beta)=\text{Exp}(\beta)$ y $G(\nu/2,\,2)=\chi^2_{(\nu)}$.</li>
+      <li>Aditiva con la misma $\beta$: $\sum G(\alpha_i,\beta)\sim G(\sum\alpha_i,\beta)$. En particular, la suma de $n$ $\text{Exp}(\beta)$ iid es $G(n,\beta)$.</li>
+    </ul>
+    <div class="box cuidado">
+      <span class="box-title">Tasa vs. escala</span>
+      <p>Algunos textos (y la Lista 1.1) escriben $\text{Gamma}(r,\lambda)$ con $\lambda$ como <b>tasa</b>: $f(x)=\frac{\lambda^r}{\Gamma(r)}x^{r-1}e^{-\lambda x}$. Es la misma distribución con $\beta=1/\lambda$. Antes de usar una fórmula, mira si el parámetro multiplica o divide a $x$ en la exponencial.</p>
+    </div>
+    <div class="sim" id="sim-gamma">
+      <p class="sim-title">Gamma como suma de exponenciales</p>
+      <p class="sim-desc">Si $\alpha$ es entero, el histograma suma $\alpha$ exponenciales $\text{Exp}(\beta)$ independientes (5000 réplicas) y cae sobre $G(\alpha,\beta)$.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+
+    <h3>Beta $\text{Beta}(\alpha,\beta)$</h3>
+    $$f_X(x)=\frac{x^{\alpha-1}(1-x)^{\beta-1}}{B(\alpha,\beta)},\quad 0\le x\le 1;\qquad \E[X]=\frac{\alpha}{\alpha+\beta},\quad \Var(X)=\frac{\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)}.$$
+    <ul>
+      <li>Vive en $[0,1]$: sirve para modelar proporciones. $\text{Beta}(1,1)=U(0,1)$.</li>
+      <li><b>Cociente de Gammas:</b> si $X\sim G(\alpha,1)$ e $Y\sim G(\beta,1)$ son independientes, entonces $\dfrac{X}{X+Y}\sim\text{Beta}(\alpha,\beta)$. (Se prueba con el Jacobiano de la Clase 1.)</li>
+      <li><b>Estadísticos de orden de uniformes:</b> si $U_1,\dots,U_n\iid U(0,1)$, entonces $U_{(i)}\sim\text{Beta}(i,\,n-i+1)$. Es la respuesta del Ejercicio 7 de la <a href="../temas/clase-02.html">Clase 2</a>.</li>
+    </ul>
+    <div class="sim" id="sim-beta">
+      <p class="sim-title">Beta como cociente de Gammas</p>
+      <p class="sim-desc">Cada réplica genera $X\sim G(\alpha,1)$ e $Y\sim G(\beta,1)$ y calcula $X/(X+Y)$.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+
+    <h3>Autoevaluación</h3>
+    <div id="quiz-familia"></div>
+  </section>
+
+  <!-- ===================================================== C) MAPA -->
+  <section>
+    <h2 id="mapa">Mapa de relaciones</h2>
+    <p>Cada flecha dice cómo obtener una distribución a partir de otra. Pulsa un nodo para abrirlo en el explorador.</p>
+    <div class="leyenda-mapa">
+      <span class="n-disc">discretas</span>
+      <span class="n-cont">continuas básicas</span>
+      <span class="n-fam">familia Gamma / Beta</span>
+      <span class="n-mues">muestrales (nuevas)</span>
+      <span class="n-otro">otras</span>
+    </div>
+    <div class="mapa-wrap">
+<!--MAPA-->
+    </div>
+    <details>
+      <summary>El mapa en forma de lista</summary>
+      <div>
+        <ul>
+          <li>$X_i\iid\text{Ber}(p)$ ⇒ $\sum_{i=1}^n X_i\sim\text{Bin}(n,p)$.</li>
+          <li>$\text{Bin}(n,p)$ con $n$ grande y $\text{Pois}(\lambda)$ con $\lambda$ grande ≈ Normal (TLC, <a href="../temas/clase-05.html">Clase 5</a>).</li>
+          <li>Poisson independientes: $\sum\text{Pois}(\lambda_i)=\text{Pois}(\sum\lambda_i)$.</li>
+          <li>$X_i\iid\text{Exp}(\beta)$ ⇒ $\sum_{i=1}^n X_i\sim G(n,\beta)$.</li>
+          <li>$G(\nu/2,\,2)=\chi^2_{(\nu)}$.</li>
+          <li>$Z\sim N(0,1)$ ⇒ $Z^2\sim\chi^2_{(1)}$; la suma de $\nu$ independientes es $\chi^2_{(\nu)}$.</li>
+          <li>$Z/\sqrt{W/\nu}\sim t_{(\nu)}$ con $Z\sim N(0,1)$ y $W\sim\chi^2_{(\nu)}$ independientes; $t_{(\nu)}\to N(0,1)$ cuando $\nu\to\infty$; $t_{(1)}=$ Cauchy.</li>
+          <li>$(W_1/\nu_1)/(W_2/\nu_2)\sim F_{(\nu_1,\nu_2)}$; $T^2\sim F_{(1,\nu)}$; $1/F_{(\nu_1,\nu_2)}\sim F_{(\nu_2,\nu_1)}$.</li>
+          <li>$X\sim G(\alpha,1)$, $Y\sim G(\beta,1)$ independientes ⇒ $X/(X+Y)\sim\text{Beta}(\alpha,\beta)$.</li>
+          <li>$U\sim U(0,1)$ y $F_X$ continua ⇒ $X=F_X^{-1}(U)$ tiene acumulada $F_X$ (transformada inversa: así se simula cualquier continua).</li>
+        </ul>
+      </div>
+    </details>
+  </section>
+
+</main>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../assets/js/stats.js"></script>
+<script src="../assets/js/plot.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+(function () {
+  'use strict';
+  const S = EM.stats, D = S.dist, fmt = S.fmt, ui = EM.ui;
+  const rng = S.rng, rn = S.rnorm01;
+  const N01 = D.normal(0, 1);
+
+  // ---------------------------------------------------------------- utilidades locales
+  // redondeo "bonito" hacia arriba: 1, 1.5, 2, 3, 4, 5, 6, 8, 10 × 10^k (ejes que cambian a saltos)
+  function niceCeil(x) {
+    if (!(x > 0) || !isFinite(x)) return 1;
+    const m = Math.pow(10, Math.floor(Math.log10(x)));
+    for (const f of [1, 1.5, 2, 3, 4, 5, 6, 8, 10]) if (x <= f * m * (1 + 1e-9)) return f * m;
+    return 10 * m;
+  }
+  function nice2(x) { // 2 cifras significativas, para valores por defecto
+    if (!isFinite(x) || x === 0) return 0;
+    const m = Math.pow(10, Math.floor(Math.log10(Math.abs(x))) - 1);
+    return parseFloat((Math.round(x / m) * m).toPrecision(6));
+  }
+  // altura útil de una densidad en [lo, hi] (ignora picos infinitos en el borde)
+  function yTop(f, lo, hi) {
+    const v = [], n = 400;
+    for (let i = 0; i < n; i++) { const y = f(lo + (hi - lo) * (i + 0.5) / n); if (isFinite(y)) v.push(y); }
+    if (!v.length) return 1;
+    v.sort((a, b) => a - b);
+    const mx = v[v.length - 1], p = v[Math.floor(v.length * 0.97)];
+    return mx > 4 * p ? p * 1.6 : mx * 1.1;
+  }
+  const momTxt = v => Number.isNaN(v) ? 'no existe' : v === Infinity ? '∞ (no es finita)' : fmt(v, 4);
+  const pct = x => (100 * x).toFixed(1) + '%';
+  const lista = (a, k = 5) => '(' + a.slice(0, k).map(z => fmt(z, 2)).join(', ') + (a.length > k ? ', …' : '') + ')';
+  function zs(n) { const a = new Array(n); for (let i = 0; i < n; i++) a[i] = rn(rng); return a; }
+  const sumSq = a => a.reduce((s, z) => s + z * z, 0);
+  function chi2Draw(nu) { let s = 0; for (let i = 0; i < nu; i++) { const z = rn(rng); s += z * z; } return s; }
+  // varianza muestral S² de n normales N(mu, sigma²) y su media
+  function muestraNormal(n, mu, sigma) {
+    let s = 0; const y = new Array(n);
+    for (let i = 0; i < n; i++) { y[i] = mu + sigma * rn(rng); s += y[i]; }
+    const m = s / n; let q = 0; for (const v of y) q += (v - m) ** 2;
+    return { y, media: m, s2: q / (n - 1) };
+  }
+  // función de distribución empírica (para la vista acumulada)
+  function ecdf(data) {
+    const s = Float64Array.from(data).sort(), n = s.length;
+    return x => { let lo = 0, hi = n; while (lo < hi) { const m = (lo + hi) >> 1; if (s[m] <= x) lo = m + 1; else hi = m; } return lo / n; };
+  }
+
+  // =================================================================== A) EXPLORADOR
+  const P = (k, tex, min, max, step, v) => ({ k, tex, min, max, step, v });
+  const DIST = {
+    normal: {
+      label: 'Normal', params: [P('mu', '\\mu', -5, 5, 0.1, 0), P('sigma', '\\sigma', 0.2, 4, 0.05, 1)],
+      make: p => D.normal(p.mu, p.sigma),
+      tex: p => `X\\sim N(\\mu=${fmt(p.mu, 2)},\\ \\sigma^2=${fmt(p.sigma ** 2, 4)})`,
+      meanTex: '\\mu', varTex: '\\sigma^2', mode: p => fmt(p.mu, 2),
+      nota: () => 'Ojo: $N(\\mu,\\sigma^2)$ lleva la <b>varianza</b>; el deslizador mueve $\\sigma$.',
+      range: p => { const h = niceCeil(Math.max(Math.abs(p.mu - 4 * p.sigma), Math.abs(p.mu + 4 * p.sigma))); return [-h, h]; },
+      crit: (p, a) => (p.mu === 0 && p.sigma === 1) ? `z_{${a}}` : null,
+    },
+    uniform: {
+      label: 'Uniforme', params: [P('a', 'a', -5, 5, 0.1, 0), P('b', 'b', -4, 10, 0.1, 1)],
+      make: p => D.uniform(p.a, p.b),
+      tex: p => `X\\sim U(a=${fmt(p.a, 2)},\\ b=${fmt(p.b, 2)})`,
+      meanTex: '\\frac{a+b}{2}', varTex: '\\frac{(b-a)^2}{12}', mode: () => 'cualquier punto de $[a,b]$',
+      nota: () => 'Densidad constante $1/(b-a)$: todas las regiones de igual ancho dentro de $[a,b]$ tienen la misma probabilidad.',
+      range: p => { const h = niceCeil(Math.max(Math.abs(p.a), Math.abs(p.b)) + 0.5); return [-h, h]; },
+    },
+    exp: {
+      label: 'Exponencial', params: [P('beta', '\\beta', 0.2, 5, 0.1, 1)],
+      make: p => D.exp(p.beta),
+      tex: p => `X\\sim \\text{Exp}(\\beta=${fmt(p.beta, 2)})`,
+      meanTex: '\\beta', varTex: '\\beta^2', mode: () => '0',
+      nota: p => `$\\beta$ es la <b>media</b>. En tasa: $\\lambda = 1/\\beta = ${fmt(1 / p.beta, 4)}$, es decir, $f(x)=\\lambda e^{-\\lambda x}$.`,
+      range: p => [0, niceCeil(p.beta * 6)],
+    },
+    gamma: {
+      label: 'Gamma', params: [P('alpha', '\\alpha', 0.5, 20, 0.1, 2), P('beta', '\\beta', 0.2, 5, 0.1, 1)],
+      make: p => D.gamma(p.alpha, p.beta),
+      tex: p => `X\\sim G(\\alpha=${fmt(p.alpha, 2)},\\ \\beta=${fmt(p.beta, 2)})`,
+      meanTex: '\\alpha\\beta', varTex: '\\alpha\\beta^2',
+      mode: p => p.alpha >= 1 ? fmt((p.alpha - 1) * p.beta, 4) : '0 (la densidad explota en 0)',
+      nota: p => {
+        let s = `$\\beta$ es de <b>escala</b>. En tasa: $\\lambda=1/\\beta=${fmt(1 / p.beta, 4)}$, o sea $\\text{Gamma}(r=${fmt(p.alpha, 2)},\\ \\lambda=${fmt(1 / p.beta, 4)})$.`;
+        if (Math.abs(p.alpha - 1) < 1e-9) s += ' Con $\\alpha=1$ es una $\\text{Exp}(\\beta)$.';
+        if (Math.abs(p.beta - 2) < 1e-9) s += ` Con $\\beta=2$ es una $\\chi^2_{(${fmt(2 * p.alpha, 2)})}$.`;
+        return s;
+      },
+      range: p => [0, niceCeil(D.gamma(p.alpha, p.beta).q(0.995))],
+    },
+    beta: {
+      label: 'Beta', params: [P('a', '\\alpha', 0.3, 10, 0.1, 2), P('b', '\\beta', 0.3, 10, 0.1, 5)],
+      make: p => D.beta(p.a, p.b),
+      tex: p => `X\\sim \\text{Beta}(\\alpha=${fmt(p.a, 2)},\\ \\beta=${fmt(p.b, 2)})`,
+      meanTex: '\\frac{\\alpha}{\\alpha+\\beta}', varTex: '\\frac{\\alpha\\beta}{(\\alpha+\\beta)^2(\\alpha+\\beta+1)}',
+      mode: p => (p.a > 1 && p.b > 1) ? fmt((p.a - 1) / (p.a + p.b - 2), 4) : 'en un extremo (o en ambos)',
+      nota: () => 'Vive en $[0,1]$. Con $\\alpha=\\beta=1$ es la $U(0,1)$; con $\\alpha=\\beta$ es simétrica en $\\tfrac12$.',
+      range: () => [0, 1],
+    },
+    chi2: {
+      label: 'χ² (ji-cuadrado)', params: [P('nu', '\\nu', 1, 60, 1, 5)],
+      make: p => D.chi2(p.nu),
+      tex: p => `X\\sim\\chi^2_{(${p.nu})} = G(${fmt(p.nu / 2, 2)},\\ 2)`,
+      meanTex: '\\nu', varTex: '2\\nu', mode: p => fmt(Math.max(p.nu - 2, 0)),
+      nota: () => 'Suma de $\\nu$ normales estándar al cuadrado. Ver la <a href="#chi2">ficha</a>.',
+      range: p => [0, niceCeil(Math.max(D.chi2(p.nu).q(0.998), 6))],
+      crit: (p, a) => `\\chi^2_{(${p.nu}),\\,${a}}`,
+    },
+    t: {
+      label: 't de Student', params: [P('nu', '\\nu', 1, 60, 1, 5)],
+      make: p => D.t(p.nu),
+      tex: p => `X\\sim t_{(${p.nu})}`,
+      meanTex: '0\\ (\\nu>1)', varTex: '\\frac{\\nu}{\\nu-2}\\ (\\nu>2)', mode: () => '0',
+      mean: p => p.nu > 1 ? 0 : NaN, var: p => p.nu > 2 ? p.nu / (p.nu - 2) : p.nu > 1 ? Infinity : NaN,
+      nota: p => p.nu === 1 ? 'Con $\\nu=1$ la t <b>es la Cauchy(0, 1)</b>: no tiene media.' : 'Simétrica, con colas más pesadas que la normal. Ver la <a href="#t-student">ficha</a>.',
+      range: () => [-5, 5],
+      crit: (p, a) => `t_{(${p.nu}),\\,${a}}`,
+    },
+    F: {
+      label: 'F de Fisher', params: [P('n1', '\\nu_1', 1, 60, 1, 5), P('n2', '\\nu_2', 1, 60, 1, 10)],
+      make: p => D.F(p.n1, p.n2),
+      tex: p => `X\\sim F_{(${p.n1},\\,${p.n2})}`,
+      meanTex: '\\frac{\\nu_2}{\\nu_2-2}\\ (\\nu_2>2)', varTex: '\\frac{2\\nu_2^2(\\nu_1+\\nu_2-2)}{\\nu_1(\\nu_2-2)^2(\\nu_2-4)}\\ (\\nu_2>4)',
+      mean: p => p.n2 > 2 ? p.n2 / (p.n2 - 2) : Infinity,
+      var: p => p.n2 > 4 ? 2 * p.n2 * p.n2 * (p.n1 + p.n2 - 2) / (p.n1 * (p.n2 - 2) ** 2 * (p.n2 - 4)) : p.n2 > 2 ? Infinity : NaN,
+      mode: p => p.n1 > 2 ? fmt((p.n1 - 2) / p.n1 * p.n2 / (p.n2 + 2), 4) : '0',
+      nota: () => '$\\nu_1$ = numerador, $\\nu_2$ = denominador. Ver la <a href="#f-fisher">ficha</a>.',
+      range: p => [0, Math.min(10, Math.max(3, niceCeil(D.F(p.n1, p.n2).q(0.99))))],
+      crit: (p, a) => `F_{(${p.n1},${p.n2},\\,${a})}`,
+    },
+    cauchy: {
+      label: 'Cauchy', params: [P('x0', 'x_0', -3, 3, 0.1, 0), P('g', '\\gamma', 0.2, 3, 0.05, 1)],
+      make: p => D.cauchy(p.x0, p.g),
+      tex: p => `X\\sim\\text{Cauchy}(x_0=${fmt(p.x0, 2)},\\ \\gamma=${fmt(p.g, 2)})`,
+      meanTex: '', varTex: '', mode: p => fmt(p.x0, 2),
+      nota: () => '$f(x)=\\dfrac{1}{\\pi\\gamma\\,[1+((x-x_0)/\\gamma)^2]}$. Sus colas son tan pesadas que $\\E|X|=\\infty$. $\\text{Cauchy}(0,1)=t_{(1)}$.',
+      range: () => [-12, 12],
+    },
+    poisson: {
+      label: 'Poisson', params: [P('lam', '\\lambda', 0.5, 40, 0.5, 4)],
+      make: p => D.poisson(p.lam),
+      tex: p => `X\\sim\\text{Pois}(\\lambda=${fmt(p.lam, 2)})`,
+      meanTex: '\\lambda', varTex: '\\lambda',
+      mode: p => Number.isInteger(p.lam) ? `${p.lam - 1} y ${p.lam}` : String(Math.floor(p.lam)),
+      nota: () => 'Aquí $\\lambda$ es la media de conteos. Suma de Poisson independientes: $\\text{Pois}(\\sum\\lambda_i)$.',
+      range: p => [-0.5, niceCeil(D.poisson(p.lam).q(0.999) + 1) + 0.5],
+    },
+    binom: {
+      label: 'Binomial', params: [P('n', 'n', 1, 100, 1, 10), P('p', 'p', 0.01, 0.99, 0.01, 0.3)],
+      make: p => D.binom(p.n, p.p),
+      tex: p => `X\\sim\\text{Bin}(n=${p.n},\\ p=${fmt(p.p, 2)})`,
+      meanTex: 'np', varTex: 'np(1-p)', mode: p => String(Math.min(p.n, Math.floor((p.n + 1) * p.p))),
+      nota: () => 'Número de éxitos en $n$ ensayos de Bernoulli independientes.',
+      range: p => [-0.5, Math.min(p.n, niceCeil(D.binom(p.n, p.p).q(0.9995) + 1)) + 0.5],
+    },
+  };
+
+  const ex = { key: 'normal', p: {}, view: 'pdf', cmp: 'none', calc: 'int', x1: -1, x2: 1, q: 0.95, nExp: 4, sim: null };
+  const host = id => document.getElementById(id);
+  const plotE = EM.plot.create(host('exp-plot'), { height: w => w < 500 ? 260 : 320, xlabel: 'x' });
+  const outModel = ui.readout(host('exp-model'));
+  const outCalc = ui.readout(host('exp-calc-out'));
+  const outSim = ui.readout(host('exp-sim-out'));
+
+  const selDist = ui.select(host('exp-top'), { label: 'Distribución', value: 'normal',
+    options: Object.keys(DIST).map(k => ({ value: k, label: DIST[k].label })), onChange: v => setDist(v) });
+  const selView = ui.select(host('exp-top'), { label: 'Ver', value: 'pdf',
+    options: [{ value: 'pdf', label: 'fdp / probabilidad' }, { value: 'cdf', label: 'acumulada F(x)' }], onChange: v => { ex.view = v; render(); } });
+  const selCmp = ui.select(host('exp-top'), { label: 'Superponer', value: 'none',
+    options: [{ value: 'none', label: 'nada' }, { value: 'z', label: 'N(0, 1)' }, { value: 'normal-igual', label: 'Normal con igual media y varianza' }],
+    onChange: v => { ex.cmp = v; render(); } });
+
+  ui.select(host('exp-calc-mode'), { label: 'Calcular', value: 'int',
+    options: [{ value: 'int', label: 'P(x₁ < X ≤ x₂)' }, { value: 'q', label: 'Cuantil y valor crítico' }],
+    onChange: v => { ex.calc = v; showCalc(); render(); } });
+  const inX1 = ui.numberInput(host('exp-calc-int'), { tex: 'x_1', value: ex.x1, step: 0.1, onInput: v => { if (isFinite(v)) { ex.x1 = v; render(); } } });
+  const inX2 = ui.numberInput(host('exp-calc-int'), { tex: 'x_2', value: ex.x2, step: 0.1, onInput: v => { if (isFinite(v)) { ex.x2 = v; render(); } } });
+  ui.slider(host('exp-calc-q'), { tex: 'q = 1-\\alpha', min: 0.005, max: 0.995, step: 0.005, value: ex.q, fmt: v => v.toFixed(3),
+    onInput: v => { ex.q = v; render(); } });
+  function showCalc() { host('exp-calc-int').style.display = ex.calc === 'int' ? '' : 'none'; host('exp-calc-q').style.display = ex.calc === 'q' ? '' : 'none'; }
+
+  ui.slider(host('exp-sim'), { label: 'n muestras', min: 2, max: 5, step: 1, value: ex.nExp, fmt: v => (10 ** v).toLocaleString('es'),
+    onInput: v => { ex.nExp = v; } });
+  ui.button(host('exp-sim'), 'Simular n muestras', () => simular(), { primary: true });
+  ui.button(host('exp-sim'), 'Borrar', () => { ex.sim = null; render(); });
+
+  const cur = () => DIST[ex.key];
+  const curKey = () => ex.key + JSON.stringify(ex.p);
+
+  function setDist(key, cmp) {
+    ex.key = key; selDist.value = key;
+    const c = cur(), box = host('exp-params');
+    box.innerHTML = ''; ex.p = {};
+    c.params.forEach(s => {
+      ex.p[s.k] = s.v;
+      const api = ui.slider(box, { tex: s.tex, min: s.min, max: s.max, step: s.step, value: s.v,
+        fmt: v => s.step < 1 ? fmt(v, 2) : String(v),
+        onInput: v => {
+          ex.p[s.k] = v;
+          if (key === 'uniform' && ex.p.b <= ex.p.a) { // mantener a < b
+            const other = s.k === 'a' ? 'b' : 'a';
+            ex.p[other] = s.k === 'a' ? +(v + 0.5).toFixed(2) : +(v - 0.5).toFixed(2);
+            sliders[other].set(ex.p[other]);
+          }
+          render();
+        } });
+      sliders[s.k] = api;
+    });
+    if (cmp !== undefined) { ex.cmp = cmp; selCmp.value = cmp; }
+    // extremos por defecto de la calculadora: cuantiles 0.2 y 0.8 redondeados
+    const d = c.make(ex.p);
+    ex.x1 = nice2(d.q(0.2)); ex.x2 = nice2(d.q(0.8));
+    if (ex.x2 <= ex.x1) ex.x2 = ex.x1 + 1;
+    inX1.value = ex.x1; inX2.value = ex.x2;
+    ex.sim = null;
+    render();
+  }
+  const sliders = {};
+
+  function render() {
+    const c = cur(), p = ex.p, d = c.make(p), disc = !!d.discrete;
+    const f = disc ? d.pmf : d.pdf;
+    const [lo, hi] = c.range(p);
+    const mean = c.mean ? c.mean(p) : d.mean, vr = c.var ? c.var(p) : d.var;
+    // distribución para superponer
+    let cmp = null, cmpMsg = '';
+    if (ex.cmp === 'z') cmp = { d: N01, label: 'N(0, 1)' };
+    if (ex.cmp === 'normal-igual') {
+      if (isFinite(mean) && isFinite(vr) && vr > 0) cmp = { d: D.normal(mean, Math.sqrt(vr)), label: `N(${fmt(mean, 3)}, ${fmt(vr, 3)})` };
+      else cmpMsg = '<br><span class="muted">No hay normal con igual media y varianza: alguna de las dos no existe o es infinita.</span>';
+    }
+    const sim = ex.sim && ex.sim.key === curKey() ? ex.sim : null;
+    const xq = d.q(ex.q);
+    const a = Math.min(ex.x1, ex.x2), b = Math.max(ex.x1, ex.x2);
+
+    let ymax;
+    if (ex.view === 'cdf') ymax = 1.05;
+    else if (disc) { let m = 0; for (let k = Math.max(0, Math.ceil(lo)); k <= hi; k++) m = Math.max(m, d.pmf(k)); ymax = niceCeil(m * 1.15); }
+    else ymax = niceCeil(yTop(d.pdf, lo, hi));
+    plotE.setRange({ xmin: lo, xmax: hi, ymin: 0, ymax, ylabel: ex.view === 'cdf' ? 'F(x)' : disc ? 'P(X = k)' : 'f(x)' });
+
+    plotE.draw(g => {
+      if (ex.view === 'pdf') {
+        if (disc) {
+          const ks = [], ys = [], hk = [], hy = [], rk = [], ry = [];
+          for (let k = Math.max(0, Math.ceil(lo)); k <= hi; k++) {
+            const y = d.pmf(k);
+            const enA = ex.calc === 'int' ? (k > a && k <= b) : k <= xq;
+            if (ex.calc === 'q' && k > xq) { rk.push(k); ry.push(y); }
+            else if (enA) { hk.push(k); hy.push(y); } else { ks.push(k); ys.push(y); }
+          }
+          const off = sim ? -0.18 : 0, w = sim ? 0.34 : 0.7;
+          g.bars(ks.map(k => k + off), ys, { color: 'c1', alpha: 0.35, width: w });
+          g.bars(hk.map(k => k + off), hy, { color: ex.calc === 'q' ? 'c3' : 'accent', alpha: 0.85, width: w, label: ex.calc === 'q' ? `F(x) ≤ q` : 'P(x₁ < X ≤ x₂)' });
+          if (rk.length) g.bars(rk.map(k => k + off), ry, { color: 'c4', alpha: 0.85, width: w, label: 'cola derecha' });
+          if (sim) g.bars(sim.ks.map(k => k + 0.18), sim.fr, { color: 'c2', alpha: 0.75, width: 0.34, label: 'frecuencia simulada' });
+        } else {
+          if (sim) g.hist(sim.data, { bins: 50, color: 'c2', alpha: 0.45, label: 'simulación' });
+          if (ex.calc === 'int') g.area(d.pdf, a, b, { color: 'accent', alpha: 0.3, label: 'P(x₁ < X ≤ x₂)' });
+          else {
+            g.area(d.pdf, lo, xq, { color: 'c3', alpha: 0.2, label: `q = ${ex.q.toFixed(3)} (tabla)` });
+            g.area(d.pdf, xq, hi, { color: 'c4', alpha: 0.45, label: `α = ${(1 - ex.q).toFixed(3)} (clase)` });
+          }
+          g.curve(d.pdf, { color: 'c1', width: 2.6, label: 'fdp' });
+        }
+        if (cmp) g.curve(cmp.d.pdf, { color: 'c5', dash: [6, 4], width: 2, label: cmp.label });
+        if (ex.calc === 'q') g.vline(xq, { color: 'ink' });
+      } else {
+        if (sim) g.curve(ecdf(sim.data), { color: 'c2', width: 1.6, label: 'acumulada empírica' });
+        if (cmp) g.curve(cmp.d.cdf, { color: 'c5', dash: [6, 4], width: 2, label: cmp.label });
+        g.curve(d.cdf, { color: 'c1', width: 2.6, label: 'F(x)' });
+        if (ex.calc === 'int') {
+          const Fa = d.cdf(a), Fb = d.cdf(b);
+          g.line(lo, Fa, a, Fa, { color: 'muted', dash: [4, 4] }).line(lo, Fb, b, Fb, { color: 'muted', dash: [4, 4] });
+          g.line(a, 0, a, Fa, { color: 'muted', dash: [4, 4] }).line(b, 0, b, Fb, { color: 'muted', dash: [4, 4] });
+          const xs = lo + (hi - lo) * 0.012;
+          g.line(xs, Fa, xs, Fb, { color: 'accent', width: 6 });
+        } else {
+          g.line(lo, ex.q, xq, ex.q, { color: 'c4', width: 1.8, dash: [] }).line(xq, ex.q, xq, 0, { color: 'c4', width: 1.8, dash: [] });
+        }
+      }
+    });
+
+    // ---- lectura del modelo
+    const mm = c.meanTex ? `$\\E[X]=${c.meanTex}$ = <b>${momTxt(mean)}</b>` : `$\\E[X]$: <b>no existe</b>`;
+    const vv = c.varTex ? `$\\Var(X)=${c.varTex}$ = <b>${momTxt(vr)}</b>` : `$\\Var(X)$: <b>no existe</b>`;
+    outModel.set(`$${c.tex(p)}$<br>${mm} &nbsp;·&nbsp; ${vv} &nbsp;·&nbsp; moda: <b>${c.mode(p)}</b><br><span class="muted">${c.nota(p)}</span>${cmpMsg}`);
+
+    // ---- calculadora
+    if (ex.calc === 'int') {
+      const Fa = d.cdf(a), Fb = d.cdf(b);
+      let s = `$\\P(${fmt(a, 3)} &lt; X \\le ${fmt(b, 3)}) = F_X(${fmt(b, 3)}) - F_X(${fmt(a, 3)})$ = ${fmt(Fb, 4)} − ${fmt(Fa, 4)} = <b>${fmt(Fb - Fa, 4)}</b>`;
+      if (disc) s += '<br><span class="muted">En una discreta importa si el extremo entra: aquí se excluye $x_1$ y se incluye $x_2$.</span>';
+      outCalc.set(s);
+    } else {
+      const al = +(1 - ex.q).toFixed(3), qs = ex.q.toFixed(3);
+      const sym = c.crit ? c.crit(p, al) : null;
+      let s = `<b>Tabla</b> (área acumulada $q$ a la izquierda): $x_{${qs}}$ con $\\P(X\\le x_{${qs}})=${qs}$ → <b>${fmt(xq, 4)}</b><br>`;
+      s += `<b>Clase</b> (área $\\alpha=${al}$ a la derecha): valor crítico ${sym ? '$' + sym + '$' : ''} → <b>${fmt(d.crit(al), 4)}</b><br>`;
+      s += `<span class="muted">Es el mismo número: el valor crítico con cola derecha $\\alpha$ es el cuantil $x_{1-\\alpha}$.`;
+      if (disc) s += ' En una discreta, $x_q$ es el menor $k$ con $F_X(k)\\ge q$.';
+      s += '</span>';
+      outCalc.set(s);
+    }
+
+    // ---- simulación
+    if (!sim) outSim.set('<span class="muted">Pulsa «Simular n muestras» para dibujar un histograma de datos generados con este modelo.</span>');
+    else {
+      let s = `n = ${sim.data.length.toLocaleString('es')}: media muestral $\\bar x$ = <b>${fmt(sim.m, 4)}</b> (teoría: ${momTxt(mean)}) · varianza muestral $s^2$ = <b>${fmt(sim.v, 4)}</b> (teoría: ${momTxt(vr)})`;
+      if (!isFinite(mean) || !isFinite(vr)) s += '<br><span class="muted">Sin media o varianza finita, estos promedios no se estabilizan: simula varias veces y compara.</span>';
+      outSim.set(s);
+    }
+  }
+
+  function simular() {
+    const d = cur().make(ex.p), n = 10 ** ex.nExp;
+    const data = new Array(n);
+    for (let i = 0; i < n; i++) data[i] = d.rand(rng);
+    const sim = { key: curKey(), data, m: S.mean(data), v: S.var(data) };
+    if (d.discrete) {
+      const cnt = new Map(); for (const k of data) cnt.set(k, (cnt.get(k) || 0) + 1);
+      sim.ks = [...cnt.keys()]; sim.fr = sim.ks.map(k => cnt.get(k) / n);
+    }
+    ex.sim = sim; render();
+  }
+
+  showCalc();
+  setDist('normal');
+
+  // enlaces "abrir en el explorador" (fichas y mapa)
+  document.querySelectorAll('a[data-dist]').forEach(el => el.addEventListener('click', () => {
+    setDist(el.dataset.dist, el.dataset.cmp || 'none');
+  }));
+
+  // =================================================================== B) SIMULACIONES DE CONSTRUCCIÓN
+  // cfg: sliders, modes[{v,label,gen(p),target(p),tlabel(p),cmp(p)?,ejemplo(p)}], range(p,target), reps, anim, readout
+  function construccion(id, cfg) {
+    const root = document.getElementById(id);
+    const ctr = root.querySelector('.controls');
+    const plot = EM.plot.create(root.querySelector('.plot'), { height: w => w < 500 ? 250 : 290, xlabel: cfg.xlabel || 'x' });
+    const out = ui.readout(root.querySelector('.out'));
+    const p = {}, sl = {};
+    cfg.sliders.forEach(s => {
+      p[s.k] = s.v;
+      sl[s.k] = ui.slider(ctr, { tex: s.tex, min: s.min, max: s.max, step: s.step || 1, value: s.v, fmt: s.fmt, onInput: v => { p[s.k] = v; nueva(); } });
+    });
+    let modo = cfg.modes[0];
+    if (cfg.modes.length > 1) ui.select(ctr, { label: 'Simular', value: modo.v, options: cfg.modes.map(m => ({ value: m.v, label: m.label })),
+      onChange: v => { modo = cfg.modes.find(m => m.v === v); nueva(); } });
+    ui.button(ctr, 'Nueva muestra', () => nueva());
+    let timer = null, animBtn = null;
+    if (cfg.anim) animBtn = ui.button(ctr, '▶ Animar ' + cfg.anim.name, () => timer ? parar() : animar());
+    let data = [];
+
+    function nueva(reps) {
+      const R = reps || cfg.reps;
+      data = new Array(R);
+      for (let i = 0; i < R; i++) data[i] = modo.gen(p);
+      dibujar();
+    }
+    function dibujar() {
+      const T = modo.target(p), [lo, hi] = cfg.range(p, T);
+      const cmp = modo.cmp ? modo.cmp(p) : null;
+      plot.setRange({ xmin: lo, xmax: hi, ymin: 0, ymax: niceCeil(yTop(T.pdf, lo, hi) * 1.08), ylabel: 'densidad' });
+      plot.draw(g => {
+        g.hist(data, { bins: cfg.bins || 50, color: 'c2', alpha: 0.5, label: `simulación (${data.length})` });
+        if (cmp) g.curve(cmp.d.pdf, { color: 'c4', dash: [6, 4], width: 2, label: cmp.label });
+        g.curve(T.pdf, { color: 'c1', width: 2.6, label: modo.tlabel(p) + ' exacta' });
+      });
+      out.set((modo.ejemplo ? modo.ejemplo(p) + '<br>' : '') + cfg.readout(p, modo, data, T));
+    }
+    function animar() {
+      const a = cfg.anim; let v = a.from;
+      animBtn.textContent = '■ Detener';
+      timer = setInterval(() => {
+        p[a.k] = v; sl[a.k].set(v); nueva(a.reps);
+        v += 1; if (v > a.to) parar();
+      }, 260);
+    }
+    function parar() { clearInterval(timer); timer = null; animBtn.textContent = '▶ Animar ' + cfg.anim.name; }
+    nueva();
+  }
+
+  // frase común: valor crítico al 5% y fracción simulada por encima
+  function lineaCritica(T, data, sym) {
+    const c = T.crit(0.05);
+    return `Valor crítico $${sym}$ = <b>${fmt(c, 3)}</b> (área 0.05 a la derecha). Simulaciones por encima de él: <b>${pct(S.prop(data, x => x > c))}</b> (debería rondar 5%).`;
+  }
+  const mom = (data, m, v) => `Media simulada <b>${fmt(S.mean(data), 3)}</b> (teoría ${m}) · varianza simulada <b>${fmt(S.var(data), 3)}</b> (teoría ${v}).`;
+
+  // ---------------------------------------------------------------- χ²
+  construccion('sim-chi2', {
+    sliders: [{ k: 'nu', tex: '\\nu', min: 1, max: 30, v: 3 }],
+    reps: 5000, anim: { k: 'nu', name: 'ν', from: 1, to: 30, reps: 2000 },
+    xlabel: 'w',
+    range: (p, T) => [0, niceCeil(Math.max(T.q(0.997), 6))],
+    modes: [
+      { v: 'cons', label: 'construcción: Z₁² + … + Z_ν²', target: p => D.chi2(p.nu), tlabel: p => `χ²(${p.nu})`,
+        gen: p => chi2Draw(p.nu),
+        ejemplo: p => { const z = zs(p.nu); return `Una réplica: $Z$ = ${lista(z)} → $W=\\sum Z_i^2$ = <b>${fmt(sumSq(z), 3)}</b>`; } },
+      { v: 'mues', label: 'muestral: (n−1)S²/σ², n = ν+1', target: p => D.chi2(p.nu), tlabel: p => `χ²(n−1 = ${p.nu})`,
+        cmp: p => ({ d: D.chi2(p.nu + 1), label: `χ²(n = ${p.nu + 1}) (¿por qué no?)` }),
+        gen: p => (p.nu) * muestraNormal(p.nu + 1, 10, 2).s2 / 4,
+        ejemplo: p => { const m = muestraNormal(p.nu + 1, 10, 2); return `Una réplica con $n=${p.nu + 1}$ datos de $N(10,\\,2^2)$: $\\bar y$ = ${fmt(m.media, 3)}, $s^2$ = ${fmt(m.s2, 3)} → $(n-1)s^2/\\sigma^2$ = <b>${fmt(p.nu * m.s2 / 4, 3)}</b>`; } },
+    ],
+    readout: (p, m, data, T) => mom(data, `$\\nu=${p.nu}$`, `$2\\nu=${2 * p.nu}$`) + '<br>' + lineaCritica(T, data, `\\chi^2_{(${p.nu}),\\,0.05}`),
+  });
+
+  // ---------------------------------------------------------------- t
+  construccion('sim-t', {
+    sliders: [{ k: 'nu', tex: '\\nu', min: 1, max: 30, v: 3 }],
+    reps: 5000, bins: 60, anim: { k: 'nu', name: 'ν', from: 1, to: 30, reps: 2000 },
+    xlabel: 't',
+    range: () => [-5, 5],
+    modes: [
+      { v: 'cons', label: 'construcción: Z / √(W/ν)', target: p => D.t(p.nu), tlabel: p => `t(${p.nu})`,
+        cmp: () => ({ d: N01, label: 'N(0, 1)' }),
+        gen: p => rn(rng) / Math.sqrt(chi2Draw(p.nu) / p.nu),
+        ejemplo: p => { const z = rn(rng), w = chi2Draw(p.nu); return `Una réplica: $Z$ = ${fmt(z, 3)}, $W$ = ${fmt(w, 3)} → $T = Z/\\sqrt{W/${p.nu}}$ = <b>${fmt(z / Math.sqrt(w / p.nu), 3)}</b>`; } },
+      { v: 'mues', label: 'muestral: (Ȳ−μ)/(S/√n), n = ν+1', target: p => D.t(p.nu), tlabel: p => `t(n−1 = ${p.nu})`,
+        cmp: () => ({ d: N01, label: 'N(0, 1)' }),
+        gen: p => { const n = p.nu + 1, m = muestraNormal(n, 10, 2); return (m.media - 10) / Math.sqrt(m.s2 / n); },
+        ejemplo: p => { const n = p.nu + 1, m = muestraNormal(n, 10, 2); return `Una réplica con $n=${n}$ datos de $N(\\mu=10,\\,2^2)$: $\\bar y$ = ${fmt(m.media, 3)}, $s$ = ${fmt(Math.sqrt(m.s2), 3)} → $T$ = <b>${fmt((m.media - 10) / Math.sqrt(m.s2 / n), 3)}</b>`; } },
+    ],
+    readout: (p, m, data, T) => {
+      const c = m.v === 'cons' ? 2 : 1.96;
+      return `$\\P(|T|>${c})$: simulada <b>${pct(S.prop(data, x => Math.abs(x) > c))}</b> · exacta con $t_{(${p.nu})}$ <b>${pct(2 * T.sf(c))}</b> · si fuera $N(0,1)$ <b>${pct(2 * N01.sf(c))}</b>.` +
+        (m.v === 'mues' ? '<br><span class="muted">Con muestras pequeñas, usar la normal en lugar de la t subestima la probabilidad de caer lejos.</span>' : '');
+    },
+  });
+
+  // ---------------------------------------------------------------- F
+  construccion('sim-F', {
+    sliders: [{ k: 'n1', tex: '\\nu_1', min: 1, max: 20, v: 5 }, { k: 'n2', tex: '\\nu_2', min: 1, max: 20, v: 10 }],
+    reps: 4000, bins: 60, xlabel: 'x',
+    range: (p, T) => [0, Math.min(8, Math.max(3, niceCeil(T.q(0.98))))],
+    modes: [
+      { v: 'cons', label: 'construcción: (W₁/ν₁)/(W₂/ν₂)', target: p => D.F(p.n1, p.n2), tlabel: p => `F(${p.n1}, ${p.n2})`,
+        gen: p => (chi2Draw(p.n1) / p.n1) / (chi2Draw(p.n2) / p.n2),
+        ejemplo: p => { const a = chi2Draw(p.n1), b = chi2Draw(p.n2); return `Una réplica: $W_1$ = ${fmt(a, 3)}, $W_2$ = ${fmt(b, 3)} → $F=\\frac{W_1/${p.n1}}{W_2/${p.n2}}$ = <b>${fmt((a / p.n1) / (b / p.n2), 3)}</b>`; } },
+      { v: 'mues', label: 'muestral: S₁²/S₂² (σ₁ = σ₂)', target: p => D.F(p.n1, p.n2), tlabel: p => `F(n₁−1, n₂−1) = F(${p.n1}, ${p.n2})`,
+        gen: p => muestraNormal(p.n1 + 1, 0, 3).s2 / muestraNormal(p.n2 + 1, 5, 3).s2,
+        ejemplo: p => { const a = muestraNormal(p.n1 + 1, 0, 3), b = muestraNormal(p.n2 + 1, 5, 3); return `Una réplica: $n_1=${p.n1 + 1}$ datos de $N(0,3^2)$ y $n_2=${p.n2 + 1}$ de $N(5,3^2)$: $s_1^2$ = ${fmt(a.s2, 3)}, $s_2^2$ = ${fmt(b.s2, 3)} → $s_1^2/s_2^2$ = <b>${fmt(a.s2 / b.s2, 3)}</b>`; } },
+      { v: 'rec', label: 'recíproco: 1/X con X ~ F(ν₂, ν₁)', target: p => D.F(p.n1, p.n2), tlabel: p => `F(${p.n1}, ${p.n2})`,
+        gen: p => 1 / ((chi2Draw(p.n2) / p.n2) / (chi2Draw(p.n1) / p.n1)),
+        ejemplo: p => { const lo = D.F(p.n1, p.n2).q(0.05), r = D.F(p.n2, p.n1).crit(0.05); return `Recíproco en números: $F_{(${p.n1},${p.n2},\\,0.95)}$ = <b>${fmt(lo, 4)}</b> y $1/F_{(${p.n2},${p.n1},\\,0.05)}$ = 1/${fmt(r, 4)} = <b>${fmt(1 / r, 4)}</b>`; } },
+      { v: 't2', label: 'T² con T ~ t(ν₂)', target: p => D.F(1, p.n2), tlabel: p => `F(1, ${p.n2})`,
+        gen: p => { const t = rn(rng) / Math.sqrt(chi2Draw(p.n2) / p.n2); return t * t; },
+        ejemplo: p => { const t = D.t(p.n2).crit(0.025); return `Aquí $\\nu_1$ no se usa: $T^2\\sim F_{(1,${p.n2})}$. En números: $t_{(${p.n2}),\\,0.025}^2$ = ${fmt(t, 4)}² = <b>${fmt(t * t, 4)}</b> = $F_{(1,${p.n2},\\,0.05)}$ = <b>${fmt(D.F(1, p.n2).crit(0.05), 4)}</b>`; } },
+    ],
+    readout: (p, m, data, T) => {
+      const n1 = m.v === 't2' ? 1 : p.n1, n2 = p.n2;
+      const med = n2 > 2 ? `$\\frac{\\nu_2}{\\nu_2-2}$ = ${fmt(n2 / (n2 - 2), 3)}` : 'no es finita ($\\nu_2\\le2$)';
+      return `Mediana simulada <b>${fmt(S.quantile(data, 0.5), 3)}</b> (exacta ${fmt(T.q(0.5), 3)}) · media teórica ${med}.<br>` + lineaCritica(T, data, `F_{(${n1},${n2},\\,0.05)}`);
+    },
+  });
+
+  // ---------------------------------------------------------------- colas de la t
+  (function () {
+    const root = document.getElementById('sim-colas');
+    const plot = EM.plot.create(root.querySelector('.plot'), { height: w => w < 500 ? 240 : 270, xmin: 0, xmax: 60, xlabel: 'ν', ylabel: 'P(|T| > c)' });
+    const out = ui.readout(root.querySelector('.out'));
+    let c = 2;
+    ui.slider(root.querySelector('.controls'), { tex: 'c', min: 1, max: 4, step: 0.1, value: c, fmt: v => v.toFixed(1), onInput: v => { c = v; dibujar(); } });
+    function dibujar() {
+      const pT = v => 2 * D.t(v).sf(c), pZ = 2 * N01.sf(c);
+      plot.setRange({ ymin: 0, ymax: niceCeil(pT(1) * 1.08) });
+      const marcas = [1, 2, 5, 10, 30];
+      plot.draw(g => {
+        g.hline(pZ, { color: 'c4', dash: [6, 4], width: 2 });
+        g.curve(pT, { color: 'c1', width: 2.6, from: 1, to: 60, label: 't(ν)' });
+        g.points(marcas, marcas.map(pT), { color: 'c1', r: 4, alpha: 1 });
+        g.text(`N(0,1): ${pct(pZ)}`, 60, pZ, { align: 'right', baseline: 'bottom', dy: -4, color: 'ink', size: 12 });
+      });
+      out.set(`$\\P(|T|>${c.toFixed(1)})$ &nbsp; ` + marcas.map(v => `$\\nu=${v}$: <b>${pct(pT(v))}</b>`).join(' · ') +
+        ` · $\\nu=\\infty$ (normal): <b>${pct(pZ)}</b><br><span class="muted">Con $c=${c.toFixed(1)}$ y $\\nu=5$, la t pone ${fmt(pT(5) / pZ, 2)} veces más probabilidad que la normal en las colas.</span>`);
+    }
+    dibujar();
+  })();
+
+  // ---------------------------------------------------------------- Gamma
+  (function () {
+    const root = document.getElementById('sim-gamma');
+    const ctr = root.querySelector('.controls');
+    const plot = EM.plot.create(root.querySelector('.plot'), { height: w => w < 500 ? 240 : 270, xlabel: 'x' });
+    const out = ui.readout(root.querySelector('.out'));
+    const p = { a: 3, b: 1 };
+    ui.slider(ctr, { tex: '\\alpha', min: 0.5, max: 12, step: 0.5, value: p.a, fmt: v => v.toFixed(1), onInput: v => { p.a = v; dibujar(); } });
+    ui.slider(ctr, { tex: '\\beta', min: 0.5, max: 4, step: 0.5, value: p.b, fmt: v => v.toFixed(1), onInput: v => { p.b = v; dibujar(); } });
+    ui.button(ctr, 'Nueva muestra', () => dibujar());
+    function dibujar() {
+      const G = D.gamma(p.a, p.b), E = D.exp(p.b), hi = niceCeil(G.q(0.995));
+      const entero = Number.isInteger(p.a);
+      let data = [];
+      if (entero) { data = new Array(5000); for (let i = 0; i < 5000; i++) { let s = 0; for (let j = 0; j < p.a; j++) s += E.rand(rng); data[i] = s; } }
+      plot.setRange({ xmin: 0, xmax: hi, ymin: 0, ymax: niceCeil(yTop(G.pdf, 0, hi) * 1.08) });
+      plot.draw(g => {
+        if (entero) g.hist(data, { bins: 50, color: 'c2', alpha: 0.5, label: `suma de ${p.a} Exp(${p.b})` });
+        g.curve(G.pdf, { color: 'c3', width: 2.6, label: `G(${p.a}, ${p.b})` });
+      });
+      let s = `$G(\\alpha=${p.a},\\ \\beta=${p.b})$: $\\E[X]=\\alpha\\beta$ = <b>${fmt(p.a * p.b, 4)}</b>, $\\Var(X)=\\alpha\\beta^2$ = <b>${fmt(p.a * p.b * p.b, 4)}</b>. En tasa: $\\lambda=1/\\beta$ = ${fmt(1 / p.b, 4)}.`;
+      if (entero) s += ` Media simulada <b>${fmt(S.mean(data), 3)}</b>.`;
+      else s += '<br><span class="muted">$\\alpha$ no es entero: no hay suma de exponenciales que mostrar, pero la Gamma existe igual.</span>';
+      const esp = [];
+      if (p.a === 1) esp.push('$\\alpha=1$: es la $\\text{Exp}(\\beta)$');
+      if (p.b === 2) esp.push(`$\\beta=2$: es la $\\chi^2_{(${2 * p.a})}$`);
+      if (esp.length) s += '<br><b>Caso especial:</b> ' + esp.join(' · ');
+      out.set(s);
+    }
+    dibujar();
+  })();
+
+  // ---------------------------------------------------------------- Beta
+  (function () {
+    const root = document.getElementById('sim-beta');
+    const ctr = root.querySelector('.controls');
+    const plot = EM.plot.create(root.querySelector('.plot'), { height: w => w < 500 ? 240 : 270, xmin: 0, xmax: 1, xlabel: 'x' });
+    const out = ui.readout(root.querySelector('.out'));
+    const p = { a: 2, b: 5 };
+    ui.slider(ctr, { tex: '\\alpha', min: 0.5, max: 8, step: 0.5, value: p.a, fmt: v => v.toFixed(1), onInput: v => { p.a = v; dibujar(); } });
+    ui.slider(ctr, { tex: '\\beta', min: 0.5, max: 8, step: 0.5, value: p.b, fmt: v => v.toFixed(1), onInput: v => { p.b = v; dibujar(); } });
+    ui.button(ctr, 'Nueva muestra', () => dibujar());
+    function dibujar() {
+      const B = D.beta(p.a, p.b), data = new Array(5000);
+      for (let i = 0; i < 5000; i++) { const x = S.rgammaShape(p.a, rng), y = S.rgammaShape(p.b, rng); data[i] = x / (x + y); }
+      plot.setRange({ ymin: 0, ymax: niceCeil(yTop(B.pdf, 0, 1) * 1.08) });
+      plot.draw(g => {
+        g.hist(data, { bins: 50, color: 'c2', alpha: 0.5, range: [0, 1], label: 'X/(X+Y) simulado' });
+        g.curve(B.pdf, { color: 'c3', width: 2.6, label: `Beta(${p.a}, ${p.b})` });
+      });
+      let s = `$\\E[X]=\\frac{\\alpha}{\\alpha+\\beta}$ = <b>${fmt(B.mean, 4)}</b> (simulada ${fmt(S.mean(data), 4)}) · $\\Var(X)$ = <b>${fmt(B.var, 4)}</b> (simulada ${fmt(S.var(data), 4)})`;
+      if (p.a === 1 && p.b === 1) s += '<br><b>Caso especial:</b> $\\text{Beta}(1,1)=U(0,1)$.';
+      else if (p.a === p.b) s += '<br><span class="muted">$\\alpha=\\beta$: simétrica alrededor de $\\tfrac12$.</span>';
+      out.set(s);
+    }
+    dibujar();
+  })();
+
+  // =================================================================== AUTOEVALUACIÓN
+  const Q = (id, arr) => arr.forEach(q => ui.quiz(document.getElementById(id), q));
+  Q('quiz-chi2', [
+    { question: 'Si $W_1\\sim\\chi^2_{(4)}$ y $W_2\\sim\\chi^2_{(6)}$ son independientes, ¿cómo se distribuye $W_1+W_2$?',
+      options: ['$\\chi^2_{(10)}$', '$\\chi^2_{(24)}$', '$F_{(4,6)}$', '$N(10,\\,20)$ exactamente'], answer: 0,
+      explain: 'La χ² es aditiva: $M(t)=(1-2t)^{-2}(1-2t)^{-3}=(1-2t)^{-5}$, que es la FGM de $\\chi^2_{(10)}$.' },
+    { question: 'Con $n=10$ datos normales, ¿cómo se distribuye $9S^2/\\sigma^2$?',
+      options: ['$\\chi^2_{(10)}$', '$\\chi^2_{(9)}$', '$t_{(9)}$', '$N(0,1)$'], answer: 1,
+      explain: '$(n-1)S^2/\\sigma^2\\sim\\chi^2_{(n-1)}$: al estimar $\\mu$ con $\\bar Y$ se pierde un grado de libertad.' },
+    { question: '¿Cuánto vale $\\chi^2_{(9),\\,0.05}$ (área 0.05 a la derecha)?',
+      options: ['3.325', '16.919', '1.833', '9'], answer: 1,
+      explain: 'Área 0.05 a la derecha = acumulada 0.95: fila 9, columna 95.0% de la tabla = 16.919. (3.325 es la columna 5.0%, es decir, la cola izquierda.)' },
+  ]);
+  Q('quiz-t', [
+    { question: '¿Qué le pasa a $t_{(\\nu)}$ cuando $\\nu\\to\\infty$?',
+      options: ['Se convierte en $N(0,1)$', 'Sus colas se vuelven más pesadas', 'Su varianza crece sin límite', 'Se convierte en una $\\chi^2$'], answer: 0,
+      explain: 'La varianza $\\nu/(\\nu-2)\\to1$ y la densidad tiende a la normal estándar. Por eso la fila $\\infty$ de la tabla t da los $z$.' },
+    { question: 'Con $n=9$ datos normales y $\\sigma$ desconocida, $\\dfrac{\\bar Y-\\mu}{S/\\sqrt n}$ sigue una…',
+      options: ['$t_{(8)}$', '$t_{(9)}$', '$N(0,1)$', '$\\chi^2_{(8)}$'], answer: 0,
+      explain: 'Los grados de libertad son los de $S^2$: $n-1=8$.' },
+    { question: '$t_{(8),\\,0.025}$ (área 0.025 a la derecha) es…',
+      options: ['1.860', '2.306', '−2.306', '1.960'], answer: 1,
+      explain: 'Área 0.025 a la derecha = columna 97.5% de la tabla, fila 8: 2.306. (1.860 es la columna 95%; 1.960 es la normal.)' },
+  ]);
+  Q('quiz-F', [
+    { question: 'Si $T\\sim t_{(6)}$, entonces $T^2$ sigue una…',
+      options: ['$F_{(1,6)}$', '$F_{(6,1)}$', '$\\chi^2_{(6)}$', '$t_{(36)}$'], answer: 0,
+      explain: '$T^2=\\dfrac{Z^2/1}{W/6}$ con $Z^2\\sim\\chi^2_{(1)}$: es una $F$ con 1 g.l. en el numerador y 6 en el denominador.' },
+    { question: 'Sabiendo que $F_{(10,5,\\,0.05)}=4.735$, ¿cuánto vale $F_{(5,10,\\,0.95)}$?',
+      options: ['$1/4.735=0.211$', '$4.735$', '$3.326$', '$1-4.735$'], answer: 0,
+      explain: 'Recíproco: $F_{(\\nu_1,\\nu_2,1-\\alpha)}=1/F_{(\\nu_2,\\nu_1,\\alpha)}$. Ojo: se intercambian los grados de libertad.' },
+    { question: 'Con $n_1=6$, $n_2=10$ datos normales independientes y $\\sigma_1=\\sigma_2$, $S_1^2/S_2^2$ sigue una…',
+      options: ['$F_{(5,9)}$', '$F_{(6,10)}$', '$F_{(9,5)}$', '$\\chi^2_{(14)}$'], answer: 0,
+      explain: '$F_{(n_1-1,\\,n_2-1)}$, con el numerador primero (Clase 4, Ejemplo 3).' },
+  ]);
+  Q('quiz-familia', [
+    { question: 'En la notación del formulario, $\\chi^2_{(\\nu)}$ es una Gamma con…',
+      options: ['$\\alpha=\\nu/2,\\ \\beta=2$', '$\\alpha=\\nu,\\ \\beta=1/2$', '$\\alpha=\\nu/2,\\ \\beta=1/2$', '$\\alpha=2,\\ \\beta=\\nu/2$'], answer: 0,
+      explain: '$\\beta=2$ es la escala. Si tu texto usa tasa, la misma distribución se escribe $\\text{Gamma}(\\nu/2,\\ \\lambda=1/2)$: de ahí la confusión con la tercera opción.' },
+    { question: 'Un deber dice «$X$ exponencial de parámetro $\\lambda=3$» (tasa). En el formulario es…',
+      options: ['$\\text{Exp}(\\beta=1/3)$, con media 1/3', '$\\text{Exp}(\\beta=3)$, con media 3', '$G(3,1)$', '$\\text{Exp}(\\beta=9)$'], answer: 0,
+      explain: 'Tasa $\\lambda$ ⇒ escala $\\beta=1/\\lambda$: $f(x)=3e^{-3x}=\\frac1{1/3}e^{-x/(1/3)}$.' },
+  ]);
+})();
+</script>
+</body>
+</html>
