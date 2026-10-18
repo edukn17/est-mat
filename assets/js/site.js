@@ -21,6 +21,7 @@ EM.SITE = [
     { id: 'clase-05', title: 'Clase 5 · Teorema del límite central', href: 'temas/clase-05.html', desc: 'TLC, aproximaciones normales, corrección por continuidad.' },
   ]},
   { group: 'Herramientas', items: [
+    { id: 'formulario', title: 'Formulario completo (Est. I + Est Mat)', href: 'herramientas/formulario.html', desc: 'Todas las fórmulas esenciales en una página: modelos, FGM, transformaciones, estadísticos de orden, χ², t, F y TLC.' },
     { id: 'distribuciones', title: 'Laboratorio de distribuciones', href: 'herramientas/distribuciones.html', desc: 'Explora Normal, χ², t, F, Gamma, Beta… con deslizadores y simulaciones.' },
     { id: 'tablas', title: 'Cómo leer las tablas (χ², t, F, K-S)', href: 'herramientas/tablas.html', desc: 'Percentil vs. valor crítico, colas, tablas interactivas y calculadora.' },
   ]},

@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Formulario completo · Estadística I + Est Mat</title>
+<meta name="description" content="Formulario de la guía: definiciones, modelos, FGM, transformaciones, estadísticos de orden, χ², t, F y TLC, con la notación de Estadística I y de Estadística Matemática.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/theme.js"></script>
+<style>
+  /* Formulario: tablas algo más compactas y con celdas que sí parten línea */
+  table.tabla.compact th, table.tabla.compact td { padding: 4px 9px; font-size: 13.5px; }
+  table.tabla.compact td.f, table.tabla.compact th.f { white-space: normal; min-width: 12rem; }
+  table.tabla.compact td.m { white-space: nowrap; }
+  .formula-tag { font: 600 12px var(--font-ui); color: var(--muted); }
+</style>
+</head>
+<body data-page="formulario" data-root="../">
+<main id="contenido">
+
+  <header class="page-head">
+    <p class="kicker">Herramientas</p>
+    <h1>Formulario completo</h1>
+    <p class="lead">Todo lo esencial de Estadística I y de Estadística Matemática en una sola página, con la notación de los Formularios 1 y 2. Cada fórmula enlaza a la página donde se explica; esta hoja crece con cada clase nueva.</p>
+  </header>
+
+  <div class="box idea">
+    <span class="box-title">Cómo usar este formulario</span>
+    <p>Es una <b>hoja de consulta</b>, no un tema de estudio: repasa antes de un examen o tenla a mano mientras resuelves. Se imprime bien (sin menús ni simulaciones) y las fórmulas remiten a su página de origen.</p>
+  </div>
+
+  <div class="box cuidado">
+    <span class="box-title">Antes de empezar: parametrizaciones (fuente nº 1 de errores)</span>
+    <p>El Formulario 2 usa <b>$\beta$ como escala ( $=\E$ )</b> para Exponencial y Gamma. Cuando un enunciado dice “exponencial de parámetro $\lambda$”, ese $\lambda$ es la <b>tasa</b>: $\beta=1/\lambda$ y la media es $1/\lambda$.</p>
+    $$\text{Exp}(\beta):\ \tfrac1\beta e^{-x/\beta},\ \E=\beta \qquad\longleftrightarrow\qquad \lambda e^{-\lambda x},\ \E=1/\lambda .$$
+    <p>Además: $N(\mu,\sigma^2)$ lleva la <b>varianza</b> (no la desviación) y la Geométrica / Binomial negativa del formulario cuentan <b>ensayos</b> (no fracasos). Regla: al leer “parámetro $\lambda$”, anota al margen “$\lambda=$ tasa, media $=1/\lambda$, $\beta=1/\lambda$”.</p>
+  </div>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="va">1. Variable aleatoria, densidad y acumulada</h2>
+    <div class="grid-2">
+      <div class="box definicion"><span class="box-title">Discreta: función de probabilidad</span>
+        <p>$p_X(x)=\P(X=x)\ge 0$, &nbsp;$\displaystyle\sum_{x\in S_X}p_X(x)=1$, &nbsp;$\P(X\in A)=\displaystyle\sum_{x\in A}p_X(x)$.</p>
+        <p>$S_X$ es el <b>soporte</b>: los $x$ con $\P(X=x)&gt;0$.</p>
+      </div>
+      <div class="box definicion"><span class="box-title">Continua: fdp</span>
+        <p>$f_X(x)\ge 0$, &nbsp;$\displaystyle\int_{-\infty}^{\infty}f_X(x)\,dx=1$, &nbsp;$\P(a&lt;X\le b)=\displaystyle\int_a^b f_X(x)\,dx$.</p>
+        <p>Cada punto tiene probabilidad $0$: $\P(X=a)=0$.</p>
+      </div>
+    </div>
+    <div class="box definicion"><span class="box-title">Acumulada y cuantil</span>
+      $$F_X(x)=\P(X\le x),\qquad \P(a&lt;X\le b)=F_X(b)-F_X(a).$$
+      <p>Continua: $F_X(x)=\displaystyle\int_{-\infty}^{x}f_X(t)\,dt$ y $f_X(x)=F_X'(x)$.
+        Discreta (escalera): $\P(X=x)=F(x)-F(x^-)$.</p>
+      <p><b>Cuantil $p$:</b> el número $x_p$ con $F_X(x_p)=p$ (“área $p$ a la izquierda”). La mediana es $x_{0.5}$; si $F$ es continua y creciente, $x_p=F^{-1}(p)$.</p>
+    </div>
+    <div class="box cuidado"><span class="box-title">Dos trampas</span>
+      <ul>
+        <li>$f_X(x)$ <b>no</b> es una probabilidad (puede superar 1); sólo las <i>áreas</i> lo son.</li>
+        <li>“$&lt;$” vs “$\le$”: da igual en continuas, <b>no</b> en discretas.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="momentos">2. Esperanza, varianza y Chebyshev</h2>
+    <div class="box definicion"><span class="box-title">Definiciones</span>
+      $$\E(X)=\sum_{x}x\,\P(X=x)=\int_{-\infty}^{\infty}x f_X(x)\,dx,$$
+      $$\E[g(X)]=\sum_{x}g(x)\P(X=x)=\int_{-\infty}^{\infty}g(x)f_X(x)\,dx,$$
+      $$\Var(X)=\E\big[(X-\E X)^2\big]=\E(X^2)-\big[\E(X)\big]^2,\qquad \sigma_X=\sqrt{\Var(X)} .$$
+    </div>
+    <div class="box teorema"><span class="box-title">Propiedades</span>
+      <ul>
+        <li>$\E(aX+b)=a\,\E(X)+b$;  $\Var(aX+b)=a^2\,\Var(X)$.</li>
+        <li>$\E(X+Y)=\E(X)+\E(Y)$ <b>siempre</b>;  $\Var(X+Y)=\Var(X)+\Var(Y)+2\Cov(X,Y)$.</li>
+        <li>$X\ind Y\Rightarrow \E(XY)=\E(X)\E(Y)$ y $\E[g(X)h(Y)]=\E[g(X)]\,\E[h(Y)]$; entonces $\Var(X+Y)=\Var(X)+\Var(Y)$.</li>
+        <li>$\E[g(X)]\ne g(\E X)$ salvo cuando $g$ es lineal.</li>
+      </ul>
+    </div>
+    <div class="box definicion"><span class="box-title">Covarianza y correlación</span>
+      $$\Cov(X,Y)=\E(XY)-\E(X)\E(Y),\qquad \rho=\text{Corr}(X,Y)=\frac{\Cov(X,Y)}{\sqrt{\Var(X)\Var(Y)}}\in[-1,1].$$
+      <p>$X\ind Y\Rightarrow\Cov=0$; el recíproco sólo es cierto en general para la <b>normal bivariada</b>.</p>
+    </div>
+    <div class="box teorema"><span class="box-title">Desigualdad de Chebyshev</span>
+      $$\P(|X-\mu|\ge k)\le\frac{\sigma^2}{k^2}\qquad\Longleftrightarrow\qquad \P(|X-\mu|\ge k\sigma)\le\frac{1}{k^2}\qquad(k&gt;0).$$
+      <p>A lo más $1/4$ de la probabilidad está a $2\sigma$ o más, y a lo más $1/9$ a $3\sigma$ o más, <b>sea cual sea la distribución</b>.</p>
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="fgm">3. Función generadora de momentos (FGM)</h2>
+    <div class="box definicion"><span class="box-title">Definición y momentos</span>
+      $$M_X(t)=\E\big(e^{tX}\big),\qquad M_X(0)=1,\qquad \frac{d^k}{dt^k}M_X(t)\Big|_{t=0}=\E(X^k),$$
+      $$\Var(X)=M_X''(0)-\big[M_X'(0)\big]^2 .$$
+    </div>
+    <div class="box teorema"><span class="box-title">Propiedades y unicidad</span>
+      <ul>
+        <li><b>Transformación lineal:</b> $M_{aX+b}(t)=e^{bt}M_X(at)$.</li>
+        <li><b>Suma de independientes:</b> $U=X_1+\cdots+X_n$ con $X_i\ind$ $\Rightarrow$ $M_U(t)=\prod_{i=1}^n M_{X_i}(t)$; si son i.i.d., $M_U(t)=[M_X(t)]^n$.</li>
+        <li><b>Unicidad:</b> si $M_X(t)=M_Y(t)$ para todo $t$ en un intervalo abierto que contiene a $0$, entonces $X$ y $Y$ tienen la <b>misma distribución</b>. <em>Ésta es la clave del método FGM.</em></li>
+      </ul>
+    </div>
+    <div class="box nota"><span class="box-title">Receta del método FGM</span>
+      <p>(1) Escribe la FGM de cada sumando (tabla de §4) → (2) multiplícalas (usa $M_{a+bX}$ si hay constantes) → (3) simplifica a la forma de una FGM conocida → (4) identifica parámetros y concluye por unicidad.</p>
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="modelos">4. Tabla de modelos (fdp, media, varianza, FGM)</h2>
+    <p>Parametrizaciones del Formulario 2. Si $X_i$ son independientes, las FGM se multiplican (§3).</p>
+    <div class="table-wrap">
+      <table class="tabla compact">
+        <thead><tr><th class="f">Modelo</th><th class="f">$\P(X=x)$ o $f_X(x)$</th><th class="m">$\E(X)$</th><th class="m">$\Var(X)$</th><th class="f">$M_X(t)$</th></tr></thead>
+        <tbody>
+          <tr><td class="f">$\text{Ber}(p)$</td><td class="f">$p^x(1-p)^{1-x},\ x\in\{0,1\}$</td><td class="m">$p$</td><td class="m">$p(1-p)$</td><td class="f">$pe^t+1-p$</td></tr>
+          <tr><td class="f">$\text{Bin}(n,p)$</td><td class="f">$\binom nx p^x(1-p)^{n-x},\ x=0,\dots,n$</td><td class="m">$np$</td><td class="m">$np(1-p)$</td><td class="f">$(pe^t+1-p)^n$</td></tr>
+          <tr><td class="f">$\text{Geo}(p)$</td><td class="f">$p(1-p)^{x-1},\ x=1,2,\dots$</td><td class="m">$1/p$</td><td class="m">$(1-p)/p^2$</td><td class="f">$\dfrac{pe^t}{1-(1-p)e^t},\ t&lt;-\ln(1-p)$</td></tr>
+          <tr><td class="f">$\text{Bneg}(r,p)$</td><td class="f">$\binom{x-1}{r-1}p^r(1-p)^{x-r},\ x=r,r+1,\dots$</td><td class="m">$r/p$</td><td class="m">$r(1-p)/p^2$</td><td class="f">$\left[\dfrac{pe^t}{1-(1-p)e^t}\right]^r$</td></tr>
+          <tr><td class="f">$\text{Hiper}(N,a,n)$</td><td class="f">$\binom ax\binom{N-a}{n-x}\big/\binom Nn$</td><td class="m">$n\frac aN$</td><td class="m">$n\frac aN\big(1-\frac aN\big)\frac{N-n}{N-1}$</td><td class="f">sin forma cerrada útil</td></tr>
+          <tr><td class="f">$\text{Pois}(\lambda)$</td><td class="f">$e^{-\lambda}\lambda^x/x!,\ x=0,1,\dots$</td><td class="m">$\lambda$</td><td class="m">$\lambda$</td><td class="f">$e^{\lambda(e^t-1)}$</td></tr>
+          <tr><td class="f">Unif. discreta</td><td class="f">$1/k,\ x\in\{x_1,\dots,x_k\}$</td><td class="m">$\frac1k\sum x_i$</td><td class="m">$\frac1k\sum x_i^2-\bar x^2$</td><td class="f">$\frac1k\sum_{i} e^{tx_i}$</td></tr>
+          <tr><td class="f">$U(a,b)$</td><td class="f">$\frac1{b-a},\ a&lt;x&lt;b$</td><td class="m">$\frac{a+b}2$</td><td class="m">$\frac{(b-a)^2}{12}$</td><td class="f">$\dfrac{e^{tb}-e^{ta}}{t(b-a)}\ (t\ne0)$</td></tr>
+          <tr><td class="f">$N(\mu,\sigma^2)$</td><td class="f">$\frac{1}{\sqrt{2\pi\sigma^2}}e^{-(x-\mu)^2/(2\sigma^2)}$</td><td class="m">$\mu$</td><td class="m">$\sigma^2$</td><td class="f">$e^{\mu t+\sigma^2t^2/2}$</td></tr>
+          <tr><td class="f">$\text{Exp}(\beta)$</td><td class="f">$\frac1\beta e^{-x/\beta},\ x&gt;0$</td><td class="m">$\beta$</td><td class="m">$\beta^2$</td><td class="f">$(1-\beta t)^{-1},\ t&lt;1/\beta$</td></tr>
+          <tr><td class="f">$G(\alpha,\beta)$</td><td class="f">$\frac{1}{\beta^\alpha\Gamma(\alpha)}x^{\alpha-1}e^{-x/\beta},\ x&gt;0$</td><td class="m">$\alpha\beta$</td><td class="m">$\alpha\beta^2$</td><td class="f">$(1-\beta t)^{-\alpha},\ t&lt;1/\beta$</td></tr>
+          <tr><td class="f">$\chi^2_{(\nu)}=G(\tfrac\nu2,2)$</td><td class="f">$\frac{1}{2^{\nu/2}\Gamma(\nu/2)}x^{\nu/2-1}e^{-x/2},\ x&gt;0$</td><td class="m">$\nu$</td><td class="m">$2\nu$</td><td class="f">$(1-2t)^{-\nu/2},\ t&lt;\tfrac12$</td></tr>
+          <tr><td class="f">$\text{Beta}(\alpha,\beta)$</td><td class="f">$\frac{x^{\alpha-1}(1-x)^{\beta-1}}{B(\alpha,\beta)},\ 0&lt;x&lt;1$</td><td class="m">$\frac{\alpha}{\alpha+\beta}$</td><td class="m">$\frac{\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)}$</td><td class="f">sin forma cerrada; usa $\E(X^k)=\frac{B(\alpha+k,\beta)}{B(\alpha,\beta)}$</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="box teorema"><span class="box-title">Relaciones entre modelos (casi todas por FGM)</span>
+      <ul>
+        <li>$\text{Ber}(p)$ i.i.d. $\times n$ $\to$ $\text{Bin}(n,p)$; $\text{Geo}(p)=\text{Bneg}(1,p)$; $\text{Bneg}$ = suma de $r$ geométricas i.i.d.</li>
+        <li>$\text{Pois}(\lambda_i)$ independientes $\to$ $\text{Pois}\big(\textstyle\sum\lambda_i\big)$.</li>
+        <li>$\text{Exp}(\beta)=\text{G}(1,\beta)$; suma de $n$ Exp$(\beta)$ i.i.d. $\to$ $\text{G}(n,\beta)$; suma de $\text{G}(\alpha_i,\beta)$ (mismo $\beta$) $\to$ $\text{G}\big(\sum\alpha_i,\beta\big)$.</li>
+        <li>Suma de normales independientes es normal: si $X_i\sim N(\mu_i,\sigma_i^2)$, $\sum X_i\sim N\big(\sum\mu_i,\sum\sigma_i^2\big)$; y $aX+b\sim N(a\mu+b,a^2\sigma^2)$.</li>
+        <li>$Z\sim N(0,1)\Rightarrow Z^2\sim\chi^2_{(1)}$; suma de $\nu$ $\chi^2_{(1)}$ independientes $\to\chi^2_{(\nu)}$; $\chi^2_{(\nu)}=G(\nu/2,2)$.</li>
+        <li>$\chi^2_{(2)}=\text{Exp}(\beta=2)$; &nbsp;$\text{Beta}(1,1)=U(0,1)$.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="gamma-beta">5. Funciones Gamma y Beta (el truco del núcleo)</h2>
+    <div class="box definicion"><span class="box-title">Gamma</span>
+      $$\Gamma(\alpha)=\int_0^\infty x^{\alpha-1}e^{-x}\,dx,\quad \alpha&gt;0;\qquad \Gamma(\alpha+1)=\alpha\,\Gamma(\alpha),\quad \Gamma(n)=(n-1)!,\quad \Gamma(\tfrac12)=\sqrt\pi .$$
+    </div>
+    <div class="box definicion"><span class="box-title">Beta</span>
+      $$B(\alpha,\beta)=\int_0^1 x^{\alpha-1}(1-x)^{\beta-1}\,dx=\frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)},\quad\alpha,\beta&gt;0 .$$
+    </div>
+    <div class="box idea"><span class="box-title">El truco del núcleo</span>
+      <p>Si reconoces el núcleo de una densidad conocida, la integral vale lo que le falta para ser 1:</p>
+      $$\int_0^\infty x^{\alpha-1}e^{-x/\beta}\,dx=\beta^\alpha\Gamma(\alpha),\qquad \int_0^1 x^{\alpha-1}(1-x)^{\beta-1}dx=B(\alpha,\beta),\qquad \int_{-\infty}^{\infty}e^{-\frac{(x-\mu)^2}{2\sigma^2}}dx=\sqrt{2\pi\sigma^2}.$$
+      <p>Momentos Gamma: $\E(X^k)=\beta^k\dfrac{\Gamma(\alpha+k)}{\Gamma(\alpha)}$.</p>
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="conjuntas">6. Distribuciones conjuntas</h2>
+    <div class="box definicion"><span class="box-title">Marginal, condicional e independencia</span>
+      $$f_X(x)=\int_{-\infty}^{\infty}f_{XY}(x,y)\,dy,\qquad f_{X|Y}(x|y)=\frac{f_{XY}(x,y)}{f_Y(y)},\qquad X\ind Y\iff f_{XY}(x,y)=f_X(x)f_Y(y).$$
+      $$\E[g(X,Y)]=\iint g(x,y)f_{XY}(x,y)\,dx\,dy,\qquad \E[X|Y=y]=\int x\,f_{X|Y}(x|y)\,dx,\qquad \E\big[\E(X|Y)\big]=\E(X).$$
+      <p>(En el caso discreto, cambia $\int$ por $\sum$.)</p>
+    </div>
+    <div class="box cuidado"><span class="box-title">Independencia: atajos</span>
+      <ul>
+        <li><b>Soporte no rectangular</b> (p. ej. $0&lt;x&lt;y&lt;1$) $\Rightarrow$ <b>no</b> son independientes.</li>
+        <li>Soporte rectangular y $f_{XY}(x,y)=g(x)h(y)$ $\Rightarrow$ sí son independientes.</li>
+        <li>$\Cov=0$ <b>no</b> implica independencia (salvo normal bivariada).</li>
+      </ul>
+    </div>
+    <div class="box nota"><span class="box-title">Límites de integración (lee el soporte)</span>
+      <p>(1) <b>Dibuja</b> el soporte. (2) La variable de afuera (última que integras) tiene límites <b>constantes</b>. (3) Para la de adentro, fija un valor de la de afuera y mira dónde la recta <b>entra</b> y <b>sale</b> de la región. (4) Si la frontera cambia de fórmula, <b>parte</b> la integral. (5) En una marginal, la variable que no integras queda fija.</p>
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="convergencia">7. Convergencias y ley de los grandes números</h2>
+    <div class="box definicion"><span class="box-title">Tipos de convergencia</span>
+      <ul>
+        <li><b>En probabilidad:</b> $X_n\pto X$ si $\displaystyle\lim_{n\to\infty}\P(|X_n-X|&gt;\varepsilon)=0$.</li>
+        <li><b>En distribución:</b> $X_n\dto X$ si $\lim F_{X_n}(x)=F_X(x)$ en todo punto de continuidad de $F_X$ (basta que $M_{X_n}\to M_X$ cerca de 0).</li>
+        <li><b>Casi segura:</b> $X_n\xrightarrow{c.s.}X$ si $\P(\lim X_n=X)=1$. Es la más fuerte: c.s. $\Rightarrow$ en probabilidad $\Rightarrow$ en distribución.</li>
+      </ul>
+    </div>
+    <div class="box teorema"><span class="box-title">LGN y su prueba con Chebyshev</span>
+      <p>Si $X_1,\dots,X_n$ son i.i.d. con media $\mu$ finita, $\bar X_n\pto\mu$. Con $\sigma^2&lt;\infty$:</p>
+      $$\P(|\bar X_n-\mu|\ge\varepsilon)\le\frac{\sigma^2/n}{\varepsilon^2}=\frac{\sigma^2}{n\varepsilon^2}\xrightarrow[n\to\infty]{}0 .$$
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="transformaciones">8. Transformaciones de variables aleatorias <span class="formula-tag">(Clase 1)</span></h2>
+
+    <div class="box nota"><span class="box-title">Método de la acumulada (el más general)</span>
+      <p>(1) Soporte de $U=h(Y)$. (2) $F_U(u)=\P(h(Y)\le u)$. (3) Despeja $Y$ dentro del evento (si $h$ decrece, se <b>voltea</b> la desigualdad). (4) Calcula con $F_Y$. (5) $f_U=F_U'$, con su soporte.</p>
+    </div>
+    <div class="box teorema"><span class="box-title">Jacobiano, una variable ($h$ monótona)</span>
+      $$f_U(u)=f_Y\big[h^{-1}(u)\big]\left|\frac{d\,h^{-1}(u)}{du}\right|,\qquad u\in h(\text{soporte de }Y).$$
+    </div>
+    <div class="box teorema"><span class="box-title">$h$ no monótona: suma sobre las ramas</span>
+      $$f_U(u)=\sum_{k:\ u\in h(\text{tramo }k)} f_Y\big(h_k^{-1}(u)\big)\left|\frac{d\,h_k^{-1}(u)}{du}\right| .$$
+      <p>Caso $U=Y^2$: &nbsp; $f_U(u)=\dfrac{f_Y(\sqrt u)+f_Y(-\sqrt u)}{2\sqrt u}$, $u&gt;0$ (cuenta cuántas raíces caen en el soporte). Si $h$ tiene tramos planos, $U$ puede tener <b>átomos</b>: usa sólo la acumulada.</p>
+    </div>
+    <div class="box teorema"><span class="box-title">Jacobiano bivariado</span>
+      $$f_{U_1,U_2}(u_1,u_2)=f_{Y_1,Y_2}\big(h_1^{-1},h_2^{-1}\big)\,|J|,\qquad
+        J=\det\begin{bmatrix}\dfrac{\partial y_1}{\partial u_1}&\dfrac{\partial y_1}{\partial u_2}\\[6pt]\dfrac{\partial y_2}{\partial u_1}&\dfrac{\partial y_2}{\partial u_2}\end{bmatrix}.$$
+      <p>$J$ es el jacobiano de la <b>inversa</b> (las $y$ respecto de las $u$). Atajo: $J=1\big/\det\big(\partial(u_1,u_2)/\partial(y_1,y_2)\big)$. Si sólo piden una $U_1$, añade una variable <b>auxiliar</b> y luego marginaliza.</p>
+    </div>
+    <div class="box teorema"><span class="box-title">Caso $n$-dimensional</span>
+      $$g(\mathbf u)=f\big(\mathbf y(\mathbf u)\big)\,\Big|\det\frac{\partial \mathbf y}{\partial \mathbf u}\Big|,\qquad \det\frac{\partial \mathbf y}{\partial \mathbf u}=\det\!\Big(\partial y_i/\partial u_j\Big)_{i,j}.$$
+    </div>
+    <div class="box cuidado"><span class="box-title">Errores que hay que evitar</span>
+      <ul>
+        <li>Olvidar el <b>soporte</b> de $U$ o el <b>valor absoluto</b> (sale densidad negativa).</li>
+        <li>Usar el jacobiano directo en vez del de la inversa, o no voltear la desigualdad.</li>
+        <li>Aplicar el Jacobiano cuando $h$ no es inyectiva (hay que sumar ramas).</li>
+        <li>Límites de integración fijos cuando la región depende de $u$: dibuja primero.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="orden">9. Estadísticos de orden <span class="formula-tag">(Clase 2)</span></h2>
+    <p>$Y_{(1)}\le\cdots\le Y_{(n)}$: las $Y_1,\dots,Y_n$ i.i.d. ordenadas. $Y_{(1)}=\min$, $Y_{(n)}=\max$.</p>
+    <div class="box teorema"><span class="box-title">Máximo y mínimo</span>
+      $$F_{Y_{(n)}}(y)=[F(y)]^n,\qquad g_{(n)}(y)=n\,[F(y)]^{n-1}f(y),$$
+      $$F_{Y_{(1)}}(y)=1-[1-F(y)]^n,\qquad g_{(1)}(y)=n\,[1-F(y)]^{n-1}f(y).$$
+    </div>
+    <div class="box teorema"><span class="box-title">El $i$-ésimo ordenado (Teorema 1)</span>
+      $$f_{Y_{(i)}}(x)=\frac{n!}{(i-1)!\,(n-i)!}\,[F(x)]^{i-1}\,f(x)\,[1-F(x)]^{n-i},\qquad x\in\R .$$
+    </div>
+    <div class="box teorema"><span class="box-title">Densidades conjuntas</span>
+      <p>Todos a la vez ($y_1&lt;\cdots&lt;y_n$):</p>
+      $$f_{Y_{(1)},\dots,Y_{(n)}}(y_1,\dots,y_n)=n!\,f(y_1)f(y_2)\cdots f(y_n).$$
+      <p>Un par $(Y_{(i)},Y_{(j)})$, $i&lt;j$, con $x&lt;y$:</p>
+      $$f_{Y_{(i)},Y_{(j)}}(x,y)=\frac{n!}{(i-1)!\,(j-i-1)!\,(n-j)!}\,f(x)f(y)\,[F(x)]^{i-1}\,[F(y)-F(x)]^{j-i-1}\,[1-F(y)]^{n-j}.$$
+    </div>
+    <div class="box nota"><span class="box-title">Casos que conviene recordar</span>
+      <ul>
+        <li>Mínimo de exponenciales i.i.d.: $Y_{(1)}\sim\text{Exp}(\beta/n)$ (las tasas se suman).</li>
+        <li>$Y_{(i)}$ de uniformes $U(0,1)$: $\text{Beta}(i,\,n-i+1)$.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="muestrales">10. Distribuciones muestrales: $\chi^2$ y $t$ <span class="formula-tag">(Clase 3)</span></h2>
+    <p>Muestra $Y_1,\dots,Y_n$ i.i.d. de $N(\mu,\sigma^2)$; $\bar Y=\frac1n\sum Y_i$, $S^2=\frac{1}{n-1}\sum(Y_i-\bar Y)^2$.</p>
+    <div class="box teorema"><span class="box-title">Teorema 1: la media muestral</span>
+      $$\bar Y\sim N\!\left(\mu,\frac{\sigma^2}{n}\right)\qquad\Longleftrightarrow\qquad Z=\frac{\bar Y-\mu}{\sigma/\sqrt n}\sim N(0,1).$$
+      <p>Error estándar: $\sigma/\sqrt n$. (“Para reducir el error a la mitad, cuatro veces más datos”.)</p>
+    </div>
+    <div class="box definicion"><span class="box-title">Chi-cuadrado: $\chi^2_{(\nu)}=G(\nu/2,2)$</span>
+      $$\E(W)=\nu,\qquad \Var(W)=2\nu,\qquad M_W(t)=(1-2t)^{-\nu/2}.$$
+      <p>Aditiva: $\chi^2_{(\nu_1)}+\chi^2_{(\nu_2)}\sim\chi^2_{(\nu_1+\nu_2)}$ (independientes).</p>
+    </div>
+    <div class="box teorema"><span class="box-title">Lema 1 y Teorema 2</span>
+      $$\sum_{i=1}^n\left(\frac{Y_i-\mu}{\sigma}\right)^2\sim\chi^2_{(n)};\qquad
+        \bar Y\ind S^2,\qquad \frac{(n-1)S^2}{\sigma^2}=\frac{1}{\sigma^2}\sum_{i=1}^n(Y_i-\bar Y)^2\sim\chi^2_{(n-1)} .$$
+      <p>Se pierde un grado de libertad al reemplazar $\mu$ por $\bar Y$.</p>
+    </div>
+    <div class="box definicion"><span class="box-title">t de Student</span>
+      $$\E(X)=0\ (\nu&gt;1),\qquad \Var(X)=\frac{\nu}{\nu-2}\ (\nu&gt;2);\qquad t_{(\nu)}\to N(0,1)\ \text{si }\nu\to\infty .$$
+    </div>
+    <div class="box teorema"><span class="box-title">Teorema 3: de dónde sale la $t$</span>
+      $$Z\sim N(0,1),\ W\sim\chi^2_{(\nu)},\ Z\ind W\ \Longrightarrow\ T=\frac{Z}{\sqrt{W/\nu}}\sim t_{(\nu)} .$$
+      <p>Con $\sigma$ desconocida y $\nu=n-1$: &nbsp; $\dfrac{\bar Y-\mu}{S/\sqrt n}\sim t_{(n-1)}$ (el pivote para $\mu$ sin conocer $\sigma$).</p>
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="f">11. La distribución F <span class="formula-tag">(Clase 4)</span></h2>
+    <div class="box definicion"><span class="box-title">Definición (Fisher–Snedecor)</span>
+      $$f_X(x)=\frac{\left(\frac{\nu_1}{\nu_2}\right)^{\nu_1/2}}{\mathrm{B}(\nu_1/2,\nu_2/2)}\;x^{\nu_1/2-1}\left(1+\frac{\nu_1}{\nu_2}x\right)^{-\frac{\nu_1+\nu_2}{2}},\qquad x&gt;0 .$$
+      <p>$\nu_1$ = g.l. del <b>numerador</b>, $\nu_2$ = g.l. del <b>denominador</b>; el orden importa.</p>
+    </div>
+    <div class="box teorema"><span class="box-title">Teorema 4</span>
+      $$W_1\sim\chi^2_{(\nu_1)}\ind W_2\sim\chi^2_{(\nu_2)}\ \Longrightarrow\ F=\frac{W_1/\nu_1}{W_2/\nu_2}\sim F_{(\nu_1,\nu_2)} .$$
+    </div>
+    <div class="box teorema"><span class="box-title">Momentos</span>
+      $$\E(X)=\frac{\nu_2}{\nu_2-2}\ (\nu_2&gt;2),\qquad \Var(X)=\frac{2\nu_2^2(\nu_1+\nu_2-2)}{\nu_1(\nu_2-2)^2(\nu_2-4)}\ (\nu_2&gt;4).$$
+    </div>
+    <div class="box teorema"><span class="box-title">Resultados a)–d)</span>
+      <ul>
+        <li><b>a)</b> $X\sim t_{(\nu)}\Rightarrow X^2\sim F_{(1,\nu)}$, y $F_{(1,\nu,\alpha)}=t_{(\nu),\alpha/2}^2$.</li>
+        <li><b>b)</b> $X\sim F_{(\nu_1,\nu_2)}\Rightarrow 1/X\sim F_{(\nu_2,\nu_1)}$.</li>
+        <li><b>c)</b> $F_{(\nu_1,\nu_2,1-\alpha)}=\dfrac{1}{F_{(\nu_2,\nu_1,\alpha)}}$.</li>
+        <li><b>d)</b> muestras normales independientes: $\dfrac{S_1^2/\sigma_1^2}{S_2^2/\sigma_2^2}\sim F_{(n_1-1,n_2-1)}$; si $\sigma_1^2=\sigma_2^2$, $S_1^2/S_2^2\sim F_{(n_1-1,n_2-1)}$.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="tlc">12. Teorema del límite central <span class="formula-tag">(Clase 5)</span></h2>
+    <div class="box teorema"><span class="box-title">Teorema 5 (TLC)</span>
+      <p>Sean $Y_1,Y_2,\dots$ i.i.d. con $\E[Y_i]=\mu$ y $\Var[Y_i]=\sigma^2&lt;\infty$. Con $S_n=\sum_{i=1}^n Y_i$ y</p>
+      $$W_n=\frac{\bar Y-\mu}{\sigma/\sqrt n}=\frac{S_n-n\mu}{\sigma\sqrt n}\ \dto\ N(0,1):\qquad \lim_{n\to\infty}\P(W_n\le w)=\Phi(w)\quad\forall w\in\R .$$
+    </div>
+    <div class="box nota"><span class="box-title">Formas equivalentes (en la práctica, para $n$ grande)</span>
+      $$Y_i\ \text{i.i.d.}\ \Longrightarrow\ \bar Y\ \overset{a}{\sim}\ N\!\left(\mu,\frac{\sigma^2}{n}\right),\qquad S_n=\sum_{i=1}^n Y_i\ \overset{a}{\sim}\ N\!\left(n\mu,\ n\sigma^2\right).$$
+      <p>Calcula $\mu$ y $\sigma^2$ de <b>una sola</b> observación (Formulario 2). Caso Bernoulli: $\text{Bin}(n,p)\overset{a}{\sim}N\big(np,\,np(1-p)\big)$ si $np\ge5$ y $n(1-p)\ge5$.</p>
+    </div>
+    <div class="box definicion"><span class="box-title">Corrección por continuidad ($X$ entera)</span>
+      <p>Escribe el evento con $\le$ o $\ge$ y extremos enteros, luego ensancha medio punto hacia afuera:</p>
+      <div class="table-wrap"><table class="tabla compact">
+        <thead><tr><th class="f">Evento</th><th class="f">Aproximación</th></tr></thead>
+        <tbody>
+          <tr><td class="f">$X\le k$</td><td class="f">$\Phi\big(\frac{k+0.5-\mu_X}{\sigma_X}\big)$</td></tr>
+          <tr><td class="f">$X&lt;k$</td><td class="f">$\Phi\big(\frac{k-0.5-\mu_X}{\sigma_X}\big)$</td></tr>
+          <tr><td class="f">$X\ge k$</td><td class="f">$1-\Phi\big(\frac{k-0.5-\mu_X}{\sigma_X}\big)$</td></tr>
+          <tr><td class="f">$X&gt;k$</td><td class="f">$1-\Phi\big(\frac{k+0.5-\mu_X}{\sigma_X}\big)$</td></tr>
+          <tr><td class="f">$X=k$</td><td class="f">$\Phi\big(\frac{k+0.5-\mu_X}{\sigma_X}\big)-\Phi\big(\frac{k-0.5-\mu_X}{\sigma_X}\big)$</td></tr>
+          <tr><td class="f">$a\le X\le b$</td><td class="f">$\Phi\big(\frac{b+0.5-\mu_X}{\sigma_X}\big)-\Phi\big(\frac{a-0.5-\mu_X}{\sigma_X}\big)$</td></tr>
+        </tbody>
+      </table></div>
+      <p>No se usa si la variable es continua; con rejilla de paso $h$, la corrección es $\pm h/2$.</p>
+    </div>
+    <div class="box cuidado"><span class="box-title">Sin varianza finita no hay TLC</span>
+      <p>$Y_i\iid\text{Cauchy}(0,1)$ (fdp $\frac{1}{\pi(1+y^2)}$, sin media ni varianza) $\Rightarrow \bar Y\sim\text{Cauchy}(0,1)$ para todo $n$: ni se concentra ni se vuelve normal.</p>
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="tablas">13. Cómo leer las tablas y los valores críticos</h2>
+    <div class="box idea"><span class="box-title">La regla que evita todos los líos de colas</span>
+      <p>Las tablas ESPOL dan el valor con <b>área a la IZQUIERDA</b> $q$: $\P(X\le x)=q$. En clase se escribe el valor crítico con <b>área $\alpha$ a la DERECHA</b>. Entonces:</p>
+      $$\text{valor crítico con cola derecha }\alpha \;=\; \text{valor de la tabla en la columna } q=1-\alpha .$$
+      <p>El <b>percentil 100$p$</b> es el $x_p$ con área $p$ a la izquierda; el valor crítico al $5\%$ es el <b>percentil 95</b>.</p>
+    </div>
+    <div class="table-wrap"><table class="tabla compact">
+      <thead><tr><th class="f">Tabla</th><th class="f">Qué da</th><th class="f">Valor crítico de clase</th></tr></thead>
+      <tbody>
+        <tr><td class="f">$Z$ (normal)</td><td class="f">fila $\nu=\infty$ de la $t$, o tabla aparte: $\Phi(z)=\P(Z\le z)$</td><td class="f">$z_\alpha$: usa $\Phi(z_\alpha)=1-\alpha$, y $\Phi(-z)=1-\Phi(z)$</td></tr>
+        <tr><td class="f">$\chi^2$</td><td class="f">fila $\nu$, columna $p$: $\P(\chi^2_{(\nu)}\le x)=p$</td><td class="f">$\chi^2_{(\nu),\alpha}$ = columna $1-\alpha$</td></tr>
+        <tr><td class="f">$t$</td><td class="f">fila $\nu$, columna $p$: $\P(t_{(\nu)}\le x)=p$ (sólo $p\ge0.6$)</td><td class="f">$t_{(\nu),\alpha}$ = columna $1-\alpha$; por simetría $\P(|T|\le c)=2\P(T\le c)-1$</td></tr>
+        <tr><td class="f">$F$</td><td class="f">bloque $\nu_2$ (denominador), fila $q$, columna $\nu_1$ (numerador)</td><td class="f">$F_{(\nu_1,\nu_2,\alpha)}$ = fila $q=1-\alpha$, columna $\nu_1$</td></tr>
+      </tbody>
+    </table></div>
+    <div class="box cuidado"><span class="box-title">Atajos imprescindibles de la tabla F</span>
+      <ul>
+        <li>Si $\nu_1=1$ (no hay columna): $F_{(1,\nu,\alpha)}=t_{(\nu),\alpha/2}^2$.</li>
+        <li>Cola izquierda (no hay fila $q&lt;0.5$): $F_{(\nu_1,\nu_2,1-\alpha)}=1/F_{(\nu_2,\nu_1,\alpha)}$.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="mapa">14. Mapa rápido: qué usar en cada caso</h2>
+    <div class="table-wrap"><table class="tabla compact text-left">
+      <thead><tr><th>Si te piden…</th><th>Usa</th><th>Fórmula clave</th></tr></thead>
+      <tbody>
+        <tr><td>Suma de v.a. independientes con FGM conocida</td><td>Método FGM (§3)</td><td>$M_{\sum X_i}=\prod M_{X_i}$ + unicidad</td></tr>
+        <tr><td>Distribución de $U=h(Y)$, $h$ monótona</td><td>Jacobiano 1D (§8)</td><td>$f_U(u)=f_Y(h^{-1}(u))|dh^{-1}/du|$</td></tr>
+        <tr><td>$h$ no monótona, tramos planos o recortes</td><td>Acumulada (§8)</td><td>$F_U(u)=\P(h(Y)\le u)$, luego derivar</td></tr>
+        <tr><td>Conjunta de varias variables nuevas</td><td>Jacobiano $n$-D (§8)</td><td>$g(\mathbf u)=f(\mathbf y(\mathbf u))\,|J|$</td></tr>
+        <tr><td>Una $U$ con región difícil</td><td>Auxiliares + marginalizar (§8)</td><td>añade $U_2$, integra</td></tr>
+        <tr><td>Mínimo o máximo de i.i.d.</td><td>Patrón min/máx (§9)</td><td>$[F]^n$; &nbsp;$1-[1-F]^n$</td></tr>
+        <tr><td>El $i$-ésimo ordenado</td><td>Teorema 1 (§9)</td><td>$\frac{n!}{(i-1)!(n-i)!}F^{i-1}f(1-F)^{n-i}$</td></tr>
+        <tr><td>Distribución de $\bar Y$ (población normal)</td><td>Teorema 1 (§10)</td><td>$\bar Y\sim N(\mu,\sigma^2/n)$</td></tr>
+        <tr><td>Distribución de $S^2$ (población normal)</td><td>Teorema 2 (§10)</td><td>$(n-1)S^2/\sigma^2\sim\chi^2_{(n-1)}$</td></tr>
+        <tr><td>$\sigma$ desconocida, inferencia sobre $\mu$</td><td>$t$ (§10)</td><td>$(\bar Y-\mu)/(S/\sqrt n)\sim t_{(n-1)}$</td></tr>
+        <tr><td>Cociente de dos $\chi^2$ independientes</td><td>$F$ (§11)</td><td>$\frac{W_1/\nu_1}{W_2/\nu_2}\sim F_{(\nu_1,\nu_2)}$</td></tr>
+        <tr><td>Cociente de varianzas muestrales</td><td>Resultado d) (§11)</td><td>$\frac{S_1^2/\sigma_1^2}{S_2^2/\sigma_2^2}\sim F_{(n_1-1,n_2-1)}$</td></tr>
+        <tr><td>Suma o media con $n$ grande</td><td>TLC (§12)</td><td>$\bar Y\overset{a}{\sim}N(\mu,\sigma^2/n)$</td></tr>
+        <tr><td>Variable entera aproximada por normal</td><td>Corrección $\pm0.5$ (§12)</td><td>ensancha medio punto</td></tr>
+      </tbody>
+    </table></div>
+    <p class="small muted">¿Falta algún resultado? Aparecerá aquí a medida que avancen las clases. Los temas en detalle están en el <a href="distribuciones.html">laboratorio de distribuciones</a>, en <a href="tablas.html">cómo leer las tablas</a> y en el <a href="../temas/repaso.html">repaso de Estadística I</a>.</p>
+  </section>
+
+</main>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../assets/js/stats.js"></script>
+<script src="../assets/js/plot.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/ui.js"></script>
+</body>
+</html>
