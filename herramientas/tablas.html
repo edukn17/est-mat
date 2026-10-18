@@ -54,7 +54,7 @@
   <!-- ============================================================ -->
   <section>
     <h2 id="idea">La idea clave: la tabla mide desde la izquierda</h2>
-    <p>Las tablas t, χ² y F responden <b>siempre</b> a la misma pregunta: <em>¿qué número $x$ deja un área $q$ a su izquierda?</em> Ese número es el <b>cuantil</b> (o percentil $100q$) $x_q$, y las columnas dicen “95.0%”, “97.5%”, “q = 0.950”… porque son valores de $q$.</p>
+    <p>Las tablas t, χ² y F responden <b>siempre</b> a la misma pregunta: <em>¿qué número $x$ deja un área $q$ a su izquierda?</em> Ese número es el <b>cuantil</b> (o percentil $100q$) $x_q$, y las columnas se etiquetan “95.0%”, “97.5%”, “q = 0.950”… porque cada una corresponde a un valor de $q$.</p>
     <p>En clase, en cambio, se escribe casi siempre el <b>valor crítico</b> con el área $\alpha$ a la <b>derecha</b>: $t_{(\nu),\alpha}$, $\chi^2_{(\nu),\alpha}$, $F_{(\nu_1,\nu_2,\alpha)}$, $z_\alpha$. Ese subíndice $\alpha$ <b>no es el percentil</b>: es lo que queda a la derecha. Por eso parece que en clase “usan las colas al revés”.</p>
 
     <div class="box definicion"><span class="box-title">Dos nombres para el mismo número</span>
@@ -93,14 +93,14 @@
     </div>
 
     <div class="box cuidado"><span class="box-title">Si dudas, dibuja</span>
-      <p>“Percentil 5%” es <b>siempre</b> acumulado: $x_{0.05}$, el número con 5% a su izquierda. En notación de clase eso es $c_{0.95}$, porque deja 95% a la derecha. Ante la duda, dibuja la curva y sombrea el área que te dan. Si el área sombreada queda a la <b>izquierda</b> del número, ese porcentaje es el encabezado de la columna. Si queda a la derecha, usa 1 menos ese porcentaje.</p>
+      <p>“Percentil 5%” es <b>siempre</b> acumulado: $x_{0.05}$, el número con 5% a su izquierda. En notación de clase eso es $c_{0.95}$, porque deja 95% a la derecha. Ante la duda, dibuja la curva y sombrea el área que te dan. Si el área sombreada queda a la <b>izquierda</b> del número, ese porcentaje es el encabezado de la columna. Si queda a la derecha, usa el complemento: 1 menos ese porcentaje.</p>
     </div>
   </section>
 
   <!-- ============================================================ -->
   <section>
     <h2 id="traductor">Traductor: de la pregunta a la columna</h2>
-    <p>Elige la distribución, los grados de libertad y lo que te preguntan. El traductor te dice <b>qué tabla, qué fila y qué columna</b> mirar, te muestra ese trozo de la tabla ESPOL con la celda resaltada y compara con el valor exacto.</p>
+    <p>Elige la distribución, los grados de libertad y lo que te preguntan. El traductor te dice <b>qué tabla, qué fila y qué columna</b> mirar, te muestra ese trozo de la tabla ESPOL con la celda resaltada y lo compara con el valor exacto.</p>
     <div class="sim" id="traductor-sim">
       <p class="sim-title">Traductor de colas</p>
       <p class="sim-desc">En los grados de libertad puedes escribir “∞” o “inf”. Para la F: $\nu_1$ = numerador, $\nu_2$ = denominador.</p>
@@ -144,7 +144,7 @@
     <h2 id="tabla-chi2">Tabla χ² (chi-cuadrado)</h2>
     <p><b>Qué trae:</b> filas $\nu=1,\dots,30,\ 35,40,\dots,60$ (no hay fila $\infty$); columnas $q$ = 0.1% … 99.9% en <b>dos páginas</b>. La pág. 1 trae 0.1%–50.0% (cola izquierda) y la pág. 2 trae 60.0%–99.9% (cola derecha). Abajo están unidas.</p>
     <div class="box cuidado"><span class="box-title">La χ² no es simétrica</span>
-      <p>La $\chi^2$ sólo toma valores positivos y está sesgada a la derecha. La cola izquierda <b>no</b> es “menos” la derecha: cada cola tiene su propia columna. Para un intervalo central necesitas <b>dos columnas distintas</b>, $\alpha/2$ y $1-\alpha/2$, y dos números que no son simétricos.</p>
+      <p>La $\chi^2$ sólo toma valores positivos y está sesgada a la derecha. La cola izquierda <b>no</b> es la derecha con signo menos: cada cola tiene su propia columna. Para un intervalo central necesitas <b>dos columnas distintas</b>, $\alpha/2$ y $1-\alpha/2$, y dos números que no son simétricos.</p>
     </div>
     $$\P\big(\chi^2_{(\nu),\,1-\alpha/2}\le W\le \chi^2_{(\nu),\,\alpha/2}\big)=1-\alpha\qquad \text{(notación de clase: subíndice = cola derecha)}$$
     <p>Ejemplo con $\nu=9$ y 90% central: columna 5.0% → 3.325 y columna 95.0% → 16.919. Fíjate en que el de la izquierda se escribe $\chi^2_{(9),\,0.95}$ en clase (deja 0.95 a la derecha).</p>
@@ -186,7 +186,7 @@
     $$F_{(1,\nu,\alpha)}=\big(t_{(\nu),\,\alpha/2}\big)^2.\qquad\text{Ej.: } F_{(1,9,0.05)}=t_{(9),0.025}^2=2.262^2=5.117.$$</p>
 
     <div class="box cuidado"><span class="box-title">El “∞” de la tabla F no siempre es infinito</span>
-      <p>En el bloque $\nu_2=1$ (filas 0.975, 0.990 y 0.999) muchas celdas dicen “∞”, pero los valores son finitos, sólo que mayores que 999 y no cupieron. Por ejemplo, $F_{(2,1)}$ con $q=0.99$ vale <b>4999.5</b>. En el bloque $\nu_2=2$, fila 0.999, el “∞” debería decir 999. La única celda donde 1.00 y ∞ son lo correcto es la columna $\nu_1=\infty$ del bloque $\nu_2=\infty$. Más detalles en <a href="#erratas">Erratas</a>.</p>
+      <p>En el bloque $\nu_2=1$ (filas 0.975, 0.990 y 0.999) muchas celdas dicen “∞”, pero los valores son finitos: sólo que pasan de 999 y no cupieron en la celda. Por ejemplo, $F_{(2,1)}$ con $q=0.99$ vale <b>4999.5</b>. En el bloque $\nu_2=2$, fila 0.999, el “∞” debería decir 999. La única celda donde 1.00 y ∞ son lo correcto es la columna $\nu_1=\infty$ del bloque $\nu_2=\infty$. Más detalles en <a href="#erratas">Erratas</a>.</p>
     </div>
 
     <h3 id="f-interactiva">Tabla F interactiva</h3>
@@ -228,7 +228,7 @@
 
     <div class="sim" id="sim-ks">
       <p class="sim-title">Qué es $D_n$</p>
-      <p class="sim-desc">Escalera azul: $F_n$ de una muestra. Línea: $F_0(x)=x$, la acumulada de la $U(0,1)$. El segmento rojo es $D_n$. Prueba con datos que sí vienen de $U(0,1)$ y con datos que no.</p>
+      <p class="sim-desc">Escalera azul: $F_n$ de una muestra. Línea: $F_0(x)=x$, la acumulada de la $U(0,1)$. El segmento rojo es $D_n$. Prueba con datos que sí provienen de $U(0,1)$ y con otros que no.</p>
       <div class="controls"></div>
       <div class="plot"></div>
       <div class="out"></div>
@@ -299,7 +299,7 @@
     </div>
 
     <h3 id="z-sin-tabla">Valores z</h3>
-    <p>Tienes dos caminos: la fila $\infty$ de la tabla t (cuantiles directos) o la <a href="#tabla-z">tabla Z</a> (probabilidades directas). Para $z_\alpha$ es más rápida la fila $\infty$. Para $\P(Z\le z)$, la tabla Z.</p>
+    <p>Tienes dos caminos: la fila $\infty$ de la tabla t (cuantiles directos) o la <a href="#tabla-z">tabla Z</a> (probabilidades directas). Para $z_\alpha$ es más rápida la fila $\infty$; para $\P(Z\le z)$, la tabla Z.</p>
   </section>
 
   <!-- ============================================================ -->
