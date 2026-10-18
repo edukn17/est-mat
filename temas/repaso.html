@@ -34,7 +34,7 @@
   <header class="page-head">
     <p class="kicker">Fundamentos</p>
     <h1>Repaso exprés de Estadística I</h1>
-    <p class="lead">Todo lo de Estadística I que Estadística Matemática da por sabido —y nada más—, con la notación de los Formularios 1 y 2 de ESPOL. Si al terminar puedes hacer cada autoevaluación sin mirar, estás listo para la Clase 1.</p>
+    <p class="lead">Todo lo de Estadística I que Estadística Matemática da por sabido —y nada más— con la notación de los Formularios 1 y 2 de ESPOL. Si al terminar puedes hacer cada autoevaluación sin mirar, estás listo para la Clase 1.</p>
   </header>
 
   <div class="box idea">
@@ -144,7 +144,7 @@
     <div class="box teorema">
       <span class="box-title">Propiedades que usarás a cada rato</span>
       <ol>
-        <li>$\E(aX+b)=a\E(X)+b$ &nbsp;y&nbsp; $\Var(aX+b)=a^2\Var(X)$ (sumar una constante mueve, no dispersa; el signo de $a$ desaparece al elevar al cuadrado).</li>
+        <li>$\E(aX+b)=a\E(X)+b$ &nbsp;y&nbsp; $\Var(aX+b)=a^2\Var(X)$ (sumar una constante desplaza, no dispersa; el signo de $a$ desaparece al elevar al cuadrado).</li>
         <li>$\E(X+Y)=\E(X)+\E(Y)$ <b>siempre</b> (aunque no sean independientes).</li>
         <li>$\Var(X+Y)=\Var(X)+\Var(Y)+2\Cov(X,Y)$. Si $X$ y $Y$ son independientes, $\Cov=0$ y las varianzas se suman.</li>
         <li>Si $X$ y $Y$ son independientes: $\E(XY)=\E(X)\E(Y)$ y, en general, $\E[g(X)h(Y)]=\E[g(X)]\,\E[h(Y)]$.</li>
@@ -517,7 +517,7 @@
       <span class="box-title">Receta para poner los límites de integración leyendo el soporte</span>
       <ol class="pasos">
         <li><b>Dibuja</b> el soporte (y, si es una probabilidad, la región del evento dentro de él). Sin dibujo, los límites salen mal.</li>
-        <li><b>Elige la variable de afuera</b> (la última que integras). Sus límites son <b>constantes</b>: lo más a la izquierda y lo más a la derecha que llega la región sobre su eje.</li>
+        <li><b>Elige la variable de afuera</b> (la última que integras). Sus límites son <b>constantes</b>: los valores extremos a los que llega la región sobre su eje (el más a la izquierda y el más a la derecha).</li>
         <li><b>Fija un valor de la variable de afuera</b> y traza la recta (vertical si fijaste $x$, horizontal si fijaste $y$). Los puntos donde esa recta <b>entra</b> y <b>sale</b> de la región son los límites de la variable de adentro; pueden depender de la de afuera.</li>
         <li>Si al mover la recta la frontera de entrada o de salida <b>cambia de fórmula</b>, parte la integral en dos.</li>
         <li>Para una marginal: la variable que <i>no</i> integras queda fija; los límites son los del paso 3, y fuera del soporte la marginal vale 0.</li>
@@ -550,7 +550,7 @@
 
     <div class="sim" id="sim-soporte">
       <p class="sim-title">Leer los límites en el soporte</p>
-      <p class="sim-desc">Elige el orden de integración y mueve el corte: el segmento morado muestra dónde <b>entra</b> y <b>sale</b> la recta de la región, es decir, los límites de la integral de adentro. "Simular" genera 20 000 pares (mín, máx) de dos uniformes y estima las cantidades del ejemplo.</p>
+      <p class="sim-desc">Elige el orden de integración y mueve el corte: el segmento morado muestra dónde la recta <b>entra</b> en la región y <b>sale</b> de ella, es decir, los límites de la integral de adentro. "Simular" genera 20 000 pares (mín, máx) de dos uniformes y estima las cantidades del ejemplo.</p>
       <div class="controls"></div>
       <div class="plot"></div>
       <div class="out"></div>
