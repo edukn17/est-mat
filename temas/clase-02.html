@@ -31,10 +31,10 @@
   <header class="page-head">
     <p class="kicker">Clase 2</p>
     <h1>Método de la FGM y estadísticos de orden</h1>
-    <p class="lead">Al terminar podrás (1) encontrar la distribución de una suma de v.a. independientes multiplicando FGMs y reconociendo el resultado, y (2) obtener la distribución del mínimo, del máximo y de cualquier valor ordenado $Y_{(i)}$ de una muestra.</p>
+    <p class="lead">Al terminar podrás hacer dos cosas: (1) encontrar la distribución de una suma de v.a. independientes multiplicando FGMs y reconociendo el resultado, y (2) obtener la distribución del mínimo, del máximo y de cualquier valor ordenado $Y_{(i)}$ de una muestra.</p>
   </header>
 
-  <p>Esta clase tiene dos herramientas que no se parecen entre sí, pero que responden a la misma pregunta de la Clase 1: <em>si conozco la distribución de $Y_1,\dots,Y_n$, ¿cuál es la distribución de una función de ellas?</em></p>
+  <p>Esta clase tiene dos herramientas que no se parecen entre sí, pero que responden a la misma pregunta que en la Clase 1: <em>si conozco la distribución de $Y_1,\dots,Y_n$, ¿cuál es la distribución de una función de ellas?</em></p>
   <ul>
     <li><b>Método FGM</b>: para <b>sumas</b> (y combinaciones lineales) de v.a. <b>independientes</b>.</li>
     <li><b>Estadísticos de orden</b>: para el <b>mínimo</b>, el <b>máximo</b> y, en general, el valor que queda en la posición $i$ cuando ordenas la muestra.</li>
@@ -51,7 +51,7 @@
 
     <p>Recordatorio: la función generadora de momentos de $X$ es</p>
     $$M_X(t)=\E\big[e^{tX}\big],$$
-    <p>definida para los $t$ en un intervalo alrededor de $0$ donde esa esperanza es finita. Se llama "generadora de momentos" porque $M_X^{(k)}(0)=\E(X^k)$, pero en esta clase la usamos para otra cosa: <b>identificar distribuciones</b>.</p>
+    <p>definida para los $t$ de un intervalo alrededor de $0$ donde esa esperanza es finita. Se llama "generadora de momentos" porque $M_X^{(k)}(0)=\E(X^k)$, pero en esta clase la usamos para otra cosa: <b>identificar distribuciones</b>.</p>
 
     <div class="box teorema"><span class="box-title">Teorema (FGM de una suma)</span>
       <p>Sean $Y_1,\dots,Y_n$ v.a. <b>independientes</b> con FGM $M_{Y_1}(t),\dots,M_{Y_n}(t)$. Si $U=Y_1+\cdots+Y_n$, entonces</p>
@@ -64,7 +64,7 @@
 
     <div class="box teorema"><span class="box-title">Teorema de unicidad (la "Obs" del PDF)</span>
       <p>Si $M_X(t)$ y $M_Y(t)$ existen y $M_X(t)=M_Y(t)$ para todo $t$ en un intervalo abierto que contiene a $0$, entonces $X$ e $Y$ tienen <b>la misma distribución</b>.</p>
-      <p class="small">(En el PDF aparece escrito $m_X(t)$, $m_Y(t)$ con minúscula y luego $M_X$, $M_Y$: es la misma cosa, la FGM.)</p>
+      <p class="small">(En el PDF aparece escrito $m_X(t)$, $m_Y(t)$ con minúscula y luego $M_X$, $M_Y$: es la misma FGM.)</p>
     </div>
 
     <p><b>Esto es lo que hace que el método funcione.</b> El primer teorema te da $M_U(t)$ fácilmente; el segundo te garantiza que, si $M_U(t)$ coincide con la FGM de un modelo conocido, entonces $U$ <em>tiene</em> ese modelo. No es una aproximación ni una coincidencia: la FGM determina la distribución.</p>
@@ -259,7 +259,7 @@
           <li>Las $W_i$ son independientes (cada una es función de una $X_i$ distinta, y las $X_i$ son independientes).</li>
           <li>$M_{\sum W_i}(t)=\big[(1-2t)^{-1/2}\big]^n=(1-2t)^{-n/2}$, que es la FGM de $\chi^2_{(n)}$. Por unicidad, $\sum_{i=1}^n\left(\frac{X_i-\mu}{\sigma}\right)^2\sim\chi^2_{(n)}$. $\ \blacksquare$</li>
         </ol>
-        <p><b>d)</b> <em>Ruta 1: normalidad conjunta (la pista del profesor).</em></p>
+        <p><b>d)</b> <em>Ruta 1: normalidad conjunta (la pista del enunciado).</em></p>
         <ol class="pasos">
           <li><b>Son conjuntamente normales.</b> El vector $(X_1,\dots,X_n)$ es normal multivariado (componentes normales independientes). $Y_1=\bar X$ e $Y_2=X_i-\bar X$ son combinaciones lineales de las $X_k$; toda transformación lineal de un vector normal es normal, así que $(Y_1,Y_2)$ es <b>normal bivariado</b>.</li>
           <li><b>Hecho clave:</b> si $(Y_1,Y_2)$ es normal bivariado, entonces $\Cov(Y_1,Y_2)=0\iff Y_1,Y_2$ independientes. (Con $\rho=0$ la densidad normal bivariada se factoriza en el producto de las marginales.)</li>
@@ -363,7 +363,7 @@
 
     <div class="sim" id="sim-minmax">
       <p class="sim-title">Simulación (b): mínimo y máximo de $n$ variables</p>
-      <p class="sim-desc">Se generan 20 000 muestras de tamaño $n$; se guarda el mínimo y el máximo de cada una. Histogramas = simulación; curvas = $g_{(1)}$ y $g_{(n)}$. Observa cómo, al crecer $n$, el mínimo se pega al borde izquierdo y el máximo se aleja hacia la derecha.</p>
+      <p class="sim-desc">Se generan 20 000 muestras de tamaño $n$; se guardan el mínimo y el máximo de cada una. Histogramas = simulación; curvas = $g_{(1)}$ y $g_{(n)}$. Observa cómo, al crecer $n$, el mínimo se pega al borde izquierdo y el máximo se aleja hacia la derecha.</p>
       <div class="controls"></div>
       <div class="plot"></div>
       <div class="out"></div>
@@ -602,7 +602,7 @@
           <li>$C$ empieza en $\min\{X_1,X_2\}$ y termina en $\min\{X_1,X_2\}+X_3$. Quien quedó hablando (de $A$ o $B$) termina en $\max\{X_1,X_2\}$, es decir, $Z$ unidades de tiempo <b>después</b> de que $C$ empezó.</li>
           <li>$Z &lt; X_3$ ⇔ $\max\{X_1,X_2\} &lt; \min\{X_1,X_2\}+X_3$ ⇔ <b>la persona que quedaba termina antes que $C$</b> ⇔ <b>$C$ es el último de los tres en salir de la central</b>.</li>
           <li>Así, $\P(C\text{ es el último en terminar})=\frac12$. Lo sorprendente: uno pensaría que $C$, que empezó más tarde, debería ser "más probablemente" el último. Pero por la <b>falta de memoria</b> de la exponencial, en el instante en que $C$ empieza, el tiempo que le <b>queda</b> a la otra persona ($Z$) es otra vez $\text{Exp}(\lambda)$, como si recién empezara: los dos "arrancan de cero" en igualdad de condiciones, y cada uno termina primero con probabilidad $1/2$.</li>
-          <li>Si las duraciones <b>no</b> fueran exponenciales, esto falla. Por ejemplo, con $U(0,L)$ se obtiene $\P(Z &lt; X_3)=\int_0^L\frac2L\big(1-\frac zL\big)\big(1-\frac zL\big)dz=\frac23$: la llamada que ya lleva rato tiende a estar por terminar. Compruébalo en la simulación (e).</li>
+          <li>Si las duraciones <b>no</b> fueran exponenciales, esto fallaría. Por ejemplo, con $U(0,L)$ se obtiene $\P(Z &lt; X_3)=\int_0^L\frac2L\big(1-\frac zL\big)\big(1-\frac zL\big)dz=\frac23$: la llamada que ya lleva rato tiende a estar por terminar. Compruébalo en la simulación (e).</li>
         </ol>
       </div></details>
     </div>
