@@ -17,6 +17,7 @@ traen pistas graduales, solución completa paso a paso y verificación numérica
 | `temas/clase-03.html` | Distribuciones muestrales, χ² y t de Student |
 | `temas/clase-04.html` | Distribución F de Fisher |
 | `temas/clase-05.html` | Teorema del límite central |
+| `herramientas/formulario.html` | Formulario completo (Est. I + Est Mat), descargable en PDF/LaTeX |
 | `herramientas/distribuciones.html` | Laboratorio de distribuciones |
 | `herramientas/tablas.html` | Tablas χ², t, F, normal estándar y K-S, transcritas e interactivas |
 | `deberes/lista-1-1.html` | Lista 1.1 resuelta |
@@ -46,6 +47,18 @@ e ids duplicados.
 `build.sh`). El pipeline requiere Python con `numpy`/`scipy`; los artefactos
 intermedios quedan en `scripts/build/` (no versionado).
 
+## Formulario
+
+`herramientas/formulario.html` resume Estadística I y las clases 1–5, y se ofrece
+para descargar en `herramientas/formulario.pdf` junto a su fuente LaTeX
+`herramientas/formulario.tex`. Para recompilar el PDF (dos pasadas):
+
+```bash
+pdflatex herramientas/formulario.tex
+```
+
+Al editar el `.tex`, recompila y reemplaza el PDF.
+
 ## Estructura
 
 ```
@@ -57,7 +70,8 @@ est-mat/
 │   ├── css/style.css
 │   └── js/{theme,stats,plot,site,ui}.js
 ├── temas/                  repaso + clases 01–05
-├── herramientas/           distribuciones.html, tablas.html
+├── herramientas/           distribuciones.html, tablas.html, formulario.html
+│                           formulario.tex, formulario.pdf (descargables)
 ├── deberes/                lista-1-1.html
 ├── scripts/                pipeline de tablas
 └── tests/                  stats.test.js, smoke.js, shot.sh

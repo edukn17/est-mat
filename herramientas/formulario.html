@@ -14,6 +14,8 @@
   table.tabla.compact td.f, table.tabla.compact th.f { white-space: normal; min-width: 12rem; }
   table.tabla.compact td.m { white-space: nowrap; }
   .formula-tag { font: 600 12px var(--font-ui); color: var(--muted); }
+  .descargas { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0 2px; }
+  a.btn { text-decoration: none; display: inline-block; }
 </style>
 </head>
 <body data-page="formulario" data-root="../">
@@ -22,8 +24,18 @@
   <header class="page-head">
     <p class="kicker">Herramientas</p>
     <h1>Formulario completo</h1>
-    <p class="lead">Todo lo esencial de Estadística I y de Estadística Matemática en una sola página, con la notación de los Formularios 1 y 2. Cada fórmula enlaza a la página donde se explica; esta hoja crece con cada clase nueva.</p>
+    <p class="lead">Todo lo esencial de Estadística I y de Estadística Matemática en una sola página, con la notación de los Formularios 1 y 2. Cada fórmula enlaza a la página donde se explica; esta hoja crece con cada clase nueva y también se puede descargar en PDF o en LaTeX.</p>
   </header>
+
+  <div class="box idea">
+    <span class="box-title">Descargar</span>
+    <p>Esta misma hoja, en formato imprimible y con el código fuente editable:</p>
+    <p class="descargas">
+      <a class="btn primary" href="formulario.pdf" download>Formulario (PDF)</a>
+      <a class="btn" href="formulario.tex" download>Fuente LaTeX (.tex)</a>
+    </p>
+    <p class="small muted">El PDF se genera con <code>pdflatex formulario.tex</code>. Si editas el <code>.tex</code>, recompílalo y reemplaza el PDF.</p>
+  </div>
 
   <div class="box idea">
     <span class="box-title">Cómo usar este formulario</span>
@@ -66,26 +78,38 @@
 
   <!-- ================================================================ -->
   <section>
-    <h2 id="momentos">2. Esperanza, varianza y Chebyshev</h2>
+    <h2 id="momentos">2. Esperanza, varianza, covarianza y sus propiedades</h2>
     <div class="box definicion"><span class="box-title">Definiciones</span>
       $$\E(X)=\sum_{x}x\,\P(X=x)=\int_{-\infty}^{\infty}x f_X(x)\,dx,$$
       $$\E[g(X)]=\sum_{x}g(x)\P(X=x)=\int_{-\infty}^{\infty}g(x)f_X(x)\,dx,$$
       $$\Var(X)=\E\big[(X-\E X)^2\big]=\E(X^2)-\big[\E(X)\big]^2,\qquad \sigma_X=\sqrt{\Var(X)} .$$
     </div>
-    <div class="box teorema"><span class="box-title">Propiedades</span>
+    <div class="box teorema"><span class="box-title">Propiedades de la esperanza</span>
       <ul>
-        <li>$\E(aX+b)=a\,\E(X)+b$;  $\Var(aX+b)=a^2\,\Var(X)$.</li>
-        <li>$\E(X+Y)=\E(X)+\E(Y)$ <b>siempre</b>;  $\Var(X+Y)=\Var(X)+\Var(Y)+2\Cov(X,Y)$.</li>
-        <li>$X\ind Y\Rightarrow \E(XY)=\E(X)\E(Y)$ y $\E[g(X)h(Y)]=\E[g(X)]\,\E[h(Y)]$; entonces $\Var(X+Y)=\Var(X)+\Var(Y)$.</li>
-        <li>$\E[g(X)]\ne g(\E X)$ salvo cuando $g$ es lineal.</li>
+        <li><b>Linealidad (siempre, sin independencia):</b> $\E(aX+b)=a\,\E(X)+b$; &nbsp;$\E(X+Y)=\E(X)+\E(Y)$; &nbsp;$\E\!\big[\sum a_iX_i+b\big]=\sum a_i\E(X_i)+b$.</li>
+        <li><b>Independencia (producto):</b> $X\ind Y\Rightarrow \E(XY)=\E(X)\E(Y)$ y $\E[g(X)h(Y)]=\E[g(X)]\,\E[h(Y)]$.</li>
+        <li>$\E[g(X)]\ne g(\E X)$ salvo cuando $g$ es lineal; si $g$ es convexa, $\E[g(X)]\ge g(\E X)$ <em>(Jensen)</em>.</li>
+        <li><b>Esperanza total:</b> $\E(X)=\E\big[\E(X\mid Y)\big]$.</li>
+      </ul>
+    </div>
+    <div class="box teorema"><span class="box-title">Propiedades de la varianza</span>
+      <ul>
+        <li>$\Var(X)=\E(X^2)-\big[\E(X)\big]^2\ge0$; &nbsp;$\Var(c)=0$; &nbsp;$\Var(X+b)=\Var(X)$; &nbsp;$\Var(aX+b)=a^2\,\Var(X)$.</li>
+        <li>$\Var(X+Y)=\Var(X)+\Var(Y)+2\Cov(X,Y)$; &nbsp;$\Var(X-Y)=\Var(X)+\Var(Y)-2\Cov(X,Y)$.</li>
+        <li>$\Var\!\big(\sum_i X_i\big)=\sum_i\Var(X_i)+2\sum_{i&lt;j}\Cov(X_i,X_j)$; si son independientes, $\Var\!\big(\sum_i X_i\big)=\sum_i\Var(X_i)$.</li>
+        <li><b>Varianza total:</b> $\Var(X)=\E\big[\Var(X\mid Y)\big]+\Var\big(\E[X\mid Y]\big)$.</li>
       </ul>
     </div>
     <div class="box definicion"><span class="box-title">Covarianza y correlación</span>
-      $$\Cov(X,Y)=\E(XY)-\E(X)\E(Y),\qquad \rho=\text{Corr}(X,Y)=\frac{\Cov(X,Y)}{\sqrt{\Var(X)\Var(Y)}}\in[-1,1].$$
-      <p>$X\ind Y\Rightarrow\Cov=0$; el recíproco sólo es cierto en general para la <b>normal bivariada</b>.</p>
+      $$\Cov(X,Y)=\E(XY)-\E(X)\E(Y)=\Cov(Y,X),\qquad \Cov(X,X)=\Var(X),$$
+      $$\Cov(aX+b,\,cY+d)=ac\,\Cov(X,Y),\qquad \Cov(X+Y,Z)=\Cov(X,Z)+\Cov(Y,Z),$$
+      $$\Cov\!\Big(\sum_i a_iX_i,\ \sum_j b_jY_j\Big)=\sum_i\sum_j a_i b_j\,\Cov(X_i,Y_j).$$
+      $$\rho=\text{Corr}(X,Y)=\frac{\Cov(X,Y)}{\sqrt{\Var(X)\Var(Y)}}\in[-1,1],\qquad \text{Corr}(aX+b,cY+d)=\operatorname{sign}(ac)\,\rho.$$
+      <p>$X\ind Y\Rightarrow\Cov=0$; el recíproco sólo es cierto en general para la <b>normal bivariada</b>. Cauchy–Schwarz: $\big[\Cov(X,Y)\big]^2\le\Var(X)\Var(Y)$.</p>
     </div>
-    <div class="box teorema"><span class="box-title">Desigualdad de Chebyshev</span>
-      $$\P(|X-\mu|\ge k)\le\frac{\sigma^2}{k^2}\qquad\Longleftrightarrow\qquad \P(|X-\mu|\ge k\sigma)\le\frac{1}{k^2}\qquad(k&gt;0).$$
+    <div class="box teorema"><span class="box-title">Desigualdades: Markov y Chebyshev</span>
+      $$\text{Markov }(X\ge0,\ a&gt;0):\quad \P(X\ge a)\le\frac{\E(X)}{a};\qquad \text{Chebyshev }(k&gt;0):\quad \P(|X-\mu|\ge k)\le\frac{\sigma^2}{k^2}.$$
+      $$\Longleftrightarrow\qquad \P(|X-\mu|\ge k\sigma)\le\frac{1}{k^2}.$$
       <p>A lo más $1/4$ de la probabilidad está a $2\sigma$ o más, y a lo más $1/9$ a $3\sigma$ o más, <b>sea cual sea la distribución</b>.</p>
     </div>
   </section>
