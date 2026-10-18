@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Plantilla de página</title>
-<!-- Para una página dentro de temas/, herramientas/ o deberes/ las rutas
-     locales empiezan con ../  (data-root="../"). Esta plantilla vive en la
-     raíz, por eso usa data-root="" y rutas sin ../ -->
+<title>Plantilla base de página</title>
+<!-- Si la página vive dentro de temas/, herramientas/ o deberes/, sus rutas
+     locales empiezan con ../  (data-root="../"). Esta plantilla está en la
+     raíz, así que usa data-root="" y rutas sin ../ -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <link rel="stylesheet" href="assets/css/style.css">
 <script src="assets/js/theme.js"></script>
@@ -17,12 +17,12 @@
   <header class="page-head">
     <p class="kicker">Clase N</p>
     <h1>Título de la página</h1>
-    <p class="lead">Una o dos frases que dicen qué vas a poder hacer al terminar esta página.</p>
+    <p class="lead">Una o dos frases que resuman lo que vas a poder hacer al terminar esta página.</p>
   </header>
 
   <section>
     <h2 id="idea">La idea en una frase</h2>
-    <p>Texto con matemáticas en línea $\P(X \le x)$ y en bloque:</p>
+    <p>Texto de ejemplo con matemáticas en línea $\P(X \le x)$ y en bloque:</p>
     $$f_U(u) = f_Y\big(h^{-1}(u)\big)\left|\frac{d h^{-1}(u)}{du}\right|.$$
 
     <div class="box definicion"><span class="box-title">Definición</span>…</div>
@@ -45,7 +45,7 @@
     <h2 id="sim">Simulación de ejemplo</h2>
     <div class="sim" id="sim-demo">
       <p class="sim-title">Normal estándar: área a la izquierda de c</p>
-      <p class="sim-desc">Mueve c y observa el área sombreada $\Phi(c)$.</p>
+      <p class="sim-desc">Mueve c para ver cómo cambia el área sombreada $\Phi(c)$.</p>
       <div class="controls"></div>
       <div class="plot"></div>
       <div class="out"></div>
