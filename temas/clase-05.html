@@ -36,17 +36,17 @@
       <li>Calcular la media muestral $\bar X$ de cada réplica.</li>
       <li>Graficar el histograma de las $M = 1000$ medias. ¿Cómo luce?</li>
     </ul>
-    <p>Fíjate en lo que eso significa: cada réplica son 25 números exponenciales y produce <b>un solo</b> número, su media.
+    <p>Fíjate en lo que eso significa: cada réplica tiene 25 números exponenciales y produce <b>un solo</b> número, su media.
       Repitiendo 1000 veces obtienes 1000 medias, y el histograma de esas medias es un retrato de la
       <b>distribución muestral</b> de $\bar X$ (la idea de la Clase 3).</p>
     <div class="box idea"><span class="box-title">Antes de mirar, predice</span>
-      <p>La exponencial es muy asimétrica: casi todo cerca de 0 y una cola larga a la derecha (gráfico pequeño de abajo).
+      <p>La exponencial es muy asimétrica: casi todo se concentra cerca de 0 y tiene una cola larga a la derecha (gráfico pequeño de abajo).
         ¿Crees que el histograma de las medias también tendrá esa forma de "tobogán"? ¿Dónde estará centrado? ¿Qué tan ancho será?</p>
     </div>
 
     <div class="sim" id="sim-motiv">
       <p class="sim-title">Simulación (a): histograma de $M$ medias muestrales</p>
-      <p class="sim-desc">Por defecto está exactamente el experimento del PDF: población $\text{Exp}(\beta=1)$, $n=25$, $M=1000$.
+      <p class="sim-desc">Por defecto verás exactamente el experimento del PDF: población $\text{Exp}(\beta=1)$, $n=25$, $M=1000$.
         Luego cambia la población, $n$ y $M$, o pasa a la escala estandarizada $W_n=(\bar X-\mu)/(\sigma/\sqrt n)$ para comparar con $N(0,1)$.</p>
       <div class="controls c-a"></div>
       <div class="controls c-b"></div>
@@ -59,7 +59,7 @@
 
     <div class="box nota"><span class="box-title">Respuesta: ¿cómo luce?</span>
       <ul>
-        <li><b>Forma:</b> de campana, casi simétrica. La asimetría de la exponencial casi desapareció (queda un leve sesgo a la derecha).</li>
+        <li><b>Forma:</b> de campana, casi simétrica. La asimetría de la exponencial prácticamente desapareció (queda un leve sesgo a la derecha).</li>
         <li><b>Centro:</b> en $\mu=\beta=1$, la media de la población: $\E[\bar X]=\mu$.</li>
         <li><b>Ancho:</b> mucho más angosto que la población: la desviación estándar de $\bar X$ es $\sigma/\sqrt{n}=1/\sqrt{25}=0.2$.</li>
       </ul>
@@ -306,7 +306,7 @@
       <details class="solucion"><summary>Solución completa</summary><div>
         <ol class="pasos">
           <li><b>Nueva sucesión.</b> Sea $D_i=X_i-Y_i$, $i=1,\dots,n$.</li>
-          <li><b>Las $D_i$ son i.i.d.</b> Los pares $(X_1,Y_1),\dots,(X_n,Y_n)$ son independientes entre sí (cada muestra es aleatoria y las muestras son independientes entre sí)
+          <li><b>Las $D_i$ son i.i.d.</b> Los pares $(X_1,Y_1),\dots,(X_n,Y_n)$ son independientes entre sí (cada muestra es aleatoria y las dos muestras son independientes)
             y todos tienen la misma distribución conjunta. Como $D_i$ depende solo del par $i$, las $D_i$ son independientes e idénticamente distribuidas.</li>
           <li><b>Media.</b> $\E[D_i]=\E[X_i]-\E[Y_i]=\mu_1-\mu_2=:\mu_D$.</li>
           <li><b>Varianza finita.</b> Como $X_i$ y $Y_i$ son independientes, $\Cov(X_i,Y_i)=0$ y
