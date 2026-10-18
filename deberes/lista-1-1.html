@@ -35,13 +35,13 @@
   <header class="page-head">
     <p class="kicker">Deber · Lista 1.1 · II PAO 2026</p>
     <h1>Transformaciones y estadísticos de orden</h1>
-    <p class="lead">Los 12 ejercicios del deber con pistas graduales, la solución completa (como la entregarías) y una simulación para comprobar cada resultado.</p>
+    <p class="lead">Los 12 ejercicios del deber, con pistas graduales, la solución completa (como la entregarías) y una simulación para comprobar cada resultado.</p>
     <p><span class="badge">Entrega: martes 20/10/2026</span></p>
   </header>
 
   <section>
     <h2 id="como-usar">Cómo usar esta página</h2>
-    <p>La instrucción del deber es <em>“Resuelva los siguientes ejercicios justificando cada paso”</em>. Esta página está pensada para que <b>tú</b> lo resuelvas; por eso todo lo que da la respuesta viene plegado. Para cada ejercicio:</p>
+    <p>La instrucción del deber es <em>“Resuelva los siguientes ejercicios justificando cada paso”</em>. Esta página está pensada para que <b>tú</b> lo resuelvas; por eso todo lo que revela la respuesta viene plegado. Para cada ejercicio:</p>
     <div class="pasos-uso">
       <span class="pu">1 · Intenta solo (papel y lápiz)</span><span class="flecha">→</span>
       <span class="pu">2 · Pista 1</span><span class="flecha">→</span>
@@ -50,7 +50,7 @@
       <span class="pu">5 · Verificación por simulación</span>
     </div>
     <ul>
-      <li>Antes de abrir la solución, usa los cuadros <b>“Comprueba tu respuesta”</b>: escribes tu número y te dice si está bien, sin revelar nada.</li>
+      <li>Antes de abrir la solución, usa los cuadros <b>“Comprueba tu respuesta”</b>: escribes tu número y el cuadro te dice si está bien, sin revelar nada.</li>
       <li>Cada ejercicio dice qué <b>técnica</b> usa y enlaza a la parte de la <a href="../temas/clase-01.html">Clase 1</a> donde se explica.</li>
       <li>Las soluciones están escritas al nivel de lo que se entrega: soporte, planteamiento, cálculo y conclusión. Cópialas a tu manera, no al pie de la letra: entenderlas es lo que te sirve para el examen.</li>
     </ul>
@@ -134,7 +134,7 @@
         </ul>
       </div></details>
       <details class="pista"><summary>Pista 3 · la pregunta de (b)</summary><div>
-        <p>Una v.a. es continua si su acumulada es continua (equivalente: $\P(W=w)=0$ para todo $w$). Mira si $F_W$ salta. Y si no es continua, ¿es discreta? Una discreta concentra <b>toda</b> su probabilidad en una cantidad numerable de puntos: suma los saltos y compara con 1.</p>
+        <p>Una v.a. es continua si su acumulada es continua (equivalente: $\P(W=w)=0$ para todo $w$). Fíjate en si $F_W$ da saltos. Y si no es continua, ¿es discreta? Una discreta concentra <b>toda</b> su probabilidad en una cantidad numerable de puntos: suma los saltos y compara con 1.</p>
       </div></details>
 
       <details class="solucion"><summary>Solución completa</summary><div>
@@ -367,7 +367,7 @@
         <ul>
           <li><b>Denominador.</b> Para $0\le t\le1$, la región $\{x,y\ge0,\ x+y\le t\}$ da
             $$\begin{aligned}\P(X+Y\le t)&=\int_0^t\!\!\int_0^{t-x}24xy\,dy\,dx=\int_0^t 12x(t-x)^2\,dx\\&=12\Big(\frac{t^4}{2}-\frac{2t^4}{3}+\frac{t^4}{4}\Big)=t^4,\end{aligned}$$ así que $\P(X+Y\le\frac34)=\big(\frac34\big)^4=\frac{81}{256}$.</li>
-          <li><b>Numerador.</b> Región: $\frac12\le x\le\frac34$, $0\le y\le\frac34-x$ (triangulito). Con $w=\frac34-x$:
+          <li><b>Numerador.</b> Región: $\frac12\le x\le\frac34$, $0\le y\le\frac34-x$ (un triángulo pequeño). Con $w=\frac34-x$:
             $$\begin{aligned}\int_{1/2}^{3/4}12x\Big(\tfrac34-x\Big)^2dx&=\int_0^{1/4}12\Big(\tfrac34-w\Big)w^2\,dw=12\Big[\frac{w^3}{4}-\frac{w^4}{4}\Big]_0^{1/4}\\&=3\Big(\frac1{64}-\frac1{256}\Big)=\frac{9}{256}.\end{aligned}$$</li>
         </ul>
         <div class="resultado">$\P(X\ge\frac12\mid X+Y\le\frac34)=\dfrac{9/256}{81/256}=\dfrac19\approx0.1111.$</div>
@@ -542,8 +542,8 @@
     <span class="box-title">Cuidado con la notación de este deber</span>
     <ul>
       <li>Aquí las observaciones son $X_1,\dots,X_n$ y <b>$Y_1\le Y_2\le\cdots\le Y_n$ son sus estadísticos de orden</b> (sin paréntesis). En la <a href="../temas/clase-02.html">Clase 2</a> se escriben $Y_{(1)}\le\cdots\le Y_{(n)}$. Es lo mismo: $Y_1=\min X_i$, $Y_n=\max X_i$ y $Y_i$ es el $i$-ésimo valor más pequeño, <em>no</em> la $i$-ésima observación.</li>
-      <li>"Exponencial de parámetro $\lambda$" significa <b>tasa</b> $\lambda$: $f(x)=\lambda e^{-\lambda x}$, $x>0$, con media $1/\lambda$. En la notación del Formulario 2 eso es $\text{Exp}(\beta)$ con $\beta=1/\lambda$.</li>
-      <li>En el Ejercicio 7, "parámetro $1/4$" es tasa $\lambda=1/4$: cada componente dura en promedio <b>4 años</b>, es decir $\text{Exp}(\beta=4)$.</li>
+      <li>“Exponencial de parámetro $\lambda$” significa <b>tasa</b> $\lambda$: $f(x)=\lambda e^{-\lambda x}$, $x>0$, con media $1/\lambda$. En la notación del Formulario 2 eso es $\text{Exp}(\beta)$ con $\beta=1/\lambda$.</li>
+      <li>En el Ejercicio 7, “parámetro $1/4$” es tasa $\lambda=1/4$: cada componente dura en promedio <b>4 años</b>, es decir $\text{Exp}(\beta=4)$.</li>
     </ul>
   </div>
 
@@ -570,7 +570,7 @@
     <p class="small"><b>Técnica:</b> densidades del máximo, del mínimo y del $i$-ésimo estadístico de orden (<a href="../temas/clase-02.html">Clase 2</a>, Teorema 1).</p>
 
     <details class="pista"><summary>Pista 1</summary><div>
-      <p>Llama $X_1,\dots,X_4$ a las duraciones y ordénalas: $Y_1\le Y_2\le Y_3\le Y_4$. ¿Qué estadístico de orden es la duración de la máquina en cada caso? En (c), "queda solo uno funcionando" ocurre en el instante en que falla el <b>tercer</b> componente.</p>
+      <p>Llama $X_1,\dots,X_4$ a las duraciones y ordénalas: $Y_1\le Y_2\le Y_3\le Y_4$. ¿Qué estadístico de orden es la duración de la máquina en cada caso? En (c), “queda solo uno funcionando” ocurre en el instante en que falla el <b>tercer</b> componente.</p>
     </div></details>
     <details class="pista"><summary>Pista 2</summary><div>
       <p>Con tasa $1/4$: $F(t)=1-e^{-t/4}$, $1-F(t)=e^{-t/4}$, $f(t)=\tfrac14 e^{-t/4}$ para $t>0$. Sustituye en $nF^{n-1}f$, $n(1-F)^{n-1}f$ y en el Teorema 1 con $n=4$, $i=3$.</p>
@@ -638,7 +638,7 @@
       <li>$\P(Y_3>2Y_1)$.</li>
       <li>El valor de $a$ tal que $\P(Y_3>aY_1)=1/2$.</li>
     </ol>
-    <p class="small"><b>Técnica:</b> densidad conjunta de los estadísticos de orden e integración sobre regiones (<a href="../temas/clase-02.html">Clase 2</a>, "Distribución conjunta").</p>
+    <p class="small"><b>Técnica:</b> densidad conjunta de los estadísticos de orden e integración sobre regiones (<a href="../temas/clase-02.html">Clase 2</a>, “Distribución conjunta”).</p>
 
     <details class="pista"><summary>Pista 1</summary><div>
       <p>La densidad conjunta es $f(y_1,y_2,y_3)=3!\cdot1\cdot1\cdot1=6$ en $0 &lt; y_1 &lt; y_2 &lt; y_3 &lt; 1$. En (a), (c) y (d) sólo aparecen $Y_1$ y $Y_3$: integra primero $y_2$ (de $y_1$ a $y_3$) y trabaja con $f_{Y_1,Y_3}(u,v)=6(v-u)$, $0 &lt; u &lt; v &lt; 1$.</p>
@@ -704,7 +704,7 @@
     <details class="verif"><summary>Verificación por simulación</summary><div>
       <div class="sim" id="p3-ej8-sim">
         <p class="sim-title">Tres uniformes ordenadas</p>
-        <p class="sim-desc">Se generan muchas ternas $(X_1,X_2,X_3)$, se ordenan y se cuenta cuántas cumplen el evento. Los puntos verdes cumplen el evento; los grises no. En (b) el plano es $(Y_1+Y_2,\ Y_3)$ y el evento es "debajo de la diagonal".</p>
+        <p class="sim-desc">Se generan muchas ternas $(X_1,X_2,X_3)$, se ordenan y se cuenta cuántas cumplen el evento. Los puntos verdes cumplen el evento; los grises no. En (b) el plano es $(Y_1+Y_2,\ Y_3)$ y el evento es “debajo de la diagonal”.</p>
         <div class="controls"></div>
         <div class="plot"></div>
         <div class="out"></div>
@@ -734,14 +734,14 @@
     </div></details>
 
     <details class="solucion"><summary>Solución completa</summary><div>
-      <p>"Parámetro $\lambda$" = tasa: $f(x)=\lambda e^{-\lambda x}$, $F(x)=1-e^{-\lambda x}$, $x>0$, media $1/\lambda$.</p>
+      <p>“Parámetro $\lambda$” = tasa: $f(x)=\lambda e^{-\lambda x}$, $F(x)=1-e^{-\lambda x}$, $x>0$, media $1/\lambda$.</p>
       <h4>a) Densidad de $Z$</h4>
       <ol class="pasos">
         <li>Con $n=2$: $Y_1=\min$, $Y_2=\max$ y $f_{Y_1,Y_2}(u,v)=2!\,f(u)f(v)=2\lambda^2e^{-\lambda(u+v)}$, $0 &lt; u &lt; v$.</li>
         <li>Transformación $U=Y_1$, $Z=Y_2-Y_1$. Inversa: $y_1=u$, $y_2=u+z$. Jacobiano $J=\det\begin{pmatrix}1&0\\1&1\end{pmatrix}=1$. Soporte: $0 &lt; u &lt; u+z\iff u>0,\ z>0$.</li>
         <li>$$f_{U,Z}(u,z)=2\lambda^2e^{-\lambda(2u+z)}=\underbrace{2\lambda e^{-2\lambda u}}_{\text{Exp tasa }2\lambda}\cdot\underbrace{\lambda e^{-\lambda z}}_{\text{Exp tasa }\lambda},\quad u>0,\ z>0.$$ Se factoriza en un rectángulo: $U$ y $Z$ son independientes.</li>
         <li>Integrando $u$: $$\boxed{f_Z(z)=\lambda e^{-\lambda z},\quad z>0,}$$ o sea $Z$ es exponencial de parámetro $\lambda$, igual que cada llamada.</li>
-        <li><b>Intuición (falta de memoria):</b> cuando la primera persona cuelga, a la otra le queda un tiempo de llamada que, por la falta de memoria de la exponencial, vuelve a ser $\text{Exp}(\lambda)$ "nuevo", sin importar cuánto lleve hablando.</li>
+        <li><b>Intuición (falta de memoria):</b> cuando la primera persona cuelga, a la otra le queda un tiempo de llamada que, por la falta de memoria de la exponencial, vuelve a ser $\text{Exp}(\lambda)$ “nuevo”, sin importar cuánto lleve hablando.</li>
       </ol>
       <h4>b) $\P(Z &lt; X_3)$</h4>
       <ol class="pasos">
@@ -755,9 +755,9 @@
             <li>C sale en $T+X_3$;</li>
             <li>la persona que seguía hablando sale en $\max(X_1,X_2)=T+Z$.</li>
           </ul></li>
-        <li>Por lo tanto $\{Z &lt; X_3\}=\{T+Z &lt; T+X_3\}$ = "la persona (A o B) que seguía hablando termina antes que C" = <b>"C es el último de los tres en salir de la central"</b>.</li>
-        <li>Como vale $1/2$, también el complemento $\{X_3 &lt; Z\}$ = "C termina antes que el que seguía hablando" (C <b>no</b> es el último) tiene probabilidad $1/2$.</li>
-        <li><b>Lo sorprendente:</b> aunque C empezó más tarde, tiene exactamente la misma probabilidad de terminar antes o después que quien ya estaba hablando. Es la falta de memoria: en el instante $T$, la llamada en curso y la de C son dos $\text{Exp}(\lambda)$ "nuevas" e independientes.</li>
+        <li>Por lo tanto $\{Z &lt; X_3\}=\{T+Z &lt; T+X_3\}$ = “la persona (A o B) que seguía hablando termina antes que C” = <b>“C es el último de los tres en salir de la central”</b>.</li>
+        <li>Como vale $1/2$, también el complemento $\{X_3 &lt; Z\}$ = “C termina antes que el que seguía hablando” (C <b>no</b> es el último) tiene probabilidad $1/2$.</li>
+        <li><b>Lo sorprendente:</b> aunque C empezó más tarde, tiene exactamente la misma probabilidad de terminar antes o después que quien ya estaba hablando. Es la falta de memoria: en el instante $T$, la llamada en curso y la de C son dos $\text{Exp}(\lambda)$ “nuevas” e independientes.</li>
       </ol>
     </div></details>
 
@@ -789,7 +789,7 @@
     <p class="small"><b>Técnica:</b> acumulada conjunta y derivada cruzada; Jacobiano bivariado (<a href="../temas/clase-02.html">Clase 2</a>, <a href="../temas/clase-01.html">Clase 1</a>).</p>
 
     <details class="pista"><summary>Pista 1</summary><div>
-      <p>$\{Y_n\le v\}$ es "todas las $X_i\le v$". Parte ese evento según si $Y_1\le u$ o $Y_1>u$; el segundo pedazo es "todas las $X_i$ en $(u,v]$". La densidad conjunta es $\frac{\partial^2}{\partial u\,\partial v}$ de la acumulada conjunta.</p>
+      <p>$\{Y_n\le v\}$ es “todas las $X_i\le v$”. Parte ese evento según si $Y_1\le u$ o $Y_1>u$; el segundo caso es “todas las $X_i$ en $(u,v]$”. La densidad conjunta es $\frac{\partial^2}{\partial u\,\partial v}$ de la acumulada conjunta.</p>
     </div></details>
     <details class="pista"><summary>Pista 2</summary><div>
       <p>La inversa de $R=V-U$, $M=(U+V)/2$ es $U=M-R/2$, $V=M+R/2$. Traduce cada desigualdad del soporte $0 &lt; u &lt; v &lt; 1$ a $(r,m)$: te queda un triángulo.</p>
@@ -802,7 +802,7 @@
       <h4>a) Acumulada y densidad conjunta de $(Y_1,Y_n)$</h4>
       <ol class="pasos">
         <li>$\{Y_n\le v\}=\{X_1\le v,\dots,X_n\le v\}$, con probabilidad $F(v)^n$.</li>
-        <li>Para $u &lt; v$ partimos: $\{Y_n\le v\}=\{Y_1\le u,\ Y_n\le v\}\ \cup\ \{Y_1>u,\ Y_n\le v\}$ (disjuntos). El segundo es "todas las $X_i$ caen en $(u,v]$": $\P=\prod_i[F(v)-F(u)]=[F(v)-F(u)]^n$.</li>
+        <li>Para $u &lt; v$ partimos: $\{Y_n\le v\}=\{Y_1\le u,\ Y_n\le v\}\ \cup\ \{Y_1>u,\ Y_n\le v\}$ (disjuntos). El segundo es “todas las $X_i$ caen en $(u,v]$”: $\P=\prod_i[F(v)-F(u)]=[F(v)-F(u)]^n$.</li>
         <li>Restando: $$\P(Y_1\le u,\ Y_n\le v)=F(v)^n-[F(v)-F(u)]^n,\qquad u &lt; v.$$ (Si $u\ge v$, $\{Y_n\le v\}\subset\{Y_1\le u\}$ y la acumulada es $F(v)^n$, que no depende de $u$: su derivada respecto de $u$ es 0, por eso la densidad es 0 fuera de $u &lt; v$.)</li>
         <li>Derivamos respecto de $u$ (el término $F(v)^n$ desaparece): $\frac{\partial}{\partial u}=n[F(v)-F(u)]^{n-1}f(u)$.</li>
         <li>Ahora respecto de $v$: $$f_{Y_1,Y_n}(u,v)=\frac{\partial^2}{\partial v\,\partial u}\P(Y_1\le u,Y_n\le v)=n(n-1)[F(v)-F(u)]^{n-2}f(u)f(v),\quad u &lt; v.\ \blacksquare$$ Es la fórmula del par $(Y_i,Y_j)$ de la Clase 2 con $i=1$, $j=n$.</li>
@@ -913,7 +913,7 @@
       <ol class="pasos">
         <li>$i=2$, $j=4$: $W\sim\text{Beta}(2,\,5-4+2+1)=\text{Beta}(2,4)$, con $f_W(w)=\frac{5!}{1!\,3!}w(1-w)^3=20\,w(1-w)^3$.</li>
         <li>Con $s=1-w$: $$\P(W>\tfrac12)=\int_{1/2}^1 20w(1-w)^3dw=\int_0^{1/2}20(1-s)s^3ds=20\Big(\frac{s^4}4-\frac{s^5}5\Big)\Big|_0^{1/2}=20\Big(\tfrac1{64}-\tfrac1{160}\Big)=\boxed{\tfrac3{16}=0.1875}.$$</li>
-        <li>Comprobación por intercambiabilidad: $Y_4-Y_2$ tiene la ley de $Y_2$ con $n=5$, y $\P(Y_2>\tfrac12)$ = "a lo sumo una de las 5 uniformes cae bajo $\tfrac12$" $=\frac{1+5}{32}=\frac3{16}$ ✓.</li>
+        <li>Comprobación por intercambiabilidad: $Y_4-Y_2$ tiene la ley de $Y_2$ con $n=5$, y $\P(Y_2>\tfrac12)$ = “a lo sumo una de las 5 uniformes cae bajo $\tfrac12$” $=\frac{1+5}{32}=\frac3{16}$ ✓.</li>
       </ol>
     </div></details>
 
@@ -936,10 +936,10 @@
     <p>Sean $X_1,\dots,X_n$ variables aleatorias independientes e idénticamente distribuidas, con distribución uniforme en $(0,1)$, y defina
       $$V_i=\frac{Y_i}{Y_{i+1}},\quad i=1,\dots,n-1\qquad\text{y}\qquad V_n=Y_n.$$
       Demuestre que $V_1,\dots,V_n$ son independientes y $V_i\sim\text{Beta}(i,1)$, para $i=1,\dots,n$.</p>
-    <p class="small"><b>Técnica:</b> Jacobiano $n$-dimensional (<a href="../temas/clase-01.html">Clase 1</a>, "Caso $n$-dimensional") sobre la densidad conjunta $n!$ de los estadísticos de orden (<a href="../temas/clase-02.html">Clase 2</a>).</p>
+    <p class="small"><b>Técnica:</b> Jacobiano $n$-dimensional (<a href="../temas/clase-01.html">Clase 1</a>, “Caso $n$-dimensional”) sobre la densidad conjunta $n!$ de los estadísticos de orden (<a href="../temas/clase-02.html">Clase 2</a>).</p>
 
     <details class="pista"><summary>Pista 1</summary><div>
-      <p>Encuentra la inversa "de atrás hacia adelante": $y_n=v_n$, $y_{n-1}=v_{n-1}y_n$, … En general $y_k=v_k\,v_{k+1}\cdots v_n$. Hazlo primero con $n=3$.</p>
+      <p>Encuentra la inversa “de atrás hacia adelante”: $y_n=v_n$, $y_{n-1}=v_{n-1}y_n$, … En general $y_k=v_k\,v_{k+1}\cdots v_n$. Hazlo primero con $n=3$.</p>
     </div></details>
     <details class="pista"><summary>Pista 2</summary><div>
       <p>$y_k$ sólo depende de $v_k,\dots,v_n$, así que la matriz $\partial y/\partial v$ es <b>triangular superior</b>: su determinante es el producto de la diagonal $\partial y_k/\partial v_k=v_{k+1}\cdots v_n$. ¿Cuántas veces aparece cada $v_\ell$?</p>
@@ -969,7 +969,7 @@
         <li>$$f_{V_1,V_2,V_3}(v_1,v_2,v_3)=3!\;v_2v_3^2=\underbrace{1}_{\text{Beta}(1,1)}\cdot\underbrace{2v_2}_{\text{Beta}(2,1)}\cdot\underbrace{3v_3^2}_{\text{Beta}(3,1)},\qquad 0 &lt; v_1,v_2,v_3 &lt; 1.$$ En particular $V_3=Y_3$ (el máximo) es $\text{Beta}(3,1)$, como ya sabíamos ✓.</li>
       </ol>
       <div class="grid-2">
-        <div><div class="plot" id="p3-ej12-fig-y"></div><p class="small muted">$n=2$: soporte $0 &lt; y_1 &lt; y_2 &lt; 1$. Las rectas $y_1=c\,y_2$ son "$v_1=c$"; las horizontales $y_2=c$ son "$v_2=c$".</p></div>
+        <div><div class="plot" id="p3-ej12-fig-y"></div><p class="small muted">$n=2$: soporte $0 &lt; y_1 &lt; y_2 &lt; 1$. Las rectas $y_1=c\,y_2$ son “$v_1=c$”; las horizontales $y_2=c$ son “$v_2=c$”.</p></div>
         <div><div class="plot" id="p3-ej12-fig-v"></div><p class="small muted">Su imagen en $(v_1,v_2)$: el cuadrado unitario; los rayos se vuelven verticales y la densidad $2v_2$ ya no depende de $v_1$.</p></div>
       </div>
       <div class="box nota"><span class="box-title">Para qué sirve</span>
