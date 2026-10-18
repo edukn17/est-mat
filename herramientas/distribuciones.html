@@ -38,16 +38,16 @@
   <header class="page-head">
     <p class="kicker">Herramientas</p>
     <h1>Laboratorio de distribuciones</h1>
-    <p class="lead">Mueve parámetros, calcula probabilidades y cuantiles, simula, y conoce de cerca las tres distribuciones nuevas del curso: la χ², la t de Student y la F de Fisher.</p>
+    <p class="lead">Mueve parámetros, calcula probabilidades y cuantiles, simula y conoce de cerca las tres distribuciones nuevas del curso: la χ², la t de Student y la F de Fisher.</p>
   </header>
 
-  <p>Arriba tienes un <b>explorador</b> para cualquier modelo del formulario. Debajo, una <b>ficha</b> para cada distribución nueva: de dónde sale (y una simulación que la construye desde cero), su fdp, sus propiedades, dónde aparece en el curso y cómo se lee su tabla. Al final, un <a href="#mapa">mapa</a> que conecta todas.</p>
+  <p>Arriba tienes un <b>explorador</b> para cualquier modelo del formulario. Debajo, una <b>ficha</b> para cada distribución nueva: de dónde sale (y una simulación que la construye desde cero), su fdp, sus propiedades, dónde aparece en el curso y cómo se lee su tabla. Al final, un <a href="#mapa">mapa</a> que las conecta todas.</p>
 
   <div class="box nota">
     <span class="box-title">Dos convenciones que usa toda la guía</span>
     <ol>
-      <li><b>Escala, no tasa.</b> Como en el Formulario 2: $\text{Exp}(\beta)$ tiene <b>media</b> $\beta$ y $G(\alpha,\beta)$ tiene $\E[X]=\alpha\beta$. Si un ejercicio dice "exponencial de parámetro $\lambda$" (tasa), entonces $\beta = 1/\lambda$.</li>
-      <li><b>Tabla ≠ clase.</b> Las tablas de ESPOL dan cuantiles con área <b>a la izquierda</b> (acumulada): $x_q$ cumple $\P(X\le x_q)=q$. En clase el valor crítico deja área $\alpha$ <b>a la derecha</b>. Por eso: valor crítico$(\alpha) = x_{1-\alpha}$. La calculadora de abajo te muestra los dos a la vez.</li>
+      <li><b>Escala, no tasa.</b> Como en el Formulario 2: $\text{Exp}(\beta)$ tiene <b>media</b> $\beta$ y $G(\alpha,\beta)$ tiene $\E[X]=\alpha\beta$. Si un ejercicio dice «exponencial de parámetro $\lambda$» (tasa), entonces $\beta = 1/\lambda$.</li>
+      <li><b>Tabla ≠ clase.</b> Las tablas de ESPOL dan cuantiles con área <b>a la izquierda</b> (acumulada): $x_q$ cumple $\P(X\le x_q)=q$. En clase el valor crítico deja área $\alpha$ <b>a la derecha</b>. Por eso: valor crítico $(\alpha) = x_{1-\alpha}$. La calculadora de abajo te muestra los dos a la vez.</li>
     </ol>
   </div>
 
@@ -119,7 +119,7 @@
     </div>
     <p><b>Forma según $\nu$</b> (pulsa «▶ Animar ν» en la simulación):</p>
     <ul>
-      <li>$\nu=1$: la densidad se dispara en 0 (es $Z^2$: casi siempre es un número pequeño).</li>
+      <li>$\nu=1$: la densidad se dispara en 0 (es $Z^2$, que casi siempre es un número pequeño).</li>
       <li>$\nu=2$: es $\text{Exp}(\beta=2)$, decreciente desde $f(0)=\tfrac12$.</li>
       <li>$\nu\ge 3$: una joroba con moda en $\nu-2$ y cola larga a la derecha.</li>
       <li>$\nu$ grande: casi simétrica, $\approx N(\nu,\,2\nu)$. Es una suma de $\nu$ cosas iid, así que actúa el TLC.</li>
@@ -171,7 +171,7 @@
 
     <div class="sim" id="sim-t">
       <p class="sim-title">Construye una t: una normal dividida por una χ² «promediada»</p>
-      <p class="sim-desc">Cada réplica genera $Z$ y $\nu$ normales más para formar $W$; luego calcula $T=Z/\sqrt{W/\nu}$. La punteada es la $N(0,1)$. Con «muestral» se simula $(\bar Y-\mu)/(S/\sqrt n)$ con $n=\nu+1$ datos normales.</p>
+      <p class="sim-desc">Cada réplica genera $Z$ y otras $\nu$ normales para formar $W$; luego calcula $T=Z/\sqrt{W/\nu}$. La punteada es la $N(0,1)$. Con «muestral» se simula $(\bar Y-\mu)/(S/\sqrt n)$ con $n=\nu+1$ datos normales.</p>
       <div class="controls"></div>
       <div class="plot"></div>
       <div class="out"></div>
@@ -231,7 +231,7 @@
 
     <div class="box idea">
       <span class="box-title">La idea</span>
-      <p>Para comparar la variabilidad de dos poblaciones normales, lo natural es dividir $S_1^2/S_2^2$. Cada varianza muestral, bien escalada, es una χ² dividida por sus grados de libertad, que tiene media 1. Así que el cociente gira alrededor de 1: si sale muy grande, la primera población parece más variable. La F es la distribución de ese cociente.</p>
+      <p>Para comparar la variabilidad de dos poblaciones normales, lo natural es dividir $S_1^2/S_2^2$. Cada varianza muestral, bien escalada, es una χ² dividida por sus grados de libertad, y ese cociente tiene media 1. Así que el cociente gira alrededor de 1: si sale muy grande, la primera población parece más variable. La F es la distribución de ese cociente.</p>
     </div>
 
     <div class="box definicion">
