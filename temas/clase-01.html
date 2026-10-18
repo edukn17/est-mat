@@ -32,18 +32,18 @@
   <header class="page-head">
     <p class="kicker">Clase 1</p>
     <h1>Funciones de variables aleatorias</h1>
-    <p class="lead">Conoces la distribución de $Y$ y te preguntan por la de $U=h(Y)$. Al terminar esta página sabrás hacerlo con dos herramientas: el método de la distribución acumulada y el método del Jacobiano (en 1, 2 y $n$ dimensiones), y sabrás cuál elegir.</p>
+    <p class="lead">Conoces la distribución de $Y$ y te preguntan por la de $U=h(Y)$. Al terminar esta página sabrás resolverlo con dos herramientas: el método de la distribución acumulada y el método del Jacobiano (en 1, 2 y $n$ dimensiones), y podrás decidir cuál usar.</p>
   </header>
 
   <!-- ================================================================= -->
   <section>
     <h2 id="idea">¿Qué problema resolvemos?</h2>
-    <p>Tienes una variable aleatoria $Y$ con densidad $f_Y(y)$ conocida (o un vector $(Y_1,\dots,Y_n)$ con densidad conjunta conocida) y te interesa una <b>función</b> de ella: el área $U=\pi Y^2$ de un círculo de radio aleatorio, el promedio $U=(Y_1+Y_2)/2$ de dos tiempos de vida, la proporción $U=Y_1/(Y_1+Y_2)$… En general <b>$U=h(Y)$ no tiene la misma distribución que $Y$</b>, y hay que deducirla.</p>
+    <p>Tienes una variable aleatoria $Y$ con densidad $f_Y(y)$ conocida (o un vector $(Y_1,\dots,Y_n)$ con densidad conjunta conocida) y te interesa una <b>función</b> de ella: el área $U=\pi Y^2$ de un círculo de radio aleatorio, el promedio $U=(Y_1+Y_2)/2$ de dos tiempos de vida, la proporción $U=Y_1/(Y_1+Y_2)$… En general <b>$U=h(Y)$ no tiene la misma distribución que $Y$</b>, así que hay que deducirla.</p>
 
     <div class="box idea"><span class="box-title">Intuición: la probabilidad se traslada, no se crea ni se destruye</span>
       <p>Toda la clase sale de una sola igualdad: para cualquier conjunto $A$,</p>
       $$\P(U\in A)=\P\big(Y\in\{y:\ h(y)\in A\}\big).$$
-      <p>Es decir: para saber cuánta probabilidad tiene $U$ en $A$, buscas <b>qué valores de $Y$ caen en $A$ después de transformarlos</b> (la <em>preimagen</em> de $A$) y mides esa probabilidad con la distribución de $Y$, que sí conoces. Los dos métodos de hoy son dos formas de organizar esta cuenta:</p>
+      <p>Es decir: para saber cuánta probabilidad tiene $U$ en $A$, buscas <b>qué valores de $Y$ caen en $A$ después de transformarlos</b> (la <em>preimagen</em> de $A$) y mides esa probabilidad con la distribución de $Y$, que sí conoces. Los dos métodos de hoy organizan la misma cuenta de maneras distintas:</p>
       <ul>
         <li><b>Acumulada:</b> tomas $A=(-\infty,u]$, calculas $F_U(u)=\P(U\le u)$ y derivas.</li>
         <li><b>Jacobiano:</b> tomas $A$ un intervalo (o rectángulo) diminuto y miras cuánto se estira o encoge al pasarlo por $h$.</li>
@@ -61,7 +61,7 @@
       <ul>
         <li>$F_Y(y)=\P(Y\le y)$ y, si $Y$ es continua, $f_Y(y)=F_Y'(y)$. Por eso <b>derivar la acumulada da la densidad</b>.</li>
         <li>$\P(a&lt;Y\le b)=F_Y(b)-F_Y(a)=\int_a^b f_Y(y)\,dy$.</li>
-        <li><b>Soporte</b>: conjunto donde $f_Y&gt;0$. Fuera de él la densidad vale 0, y casi todos los errores de esta clase son por olvidar el soporte.</li>
+        <li><b>Soporte</b>: conjunto donde $f_Y&gt;0$. Fuera de él la densidad vale 0, y casi todos los errores de esta clase vienen de olvidar el soporte.</li>
         <li>Exponencial con media $\beta$ (notación del Formulario 2): $f(y)=\frac1\beta e^{-y/\beta}$, $F(y)=1-e^{-y/\beta}$, $y&gt;0$.</li>
         <li>Si $Y_1,Y_2$ son independientes: $f_{Y_1,Y_2}(y_1,y_2)=f_{Y_1}(y_1)\,f_{Y_2}(y_2)$.</li>
       </ul>
@@ -113,7 +113,7 @@
           <li><b>Soporte.</b> $x\mapsto e^{-2x}$ es decreciente, vale 1 en $x=0$ y tiende a 0 cuando $x\to\infty$. Luego $Y\in(0,1)$: $F_Y(y)=0$ si $y\le0$ y $F_Y(y)=1$ si $y\ge1$.</li>
           <li><b>Despejar.</b> Para $0&lt;y&lt;1$ (ahí $\ln y&lt;0$):
             $$F_Y(y)=\P(e^{-2X}\le y)=\P(-2X\le \ln y)=\P\Big(X\ge -\tfrac{\ln y}{2}\Big).$$
-            El logaritmo es creciente (no voltea), dividir entre $-2$ sí voltea.</li>
+            El logaritmo es creciente (no voltea la desigualdad), pero dividir entre $-2$ sí la voltea.</li>
           <li><b>Calcular.</b> $\P(X\ge a)=e^{-a}$ para $a&gt;0$, con $a=-\frac{\ln y}2&gt;0$:
             $$F_Y(y)=e^{\ln y/2}=\sqrt{y},\qquad 0&lt;y&lt;1.$$</li>
           <li><b>Derivar.</b>
@@ -144,7 +144,7 @@
             $$\P(D&gt;d)=\Big(\frac{h-d}{h}\Big)^2,\qquad 0\le d\le h.$$</li>
           <li><b>Acumulada.</b> $F_D(d)=1-\Big(1-\dfrac dh\Big)^2$ para $0\le d\le h$ (0 antes, 1 después).</li>
           <li><b>Densidad.</b> $$f_D(d)=F_D'(d)=2\Big(1-\frac dh\Big)\frac1h=\frac{2(h-d)}{h^2},\qquad 0&lt;d&lt;h.$$</li>
-          <li><b>Comprobación con otra idea.</b> La probabilidad de caer en una franja delgada $[d,d+\Delta d]$ es (ancho de la franja)·$\Delta d$/área. El ancho a altura $d$ es $b\frac{h-d}{h}$ (semejanza), luego $f_D(d)=\dfrac{b(h-d)/h}{bh/2}=\dfrac{2(h-d)}{h^2}$. ✓</li>
+          <li><b>Comprobación con otra idea.</b> La probabilidad de caer en una franja delgada $[d,d+\Delta d]$ es el ancho de la franja multiplicado por $\Delta d$, dividido entre el área total. El ancho a altura $d$ es $b\frac{h-d}{h}$ (semejanza), luego $f_D(d)=\dfrac{b(h-d)/h}{bh/2}=\dfrac{2(h-d)}{h^2}$. ✓</li>
         </ol>
         <p><b>Observa:</b> el resultado no depende de $b$ ni de dónde esté el vértice superior (el triángulo no tiene que ser isósceles). Además $\E[D]=\int_0^h d\,\frac{2(h-d)}{h^2}\,dd=\frac h3$: el centroide está a un tercio de la altura.</p>
       </div></details>
@@ -219,7 +219,7 @@
       <li>Encuentre $f_U(u)$ derivando $F_U(u)$.</li>
     </ol>
     <div class="box idea"><span class="box-title">Por qué los límites de integración cambian con $u$</span>
-      <p>La región $\{U\le u\}$ se mueve al mover $u$, y su <b>forma</b> al cortarla con el soporte puede cambiar (un triángulo, luego un pentágono…). Cada forma distinta da una fórmula distinta de $F_U$: por eso la respuesta suele venir "por tramos". El primer trabajo es siempre dibujar.</p>
+      <p>La región $\{U\le u\}$ se mueve al mover $u$, y su <b>forma</b> al cortarla con el soporte puede cambiar (un triángulo, luego un pentágono…). Cada forma da una fórmula distinta de $F_U$: por eso la respuesta suele venir "por tramos". El primer trabajo es siempre dibujar.</p>
     </div>
 
     <div class="box ejemplo" id="ejemplo-1">
@@ -347,7 +347,7 @@
 
     <div class="box ejemplo" id="ejemplo-2">
       <span class="box-title">Ejemplo 2 (Clase 1)</span>
-      <p>Para el Ejercicio 1, $U=h(Y)=3Y-1$, entonces tenemos $Y=h^{-1}(U)=(U+1)/3$. Además se tiene $\left|\dfrac{dh^{-1}(u)}{du}\right|=\left|\dfrac{d\big((u+1)/3\big)}{du}\right|=\dfrac13$. Por lo tanto,</p>
+      <p>Para el Ejercicio 1, $U=h(Y)=3Y-1$, así que $Y=h^{-1}(U)=(U+1)/3$. Además, $\left|\dfrac{dh^{-1}(u)}{du}\right|=\left|\dfrac{d\big((u+1)/3\big)}{du}\right|=\dfrac13$. Por lo tanto,</p>
       $$f_U(u)=2\Big(\frac{u+1}{3}\Big)\times\frac13=\frac29(u+1)\times\1\{-1\le u\le2\}.$$
       <details class="solucion"><summary>Explicación paso a paso</summary><div>
         <ol class="pasos">
@@ -450,7 +450,7 @@
 
     <div class="box ejercicio" id="ej-7">
       <span class="box-title">Ejercicio 7 (Clase 1)</span>
-      <p>Resuelva el ejercicio anterior, usando el hecho que para dos v.a.'s $X$ y $Y$ normalmente distribuidas se cumple que</p>
+      <p>Resuelva el ejercicio anterior, usando el hecho de que para dos v.a.'s $X$ y $Y$ normalmente distribuidas se cumple que</p>
       $$\Cov(X,Y)=0\implies X\text{ y }Y\text{ son independientes.}$$
       <details class="pista"><summary>Pista 1</summary><div><p>Calcula $\E[U_i]$, $\Var(U_i)$ y $\Cov(U_1,U_2)$ con las propiedades de la esperanza y la covarianza (bilinealidad).</p></div></details>
       <details class="pista"><summary>Pista 2</summary><div><p>Una combinación lineal de normales independientes es normal. Si además $\Cov=0$, la conjunta es el producto de las marginales.</p></div></details>
