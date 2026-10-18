@@ -18,8 +18,8 @@
   <header class="page-head">
     <p class="kicker">Clase 4 · Distribuciones muestrales</p>
     <h1>La distribución F de Fisher–Snedecor</h1>
-    <p class="lead">Al terminar vas a saber de dónde sale la F, por qué sirve para comparar dos varianzas,
-      cómo leer la tabla F de ESPOL (y qué hacer con lo que no trae) y vas a tener resueltos los Ejemplos 3 y 4 de la clase.</p>
+    <p class="lead">Al terminar sabrás de dónde sale la F, por qué sirve para comparar dos varianzas y
+      cómo leer la tabla F de ESPOL (y qué hacer con lo que no trae); además, tendrás resueltos los Ejemplos 3 y 4 de la clase.</p>
   </header>
 
   <!-- ===================================================================== -->
@@ -31,7 +31,7 @@
       ¿la máquina A llena las botellas con más variabilidad que la máquina B? ¿Un método de medición es más preciso que otro?
       Ahí tienes dos poblaciones normales con varianzas $\sigma_1^2$ y $\sigma_2^2$, y dos muestras independientes.</p>
     <p>Para comparar dos números positivos, lo natural no es restarlos sino <b>dividirlos</b>: si $\sigma_1^2/\sigma_2^2=1$ son iguales,
-      si es 3 la primera es el triple. El estimador obvio de ese cociente es $S_1^2/S_2^2$. La pregunta de esta clase es:</p>
+      si es 3, la primera es el triple. El estimador obvio de ese cociente es $S_1^2/S_2^2$. La pregunta de esta clase es:</p>
     <div class="box idea"><span class="box-title">Intuición</span>
       <p>¿Cómo se distribuye un cociente de varianzas muestrales? Cada $S_i^2$, bien escalada, es una $\chi^2$ dividida entre sus grados de libertad
         (que se parece a 1 cuando hay muchos datos). La distribución del <b>cociente de dos "$\chi^2$ por grado de libertad" independientes</b>
@@ -177,7 +177,7 @@
       <ul>
         <li><b>Ningún $q&lt;0.5$.</b> No hay cola izquierda. Para valores pequeños (área pequeña a la izquierda) usas la <a href="#res-c">propiedad del recíproco c)</a>.</li>
         <li><b>No hay columna $\nu_1=1$.</b> Usas la tabla $t$: $F_{(1,\nu,\alpha)}=t_{(\nu),\alpha/2}^2$ (resultado <a href="#res-a">a)</a>).</li>
-        <li><b>Faltan $\nu_1=9,11,13,14,16$–$19,\dots$ y $\nu_2=31$–$59,\dots$</b> Interpolas o tomas el más cercano (ver el <a href="#ejemplo-extra-3">ejemplo propio 3</a>).</li>
+        <li><b>Faltan $\nu_1=9,11,13,14,16$–$19,\dots$ y $\nu_2=31$–$59,\dots$.</b> Interpolas o tomas el más cercano (ver el <a href="#ejemplo-extra-3">ejemplo propio 3</a>).</li>
         <li>En los bloques $\nu_2=1$ y $\nu_2=2$ algunas casillas dicen "∞" o "999.": <b>no son infinito</b>, son valores enormes que no caben (p.&nbsp;ej. $x_{0.975}$ de $F_{(30,1)}$ es $\approx1001$).</li>
       </ul>
     </div>
@@ -367,7 +367,7 @@
         <li>$\left(\sum_{i=1}^{9}\frac{Y_i-1}{2}\right)\Big/9$</li>
         <li>$\left(\sum_{i=1}^{9}\frac{Y_i-1}{2}\right)\Big/3$</li>
         <li>$\left(\frac13\sum_{i=1}^{9}\frac{Y_i-1}{2}\right)\Big/\sqrt{2S_Y^2/8}$</li>
-        <li>Suponga que $X_1,X_2,X_3,X_4$ son provenientes de una distribución normal estándar. Defina $S_X^2=\frac13\sum_{i=1}^4(X_i-\bar X)^2$. ¿Cuál es la distribución de $4S_X^2/S_Y^2$?</li>
+        <li>Suponga que $X_1,X_2,X_3,X_4$ provienen de una distribución normal estándar. Defina $S_X^2=\frac13\sum_{i=1}^4(X_i-\bar X)^2$. ¿Cuál es la distribución de $4S_X^2/S_Y^2$?</li>
       </ol>
       <details class="pista"><summary>Pista 1 (las piezas)</summary><div>
         <p>Tienes $n=9$, $\mu=1$, $\sigma^2=4$ ($\sigma=2$). Las tres piezas de la Clase 3:
