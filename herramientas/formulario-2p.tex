@@ -1,0 +1,256 @@
+% =====================================================================
+%  Formulario de examen (2 páginas) — Estadística Matemática · FCNM–ESPOL
+%  Versión condensada de herramientas/formulario.tex, para imprimir.
+%  Compilar con:   pdflatex formulario-2p.tex   (dos veces)
+% =====================================================================
+\documentclass[8pt,a4paper,twocolumn]{extarticle}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noshorthands]{babel}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage[a4paper,margin=1.05cm,top=0.9cm,bottom=0.9cm]{geometry}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{parskip}
+\usepackage{microtype}
+\usepackage{fancyhdr}
+\usepackage[hidelinks]{hyperref}
+
+\setlength{\columnsep}{16pt}
+\setlength{\parskip}{1pt}
+\setlength{\abovedisplayskip}{2.5pt}
+\setlength{\belowdisplayskip}{2.5pt}
+\setlength{\abovedisplayshortskip}{1pt}
+\setlength{\belowdisplayshortskip}{1pt}
+\allowdisplaybreaks
+\setlist[itemize]{leftmargin=1.05em,topsep=1pt,itemsep=0.6pt,parsep=0pt,partopsep=0pt}
+\setlist[enumerate]{leftmargin=1.3em,topsep=1pt,itemsep=0.6pt,parsep=0pt,partopsep=0pt}
+
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\Corr}{\operatorname{Corr}}
+\newcommand{\ind}{\perp\!\!\!\perp}
+\newcommand{\iid}{\overset{\text{i.i.d.}}{\sim}}
+\newcommand{\adist}{\overset{a}{\sim}}
+\newcommand{\dto}{\xrightarrow{\;d\;}}
+\newcommand{\pto}{\xrightarrow{\;p\;}}
+\newcommand{\dcs}{\xrightarrow{\mathrm{c.s.}}}
+
+\definecolor{seccolor}{RGB}{24,54,96}
+\newcommand{\fh}[1]{\par\vspace{3pt}{\color{seccolor}\bfseries #1}\par\vspace{0.5pt}\hrule height 0.7pt\relax\vspace{3pt}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyfoot[C]{\scriptsize\thepage\,/\,2}
+
+\begin{document}
+
+% ============================ CABECERA (ancho completo) ==============
+\twocolumn[\begin{minipage}{\textwidth}\centering
+  {\large\bfseries Formulario de examen · Estadística Matemática}\par\vspace{1pt}
+  {\footnotesize Estadística I (repaso) + Est Mat · FCNM–ESPOL}\par
+\end{minipage}
+\vspace{3pt}
+{\footnotesize \textbf{Parametrizaciones:} el Formulario 2 usa $\beta$ como \textbf{escala} ($=\E$) en Exp/Gamma. La ``exponencial de parámetro $\lambda$'' lleva $\lambda=$ \textbf{tasa}: $\beta=1/\lambda$, media $1/\lambda$. $N(\mu,\sigma^2)$ lleva la \textbf{varianza}; Geo/Bneg cuentan \textbf{ensayos}.}
+\vspace{3pt}
+
+{\footnotesize\setlength{\tabcolsep}{4pt}
+\hrule height 0.7pt
+\vspace{2pt}
+\noindent\textbf{Modelos (parametrización del Formulario 2; si son independientes las FGM se multiplican)}\\[1pt]
+\begin{tabular}{@{}p{1.85cm} p{5.0cm} p{1.5cm} p{2.75cm} p{5.0cm}@{}}
+\toprule
+\textbf{Modelo} & \textbf{$\Prob(X=x)$ o $f_X(x)$} & \textbf{$\E(X)$} & \textbf{$\Var(X)$} & \textbf{$M_X(t)$}\\
+\midrule
+$\text{Ber}(p)$ & $p^x(1-p)^{1-x},\ x\in\{0,1\}$ & $p$ & $p(1-p)$ & $pe^t+1-p$\\
+$\text{Bin}(n,p)$ & $\binom nx p^x(1-p)^{n-x},\ x=0,\dots,n$ & $np$ & $np(1-p)$ & $(pe^t+1-p)^n$\\
+$\text{Geo}(p)$ & $p(1-p)^{x-1},\ x=1,2,\dots$ & $1/p$ & $(1-p)/p^2$ & $\dfrac{pe^t}{1-(1-p)e^t},\,t<-\ln(1-p)$\\
+$\text{Bneg}(r,p)$ & $\binom{x-1}{r-1}p^r(1-p)^{x-r},\ x\ge r$ & $r/p$ & $r(1-p)/p^2$ & $\Big[\dfrac{pe^t}{1-(1-p)e^t}\Big]^r$\\
+$\text{Hiper}(N,a,n)$ & $\binom ax\binom{N-a}{n-x}\big/\binom Nn$ & $n\frac aN$ & $n\frac aN(1-\frac aN)\frac{N-n}{N-1}$ & sin forma cerrada\\
+$\text{Pois}(\lambda)$ & $e^{-\lambda}\lambda^x/x!,\ x=0,1,\dots$ & $\lambda$ & $\lambda$ & $e^{\lambda(e^t-1)}$\\
+Unif.\ discreta & $1/k,\ x\in\{x_1,\dots,x_k\}$ & $\frac1k\sum x_i$ & $\frac1k\sum x_i^2-\bar x^2$ & $\frac1k\sum_i e^{tx_i}$\\
+$U(a,b)$ & $\frac1{b-a},\ a<x<b$ & $\frac{a+b}2$ & $\frac{(b-a)^2}{12}$ & $\dfrac{e^{tb}-e^{ta}}{t(b-a)}$\\
+$N(\mu,\sigma^2)$ & $\frac{1}{\sqrt{2\pi\sigma^2}}e^{-(x-\mu)^2/(2\sigma^2)}$ & $\mu$ & $\sigma^2$ & $e^{\mu t+\sigma^2t^2/2}$\\
+$\text{Exp}(\beta)$ & $\frac1\beta e^{-x/\beta},\ x>0$ & $\beta$ & $\beta^2$ & $(1-\beta t)^{-1},\,t<1/\beta$\\
+$G(\alpha,\beta)$ & $\frac{1}{\beta^\alpha\Gamma(\alpha)}x^{\alpha-1}e^{-x/\beta},\ x>0$ & $\alpha\beta$ & $\alpha\beta^2$ & $(1-\beta t)^{-\alpha},\,t<1/\beta$\\
+$\chi^2_{(\nu)}=G(\tfrac\nu2,2)$ & $\frac{1}{2^{\nu/2}\Gamma(\nu/2)}x^{\nu/2-1}e^{-x/2}$ & $\nu$ & $2\nu$ & $(1-2t)^{-\nu/2},\,t<\tfrac12$\\
+$\text{Beta}(\alpha,\beta)$ & $\frac{x^{\alpha-1}(1-x)^{\beta-1}}{B(\alpha,\beta)},\ 0<x<1$ & $\frac{\alpha}{\alpha+\beta}$ & $\frac{\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)}$ & $\E(X^k)=\frac{B(\alpha+k,\beta)}{B(\alpha,\beta)}$\\
+\bottomrule
+\end{tabular}
+\vspace{2pt}
+\hrule height 0.7pt
+\par\vspace{3pt}
+\textbf{Relaciones (por FGM o definición):} Ber$_n$ i.i.d.\ $\to$ Bin$(n,p)$;\ Geo$=$Bneg$(1,p)$;\ Bneg$=$suma de $r$ Geo i.i.d.;\ Pois$(\lambda_i)$ indep.\ $\to$ Pois$(\sum\lambda_i)$;\ Exp$(\beta)=G(1,\beta)$;\ $n$ Exp$(\beta)$ i.i.d.\ $\to G(n,\beta)$;\ $G(\alpha_i,\beta)$ (mismo $\beta$) $\to G(\sum\alpha_i,\beta)$;\ $N(\mu_i,\sigma_i^2)$ indep.\ $\to N(\sum\mu_i,\sum\sigma_i^2)$;\ $aX+b\sim N(a\mu+b,a^2\sigma^2)$;\ $Z^2\sim\chi^2_{(1)}$;\ $\sum^\nu\chi^2_{(1)}\to\chi^2_{(\nu)}$;\ $\chi^2_{(2)}=$Exp$(2)$;\ Beta$(1,1)=U(0,1)$.
+\par}
+\vspace{6pt}
+]
+
+% =====================================================================
+\fh{1. Variable aleatoria, densidad y acumulada}
+Discreta: $p_X(x)=\Prob(X=x)\ge0$, $\sum_{S_X}p_X=1$, $\Prob(X\in A)=\sum_A p_X$.
+
+Continua: $f_X\ge0$, $\int_{-\infty}^{\infty}f_X=1$, $\Prob(a<X\le b)=\int_a^b f_X$.
+\[
+F_X(x)=\Prob(X\le x),\quad \Prob(a<X\le b)=F_X(b)-F_X(a).
+\]
+Continua: $F_X(x)=\int_{-\infty}^{x}f_X(t)\,dt$, $f_X=F_X'$. Discreta: $\Prob(X=x)=F(x)-F(x^-)$.
+\textbf{Cuantil $p$:} $x_p$ con $F_X(x_p)=p$ (mediana $x_{0.5}$); si $F$ creciente, $x_p=F^{-1}(p)$.
+\textbf{Ojo:} $f_X$ \emph{no} es probabilidad (puede pasar de 1); ``$<$'' vs ``$\le$'' da igual en continuas, no en discretas.
+
+% =====================================================================
+\fh{2. Esperanza, varianza, covarianza}
+\begin{gather*}
+\E(X)=\sum_x x\,\Prob(X=x)=\int x f_X(x)\,dx,\\
+\E[g(X)]=\sum_x g(x)\Prob(X=x)=\int g(x)f_X(x)\,dx .
+\end{gather*}
+\[
+\Var(X)=\E\big[(X-\E X)^2\big]=\E(X^2)-[\E X]^2,\quad \sigma_X=\sqrt{\Var(X)} .
+\]
+\[
+\Cov(X,Y)=\E(XY)-\E(X)\E(Y)=\E\big[(X-\E X)(Y-\E Y)\big].
+\]
+\begin{itemize}
+  \item \textbf{E:} $\E(aX+b)=a\E X+b$;\ $\E(X+Y)=\E X+\E Y$ (siempre);\ $\E[\sum a_iX_i+b]=\sum a_i\E X_i+b$;\ $\E(c)=c$.
+  \item $X\ind Y\Rightarrow \E(XY)=\E X\,\E Y$ y $\E[g(X)h(Y)]=\E g(X)\E h(Y)$.
+  \item $\E[g(X)]\ne g(\E X)$ salvo $g$ lineal;\ $g$ convexa $\Rightarrow \E g(X)\ge g(\E X)$ (Jensen).\ \textbf{Esperanza total:} $\E X=\E[\E(X\mid Y)]$.
+  \item \textbf{Var:} $\Var(aX+b)=a^2\Var X$;\ $\Var(X+b)=\Var X$;\ $\Var c=0$.
+  \item $\Var(X\pm Y)=\Var X+\Var Y\pm2\Cov(X,Y)$;\ $\Var(\sum X_i)=\sum\Var X_i+2\sum_{i<j}\Cov(X_i,X_j)$;\ si indep.\ $\Var(\sum X_i)=\sum\Var X_i$.
+  \item \textbf{Varianza total:} $\Var X=\E[\Var(X\mid Y)]+\Var(\E[X\mid Y])$.
+  \item \textbf{Cov:} $\Cov(X,Y)=\Cov(Y,X)$;\ $\Cov(X,X)=\Var X$;\ $\Cov(aX+b,cY+d)=ac\,\Cov(X,Y)$;\ $\Cov(X+Y,Z)=\Cov(X,Z)+\Cov(Y,Z)$;\ $\Cov(\sum a_iX_i,\sum b_jY_j)=\sum_i\sum_j a_ib_j\Cov(X_i,Y_j)$.
+  \item $X\ind Y\Rightarrow\Cov=0$ (recíproco sólo en la normal bivariada).\ $\rho=\Corr=\frac{\Cov(X,Y)}{\sqrt{\Var X\Var Y}}\in[-1,1]$, $\Corr(aX+b,cY+d)=\operatorname{sign}(ac)\rho$.
+  \item Cauchy--Schwarz $[\Cov(X,Y)]^2\le\Var X\Var Y$. \textbf{Markov} ($X\ge0$): $\Prob(X\ge a)\le\E X/a$.
+  \item \textbf{Chebyshev:} $\Prob(|X-\mu|\ge k)\le\sigma^2/k^2$;\ en $k\sigma$: $\le1/k^2$.
+\end{itemize}
+
+% =====================================================================
+\fh{3. Función generadora de momentos (FGM)}
+\begin{gather*}
+M_X(t)=\E(e^{tX}),\quad M_X(0)=1,\\
+M_X^{(k)}(0)=\E(X^k),\quad \Var X=M_X''(0)-[M_X'(0)]^2 .
+\end{gather*}
+\begin{itemize}
+  \item $M_{aX+b}(t)=e^{bt}M_X(at)$.
+  \item $X_i\ind\Rightarrow M_{\sum X_i}(t)=\prod_i M_{X_i}(t)$;\ i.i.d.\ $\Rightarrow[M_X(t)]^n$.
+  \item \textbf{Unicidad:} si $M_X=M_Y$ cerca de $0$, misma distribución. \emph{Clave del método FGM.}
+\end{itemize}
+\textbf{Receta:} FGM de cada sumando (tabla) $\to$ multiplicar (usa $M_{a+bX}$) $\to$ simplificar a una FGM conocida $\to$ identificar y concluir por unicidad.
+
+% =====================================================================
+\fh{4. Gamma y Beta (truco del núcleo)}
+\begin{gather*}
+\Gamma(\alpha)=\int_0^\infty x^{\alpha-1}e^{-x}dx,\ \ \alpha>0;\\
+\Gamma(\alpha+1)=\alpha\Gamma(\alpha),\quad \Gamma(n)=(n-1)!,\quad \Gamma(\tfrac12)=\sqrt\pi .
+\end{gather*}
+\[
+B(\alpha,\beta)=\int_0^1 x^{\alpha-1}(1-x)^{\beta-1}dx=\frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)} .
+\]
+\textbf{Núcleo:} $\int_0^\infty x^{\alpha-1}e^{-x/\beta}dx=\beta^\alpha\Gamma(\alpha)$,\ $\int_0^1 x^{\alpha-1}(1-x)^{\beta-1}dx=B(\alpha,\beta)$,\ $\int e^{-\frac{(x-\mu)^2}{2\sigma^2}}dx=\sqrt{2\pi\sigma^2}$.\ \textbf{Momentos Gamma:} $\E(X^k)=\beta^k\frac{\Gamma(\alpha+k)}{\Gamma(\alpha)}$.
+
+% =====================================================================
+\fh{5. Distribuciones conjuntas}
+\begin{gather*}
+f_X(x)=\int f_{XY}(x,y)\,dy,\quad f_{X\mid Y}(x\mid y)=\frac{f_{XY}(x,y)}{f_Y(y)},\\
+X\ind Y\iff f_{XY}=f_X f_Y .
+\end{gather*}
+\begin{gather*}
+\E[g(X,Y)]=\iint g\,f_{XY}\,dx\,dy,\quad \E[X\mid Y=y]=\int x f_{X\mid Y}dx,\\
+\E[\E(X\mid Y)]=\E X .
+\end{gather*}
+Discretas: cambia $\int$ por $\sum$.
+\begin{itemize}
+  \item Soporte \textbf{no rectangular} (p. ej.\ $0<x<y<1$) $\Rightarrow$ no son independientes.
+  \item Soporte rectangular y $f_{XY}=g(x)h(y)$ $\Rightarrow$ sí independientes.
+  \item \textbf{Límites:} dibuja el soporte; la variable de afuera tiene límites constantes; la de adentro, fija la de afuera y mira dónde entra/sale; si la frontera cambia, parte la integral.
+\end{itemize}
+
+% =====================================================================
+\fh{6. Transformaciones (Clase 1)}
+\textbf{Acumulada (general):} (1) soporte de $U=h(Y)$; (2) $F_U(u)=\Prob(h(Y)\le u)$; (3) despeja $Y$ (si $h$ decrece, voltea); (4) usa $F_Y$; (5) $f_U=F_U'$.
+\[
+\text{Jacobiano 1D (monótona):}\quad f_U(u)=f_Y[h^{-1}(u)]\Big|\frac{dh^{-1}}{du}\Big| .
+\]
+\begin{gather*}
+\text{No monótona:}\quad f_U(u)=\sum_k f_Y[h_k^{-1}(u)]\Big|\frac{dh_k^{-1}}{du}\Big|,\\
+U=Y^2:\quad f_U(u)=\frac{f_Y(\sqrt u)+f_Y(-\sqrt u)}{2\sqrt u}\ (u>0).
+\end{gather*}
+\begin{gather*}
+\text{Bivariado:}\quad f_{U_1,U_2}=f_{Y_1,Y_2}(h_1^{-1},h_2^{-1})\,|J|,\quad J=\det\!\big[\partial y_i/\partial u_j\big];\\
+n\text{-D:}\quad g(\mathbf u)=f(\mathbf y(\mathbf u))\,\Big|\det\frac{\partial\mathbf y}{\partial\mathbf u}\Big| .
+\end{gather*}
+$J$ es el jacobiano de la \textbf{inversa}; atajo $J=1/\det(\partial(u_1,u_2)/\partial(y_1,y_2))$. Si piden una sola $U_1$, añade una \textbf{auxiliar} y marginaliza. Tramos planos $\Rightarrow$ átomos: usa sólo la acumulada.
+
+% =====================================================================
+\fh{7. Estadísticos de orden (Clase 2)}
+$Y_{(1)}=\min$, $Y_{(n)}=\max$ de $Y_i$ i.i.d.
+\begin{gather*}
+F_{(n)}(y)=[F(y)]^n,\quad g_{(n)}(y)=n[F(y)]^{n-1}f(y);\\
+F_{(1)}(y)=1-[1-F(y)]^n,\quad g_{(1)}(y)=n[1-F(y)]^{n-1}f(y).
+\end{gather*}
+\[
+\text{Teo. 1:}\quad f_{Y_{(i)}}(x)=\frac{n!}{(i-1)!(n-i)!}[F(x)]^{i-1}f(x)[1-F(x)]^{n-i}.
+\]
+\begin{gather*}
+f_{(1),\dots,(n)}=n!\prod_{k}f(y_k);\\
+f_{(i),(j)}(x,y)=c_{ij}\,f(x)f(y)\,F(x)^{i-1}[F(y)-F(x)]^{j-i-1}[1-F(y)]^{n-j},\\
+c_{ij}=\frac{n!}{(i-1)!(j-i-1)!(n-j)!}\ (i<j).
+\end{gather*}
+Mín.\ de Exp$(\beta)$ i.i.d.\ $\sim$ Exp$(\beta/n)$;\ $Y_{(i)}$ de $U(0,1)\sim$ Beta$(i,n-i+1)$.
+
+% =====================================================================
+\fh{8. Distribuciones muestrales: $\chi^2$ y $t$ (Clase 3)}
+$Y_1,\dots,Y_n$ i.i.d.\ $N(\mu,\sigma^2)$;\ $\bar Y=\frac1n\sum Y_i$,\ $S^2=\frac{1}{n-1}\sum(Y_i-\bar Y)^2$.
+\begin{gather*}
+\bar Y\sim N\!\Big(\mu,\frac{\sigma^2}{n}\Big)\ \Leftrightarrow\ Z=\frac{\bar Y-\mu}{\sigma/\sqrt n}\sim N(0,1);\\
+\sum_{i}\Big(\frac{Y_i-\mu}{\sigma}\Big)^2\sim\chi^2_{(n)} .
+\end{gather*}
+\begin{gather*}
+\bar Y\ind S^2,\quad \frac{(n-1)S^2}{\sigma^2}\sim\chi^2_{(n-1)};\\
+\chi^2_{(\nu)}=G(\tfrac\nu2,2):\ \E=\nu,\ \Var=2\nu,\ M=(1-2t)^{-\nu/2} .
+\end{gather*}
+\begin{gather*}
+Z\sim N(0,1)\ind W\sim\chi^2_{(\nu)}\Rightarrow T=\frac{Z}{\sqrt{W/\nu}}\sim t_{(\nu)};\\
+\nu=n-1:\quad \frac{\bar Y-\mu}{S/\sqrt n}\sim t_{(n-1)} .
+\end{gather*}
+$t_{(\nu)}$: $\E=0\,(\nu>1)$, $\Var=\frac{\nu}{\nu-2}\,(\nu>2)$,\ $\to N(0,1)$ si $\nu\to\infty$.
+
+% =====================================================================
+\fh{9. La distribución $F$ (Clase 4)}
+\begin{gather*}
+W_1\sim\chi^2_{(\nu_1)}\ind W_2\sim\chi^2_{(\nu_2)}\Rightarrow F=\frac{W_1/\nu_1}{W_2/\nu_2}\sim F_{(\nu_1,\nu_2)};\\
+\E=\frac{\nu_2}{\nu_2-2}\,(\nu_2>2),\quad \Var=\frac{2\nu_2^2(\nu_1+\nu_2-2)}{\nu_1(\nu_2-2)^2(\nu_2-4)}\,(\nu_2>4).
+\end{gather*}
+\begin{itemize}
+  \item $X\sim t_{(\nu)}\Rightarrow X^2\sim F_{(1,\nu)}$, y $F_{(1,\nu,\alpha)}=t_{(\nu),\alpha/2}^2$.
+  \item $X\sim F_{(\nu_1,\nu_2)}\Rightarrow 1/X\sim F_{(\nu_2,\nu_1)}$;\quad $F_{(\nu_1,\nu_2,1-\alpha)}=1/F_{(\nu_2,\nu_1,\alpha)}$.
+  \item Muestras normales indep.: $\dfrac{S_1^2/\sigma_1^2}{S_2^2/\sigma_2^2}\sim F_{(n_1-1,n_2-1)}$; si $\sigma_1^2=\sigma_2^2$, $S_1^2/S_2^2\sim F_{(n_1-1,n_2-1)}$.
+\end{itemize}
+
+% =====================================================================
+\fh{10. Teorema del límite central (Clase 5)}
+$Y_i$ i.i.d., $\E Y_i=\mu$, $\Var=\sigma^2<\infty$; $S_n=\sum Y_i$:
+\begin{gather*}
+W_n=\frac{\bar Y-\mu}{\sigma/\sqrt n}=\frac{S_n-n\mu}{\sigma\sqrt n}\ \dto\ N(0,1);\\
+\bar Y\adist N\!\Big(\mu,\frac{\sigma^2}{n}\Big),\quad S_n\adist N(n\mu,n\sigma^2).
+\end{gather*}
+Bernoulli: Bin$(n,p)\adist N(np,np(1-p))$ si $np\ge5$ y $n(1-p)\ge5$. Sin $\sigma^2$ finita no hay TLC.
+\begin{itemize}
+  \item \textbf{Corrección $\pm\tfrac12$:} $X\le k\Rightarrow\Phi(\frac{k+0.5-\mu_X}{\sigma_X})$;\ $X<k\Rightarrow\Phi(\frac{k-0.5-\mu_X}{\sigma_X})$;\ $X\ge k\Rightarrow1-\Phi(\frac{k-0.5-\mu_X}{\sigma_X})$;\ $X>k\Rightarrow1-\Phi(\frac{k+0.5-\mu_X}{\sigma_X})$.
+  \item $X=k\Rightarrow\Phi(\frac{k+0.5-\mu_X}{\sigma_X})-\Phi(\frac{k-0.5-\mu_X}{\sigma_X})$;\ $a\le X\le b\Rightarrow\Phi(\frac{b+0.5-\mu_X}{\sigma_X})-\Phi(\frac{a-0.5-\mu_X}{\sigma_X})$.
+\end{itemize}
+
+% =====================================================================
+\fh{11. Tablas y valores críticos}
+Las tablas ESPOL dan área a la \textbf{izquierda} $q$: $\Prob(X\le x)=q$. \textbf{Crítico con cola derecha $\alpha$ = tabla en columna $q=1-\alpha$.} El percentil $100p$ es $x_p$; el crítico al $5\%$ es el percentil 95.
+\begin{itemize}
+  \item $Z$: $\Phi(z_\alpha)=1-\alpha$, $\Phi(-z)=1-\Phi(z)$.
+  \item $\chi^2_{(\nu),\alpha}$: columna $1-\alpha$.\quad $t_{(\nu),\alpha}$: columna $1-\alpha$;\ $\Prob(|T|\le c)=2\Prob(T\le c)-1$ (simetría).
+  \item $F_{(\nu_1,\nu_2)}$: bloque $\nu_2$ (denominador), $F_{(\nu_1,\nu_2,\alpha)}$ = fila $q=1-\alpha$, columna $\nu_1$ (numerador).
+\end{itemize}
+
+\end{document}

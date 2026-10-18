@@ -17,7 +17,7 @@ traen pistas graduales, solución completa paso a paso y verificación numérica
 | `temas/clase-03.html` | Distribuciones muestrales, χ² y t de Student |
 | `temas/clase-04.html` | Distribución F de Fisher |
 | `temas/clase-05.html` | Teorema del límite central |
-| `herramientas/formulario.html` | Formulario completo (Est. I + Est Mat), descargable en PDF/LaTeX |
+| `herramientas/formulario.html` | Formulario (Est. I + Est Mat): versión completa y de examen (2 págs.), en PDF/LaTeX |
 | `herramientas/distribuciones.html` | Laboratorio de distribuciones |
 | `herramientas/tablas.html` | Tablas χ², t, F, normal estándar y K-S, transcritas e interactivas |
 | `deberes/lista-1-1.html` | Lista 1.1 resuelta |
@@ -50,14 +50,19 @@ intermedios quedan en `scripts/build/` (no versionado).
 ## Formulario
 
 `herramientas/formulario.html` resume Estadística I y las clases 1–5, y se ofrece
-para descargar en `herramientas/formulario.pdf` junto a su fuente LaTeX
-`herramientas/formulario.tex`. Para recompilar el PDF (dos pasadas):
+en dos versiones descargables, cada una con su fuente LaTeX:
+
+- **Completa** (8 págs.): `herramientas/formulario.pdf` / `formulario.tex`.
+- **De examen** (2 págs., a dos columnas): `herramientas/formulario-2p.pdf` /
+  `formulario-2p.tex`.
+
+Para recompilar un PDF (dos pasadas):
 
 ```bash
-pdflatex herramientas/formulario.tex
+pdflatex herramientas/formulario.tex        # o formulario-2p.tex
 ```
 
-Al editar el `.tex`, recompila y reemplaza el PDF.
+Al editar un `.tex`, recompílalo y reemplaza el PDF.
 
 ## Estructura
 
@@ -71,7 +76,7 @@ est-mat/
 │   └── js/{theme,stats,plot,site,ui}.js
 ├── temas/                  repaso + clases 01–05
 ├── herramientas/           distribuciones.html, tablas.html, formulario.html
-│                           formulario.tex, formulario.pdf (descargables)
+│                           formulario.tex/.pdf y formulario-2p.tex/.pdf
 ├── deberes/                lista-1-1.html
 ├── scripts/                pipeline de tablas
 └── tests/                  stats.test.js, smoke.js, shot.sh
