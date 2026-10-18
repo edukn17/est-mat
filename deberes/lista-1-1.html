@@ -900,7 +900,7 @@
         <li>Con $\alpha=j-i$, $\beta=n-j+i+1$ se tiene $\alpha+\beta=n+1$ y $\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}=\frac{n!}{(j-i-1)!\,(n-j+i)!}$, así que $$\boxed{W=Y_j-Y_i\sim\text{Beta}(j-i,\ n-j+i+1).}\ \blacksquare$$</li>
       </ol>
       <div class="box idea"><span class="box-title">¿Qué tiene de particular? (espaciamientos intercambiables)</span>
-        <p>La ley de $Y_j-Y_i$ depende sólo de $k=j-i$: la distancia entre dos estadísticos separados $k$ lugares es la misma esté donde esté el par (al principio, en medio o al final). Además coincide con la ley de $Y_k=Y_k-0$, que es $\text{Beta}(k,\,n-k+1)$ (Ejercicio 7 de la Clase 2).</p>
+        <p>La ley de $Y_j-Y_i$ depende sólo de $k=j-i$: la distancia entre dos estadísticos separados $k$ lugares es la misma esté donde esté el par (al principio, en medio o al final). Además coincide con la ley de $Y_k$, la suma de los primeros $k$ espaciamientos, que es $\text{Beta}(k,\,n-k+1)$ (Ejercicio 7 de la Clase 2).</p>
         <p>La razón: los $n$ puntos cortan $(0,1)$ en $n+1$ <b>espaciamientos</b> $D_1=Y_1,\ D_2=Y_2-Y_1,\dots,D_{n+1}=1-Y_n$. Su densidad conjunta es la constante $n!$ sobre el simplex $\{D_\ell>0,\ \sum D_\ell=1\}$: es <b>simétrica</b>, es decir, los espaciamientos son intercambiables. $Y_j-Y_i$ es la suma de $k$ espaciamientos consecutivos, y cualquier suma de $k$ de ellos tiene la misma ley.</p>
         <p>Cruce con el Ejercicio 10: el rango $R=Y_n-Y_1$ tiene $k=n-1$, así que $R\sim\text{Beta}(n-1,2)$ ✓.</p>
       </div>

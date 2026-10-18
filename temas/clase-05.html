@@ -274,7 +274,7 @@
       ni se vuelve normal (falla el TLC). La razón intuitiva: de vez en cuando aparece un valor gigantesco que domina toda la suma.</p>
 
     <div class="sim" id="sim-cauchy">
-      <p class="sim-title">Simulación (e): la media acumulada $\bar Y_k$ con $k=1,\dots,3000$</p>
+      <p class="sim-title">Simulación (d): la media acumulada $\bar Y_k$ con $k=1,\dots,3000$</p>
       <p class="sim-desc">Cinco trayectorias de la media acumulada. Con la normal se encierran en la banda $\pm2/\sqrt k$ que predice el TLC;
         con la Cauchy saltan para siempre. En la simulación (a) elige "Cauchy" para ver que el histograma de $\bar X$ no se angosta al crecer $n$.</p>
       <div class="controls"></div>
@@ -526,7 +526,7 @@
     </div>
 
     <div class="sim" id="sim-ej5">
-      <p class="sim-title">Simulación (d1): lanzar la moneda hasta 450 caras, muchas veces</p>
+      <p class="sim-title">Simulación (e1): lanzar la moneda hasta 450 caras, muchas veces</p>
       <p class="sim-desc">Cada repetición lanza una moneda real (virtual) hasta juntar 450 caras y anota $T$. Las repeticiones se acumulan con cada clic.</p>
       <div class="controls"></div>
       <div class="plot"></div>
@@ -590,13 +590,13 @@
               esta probabilidad es exactamente $0.5$. Responde otra pregunta.</li>
             <li><b>Usar $\P(S_{27}>42)$</b> (=0.16): confunde "más baterías" con "más tiempo". Más baterías en el mismo tiempo significa baterías que duran <b>poco</b>, o sea $S_{27}$ pequeño.</li>
           </ul>
-          <p>La simulación (d2) cuenta directamente las baterías y confirma que $\{N>27\}$ y $\{S_{27}&lt;42\}$ son el mismo evento.</p>
+          <p>La simulación (e2) cuenta directamente las baterías y confirma que $\{N>27\}$ y $\{S_{27}&lt;42\}$ son el mismo evento.</p>
         </div>
       </div></details>
     </div>
 
     <div class="sim" id="sim-ej6">
-      <p class="sim-title">Simulación (d2): contar baterías en 42 meses</p>
+      <p class="sim-title">Simulación (e2): contar baterías en 42 meses</p>
       <p class="sim-desc">Cada repetición pone baterías $U(1,2)$ una tras otra hasta pasar el mes 42 y cuenta cuántas se usaron ($N$). Barras verdes: $N\ge28$.</p>
       <div class="controls"></div>
       <div class="plot"></div>
@@ -1000,7 +1000,7 @@
     params();
   })();
 
-  /* ================= Simulación (e): Cauchy ================= */
+  /* ================= Simulación (d): Cauchy ================= */
   (function () {
     const root = document.getElementById('sim-cauchy');
     const NK = 3000, NP = 5;
@@ -1063,7 +1063,7 @@
     render();
   })();
 
-  /* ================= Simulación (d1): Ejemplo 5 ================= */
+  /* ================= Simulación (e1): Ejemplo 5 ================= */
   (function () {
     const root = document.getElementById('sim-ej5');
     const REPS = 500;
@@ -1098,7 +1098,7 @@
     run(REPS);
   })();
 
-  /* ================= Simulación (d2): Ejemplo 6 ================= */
+  /* ================= Simulación (e2): Ejemplo 6 ================= */
   (function () {
     const root = document.getElementById('sim-ej6');
     const REPS = 4000, L = 42;
