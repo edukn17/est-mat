@@ -116,6 +116,7 @@
       else pn.append(el('span'));
       if (idx < flat.length - 1) pn.append(el('a', { class: 'pn next', href: ROOT + flat[idx + 1].href }, el('small', {}, 'Siguiente →'), flat[idx + 1].title));
       foot.append(pn);
+      foot.append(el('p', { class: 'foot-credit' }, 'Guía de Estadística Matemática · Eduardo Montenegro'));
       main.append(foot);
     }
 
