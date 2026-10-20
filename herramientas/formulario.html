@@ -140,7 +140,7 @@
 
   <!-- ================================================================ -->
   <section>
-    <h2 id="modelos">4. Tabla de modelos (fdp, media, varianza, FGM)</h2>
+    <h2 id="modelos">4. Tabla de modelos (fdp, FDA, media, varianza, FGM)</h2>
     <p>Parametrizaciones del Formulario 2. Si $X_i$ son independientes, las FGM se multiplican (§3).</p>
     <div class="table-wrap">
       <table class="tabla compact">
@@ -162,6 +162,30 @@
         </tbody>
       </table>
     </div>
+
+    <h3 id="fda">FDA de los modelos</h3>
+    <p>Acumulada $F_X(x)=\P(X\le x)$ de los modelos de la tabla anterior. $\lfloor x\rfloor$ es la parte entera; $I_x(a,b)$ es la beta incompleta regularizada y $P(a,z)=\gamma(a,z)/\Gamma(a)$ la gamma incompleta regularizada. Cuando aparece una suma o una función especial, no hay forma elemental cerrada.</p>
+    <div class="table-wrap">
+      <table class="tabla compact">
+        <thead><tr><th class="f">Modelo</th><th class="f">$F_X(x)=\P(X\le x)$</th></tr></thead>
+        <tbody>
+          <tr><td class="f">$\text{Ber}(p)$</td><td class="f">$\begin{cases}0, & x&lt;0\\ 1-p, & 0\le x&lt;1\\ 1, & x\ge1\end{cases}$</td></tr>
+          <tr><td class="f">$\text{Bin}(n,p)$</td><td class="f">$\displaystyle\sum_{k=0}^{\lfloor x\rfloor}\binom nk p^k(1-p)^{n-k}$</td></tr>
+          <tr><td class="f">$\text{Geo}(p)$</td><td class="f">$1-(1-p)^{\lfloor x\rfloor}$ si $x\ge1$; &nbsp;$0$ si $x&lt;1$</td></tr>
+          <tr><td class="f">$\text{Bneg}(r,p)$</td><td class="f">$\displaystyle\sum_{k=r}^{\lfloor x\rfloor}\binom{k-1}{r-1}p^r(1-p)^{k-r}=I_p\big(r,\lfloor x\rfloor-r+1\big)$</td></tr>
+          <tr><td class="f">$\text{Hiper}(N,a,n)$</td><td class="f">$\displaystyle\sum_{k=0}^{\lfloor x\rfloor}\frac{\binom ak\binom{N-a}{n-k}}{\binom Nn}$</td></tr>
+          <tr><td class="f">$\text{Pois}(\lambda)$</td><td class="f">$e^{-\lambda}\displaystyle\sum_{k=0}^{\lfloor x\rfloor}\frac{\lambda^k}{k!}$</td></tr>
+          <tr><td class="f">Unif. discreta</td><td class="f">$\dfrac{1}{k}\,\#\{i:\ x_i\le x\}$</td></tr>
+          <tr><td class="f">$U(a,b)$</td><td class="f">$\begin{cases}0, & x&lt;a\\ \dfrac{x-a}{b-a}, & a\le x&lt;b\\ 1, & x\ge b\end{cases}$</td></tr>
+          <tr><td class="f">$N(\mu,\sigma^2)$</td><td class="f">$\Phi\!\left(\dfrac{x-\mu}{\sigma}\right)$ &nbsp;(tabla de $Z$)</td></tr>
+          <tr><td class="f">$\text{Exp}(\beta)$</td><td class="f">$1-e^{-x/\beta}$ si $x\ge0$; &nbsp;$0$ si $x&lt;0$</td></tr>
+          <tr><td class="f">$G(\alpha,\beta)$</td><td class="f">$P\!\left(\alpha,\dfrac{x}{\beta}\right)$; si $\alpha$ entero: $1-e^{-x/\beta}\displaystyle\sum_{k=0}^{\alpha-1}\frac{(x/\beta)^k}{k!}$</td></tr>
+          <tr><td class="f">$\chi^2_{(\nu)}=G(\tfrac\nu2,2)$</td><td class="f">$P\!\left(\dfrac{\nu}{2},\dfrac{x}{2}\right)$ &nbsp;(tabla de $\chi^2$)</td></tr>
+          <tr><td class="f">$\text{Beta}(\alpha,\beta)$</td><td class="f">$I_x(\alpha,\beta)$ &nbsp;(beta incompleta regularizada)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small muted">Para $t_{(\nu)}$ y $F_{(\nu_1,\nu_2)}$: $F_F(x)=I_{\nu_1x/(\nu_1x+\nu_2)}\big(\tfrac{\nu_1}{2},\tfrac{\nu_2}{2}\big)$ y, para $t\ge0$, $F_t(t)=1-\tfrac12 I_{\nu/(\nu+t^2)}\big(\tfrac\nu2,\tfrac12\big)$ (simetría si $t&lt;0$). En la práctica se usan las tablas (§13).</p>
 
     <div class="box teorema"><span class="box-title">Relaciones entre modelos (casi todas por FGM)</span>
       <ul>

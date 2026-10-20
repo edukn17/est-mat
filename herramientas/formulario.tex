@@ -276,7 +276,7 @@ $\to$ (4) identifica parámetros y concluye por unicidad.
 \end{notebox}
 
 % =====================================================================
-\section{Tabla de modelos (fdp, media, varianza, FGM)}
+\section{Tabla de modelos (fdp, FDA, media, varianza, FGM)}
 
 Parametrizaciones del Formulario 2. Si $X_i$ son independientes, las FGM se
 multiplican (sección 3).
@@ -309,6 +309,50 @@ $\text{Beta}(\alpha,\beta)$ & $\frac{x^{\alpha-1}(1-x)^{\beta-1}}{B(\alpha,\beta
 \smallskip
 \textbf{Dominios de la FGM:} Geo/Bneg y Exp/Gamma con $t<-\ln(1-p)$ o
 $t<1/\beta$; $\chi^2$ con $t<\tfrac12$; uniforme con $t\ne0$.
+
+\subsection*{FDA de los modelos}
+Acumulada $F_X(x)=\Prob(X\le x)$ de los modelos anteriores.
+$\lfloor x\rfloor$ es la parte entera; $I_x(a,b)$ es la beta incompleta
+regularizada y $P(a,z)=\gamma(a,z)/\Gamma(a)$ la gamma incompleta
+regularizada. Cuando aparece una suma o una función especial, no hay forma
+elemental cerrada.
+
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\noindent
+\begin{tabular}{@{}p{2.0cm} p{15.0cm}@{}}
+\toprule
+\textbf{Modelo} & \textbf{$F_X(x)=\Prob(X\le x)$}\\
+\midrule
+$\text{Ber}(p)$ & \rr $0$ si $x<0$; \ $1-p$ si $0\le x<1$; \ $1$ si $x\ge1$\\
+$\text{Bin}(n,p)$ & \rr $\sum_{k=0}^{\lfloor x\rfloor}\binom nk p^k(1-p)^{n-k}$\\
+$\text{Geo}(p)$ & \rr $1-(1-p)^{\lfloor x\rfloor}$ si $x\ge1$; \ $0$ si $x<1$\\
+$\text{Bneg}(r,p)$ & \rr $\sum_{k=r}^{\lfloor x\rfloor}\binom{k-1}{r-1}p^r(1-p)^{k-r}
+  =I_p\big(r,\lfloor x\rfloor-r+1\big)$\\
+$\text{Hiper}(N,a,n)$ & \rr $\sum_{k=0}^{\lfloor x\rfloor}
+  \frac{\binom ak\binom{N-a}{n-k}}{\binom Nn}$\\
+$\text{Pois}(\lambda)$ & \rr $e^{-\lambda}\sum_{k=0}^{\lfloor x\rfloor}
+  \frac{\lambda^k}{k!}$\\
+Unif.\ discreta & \rr $\frac1k\,\#\{i:\ x_i\le x\}$\\
+$U(a,b)$ & \rr $0$ si $x<a$; \ $\dfrac{x-a}{b-a}$ si $a\le x<b$; \ $1$ si $x\ge b$\\
+$N(\mu,\sigma^2)$ & \rr $\Phi\!\left(\dfrac{x-\mu}{\sigma}\right)$ \ (tabla de $Z$)\\
+$\text{Exp}(\beta)$ & \rr $1-e^{-x/\beta}$ si $x\ge0$; \ $0$ si $x<0$\\
+$G(\alpha,\beta)$ & \rr $P\!\left(\alpha,\dfrac{x}{\beta}\right)$; si $\alpha$ entero:
+  \ $1-e^{-x/\beta}\sum_{k=0}^{\alpha-1}\dfrac{(x/\beta)^k}{k!}$\\
+$\chi^2_{(\nu)}=G(\tfrac\nu2,2)$ & \rr $P\!\left(\dfrac{\nu}{2},\dfrac{x}{2}\right)$
+  \ (tabla de $\chi^2$)\\
+$\text{Beta}(\alpha,\beta)$ & \rr $I_x(\alpha,\beta)$ \ (beta incompleta regularizada)\\
+\bottomrule
+\end{tabular}
+\endgroup
+
+\smallskip
+\noindent\footnotesize Para $t_{(\nu)}$ y $F_{(\nu_1,\nu_2)}$:
+$F_F(x)=I_{\nu_1x/(\nu_1x+\nu_2)}\big(\tfrac{\nu_1}{2},\tfrac{\nu_2}{2}\big)$ y,
+para $t\ge0$, $F_t(t)=1-\tfrac12 I_{\nu/(\nu+t^2)}\big(\tfrac\nu2,\tfrac12\big)$
+(simetría si $t<0$). En la práctica se usan las tablas (sección 13).
+\normalsize
 
 \begin{thmbox}[frametitle={Relaciones entre modelos (casi todas por FGM)}]
 \begin{itemize}

@@ -61,30 +61,32 @@
 {\footnotesize \textbf{Parametrizaciones:} el Formulario 2 usa $\beta$ como \textbf{escala} ($=\E$) en Exp/Gamma. La ``exponencial de parámetro $\lambda$'' lleva $\lambda=$ \textbf{tasa}: $\beta=1/\lambda$, media $1/\lambda$. $N(\mu,\sigma^2)$ lleva la \textbf{varianza}; Geo/Bneg cuentan \textbf{ensayos}.}
 \vspace{3pt}
 
-{\footnotesize\setlength{\tabcolsep}{4pt}
+{\footnotesize\setlength{\tabcolsep}{3pt}
 \hrule height 0.7pt
 \vspace{2pt}
 \noindent\textbf{Modelos (parametrización del Formulario 2; si son independientes las FGM se multiplican)}\\[1pt]
-\begin{tabular}{@{}p{1.85cm} p{5.0cm} p{1.5cm} p{2.75cm} p{5.0cm}@{}}
+\begin{tabular}{@{}p{1.85cm} p{3.6cm} p{4.85cm} p{1.15cm} p{2.15cm} p{3.6cm}@{}}
 \toprule
-\textbf{Modelo} & \textbf{$\Prob(X=x)$ o $f_X(x)$} & \textbf{$\E(X)$} & \textbf{$\Var(X)$} & \textbf{$M_X(t)$}\\
+\textbf{Modelo} & \textbf{$\Prob(X=x)$ o $f_X(x)$} & \textbf{FDA $F_X(x)$}\newline{\tiny$\lfloor\cdot\rfloor$ ent.; $I_x$ beta; $P$ gamma} & \textbf{$\E(X)$} & \textbf{$\Var(X)$} & \textbf{$M_X(t)$}\\
 \midrule
-$\text{Ber}(p)$ & $p^x(1-p)^{1-x},\ x\in\{0,1\}$ & $p$ & $p(1-p)$ & $pe^t+1-p$\\
-$\text{Bin}(n,p)$ & $\binom nx p^x(1-p)^{n-x},\ x=0,\dots,n$ & $np$ & $np(1-p)$ & $(pe^t+1-p)^n$\\
-$\text{Geo}(p)$ & $p(1-p)^{x-1},\ x=1,2,\dots$ & $1/p$ & $(1-p)/p^2$ & $\dfrac{pe^t}{1-(1-p)e^t},\,t<-\ln(1-p)$\\
-$\text{Bneg}(r,p)$ & $\binom{x-1}{r-1}p^r(1-p)^{x-r},\ x\ge r$ & $r/p$ & $r(1-p)/p^2$ & $\Big[\dfrac{pe^t}{1-(1-p)e^t}\Big]^r$\\
-$\text{Hiper}(N,a,n)$ & $\binom ax\binom{N-a}{n-x}\big/\binom Nn$ & $n\frac aN$ & $n\frac aN(1-\frac aN)\frac{N-n}{N-1}$ & sin forma cerrada\\
-$\text{Pois}(\lambda)$ & $e^{-\lambda}\lambda^x/x!,\ x=0,1,\dots$ & $\lambda$ & $\lambda$ & $e^{\lambda(e^t-1)}$\\
-Unif.\ discreta & $1/k,\ x\in\{x_1,\dots,x_k\}$ & $\frac1k\sum x_i$ & $\frac1k\sum x_i^2-\bar x^2$ & $\frac1k\sum_i e^{tx_i}$\\
-$U(a,b)$ & $\frac1{b-a},\ a<x<b$ & $\frac{a+b}2$ & $\frac{(b-a)^2}{12}$ & $\dfrac{e^{tb}-e^{ta}}{t(b-a)}$\\
-$N(\mu,\sigma^2)$ & $\frac{1}{\sqrt{2\pi\sigma^2}}e^{-(x-\mu)^2/(2\sigma^2)}$ & $\mu$ & $\sigma^2$ & $e^{\mu t+\sigma^2t^2/2}$\\
-$\text{Exp}(\beta)$ & $\frac1\beta e^{-x/\beta},\ x>0$ & $\beta$ & $\beta^2$ & $(1-\beta t)^{-1},\,t<1/\beta$\\
-$G(\alpha,\beta)$ & $\frac{1}{\beta^\alpha\Gamma(\alpha)}x^{\alpha-1}e^{-x/\beta},\ x>0$ & $\alpha\beta$ & $\alpha\beta^2$ & $(1-\beta t)^{-\alpha},\,t<1/\beta$\\
-$\chi^2_{(\nu)}=G(\tfrac\nu2,2)$ & $\frac{1}{2^{\nu/2}\Gamma(\nu/2)}x^{\nu/2-1}e^{-x/2}$ & $\nu$ & $2\nu$ & $(1-2t)^{-\nu/2},\,t<\tfrac12$\\
-$\text{Beta}(\alpha,\beta)$ & $\frac{x^{\alpha-1}(1-x)^{\beta-1}}{B(\alpha,\beta)},\ 0<x<1$ & $\frac{\alpha}{\alpha+\beta}$ & $\frac{\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)}$ & $\E(X^k)=\frac{B(\alpha+k,\beta)}{B(\alpha,\beta)}$\\
+$\text{Ber}(p)$ & $p^x(1-p)^{1-x},\ x\in\{0,1\}$ & {\scriptsize $0$ ($x<0$); $1-p$ ($0\le x<1$); $1$ ($x\ge1$)} & $p$ & $p(1-p)$ & $pe^t+1-p$\\
+$\text{Bin}(n,p)$ & $\binom nx p^x(1-p)^{n-x},\ x=0,\dots,n$ & {\scriptsize $\sum_{k=0}^{\lfloor x\rfloor}\binom nk p^k(1-p)^{n-k}$} & $np$ & $np(1-p)$ & $(pe^t+1-p)^n$\\
+$\text{Geo}(p)$ & $p(1-p)^{x-1},\ x=1,2,\dots$ & {\scriptsize $1-(1-p)^{\lfloor x\rfloor}$ ($x\ge1$); $0$ ($x<1$)} & $1/p$ & $(1-p)/p^2$ & $\dfrac{pe^t}{1-(1-p)e^t}$\\
+$\text{Bneg}(r,p)$ & $\binom{x-1}{r-1}p^r(1-p)^{x-r},\ x\ge r$ & {\scriptsize $\sum_{k=r}^{\lfloor x\rfloor}\binom{k-1}{r-1}p^r(1-p)^{k-r}$} & $r/p$ & $r(1-p)/p^2$ & $\Big[\dfrac{pe^t}{1-(1-p)e^t}\Big]^r$\\
+$\text{Hiper}(N,a,n)$ & $\binom ax\binom{N-a}{n-x}\big/\binom Nn$ & {\scriptsize $\sum_{k=0}^{\lfloor x\rfloor}\frac{\binom ak\binom{N-a}{n-k}}{\binom Nn}$} & $n\frac aN$ & $n\frac aN(1-\frac aN)\frac{N-n}{N-1}$ & sin forma cerrada\\
+$\text{Pois}(\lambda)$ & $e^{-\lambda}\lambda^x/x!,\ x=0,1,\dots$ & {\scriptsize $e^{-\lambda}\sum_{k=0}^{\lfloor x\rfloor}\lambda^k/k!$} & $\lambda$ & $\lambda$ & $e^{\lambda(e^t-1)}$\\
+Unif.\ discreta & $1/k,\ x\in\{x_1,\dots,x_k\}$ & {\scriptsize $\frac1k\#\{i:x_i\le x\}$} & $\frac1k\sum x_i$ & $\frac1k\sum x_i^2-\bar x^2$ & $\frac1k\sum_i e^{tx_i}$\\
+$U(a,b)$ & $\frac1{b-a},\ a<x<b$ & {\scriptsize $0$ ($x<a$); $\frac{x-a}{b-a}$ ($a\le x<b$); $1$ ($x\ge b$)} & $\frac{a+b}2$ & $\frac{(b-a)^2}{12}$ & $\dfrac{e^{tb}-e^{ta}}{t(b-a)}$\\
+$N(\mu,\sigma^2)$ & $\frac{1}{\sqrt{2\pi\sigma^2}}e^{-(x-\mu)^2/(2\sigma^2)}$ & {\scriptsize $\Phi\big(\frac{x-\mu}{\sigma}\big)$} & $\mu$ & $\sigma^2$ & $e^{\mu t+\sigma^2t^2/2}$\\
+$\text{Exp}(\beta)$ & $\frac1\beta e^{-x/\beta},\ x>0$ & {\scriptsize $1-e^{-x/\beta}$ ($x\ge0$); $0$ ($x<0$)} & $\beta$ & $\beta^2$ & $(1-\beta t)^{-1}$\\
+$G(\alpha,\beta)$ & $\frac{1}{\beta^\alpha\Gamma(\alpha)}x^{\alpha-1}e^{-x/\beta},\ x>0$ & {\scriptsize $P\big(\alpha,\frac{x}{\beta}\big)$} & $\alpha\beta$ & $\alpha\beta^2$ & $(1-\beta t)^{-\alpha}$\\
+$\chi^2_{(\nu)}=G(\tfrac\nu2,2)$ & $\frac{1}{2^{\nu/2}\Gamma(\nu/2)}x^{\nu/2-1}e^{-x/2}$ & {\scriptsize $P\big(\frac{\nu}{2},\frac{x}{2}\big)$} & $\nu$ & $2\nu$ & $(1-2t)^{-\nu/2}$\\
+$\text{Beta}(\alpha,\beta)$ & $\frac{x^{\alpha-1}(1-x)^{\beta-1}}{B(\alpha,\beta)},\ 0<x<1$ & {\scriptsize $I_x(\alpha,\beta)$} & $\frac{\alpha}{\alpha+\beta}$ & $\frac{\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)}$ & $\E(X^k)=\frac{B(\alpha+k,\beta)}{B(\alpha,\beta)}$\\
 \bottomrule
 \end{tabular}
-\vspace{2pt}
+\par\vspace{1pt}
+{\scriptsize\textbf{Dominios FGM:} Geo/Bneg: $t<-\ln(1-p)$; Exp/Gamma: $t<1/\beta$; $\chi^2$: $t<\tfrac12$; $U$: $t\ne0$.}
+\par\vspace{2pt}
 \hrule height 0.7pt
 \par\vspace{3pt}
 \textbf{Relaciones (por FGM o definición):} Ber$_n$ i.i.d.\ $\to$ Bin$(n,p)$;\ Geo$=$Bneg$(1,p)$;\ Bneg$=$suma de $r$ Geo i.i.d.;\ Pois$(\lambda_i)$ indep.\ $\to$ Pois$(\sum\lambda_i)$;\ Exp$(\beta)=G(1,\beta)$;\ $n$ Exp$(\beta)$ i.i.d.\ $\to G(n,\beta)$;\ $G(\alpha_i,\beta)$ (mismo $\beta$) $\to G(\sum\alpha_i,\beta)$;\ $N(\mu_i,\sigma_i^2)$ indep.\ $\to N(\sum\mu_i,\sum\sigma_i^2)$;\ $aX+b\sim N(a\mu+b,a^2\sigma^2)$;\ $Z^2\sim\chi^2_{(1)}$;\ $\sum^\nu\chi^2_{(1)}\to\chi^2_{(\nu)}$;\ $\chi^2_{(2)}=$Exp$(2)$;\ Beta$(1,1)=U(0,1)$.
@@ -218,7 +220,7 @@ $Y_1,\dots,Y_n$ i.i.d.\ $N(\mu,\sigma^2)$;\ $\bar Y=\frac1n\sum Y_i$,\ $S^2=\fra
 Z\sim N(0,1)\ind W\sim\chi^2_{(\nu)}\Rightarrow T=\frac{Z}{\sqrt{W/\nu}}\sim t_{(\nu)};\\
 \nu=n-1:\quad \frac{\bar Y-\mu}{S/\sqrt n}\sim t_{(n-1)} .
 \end{gather*}
-$t_{(\nu)}$: $\E=0\,(\nu>1)$, $\Var=\frac{\nu}{\nu-2}\,(\nu>2)$,\ $\to N(0,1)$ si $\nu\to\infty$.
+$t_{(\nu)}$: $\E=0\,(\nu>1)$, $\Var=\frac{\nu}{\nu-2}\,(\nu>2)$,\ $\to N(0,1)$ si $\nu\to\infty$. FDA: $F_t(t)=1-\frac12 I_{\nu/(\nu+t^2)}(\tfrac\nu2,\tfrac12)$ ($t\ge0$).
 
 % =====================================================================
 \fh{9. La distribución $F$ (Clase 4)}
@@ -226,6 +228,7 @@ $t_{(\nu)}$: $\E=0\,(\nu>1)$, $\Var=\frac{\nu}{\nu-2}\,(\nu>2)$,\ $\to N(0,1)$ s
 W_1\sim\chi^2_{(\nu_1)}\ind W_2\sim\chi^2_{(\nu_2)}\Rightarrow F=\frac{W_1/\nu_1}{W_2/\nu_2}\sim F_{(\nu_1,\nu_2)};\\
 \E=\frac{\nu_2}{\nu_2-2}\,(\nu_2>2),\quad \Var=\frac{2\nu_2^2(\nu_1+\nu_2-2)}{\nu_1(\nu_2-2)^2(\nu_2-4)}\,(\nu_2>4).
 \end{gather*}
+FDA: $F(x)=I_{\nu_1x/(\nu_1x+\nu_2)}\big(\tfrac{\nu_1}2,\tfrac{\nu_2}2\big)$; $I$ = beta incompleta regularizada.
 \begin{itemize}
   \item $X\sim t_{(\nu)}\Rightarrow X^2\sim F_{(1,\nu)}$, y $F_{(1,\nu,\alpha)}=t_{(\nu),\alpha/2}^2$.
   \item $X\sim F_{(\nu_1,\nu_2)}\Rightarrow 1/X\sim F_{(\nu_2,\nu_1)}$;\quad $F_{(\nu_1,\nu_2,1-\alpha)}=1/F_{(\nu_2,\nu_1,\alpha)}$.

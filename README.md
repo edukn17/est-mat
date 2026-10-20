@@ -52,7 +52,7 @@ intermedios quedan en `scripts/build/` (no versionado).
 `herramientas/formulario.html` resume Estadística I y las clases 1–5, y se ofrece
 en dos versiones descargables, cada una con su fuente LaTeX:
 
-- **Completa** (8 págs.): `herramientas/formulario.pdf` / `formulario.tex`.
+- **Completa** (9 págs.): `herramientas/formulario.pdf` / `formulario.tex`.
 - **De examen** (2 págs., a dos columnas): `herramientas/formulario-2p.pdf` /
   `formulario-2p.tex`.
 
