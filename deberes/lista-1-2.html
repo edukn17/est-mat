@@ -256,7 +256,7 @@
             Para $K \sim \text{Bin}(250, 0.5)$, la media es $\mu_K = 125$ y la varianza es $\sigma_K^2 = 250(0.5)(0.5) = 62.5 \implies \sigma_K \approx 7.90569$.
             Aplicando la corrección por continuidad para la variable entera $K \ge 127 \iff K \ge 126.5$:
             $$\P(K \ge 127) \approx \P\left(Z \ge \frac{126.5 - 125}{\sqrt{62.5}}\right) = \P(Z \ge 0.1897) = 1 - \Phi(0.1897) \approx 0.4248.$$
-            *(El valor exacto de la masa binomial acumulada da $\sum_{k=127}^{250} \binom{250}{k} 0.5^{250} \approx 0.42478$). Ambas respuestas son válidas.*
+            <em>(El valor exacto de la masa binomial acumulada da $\sum_{k=127}^{250} \binom{250}{k} 0.5^{250} \approx 0.42478$; ambas respuestas son válidas).</em>
             <div class="resultado">$$\P(P_{250} &gt; 100) \approx 0.4372 \quad (\text{TLC directo en } \sum \ln F_i) \quad \text{o bien } 0.4248 \quad (\text{con corrección por continuidad}).$$</div>
           </li>
         </ol>
@@ -273,7 +273,7 @@
             $$\E[\ln F] &lt; \ln \E[F].$$</li>
           <li><b>Explicación probabilística: por qué la probabilidad es menor que $1/2$.</b>
             <ul>
-              <li><b>Arrastre por volatilidad (volatility drag):</b> Un rendimiento porcentual positivo no compensa a un rendimiento porcentual negativo de igual magnitud: multiplicar por $1.02$ y luego por $0.98$ produce $1.02 \times 0.98 = 0.9996 &lt; 1$, lo que genera una pérdida neta acumulada del $0.04\%$.</li>
+              <li><b>Arrastre por volatilidad:</b> Un rendimiento porcentual positivo no compensa a un rendimiento porcentual negativo de igual magnitud: multiplicar por $1.02$ y luego por $0.98$ produce $1.02 \times 0.98 = 0.9996 &lt; 1$, lo que genera una pérdida neta acumulada del $0.04\%$.</li>
               <li><b>Evolución de la mediana vs. la media:</b> Como la tasa de crecimiento logarítmico esperada es estrictamente negativa ($\mu_Y \approx -0.0002$), la <b>mediana</b> del precio a los 250 días cae de forma continua:
                 $$\text{Mediana}(P_{250}) = 100 \times e^{\text{Mediana}(S_{250})} \approx 100 \times (0.9996)^{125} \approx 95.12 \text{ dólares}.$$
                 Al ser la mediana inferior a 100, estrictamente más de la mitad de las trayectorias ($57.5\%$) terminan con pérdidas ($P_{250} &lt; 100$).</li>
@@ -346,16 +346,18 @@
             $$N = \min\{n \ge 1 : M_n &gt; 100\,000\}.$$
             Por la monotonía del producto:
             $$\{N \le 25\} \iff \{M_{25} &gt; 100\,000\}.$$
-            *(Justificación: si $N \le 25$, existió algún paso $k \le 25$ en que $M_k &gt; 100\,000$, y al ser los factores posteriores $\ge 1$, $M_{25} \ge M_k &gt; 100\,000$. A la inversa, si $M_{25} &gt; 100\,000$, el primer cruce ocurrió necesariamente en o antes del lanzamiento 25).*</li>
+            <em>(Justificación: si $N \le 25$, existió algún paso $k \le 25$ en que $M_k &gt; 100\,000$, y al ser los factores posteriores $\ge 1$, $M_{25} \ge M_k &gt; 100\,000$. A la inversa, si $M_{25} &gt; 100\,000$, el primer cruce ocurrió necesariamente en o antes del lanzamiento 25).</em></li>
           <li><b>Linealización mediante logaritmos.</b>
             Aplicando el logaritmo natural al producto:
             $$\prod_{i=1}^{25} X_i &gt; 100\,000 \iff S_{25} = \sum_{i=1}^{25} \ln X_i &gt; \ln(100\,000) \approx 11.512925.$$
-            *(Nota: si se utiliza $\log_{10}$, el umbral es $5$ y la estandarización conduce con exactitud al mismo valor de $z$).*</li>
+            <em>(Nota: si se utiliza $\log_{10}$, el umbral es $5$ y la estandarización conduce con exactitud al mismo valor de $z$).</em></li>
           <li><b>Momentos de la variable $Y_i = \ln X_i$.</b>
             La variable $Y_i$ toma los valores:
-            - $\ln(1) = 0$ con probabilidad $1/2$,
-            - $\ln(2) \approx 0.693147$ con probabilidad $1/6$,
-            - $\ln(3) \approx 1.098612$ con probabilidad $1/3$.
+            <ul>
+              <li>$\ln(1) = 0$ con probabilidad $1/2$,</li>
+              <li>$\ln(2) \approx 0.693147$ con probabilidad $1/6$,</li>
+              <li>$\ln(3) \approx 1.098612$ con probabilidad $1/3$.</li>
+            </ul>
             Calculamos su media:
             $$\mu = \E[\ln X_i] = \frac{1}{2}\ln(1) + \frac{1}{6}\ln(2) + \frac{1}{3}\ln(3) = \frac{\ln 2 + 2\ln 3}{6} = \frac{\ln(2 \cdot 3^2)}{6} = \frac{\ln 18}{6} \approx 0.481729.$$
             Calculamos su segundo momento:
@@ -495,7 +497,7 @@
           <li><b>Modelo del proceso de cortes sucesivos.</b>
             Sean $X_1, X_2, \dots$ variables aleatorias independientes e idénticamente distribuidas con distribución $\text{Beta}(3, 1)$, donde $X_i$ representa la fracción retenida en la partición $i$.
             Tras $n$ pasos, la longitud residual de la vara es el producto:
-            $$L_n = X_1 \cdot X_2 \\cdots X_n = \prod_{i=1}^n X_i.$$
+            $$L_n = X_1 \cdot X_2 \cdots X_n = \prod_{i=1}^n X_i.$$
             Como cada $X_i \in (0, 1)$ casi seguramente, la sucesión de longitudes es estrictamente decreciente: $1 &gt; L_1 &gt; L_2 &gt; \dots &gt; 0$.</li>
           <li><b>Equivalencia del evento de parada.</b>
             El juego se detiene en el primer paso $N$ donde la longitud cae por debajo de $e^{-8}$:
@@ -533,7 +535,7 @@
             $$S_{24} \sim \text{Gamma}\left(\alpha = 24, \;\beta = \frac{1}{3}\right).$$
             La probabilidad acumulada exacta es:
             $$\P(S_{24} \le 8) = F_{\text{Gamma}(24, 1/3)}(8) = \int_0^8 \frac{1}{(1/3)^{24}\Gamma(24)} y^{23} e^{-3y}\,dy \approx 0.5272.$$
-            *(¿Por qué el valor exacto $0.5272$ es ligeramente superior a $0.5000$? Porque la distribución Gamma posee asimetría positiva $\alpha_3 = 2/\sqrt{24} \approx 0.408$. En distribuciones asimétricas a la derecha, la mediana es estrictamente menor que la media: para $\text{Gamma}(24, 1/3)$ la media es $8.000$, pero su mediana es $\approx 7.889 &lt; 8$. Por tanto, el punto $8$ se ubica por encima de la mediana y acumula más del $50\%$ de la masa probabilística).*
+            <em>(¿Por qué el valor exacto $0.5272$ es ligeramente superior a $0.5000$? Porque la distribución Gamma posee asimetría positiva $\alpha_3 = 2/\sqrt{24} \approx 0.408$. En distribuciones asimétricas a la derecha, la mediana es estrictamente menor que la media: para $\text{Gamma}(24, 1/3)$ la media es $8.000$, pero su mediana es $\approx 7.889 &lt; 8$. Por tanto, el punto $8$ se ubica por encima de la mediana y acumula más del $50\%$ de la masa probabilística).</em>
           </li>
         </ol>
       </div></details>

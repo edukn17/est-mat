@@ -97,7 +97,7 @@
             $$\text{MSE}_\delta(\bar X) = \Var(\bar X) = \frac{\delta^2}{n}, \qquad \text{MSE}_\delta(n X_{(1)}) = \Var(n X_{(1)}) = \delta^2.$$</li>
           <li>Para cualquier muestra con más de una observación ($n &gt; 1$):
             $$\frac{\delta^2}{n} &lt; \delta^2 \iff \text{MSE}_\delta(\bar X) &lt; \text{MSE}_\delta(n X_{(1)}).$$
-            Por tanto, **$\bar X$ es estrictamente superior a $n X_{(1)}$**.</li>
+            Por tanto, <b>$\bar X$ es estrictamente superior a $n X_{(1)}$</b>.</li>
           <li><b>Eficiencia relativa y comportamiento asintótico:</b>
             $$\text{eff}\big(\bar X, n X_{(1)}\big) = \frac{\Var(n X_{(1)})}{\Var(\bar X)} = \frac{\delta^2}{\delta^2/n} = n.$$
             La media muestral $\bar X$ es $n$ veces más eficiente. Más trascendente aún:
@@ -228,7 +228,7 @@
         </ol>
 
         <h4>Conclusión fundamental</h4>
-        <p>La varianza mínima absoluta entre todas las combinaciones lineales insesgadas es $\frac{\sigma^2}{n}$, y se alcanza de forma única con la <b>media muestral</b> $\bar X = \frac{1}{n}\sum_{i=1}^n X_i$. Este resultado constituye el cimiento del célebre teorema de Gauss–Márkov en regresión lineal (estimador BLUE: <em>Best Linear Unbiased Estimator</em>).</p>
+        <p>La varianza mínima absoluta entre todas las combinaciones lineales insesgadas es $\frac{\sigma^2}{n}$, y se alcanza de forma única con la <b>media muestral</b> $\bar X = \frac{1}{n}\sum_{i=1}^n X_i$. Este resultado constituye el cimiento del célebre teorema de Gauss–Márkov en regresión lineal (el mejor estimador lineal insesgado).</p>
       </div></details>
     </div>
   </section>
@@ -308,7 +308,7 @@
           <li>Dado que la tasa de Poisson es estrictamente positiva ($\lambda &gt; 0$), el límite del sesgo es $-\lambda \ne 0$.</li>
           <li>Equivalentemente:
             $$\lim_{n\to\infty} \E[T_n] = \lim_{n\to\infty} \left(\lambda^2 - \frac{n-1}{n}\lambda\right) = \lambda^2 - \lambda \ne \lambda^2.$$
-            Por lo tanto, **$T_n$ NO es asintóticamente insesgado** para $\lambda^2$. Su sesgo es persistente y nunca desaparece.</li>
+            Por lo tanto, <b>$T_n$ no es asintóticamente insesgado</b> para $\lambda^2$. Su sesgo es persistente y nunca desaparece.</li>
           <li><em>Contraste didáctico:</em> el estimador ingenuo $(\bar X_n)^2$ tiene esperanza $\lambda^2 + \frac{\lambda}{n}$, con sesgo $+\frac{\lambda}{n} \to 0$ cuando $n \to \infty$. Por ende, $(\bar X_n)^2$ <b>sí</b> es asintóticamente insesgado, mientras que $T_n$ se descalibra por haber restado incorrectamente $\bar X_n$ completo en lugar de $\frac{\bar X_n}{n}$.</li>
         </ol>
 

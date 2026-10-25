@@ -119,10 +119,10 @@
     <div class="box definicion"><span class="box-title">Definición: Estimador insesgado y sesgo</span>
       <p>Sea $\hat\theta$ un estimador puntual del parámetro $\theta \in \Omega$.</p>
       <ul>
-        <li>Se dice que $\hat\theta$ es un <b>estimador insesgado</b> (*unbiased*) de $\theta$ si, para todo valor posible del parámetro en el espacio parametral:
+        <li>Se dice que $\hat\theta$ es un <b>estimador insesgado</b> de $\theta$ si, para todo valor posible del parámetro en el espacio parametral:
           $$\E_\theta[\hat\theta] = \theta \qquad \forall\,\theta \in \Omega.$$
-          Si existe al menos un valor de $\theta$ para el cual $\E_\theta[\hat\theta] \ne \theta$, decimos que $\hat\theta$ es un estimador <b>sesgado</b> (*biased*).</li>
-        <li>El <b>sesgo</b> (*bias*) de un estimador $\hat\theta$, denotado por $\mathbb{B}(\hat\theta)$, es la diferencia entre su valor esperado y el parámetro verdadero:
+          Si existe al menos un valor de $\theta$ para el cual $\E_\theta[\hat\theta] \ne \theta$, decimos que $\hat\theta$ es un estimador <b>sesgado</b>.</li>
+        <li>El <b>sesgo</b> de un estimador $\hat\theta$, denotado por $\mathbb{B}(\hat\theta)$, es la diferencia entre su valor esperado y el parámetro verdadero:
           $$\mathbb{B}(\hat\theta) = \E_\theta[\hat\theta] - \theta.$$
         </li>
       </ul>
@@ -132,7 +132,7 @@
     <div class="box cuidado"><span class="box-title">Cuidado didáctico: Qué significa y qué NO significa la insesgadez</span>
       <ul>
         <li><b>Qué sí significa:</b> Si repitiéramos el muestreo una infinidad de veces bajo condiciones idénticas y calculáramos la estimación en cada réplica, el promedio de todas esas infinitas estimaciones coincidiría exactamente con el blanco $\theta$. El estimador "apunta al centro correcto" en promedio.</li>
-        <li><b>Qué NO significa:</b> No significa que la estimación de <em>tu</em> muestra concreta coincidirá con $\theta$. De hecho, casi nunca coincide. Tampoco significa que el estimador sea preciso: un estimador puede ser perfectamente insesgado pero tener una dispersión gigantezca alrededor del parámetro (como $X_1$ frente a $\bar X$).</li>
+        <li><b>Qué NO significa:</b> No significa que la estimación de <em>tu</em> muestra concreta coincidirá con $\theta$. De hecho, casi nunca coincide. Tampoco significa que el estimador sea preciso: un estimador puede ser perfectamente insesgado pero tener una dispersión gigantesca alrededor del parámetro (como $X_1$ frente a $\bar X$).</li>
       </ul>
     </div>
 
@@ -225,7 +225,7 @@
     <p>La insesgadez solo mira si el promedio a largo plazo está centrado, pero no castiga la dispersión de las estimaciones individuales. Para incorporar la cercanía de cada estimación al blanco, definimos el <b>Error Cuadrático Medio</b>.</p>
 
     <div class="box definicion"><span class="box-title">Definición: Error Cuadrático Medio (MSE)</span>
-      <p>Sea $\hat\theta$ un estimador puntual del parámetro $\theta$. El <b>Error Cuadrático Medio</b> (*Mean Squared Error*, $\text{MSE}$) de $\hat\theta$ con respecto a $\theta$ se define como el valor esperado de la distancia cuadrática entre el estimador y el valor verdadero:</p>
+      <p>Sea $\hat\theta$ un estimador puntual del parámetro $\theta$. El <b>error cuadrático medio</b> ($\text{MSE}$, por sus siglas en inglés) de $\hat\theta$ con respecto a $\theta$ se define como el valor esperado de la distancia cuadrática entre el estimador y el valor verdadero:</p>
       $$\text{MSE}_\theta(\hat\theta) = \E_\theta\big[(\hat\theta - \theta)^2\big].$$
     </div>
 
