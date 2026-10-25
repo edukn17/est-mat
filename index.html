@@ -25,11 +25,17 @@
 <body data-page="inicio" data-root="">
 <main id="contenido">
 
-  <header class="page-head hero">
-    <p class="kicker">FCNM · ESPOL · II PAO 2026</p>
-    <h1>Estadística Matemática, explicada con calma</h1>
-    <p class="lead">Las clases del curso reescritas desde cero, con cada ejemplo y ejercicio resuelto paso a paso, simulaciones para ver los teoremas y guías para resolver los deberes.</p>
-    <div class="progress"><span id="prog-txt">Progreso</span><div class="bar"><i id="prog-bar"></i></div></div>
+  <header class="page-head hero hero-enhanced">
+    <div class="hero-badge"><span class="hero-dot"></span>FCNM · ESPOL · II PAO 2026</div>
+    <h1>Estadística Matemática, <span class="gradient-text">explicada con calma</span></h1>
+    <p class="lead">Las clases del curso reescritas desde cero, con cada ejemplo y ejercicio resuelto paso a paso, simulaciones interactivas para ver los teoremas en vivo y guías completas para resolver los deberes.</p>
+    <div class="progress-box">
+      <div class="progress">
+        <span id="prog-txt">Progreso</span>
+        <div class="bar"><i id="prog-bar"></i></div>
+        <span id="prog-pct" class="prog-pct">0%</span>
+      </div>
+    </div>
   </header>
 
   <section>
@@ -83,8 +89,11 @@
           <tr><td>Clase 03: distribuciones muestrales, χ² y t</td><td><a href="temas/clase-03.html">Clase 3</a></td></tr>
           <tr><td>Clase 04: distribución F</td><td><a href="temas/clase-04.html">Clase 4</a></td></tr>
           <tr><td>Clase 05: teorema del límite central</td><td><a href="temas/clase-05.html">Clase 5</a></td></tr>
+          <tr><td>Clase 06: estimación puntual, sesgo y MSE</td><td><a href="temas/clase-06.html">Clase 6</a></td></tr>
+          <tr><td>Clase 07: comparación de estimadores y error de estimación</td><td><a href="temas/clase-07.html">Clase 7</a></td></tr>
           <tr><td>Tablas χ², t, F, K-S</td><td><a href="herramientas/tablas.html">Cómo leer las tablas</a> (transcritas e interactivas)</td></tr>
-          <tr><td>Lista 1.1 (entrega 20/10/2026)</td><td><a href="deberes/lista-1-1.html">Guía del deber</a></td></tr>
+          <tr><td>Lista 1.1 (entrega 20/10/2026)</td><td><a href="deberes/lista-1-1.html">Guía del deber Lista 1.1</a></td></tr>
+          <tr><td>Lista 1.2 · TLC (II PAO 2026)</td><td><a href="deberes/lista-1-2.html">Guía del deber Lista 1.2</a></td></tr>
         </tbody>
       </table>
     </div>
@@ -117,8 +126,11 @@
     }
     host.append(cards);
   }
+  const pct = total ? Math.round(100 * done / total) : 0;
   document.getElementById('prog-txt').textContent = `Progreso: ${done}/${total} secciones`;
-  document.getElementById('prog-bar').style.width = (total ? 100 * done / total : 0) + '%';
+  document.getElementById('prog-bar').style.width = pct + '%';
+  const pctEl = document.getElementById('prog-pct');
+  if (pctEl) pctEl.textContent = pct + '%';
 })();
 </script>
 </body>

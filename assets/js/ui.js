@@ -75,7 +75,7 @@
       nav.append(el('div', { class: 'nav-group' }, g.group));
       for (const it of g.items) {
         const done = store.get(doneKey(it.id)) === '1';
-        nav.append(el('a', { href: ROOT + it.href, class: 'nav-link' + (it.id === PAGE ? ' active' : '') + (done ? ' done' : '') },
+        nav.append(el('a', { href: ROOT + it.href, class: 'nav-link' + (it.id === PAGE ? ' active' : '') + (done ? ' done' : ''), onclick: () => body.classList.remove('nav-open') },
           el('span', { class: 'nav-check' }, done ? '✓' : ''), it.title));
       }
     }

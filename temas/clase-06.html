@@ -1,0 +1,992 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clase 6 · Estimación puntual: sesgo y error cuadrático medio</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/theme.js"></script>
+<style>
+  /* Estilos específicos para la Clase 6 */
+  .badge.star { background: var(--plot-c3, #c0392b); color: #fff; font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; vertical-align: middle; }
+  .tabla-comp { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.95rem; }
+  .tabla-comp th, .tabla-comp td { padding: 8px 12px; border: 1px solid var(--border, #ddd); text-align: left; }
+  .tabla-comp th { background: var(--surface-2, #f5f5f5); }
+  .btn-group { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+</style>
+</head>
+<body data-page="clase-06" data-root="../">
+<main id="contenido">
+
+  <header class="page-head">
+    <p class="kicker">Clase 6 · Unidad 2 — Teoría de la estimación</p>
+    <h1>Estimación puntual: sesgo y error cuadrático medio</h1>
+    <p class="lead">Cómo usar los datos de una muestra para inferir un parámetro desconocido $\theta$, cómo medir si un estimador apunta bien en promedio (insesgadez) y cómo cuantificar el compromiso entre sesgo y varianza mediante el error cuadrático medio ($\text{MSE}$).</p>
+  </header>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="estimador">1. ¿Qué es un estimador puntual?</h2>
+
+    <div class="box idea"><span class="box-title">El gran giro de la inferencia estadística</span>
+      <p>En las Clases 1 a 5 (Probabilidad deductiva y Distribuciones muestrales), el flujo de razonamiento iba <b>hacia adelante</b>: suponíamos conocidos los parámetros poblacionales ($\mu, \sigma^2, p, \lambda$) y deducíamos cómo debían distribuirse los datos de una muestra aleatoria.</p>
+      $$\text{Parámetro conocido } \theta \;\xrightarrow{\;\text{Probabilidad directiva}\;}\; \text{Distribución de la muestra } (X_1, \dots, X_n).$$
+      <p>A partir de esta clase y durante todo el resto del curso, <b>invertimos la dirección de la pregunta</b> (Inferencia inductiva): en la vida real <em>nadie nos da el valor verdadero de $\theta$</em>. Lo único que tenemos en nuestras manos son los datos numéricos recolectados $x_1, \dots, x_n$ y queremos adivinar o inferir el valor de $\theta$.</p>
+      $$\text{Datos observados } (x_1, \dots, x_n) \;\xrightarrow{\;\text{Estimación inductiva}\;}\; \text{¿Cuál es el valor del parámetro desconocido } \theta\text{?}$$
+    </div>
+
+    <div class="box definicion"><span class="box-title">Definición: Estimador puntual y estimación puntual</span>
+      <p>Sea $X_1, \dots, X_n$ una muestra aleatoria tomada de una población cuya función de probabilidad o densidad depende de un parámetro desconocido $\theta \in \Omega$ (donde $\Omega \subseteq \R$ denota el espacio parametral).</p>
+      <ul>
+        <li>Un <b>estimador puntual</b> de $\theta$ es cualquier estadístico:
+          $$\hat\theta = T(X_1, \dots, X_n),$$
+          es decir, una función medible de la muestra que <b>no depende de ningún parámetro desconocido</b>.</li>
+        <li>Una vez realizado el experimento y observados los valores numéricos concretos $x_1, \dots, x_n$, el número real resultante:
+          $$\hat\theta(x_1, \dots, x_n) = T(x_1, \dots, x_n)$$
+          se denomina la <b>estimación puntual</b> de $\theta$.</li>
+      </ul>
+    </div>
+
+    <div class="box nota"><span class="box-title">Distinción fundamental: Estimador vs. Estimación</span>
+      <table class="tabla-comp">
+        <thead>
+          <tr>
+            <th>Concepto</th>
+            <th>Naturaleza matemática</th>
+            <th>¿Cuándo existe?</th>
+            <th>Notación típica</th>
+            <th>Ejemplo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>Estimador</b></td>
+            <td><b>Variable aleatoria</b> (función de $X_1, \dots, X_n$). Tiene distribución muestral, esperanza, varianza y desvío.</td>
+            <td>Antes de observar los datos (en el diseño del experimento).</td>
+            <td>$\hat\theta$, $\bar X$, $S^2$</td>
+            <td>$\bar X = \frac{1}{n}\sum_{i=1}^n X_i$</td>
+          </tr>
+          <tr>
+            <td><b>Estimación</b></td>
+            <td><b>Número real fijo</b> (un escalar en $\R$). No tiene varianza ni distribución; ya se realizó.</td>
+            <td>Después de observar la muestra concreta.</td>
+            <td>$\hat\theta(x)$, $\bar x$, $s^2$</td>
+            <td>$\bar x = 14.85\text{ cm}$</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Ejemplos de estimadores candidatos</h3>
+    <p>Para un mismo parámetro casi siempre existen muchos estimadores concebibles. Consideremos los tres ejemplos iniciales de la clase:</p>
+
+    <div class="box nota"><span class="box-title">Ejemplo 1 (Estimadores habituales)</span>
+      <ul>
+        <li><b>(a)</b> Si $X_1, \dots, X_n \iid N(\mu, 1)$, el parámetro desconocido es la media $\mu \in \R$. Un estimador natural e intuitivo es la media muestral $\hat\mu = \bar X = \frac{1}{n}\sum_{i=1}^n X_i$.</li>
+        <li><b>(b)</b> Si $X_1, \dots, X_n \iid N(0, \sigma^2)$, el parámetro desconocido es la varianza $\sigma^2 &gt; 0$. Un estimador habitual es la cuasivarianza muestral $\hat\sigma^2 = S^2 = \frac{1}{n-1}\sum_{i=1}^n (X_i - \bar X)^2$.</li>
+      </ul>
+    </div>
+
+    <div class="box nota"><span class="box-title">Ejemplo 2 (Muchos candidatos para el mismo parámetro)</span>
+      <p>Supongamos que $X_1, \dots, X_n \iid N(\mu, \sigma^2)$, donde tanto $\mu$ como $\sigma^2$ son desconocidos:</p>
+      <ul>
+        <li><b>Candidatos para estimar $\mu$:</b>
+          $$\hat\mu_1 = \bar X = \frac{1}{n}\sum_{i=1}^n X_i, \qquad \hat\mu_2 = X_1 \quad (\text{solo la primera observación}), \qquad \hat\mu_3 = \frac{X_1 + X_2}{2}.$$
+        </li>
+        <li><b>Candidatos para estimar $\sigma^2$:</b>
+          $$S^2 = \frac{1}{n-1}\sum_{i=1}^n (X_i - \bar X)^2, \qquad S_n^2 = \frac{1}{n}\sum_{i=1}^n (X_i - \bar X)^2, \qquad \hat\sigma^2_3 = \frac{(X_1 - X_2)^2}{2}.$$
+        </li>
+      </ul>
+      <p>Todos estos candidatos son estadísticos válidos porque dependen únicamente de los datos observados y no requieren conocer $\mu$ ni $\sigma^2$.</p>
+    </div>
+
+    <div class="box nota"><span class="box-title">Ejemplo 3 (Candidatos en el modelo Bernoulli)</span>
+      <p>Si $X_1, \dots, X_n \iid \text{Ber}(p)$ con parámetro de éxito $0 \le p \le 1$ desconocido, candidatos posibles para estimar $p$ son:</p>
+      $$\hat p_1 = \bar X = \frac{1}{n}\sum_{i=1}^n X_i, \qquad \hat p_2 = X_n, \qquad \hat p_3 = \frac{X_1 + X_2}{2}, \qquad \hat p_4 = \frac{X_1 + X_2 + X_n}{3}.$$
+    </div>
+
+    <div class="box idea"><span class="box-title">La gran pregunta de la estimación</span>
+      <p>Si para un mismo parámetro $\theta$ podemos inventar infinitos estadísticos diferentes, ¿cómo decidimos cuál es un <b>buen</b> estimador? ¿Bajo qué principios matemáticos preferimos $\bar X$ sobre $X_1$, o $S^2$ sobre $S_n^2$?</p>
+      <p>Para responder esto necesitamos <b>criterios de calidad</b> cuantitativos. En esta clase estudiaremos los dos primeros: <b>la insesgadez</b> y <b>el error cuadrático medio ($\text{MSE}$)</b>.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="sesgo">2. Primer criterio: Insesgadez y sesgo</h2>
+
+    <div class="box definicion"><span class="box-title">Definición: Estimador insesgado y sesgo</span>
+      <p>Sea $\hat\theta$ un estimador puntual del parámetro $\theta \in \Omega$.</p>
+      <ul>
+        <li>Se dice que $\hat\theta$ es un <b>estimador insesgado</b> (*unbiased*) de $\theta$ si, para todo valor posible del parámetro en el espacio parametral:
+          $$\E_\theta[\hat\theta] = \theta \qquad \forall\,\theta \in \Omega.$$
+          Si existe al menos un valor de $\theta$ para el cual $\E_\theta[\hat\theta] \ne \theta$, decimos que $\hat\theta$ es un estimador <b>sesgado</b> (*biased*).</li>
+        <li>El <b>sesgo</b> (*bias*) de un estimador $\hat\theta$, denotado por $\mathbb{B}(\hat\theta)$, es la diferencia entre su valor esperado y el parámetro verdadero:
+          $$\mathbb{B}(\hat\theta) = \E_\theta[\hat\theta] - \theta.$$
+        </li>
+      </ul>
+      <p>Por consiguiente, $\hat\theta$ es insesgado para $\theta$ si y solo si su sesgo es idénticamente nulo: $\mathbb{B}(\hat\theta) = 0$.</p>
+    </div>
+
+    <div class="box cuidado"><span class="box-title">Cuidado didáctico: Qué significa y qué NO significa la insesgadez</span>
+      <ul>
+        <li><b>Qué sí significa:</b> Si repitiéramos el muestreo una infinidad de veces bajo condiciones idénticas y calculáramos la estimación en cada réplica, el promedio de todas esas infinitas estimaciones coincidiría exactamente con el blanco $\theta$. El estimador "apunta al centro correcto" en promedio.</li>
+        <li><b>Qué NO significa:</b> No significa que la estimación de <em>tu</em> muestra concreta coincidirá con $\theta$. De hecho, casi nunca coincide. Tampoco significa que el estimador sea preciso: un estimador puede ser perfectamente insesgado pero tener una dispersión gigantezca alrededor del parámetro (como $X_1$ frente a $\bar X$).</li>
+      </ul>
+    </div>
+
+    <div class="box ejercicio" id="ej-4">
+      <span class="box-title">Ejercicio 4 (Cálculo de sesgo e insesgadez en poblaciones normales)</span>
+      <p>En el contexto del Ejemplo 2, sean $X_1, \dots, X_n \iid N(\mu, \sigma^2)$ con $n \ge 2$. Demuestre paso a paso que:</p>
+      <ol class="pasos">
+        <li><b>(a)</b> Los tres estimadores $\bar X$, $X_1$ y $\frac{X_1 + X_2}{2}$ son todos insesgados para $\mu$.</li>
+        <li><b>(b)</b> La cuasivarianza muestral $S^2 = \frac{1}{n-1}\sum_{i=1}^n (X_i - \bar X)^2$ y el estadístico $\frac{(X_1 - X_2)^2}{2}$ son ambos insesgados para $\sigma^2$. (Para $S^2$, presente dos demostraciones: una usando la distribución $\chi^2$ de la Clase 3 y otra algebraica general válida sin normalidad).</li>
+        <li><b>(c)</b> La varianza muestral dividida para $n$, $S_n^2 = \frac{1}{n}\sum_{i=1}^n (X_i - \bar X)^2$, es un estimador <b>sesgado</b> para $\sigma^2$, con sesgo estrictamente negativo, mientras que $\frac{n}{n-1}S_n^2$ es insesgado.</li>
+      </ol>
+
+      <details class="pista"><summary>Pista para la parte (a)</summary>
+        <div>Usa la linealidad del operador esperanza: $\E[aX + bY] = a\E[X] + b\E[Y]$ y el hecho de que cada $X_i$ tiene media $\mu$.</div>
+      </details>
+      <details class="pista"><summary>Pista para la parte (b)</summary>
+        <div>Para la primera demostración de $S^2$, recuerda que en la Clase 3 vimos que $\frac{(n-1)S^2}{\sigma^2} \sim \chi^2_{(n-1)}$ y que una variable $\chi^2_{(\nu)}$ tiene esperanza $\nu$. Para la demostración algebraica, expande $\sum (X_i - \mu)^2 = \sum (X_i - \bar X)^2 + n(\bar X - \mu)^2$. Para $\frac{(X_1 - X_2)^2}{2}$, nota que $\E[X_1 - X_2] = 0$ y calcula $\Var(X_1 - X_2)$.</div>
+      </details>
+      <details class="pista"><summary>Pista para la parte (c)</summary>
+        <div>Observa la relación directa entre $S_n^2$ y $S^2$: $S_n^2 = \frac{n-1}{n}S^2$. Toma esperanza en ambos lados.</div>
+      </details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary>
+        <div>
+          <h4>Parte (a): Insesgadez para $\mu$</h4>
+          <ul>
+            <li>Para $\bar X$:
+              $$\E[\bar X] = \E\left[\frac{1}{n}\sum_{i=1}^n X_i\right] = \frac{1}{n}\sum_{i=1}^n \E[X_i] = \frac{1}{n}(n\mu) = \mu \implies \mathbb{B}(\bar X) = 0.$$</li>
+            <li>Para $X_1$:
+              $$\E[X_1] = \mu \implies \mathbb{B}(X_1) = 0.$$</li>
+            <li>Para $\frac{X_1 + X_2}{2}$:
+              $$\E\left[\frac{X_1 + X_2}{2}\right] = \frac{\E[X_1] + \E[X_2]}{2} = \frac{\mu + \mu}{2} = \mu \implies \mathbb{B}\left(\frac{X_1 + X_2}{2}\right) = 0.$$</li>
+          </ul>
+          <p><b>Conclusión clave:</b> ¡La sola insesgadez no permite decidir entre $\bar X$ y $X_1$! Ambos apuntan al blanco en promedio, pero intuitivamente sabemos que $\bar X$ aprovecha toda la información de la muestra mientras que $X_1$ tira a la basura $n-1$ datos.</p>
+
+          <h4>Parte (b): Insesgadez de $S^2$ y $\frac{(X_1 - X_2)^2}{2}$ para $\sigma^2$</h4>
+          <p><b>Demostración 1 de $\E[S^2] = \sigma^2$ (usando la distribución muestral de la Clase 3):</b></p>
+          <p>Por el Teorema de Fisher de la Clase 3, si $X_1, \dots, X_n \iid N(\mu, \sigma^2)$, la variable estandarizada
+            $$W = \frac{(n-1)S^2}{\sigma^2} \sim \chi^2_{(n-1)}.$$
+            Como la esperanza de una distribución chi-cuadrado con $\nu$ grados de libertad es su número de grados de libertad, $\E[W] = n - 1$. Despejando $S^2$:</p>
+          $$\E[S^2] = \E\left[\frac{\sigma^2}{n-1} W\right] = \frac{\sigma^2}{n-1}\E[W] = \frac{\sigma^2}{n-1}(n-1) = \sigma^2.$$
+          <p>Por lo tanto, $\mathbb{B}(S^2) = \E[S^2] - \sigma^2 = 0$. $\blacksquare$</p>
+
+          <p><b>Demostración 2 de $\E[S^2] = \sigma^2$ (algebraica general, válida para cualquier población):</b></p>
+          <p>Escribimos cada desviación respecto a la verdadera media $\mu$: $X_i - \mu = (X_i - \bar X) + (\bar X - \mu)$. Elevando al cuadrado y sumando sobre $i = 1, \dots, n$:</p>
+          $$\sum_{i=1}^n (X_i - \mu)^2 = \sum_{i=1}^n (X_i - \bar X)^2 + 2(\bar X - \mu)\underbrace{\sum_{i=1}^n (X_i - \bar X)}_{=\,0} + n(\bar X - \mu)^2 = \sum_{i=1}^n (X_i - \bar X)^2 + n(\bar X - \mu)^2.$$
+          <p>Despejando la suma de cuadrados respecto a la media muestral:</p>
+          $$\sum_{i=1}^n (X_i - \bar X)^2 = \sum_{i=1}^n (X_i - \mu)^2 - n(\bar X - \mu)^2.$$
+          <p>Tomando esperanza matemática a ambos lados y recordando que $\E[(X_i - \mu)^2] = \Var(X_i) = \sigma^2$ y $\E[(\bar X - \mu)^2] = \Var(\bar X) = \sigma^2/n$:</p>
+          $$\E\left[\sum_{i=1}^n (X_i - \bar X)^2\right] = \sum_{i=1}^n \Var(X_i) - n\Var(\bar X) = n\sigma^2 - n\left(\frac{\sigma^2}{n}\right) = n\sigma^2 - \sigma^2 = (n-1)\sigma^2.$$
+          <p>Dividiendo para $n - 1$ resulta inmediatamente:</p>
+          $$\E[S^2] = \E\left[\frac{1}{n-1}\sum_{i=1}^n (X_i - \bar X)^2\right] = \frac{(n-1)\sigma^2}{n-1} = \sigma^2.$$
+          <p><i>Nota:</i> Esta segunda prueba no requiere normalidad; solo requiere que las $X_i$ sean i.i.d. con varianza finita $\sigma^2$.</p>
+
+          <p><b>Para el estimador $\frac{(X_1 - X_2)^2}{2}$:</b></p>
+          <p>La diferencia $D = X_1 - X_2$ tiene esperanza $\E[D] = \E[X_1] - \E[X_2] = \mu - \mu = 0$ y varianza (por independencia):</p>
+          $$\Var(D) = \Var(X_1) + \Var(X_2) = \sigma^2 + \sigma^2 = 2\sigma^2.$$
+          <p>Como $\Var(D) = \E[D^2] - (\E[D])^2 = \E[D^2] - 0$, tenemos $\E[(X_1 - X_2)^2] = 2\sigma^2$. En consecuencia:</p>
+          $$\E\left[\frac{(X_1 - X_2)^2}{2}\right] = \frac{1}{2}\E[(X_1 - X_2)^2] = \frac{1}{2}(2\sigma^2) = \sigma^2.$$
+          <p>Por lo tanto, $\frac{(X_1 - X_2)^2}{2}$ también es insesgado para $\sigma^2$.</p>
+
+          <h4>Parte (c): El sesgo de $S_n^2$ y la corrección de Bessel</h4>
+          <p>Como $S_n^2 = \frac{1}{n}\sum_{i=1}^n (X_i - \bar X)^2 = \frac{n-1}{n} S^2$, su esperanza es:</p>
+          $$\E[S_n^2] = \frac{n-1}{n}\E[S^2] = \frac{n-1}{n}\sigma^2 = \sigma^2 - \frac{\sigma^2}{n}.$$
+          <p>El sesgo de $S_n^2$ es:</p>
+          $$\mathbb{B}(S_n^2) = \E[S_n^2] - \sigma^2 = -\frac{\sigma^2}{n} &lt; 0.$$
+          <p>Como $-\sigma^2/n &lt; 0$, $S_n^2$ <b>subestima sistemáticamente</b> la varianza poblacional. ¿Por qué ocurre esto intuitivamente? Porque las desviaciones se calculan respecto a $\bar X$, y la propiedad de mínimos cuadrados de la media garantiza que $\sum (X_i - c)^2$ se minimiza precisamente en $c = \bar X$. Como la distancia a $\bar X$ es menor o igual que la distancia a la verdadera media desconocida $\mu$, $S_n^2$ queda tirado hacia abajo.</p>
+          <p>Para corregirlo, multiplicamos por el factor $\frac{n}{n-1}$ (la conocida <i>corrección de Bessel</i>):</p>
+          $$\E\left[\frac{n}{n-1} S_n^2\right] = \frac{n}{n-1}\left(\frac{n-1}{n}\sigma^2\right) = \sigma^2.$$
+          <p>lo cual recupera exactamente la cuasivarianza muestral $S^2$. $\blacksquare$</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- Simulación 1: Sesgo -->
+    <div class="sim" id="sim-sesgo">
+      <p class="sim-title">Simulador interactivo 1: Insesgadez y distribución muestral de los estimadores</p>
+      <p class="sim-desc">Genera $M = 1500$ muestras aleatorias de $N(\mu = 5, \sigma^2 = 4)$. Compara empíricamente el comportamiento de $\bar X$ frente a $X_1$, o el de $S^2$ frente a $S_n^2$ y $(X_1 - X_2)^2/2$. Observa cómo $S_n^2$ sistemáticamente promedia por debajo del valor verdadero.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="mse">3. Segundo criterio: Error Cuadrático Medio (MSE) y compromiso Sesgo–Varianza</h2>
+
+    <p>Como acabamos de comprobar en el Ejercicio 4, tanto $\bar X$ como $X_1$ son perfectamente insesgados para $\mu$. Sin embargo, usar únicamente $X_1$ es absurdo porque oscila enormemente alrededor de $\mu$ con varianza $\sigma^2$, mientras que $\bar X$ se concentra mucho más estrechamente alrededor de $\mu$ con varianza $\sigma^2/n$.</p>
+    <p>La insesgadez solo mira si el promedio a largo plazo está centrado, pero no castiga la dispersión de las estimaciones individuales. Para incorporar la cercanía de cada estimación al blanco, definimos el <b>Error Cuadrático Medio</b>.</p>
+
+    <div class="box definicion"><span class="box-title">Definición: Error Cuadrático Medio (MSE)</span>
+      <p>Sea $\hat\theta$ un estimador puntual del parámetro $\theta$. El <b>Error Cuadrático Medio</b> (*Mean Squared Error*, $\text{MSE}$) de $\hat\theta$ con respecto a $\theta$ se define como el valor esperado de la distancia cuadrática entre el estimador y el valor verdadero:</p>
+      $$\text{MSE}_\theta(\hat\theta) = \E_\theta\big[(\hat\theta - \theta)^2\big].$$
+    </div>
+
+    <div class="box teorema"><span class="box-title">Teorema: Descomposición Sesgo–Varianza del MSE</span>
+      <p>Para cualquier estimador $\hat\theta$ con segundo momento finito ($\E[\hat\theta^2] &lt; \infty$):</p>
+      $$\text{MSE}_\theta(\hat\theta) = \Var_\theta[\hat\theta] + \big[\mathbb{B}_\theta(\hat\theta)\big]^2.$$
+      <p>En palabras:</p>
+      $$\text{Error Cuadrático Medio} = \text{Varianza} + (\text{Sesgo})^2.$$
+      <p><b>Consecuencia fundamental:</b> Si $\hat\theta$ es un estimador <b>insesgado</b> ($\mathbb{B}(\hat\theta) = 0$), su error cuadrático medio coincide exactamente con su varianza:</p>
+      $$\hat\theta \text{ insesgado} \implies \text{MSE}_\theta(\hat\theta) = \Var_\theta[\hat\theta].$$
+    </div>
+
+    <details class="prueba" open><summary>Demostración paso a paso (sumar y restar $\E[\hat\theta]$)</summary>
+      <div>
+        <p>El truco clásico consiste en sumar y restar la constante $\E[\hat\theta]$ dentro del binomio:</p>
+        $$\begin{aligned}
+        \text{MSE}_\theta(\hat\theta) &= \E\big[(\hat\theta - \theta)^2\big] \\
+        &= \E\big[\big((\hat\theta - \E[\hat\theta]) + (\E[\hat\theta] - \theta)\big)^2\big] \\
+        &= \E\Big[(\hat\theta - \E[\hat\theta])^2 + 2(\hat\theta - \E[\hat\theta])(\E[\hat\theta] - \theta) + (\E[\hat\theta] - \theta)^2\Big].
+        \end{aligned}$$
+        <p>Como $\E[\hat\theta] - \theta = \mathbb{B}(\hat\theta)$ es una constante fija respecto al operador esperanza, aplicamos linealidad de $\E$:</p>
+        $$\text{MSE}_\theta(\hat\theta) = \underbrace{\E\big[(\hat\theta - \E[\hat\theta])^2\big]}_{=\,\Var[\hat\theta]} + 2\big(\E[\hat\theta] - \theta\big)\underbrace{\E\big[\hat\theta - \E[\hat\theta]\big]}_{=\,\E[\hat\theta] - \E[\hat\theta] = 0} + \big(\E[\hat\theta] - \theta\big)^2.$$
+        <p>El término cruzado se anula idénticamente porque la desviación media respecto a la media es cero. Por lo tanto:</p>
+        $$\text{MSE}_\theta(\hat\theta) = \Var[\hat\theta] + \big[\mathbb{B}(\hat\theta)\big]^2. \qquad \blacksquare$$
+      </div>
+    </details>
+
+    <!-- Simulación 2: Diana de Sesgo vs Varianza -->
+    <div class="sim" id="sim-diana">
+      <p class="sim-title">Simulador interactivo 2: Las 4 dianas del compromiso Sesgo–Varianza</p>
+      <p class="sim-desc">El centro de la diana es el parámetro verdadero $\theta = (0,0)$. Cada punto azul es una estimación puntual $\hat\theta$. Ajusta el sesgo y la varianza o pulsa los botones de los 4 cuadrantes clásicos para ver cómo el $\text{MSE} = \Var + \mathbb{B}^2$ combina la puntería y la precisión.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+
+    <div class="box ejercicio" id="ej-5">
+      <span class="box-title">Ejercicio 5 (Comparación de MSE en muestras normales)</span>
+      <p>Sean $X_1, \dots, X_n \iid N(\mu, \sigma^2)$ con $n \ge 3$. Demuestre paso a paso que:</p>
+      <ol class="pasos">
+        <li><b>(a)</b> Para estimar $\mu$, los errores cuadráticos medios de $\bar X$, $X_1$ y $\frac{X_1 + X_2}{2}$ son:
+          $$\text{MSE}_\mu(\bar X) = \frac{\sigma^2}{n}, \qquad \text{MSE}_\mu(X_1) = \sigma^2, \qquad \text{MSE}_\mu\left(\frac{X_1 + X_2}{2}\right) = \frac{\sigma^2}{2}.$$
+        </li>
+        <li><b>(b)</b> Para estimar $\sigma^2$, los errores cuadráticos medios de $S^2$ y $\frac{(X_1 - X_2)^2}{2}$ son:
+          $$\text{MSE}_{\sigma^2}(S^2) = \frac{2\sigma^4}{n-1}, \qquad \text{MSE}_{\sigma^2}\left(\frac{(X_1 - X_2)^2}{2}\right) = 2\sigma^4.$$
+          (Deduzca con todo detalle algebraico de dónde surge el factor $2\sigma^4$).
+        </li>
+      </ol>
+
+      <details class="pista"><summary>Pista</summary>
+        <div>Todos los estimadores analizados en este ejercicio son insesgados (como se demostró en el Ejercicio 4), de modo que su $\text{MSE}$ coincide con su varianza. Para la varianza de $S^2$, utiliza la variable $W = \frac{(n-1)S^2}{\sigma^2} \sim \chi^2_{(n-1)}$ y recuerda que $\Var(\chi^2_{(\nu)}) = 2\nu$. Para $\frac{(X_1 - X_2)^2}{2}$, nota que es el caso particular $n = 2$.</div>
+      </details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary>
+        <div>
+          <h4>Parte (a): Estimadores de $\mu$</h4>
+          <p>Como $\bar X$, $X_1$ y $\frac{X_1 + X_2}{2}$ son insesgados para $\mu$, sus sesgos son 0 y sus MSE coinciden con sus varianzas:</p>
+          $$\text{MSE}_\mu(\bar X) = \Var(\bar X) = \Var\left(\frac{1}{n}\sum_{i=1}^n X_i\right) = \frac{1}{n^2}\sum_{i=1}^n \Var(X_i) = \frac{n\sigma^2}{n^2} = \frac{\sigma^2}{n}.$$
+          $$\text{MSE}_\mu(X_1) = \Var(X_1) = \sigma^2.$$
+          $$\text{MSE}_\mu\left(\frac{X_1 + X_2}{2}\right) = \Var\left(\frac{X_1 + X_2}{2}\right) = \frac{1}{4}\big(\Var(X_1) + \Var(X_2)\big) = \frac{\sigma^2 + \sigma^2}{4} = \frac{\sigma^2}{2}.$$
+          <p><b>Conclusión:</b> Para todo $n &gt; 1$, $\bar X$ tiene un $\text{MSE}$ estrictamente menor que $X_1$ y que $\frac{X_1 + X_2}{2}$. Con $n = 100$ observaciones, el $\text{MSE}$ de $\bar X$ es 100 veces menor que el de $X_1$.</p>
+
+          <h4>Parte (b): Estimadores de $\sigma^2$ y deducción del factor $2\sigma^4$</h4>
+          <p>Como ambos estimadores son insesgados para $\sigma^2$, su MSE coincide con su varianza.</p>
+          <p><b>1. Para $S^2$:</b></p>
+          <p>Por el Teorema de Fisher (Clase 3), $W = \frac{(n-1)S^2}{\sigma^2} \sim \chi^2_{(n-1)}$.</p>
+          <p>Una variable chi-cuadrado con $\nu$ grados de libertad es una distribución $\text{Gamma}(\alpha = \nu/2, \beta = 2)$. Por el Formulario 2, su varianza es:</p>
+          $$\Var(W) = \alpha \beta^2 = \left(\frac{\nu}{2}\right)(2^2) = 2\nu = 2(n-1).$$
+          <p>Despejando $S^2 = \frac{\sigma^2}{n-1} W$ y utilizando la propiedad $\Var(aW) = a^2 \Var(W)$:</p>
+          $$\Var(S^2) = \left(\frac{\sigma^2}{n-1}\right)^2 \Var(W) = \frac{\sigma^4}{(n-1)^2} \cdot 2(n-1) = \frac{2\sigma^4}{n-1}.$$
+          <p>Por lo tanto:</p>
+          $$\text{MSE}_{\sigma^2}(S^2) = \Var(S^2) = \frac{2\sigma^4}{n-1}.$$
+
+          <p><b>2. Para el estimador $\frac{(X_1 - X_2)^2}{2}$:</b></p>
+          <p>Como $X_1, X_2 \iid N(\mu, \sigma^2)$, su diferencia $X_1 - X_2 \sim N(0, 2\sigma^2)$. Estandarizando:</p>
+          $$Z = \frac{X_1 - X_2}{\sqrt{2}\sigma} \sim N(0, 1).$$
+          <p>El cuadrado de una normal estándar es una chi-cuadrado con 1 grado de libertad (Clase 3):</p>
+          $$Z^2 = \left(\frac{X_1 - X_2}{\sqrt{2}\sigma}\right)^2 = \frac{(X_1 - X_2)^2}{2\sigma^2} \sim \chi^2_{(1)}.$$
+          <p>Por la fórmula de la varianza de la chi-cuadrado con $\nu = 1$, $\Var(Z^2) = 2(1) = 2$. Expresando nuestro estimador como $\frac{(X_1 - X_2)^2}{2} = \sigma^2 Z^2$, calculamos su varianza:</p>
+          $$\Var\left(\frac{(X_1 - X_2)^2}{2}\right) = \Var(\sigma^2 Z^2) = (\sigma^2)^2 \Var(Z^2) = \sigma^4 \cdot 2 = 2\sigma^4.$$
+          <p>Al ser insesgado, su MSE es exactamente $2\sigma^4$.</p>
+          <p><b>Conclusión:</b> Para todo $n &gt; 2$, $S^2$ tiene un MSE estrictamente menor que $\frac{(X_1 - X_2)^2}{2}$. De hecho, el cociente de errores es:</p>
+          $$\frac{\text{MSE}(S^2)}{\text{MSE}\left(\frac{(X_1 - X_2)^2}{2}\right)} = \frac{1}{n-1}.$$
+          <p>Para $n = 21$, ¡la cuasivarianza $S^2$ es 20 veces más precisa en MSE que usar solo el par $(X_1, X_2)$! $\blacksquare$</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="mse-sesgado">4. ¿Puede un estimador sesgado ganar en MSE? (Ejemplos avanzados)</h2>
+
+    <p>Uno de los mitos más frecuentes en estadística consiste en creer que un estimador insesgado siempre es mejor que uno sesgado. La ecuación fundamental del compromiso:</p>
+    $$\text{MSE} = \Var + \mathbb{B}^2$$
+    <p>muestra con total claridad que si un estimador introduce un <b>sesgo pequeño</b> pero a cambio consigue una <b>reducción sustancial de la varianza</b>, su $\text{MSE}$ total puede ser menor que el de cualquier estimador insesgado. Analicemos dos problemas clave de la materia donde se aprecia este fenómeno.</p>
+
+    <div class="box ejercicio" id="ej-6">
+      <span class="box-title">Ejercicio 6 <span class="badge star">★ reto</span> (Bernoulli truncada y dominancia estricta del estimador sesgado)</span>
+      <p>Sean $X_1, \dots, X_n$ una muestra aleatoria con función de masa de probabilidad $\P(X = x) = \theta^x (1 - \theta)^{1 - x}$ para $x \in \{0, 1\}$, donde se conoce la información a priori de que $0 \le \theta \le \frac{1}{2}$. Considere los estimadores:</p>
+      $$\bar X = \frac{1}{n}\sum_{i=1}^n X_i \qquad \text{y} \qquad \hat\theta = \min\left\{\bar X, \frac{1}{2}\right\}.$$
+      <ol class="pasos">
+        <li><b>(a)</b> Encuentre las expresiones del MSE de $\bar X$ y de $\hat\theta$.</li>
+        <li><b>(b)</b> ¿Cuál de los dos estimadores es preferido según el criterio del MSE? Justifique formalmente su respuesta demostrando qué ocurre punto a punto en el espacio muestral.</li>
+      </ol>
+
+      <details class="pista"><summary>Pista 1</summary>
+        <div>$\bar X$ es el estimador clásico habitual: verifica si es insesgado y calcula su varianza directamente a partir de $X_i \sim \text{Ber}(\theta)$.</div>
+      </details>
+      <details class="pista"><summary>Pista 2</summary>
+        <div>Para $\hat\theta$, nota que $\hat\theta$ coincide con $\bar X$ cuando $\bar X \le 1/2$, y vale exactamente $1/2$ cuando $\bar X &gt; 1/2$. Como $K = n\bar X \sim \text{Bin}(n, \theta)$, puedes expresar $\text{MSE}(\hat\theta)$ como una suma finita separada en dos tramos: $k \le \lfloor n/2 \rfloor$ y $k &gt; \lfloor n/2 \rfloor$.</div>
+      </details>
+      <details class="pista"><summary>Pista 3</summary>
+        <div>Para la parte (b), no intentes restar las sumatorias directamente con álgebra tediosa: compara las pérdidas cuadráticas $(\hat\theta - \theta)^2$ y $(\bar X - \theta)^2$ en cada resultado muestral posible. Si $\bar X &gt; 1/2$ y sabemos que $\theta \le 1/2$, ¿cuál de los dos números está más cerca de $\theta$: $1/2$ o $\bar X$?</div>
+      </details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary>
+        <div>
+          <h4>Parte (a): Expresión del MSE para ambos estimadores</h4>
+          <p><b>1. Para $\bar X$:</b></p>
+          <p>Como $\E[\bar X] = \theta$, $\bar X$ es insesgado ($\mathbb{B}(\bar X) = 0$). Como cada $X_i \iid \text{Ber}(\theta)$, $\Var(X_i) = \theta(1-\theta)$. Por lo tanto:</p>
+          $$\text{MSE}_\theta(\bar X) = \Var(\bar X) = \frac{\theta(1 - \theta)}{n}.$$
+
+          <p><b>2. Para $\hat\theta = \min\{\bar X, 1/2\}$:</b></p>
+          <p>Sea $K = \sum_{i=1}^n X_i = n\bar X \sim \text{Bin}(n, \theta)$, una variable aleatoria que toma valores enteros $k \in \{0, 1, \dots, n\}$.</p>
+          <ul>
+            <li>Si $k \le \lfloor n/2 \rfloor$, entonces $\bar X = k/n \le 1/2$, por lo que $\hat\theta = k/n$.</li>
+            <li>Si $k &gt; \lfloor n/2 \rfloor$, entonces $\bar X = k/n &gt; 1/2$, por lo que $\hat\theta = 1/2$.</li>
+          </ul>
+          <p>Aplicando la definición de esperanza matemática:</p>
+          $$\text{MSE}_\theta(\hat\theta) = \sum_{k=0}^{\lfloor n/2 \rfloor} \left(\frac{k}{n} - \theta\right)^2 \binom{n}{k}\theta^k(1-\theta)^{n-k} + \sum_{k=\lfloor n/2 \rfloor + 1}^n \left(\frac{1}{2} - \theta\right)^2 \binom{n}{k}\theta^k(1-\theta)^{n-k}.$$
+
+          <h4>Parte (b): Justificación formal de la preferencia según MSE</h4>
+          <p>Demostraremos analíticamente que $\text{MSE}_\theta(\hat\theta) &lt; \text{MSE}_\theta(\bar X)$ para todo $\theta \in (0, 1/2]$.</p>
+          <p>Comparemos las variables aleatorias del error cuadrático muestra a muestra (punto a punto en el espacio muestral $\Omega$):</p>
+          <ul>
+            <li><b>Caso 1 (Evento $\{\bar X \le 1/2\}$):</b> En este conjunto, $\hat\theta = \bar X$. Por lo tanto,
+              $$(\hat\theta - \theta)^2 = (\bar X - \theta)^2.$$</li>
+            <li><b>Caso 2 (Evento $\{\bar X &gt; 1/2\}$):</b> Como por hipótesis sabemos con certeza que el verdadero parámetro satisface $\theta \le 1/2$, se verifica la cadena de desigualdades:
+              $$0 \le \frac{1}{2} - \theta &lt; \bar X - \theta.$$
+              Como ambos miembros son cantidades no negativas y la desigualdad es estricta, elevando al cuadrado preservamos el orden estricto:
+              $$\left(\frac{1}{2} - \theta\right)^2 &lt; (\bar X - \theta)^2.$$
+              Pero cuando $\bar X &gt; 1/2$, el estimador truncado vale exactamente $\hat\theta = 1/2$. Por ende:
+              $$(\hat\theta - \theta)^2 &lt; (\bar X - \theta)^2 \qquad \text{en todo el evento } \{\bar X &gt; 1/2\}.$$</li>
+          </ul>
+          <p>Restando ambas pérdidas cuadráticas obtenemos:</p>
+          $$(\bar X - \theta)^2 - (\hat\theta - \theta)^2 = \left[(\bar X - \theta)^2 - \left(\frac{1}{2} - \theta\right)^2\right] \1_{\{\bar X &gt; 1/2\}} \ge 0.$$
+          <p>Tomando valor esperado a ambos miembros:</p>
+          $$\text{MSE}_\theta(\bar X) - \text{MSE}_\theta(\hat\theta) = \E_\theta\left[\left((\bar X - \theta)^2 - \left(\frac{1}{2} - \theta\right)^2\right) \1_{\{\bar X &gt; 1/2\}}\right].$$
+          <p>Para cualquier $\theta \in (0, 1/2]$, el evento $\{\bar X &gt; 1/2\}$ ocurre con probabilidad estrictamente positiva (por ejemplo, $\P(X_1 = \dots = X_n = 1) = \theta^n &gt; 0$). Como el integrando es estrictamente positivo en dicho evento y la probabilidad es positiva:</p>
+          $$\text{MSE}_\theta(\bar X) - \text{MSE}_\theta(\hat\theta) &gt; 0 \implies \text{MSE}_\theta(\hat\theta) &lt; \text{MSE}_\theta(\bar X) \quad \forall\,\theta \in (0, 1/2].$$
+          <p>(Si $\theta = 0$, $X_i = 0$ casi seguramente, ambos estimadores valen 0 y ambos MSE son 0).</p>
+
+          <p><b>Conclusión pedagógica:</b> El estimador $\hat\theta$ es <b>sesgado</b> (de hecho $\E[\hat\theta] &lt; \theta$ porque recorta valores por arriba sin compensar por abajo), pero <b>domina estrictamente a $\bar X$ en todo el espacio parametral</b>. Truncar el estimador al rango de valores válidos $[0, 1/2]$ elimina estimaciones absurdas y reduce el error cuadrático medio.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- Simulación 3: Bernoulli truncada -->
+    <div class="sim" id="sim-ber-trunc">
+      <p class="sim-title">Simulador interactivo 3: Curvas exactas de MSE en la Bernoulli truncada</p>
+      <p class="sim-desc">Compara la curva exacta de $\text{MSE}(\bar X) = \theta(1-\theta)/n$ (en color azul/verde) con la del estimador truncado $\hat\theta = \min\{\bar X, 1/2\}$ calculada con la suma binomial exacta. Mueve $n$ y $\theta$ para comprobar que $\text{MSE}(\hat\theta) &lt; \text{MSE}(\bar X)$ en todo $(0, 1/2]$.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+
+    <div class="box ejercicio" id="ej-7">
+      <span class="box-title">Ejercicio 7 (Tres estimadores de la pendiente en regresión lineal por el origen)</span>
+      <p>Sean $Y_1, \dots, Y_n$ variables aleatorias independientes que siguen el modelo de regresión por el origen:</p>
+      $$Y_i = x_i \beta + \varepsilon_i, \qquad i = 1, \dots, n,$$
+      <p>donde $x_1, \dots, x_n$ son constantes positivas conocidas no todas iguales, $\beta \in \R$ es el parámetro desconocido de interés y $\varepsilon_1, \dots, \varepsilon_n \iid N(0, \sigma^2)$ con $\sigma^2$ desconocido.</p>
+      <ol class="pasos">
+        <li><b>(a)</b> Determine la distribución exacta de cada variable $Y_i$.</li>
+        <li><b>(b)</b> Demuestre que el estimador de mínimos cuadrados ordinarios:
+          $$\hat\beta := \frac{\sum_{i=1}^n x_i Y_i}{\sum_{i=1}^n x_i^2}$$
+          es insesgado para $\beta$.</li>
+        <li><b>(c)</b> Demuestre que los dos estimadores alternativos:
+          $$\tilde\beta := \frac{\sum_{i=1}^n Y_i}{\sum_{i=1}^n x_i} \qquad \text{y} \qquad \tilde{\tilde\beta} := \frac{1}{n}\sum_{i=1}^n \frac{Y_i}{x_i}$$
+          también son insesgados para $\beta$.</li>
+        <li><b>(d)</b> Demuestre rigurosamente que las varianzas de estos tres estimadores satisfacen la cadena de desigualdades:
+          $$\Var[\hat\beta] \le \Var[\tilde\beta] \le \Var[\tilde{\tilde\beta}].$$
+          Identifique bajo qué condiciones se alcanzaría la igualdad.</li>
+      </ol>
+
+      <details class="pista"><summary>Pista para la parte (a)</summary>
+        <div>Cada $Y_i$ es una transformación lineal de $\varepsilon_i \sim N(0, \sigma^2)$: $Y_i = c + \varepsilon_i$. ¿Qué distribución tiene una normal trasladada por una constante?</div>
+      </details>
+      <details class="pista"><summary>Pista para las partes (b) y (c)</summary>
+        <div>Aplica la linealidad de la esperanza y usa $\E[Y_i] = x_i\beta$.</div>
+      </details>
+      <details class="pista"><summary>Pista para la parte (d)</summary>
+        <div>Calcula las varianzas usando la independencia de las $Y_i$ y $\Var(Y_i) = \sigma^2$. Para la primera desigualdad, recuerda la desigualdad de Cauchy–Schwarz en $\R^n$: $(\mathbf{u}\cdot\mathbf{v})^2 \le \|\mathbf{u}\|^2\|\mathbf{v}\|^2$ aplicada a los vectores $\mathbf{u} = (x_1, \dots, x_n)$ y $\mathbf{v} = (1, \dots, 1)$. Para la segunda desigualdad, aplica Cauchy–Schwarz a $(\sqrt{x_i})$ y $(1/\sqrt{x_i})$, o utiliza la desigualdad de Jensen con la función estrictamente convexa $g(u) = 1/u^2$.</div>
+      </details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary>
+        <div>
+          <h4>Parte (a): Distribución de cada $Y_i$</h4>
+          <p>Como $x_i \beta$ es una constante fija conocida y $\varepsilon_i \sim N(0, \sigma^2)$, por propiedades elementales de la distribución normal (Clase 1), sumar una constante traslada la media sin alterar la varianza ni la forma de campana:</p>
+          $$Y_i \sim N(x_i \beta, \sigma^2) \quad \text{independientes para } i = 1, \dots, n.$$
+
+          <h4>Partes (b) y (c): Insesgadez de los tres estimadores</h4>
+          <p>Como $\E[Y_i] = x_i \beta$ para todo $i$:</p>
+          <ul>
+            <li>Para $\hat\beta$:
+              $$\E[\hat\beta] = \E\left[\frac{\sum_{i=1}^n x_i Y_i}{\sum_{i=1}^n x_i^2}\right] = \frac{\sum_{i=1}^n x_i \E[Y_i]}{\sum_{i=1}^n x_i^2} = \frac{\sum_{i=1}^n x_i (x_i \beta)}{\sum_{i=1}^n x_i^2} = \beta \frac{\sum_{i=1}^n x_i^2}{\sum_{i=1}^n x_i^2} = \beta.$$</li>
+            <li>Para $\tilde\beta$:
+              $$\E[\tilde\beta] = \E\left[\frac{\sum_{i=1}^n Y_i}{\sum_{i=1}^n x_i}\right] = \frac{\sum_{i=1}^n \E[Y_i]}{\sum_{i=1}^n x_i} = \frac{\sum_{i=1}^n x_i \beta}{\sum_{i=1}^n x_i} = \beta \frac{\sum_{i=1}^n x_i}{\sum_{i=1}^n x_i} = \beta.$$</li>
+            <li>Para $\tilde{\tilde\beta}$:
+              $$\E[\tilde{\tilde\beta}] = \E\left[\frac{1}{n}\sum_{i=1}^n \frac{Y_i}{x_i}\right] = \frac{1}{n}\sum_{i=1}^n \frac{\E[Y_i]}{x_i} = \frac{1}{n}\sum_{i=1}^n \frac{x_i \beta}{x_i} = \frac{1}{n}\sum_{i=1}^n \beta = \frac{n\beta}{n} = \beta.$$</li>
+          </ul>
+          <p>Los tres estimadores son perfectamente insesgados para $\beta$. Por tanto, sus errores cuadráticos medios coinciden con sus respectivas varianzas.</p>
+
+          <h4>Parte (d): Cálculo y ordenamiento de las varianzas</h4>
+          <p>Dado que las variables $Y_1, \dots, Y_n$ son independientes y $\Var(Y_i) = \sigma^2$ para todo $i$:</p>
+          <ol class="pasos">
+            <li><b>Varianza de $\hat\beta$:</b>
+              $$\Var[\hat\beta] = \Var\left[\sum_{i=1}^n \left(\frac{x_i}{\sum_{j=1}^n x_j^2}\right) Y_i\right] = \sum_{i=1}^n \left(\frac{x_i}{\sum_{j=1}^n x_j^2}\right)^2 \Var(Y_i) = \frac{\sum_{i=1}^n x_i^2}{\left(\sum_{i=1}^n x_i^2\right)^2} \sigma^2 = \frac{\sigma^2}{\sum_{i=1}^n x_i^2}.$$</li>
+            <li><b>Varianza de $\tilde\beta$:</b>
+              $$\Var[\tilde\beta] = \Var\left[\frac{1}{\sum_{i=1}^n x_i} \sum_{i=1}^n Y_i\right] = \frac{1}{\left(\sum_{i=1}^n x_i\right)^2} \sum_{i=1}^n \Var(Y_i) = \frac{n\sigma^2}{\left(\sum_{i=1}^n x_i\right)^2}.$$</li>
+            <li><b>Varianza de $\tilde{\tilde\beta}$:</b>
+              $$\Var[\tilde{\tilde\beta}] = \Var\left[\frac{1}{n}\sum_{i=1}^n \frac{Y_i}{x_i}\right] = \frac{1}{n^2}\sum_{i=1}^n \frac{\Var(Y_i)}{x_i^2} = \frac{\sigma^2}{n^2}\sum_{i=1}^n \frac{1}{x_i^2}.$$</li>
+          </ol>
+
+          <p><b>Demostración de la primera desigualdad: $\Var[\hat\beta] \le \Var[\tilde\beta]$</b></p>
+          <p>Queremos demostrar que:</p>
+          $$\frac{\sigma^2}{\sum_{i=1}^n x_i^2} \le \frac{n\sigma^2}{\left(\sum_{i=1}^n x_i\right)^2} \iff \left(\sum_{i=1}^n x_i\right)^2 \le n \sum_{i=1}^n x_i^2.$$
+          <p>Aplicamos la desigualdad clásica de Cauchy–Schwarz en $\R^n$, $\langle \mathbf{u}, \mathbf{v} \rangle^2 \le \|\mathbf{u}\|^2 \|\mathbf{v}\|^2$, a los vectores:</p>
+          $$\mathbf{u} = (x_1, x_2, \dots, x_n) \qquad \text{y} \qquad \mathbf{v} = (1, 1, \dots, 1).$$
+          <p>Entonces:</p>
+          $$\left(\sum_{i=1}^n x_i \cdot 1\right)^2 \le \left(\sum_{i=1}^n x_i^2\right)\left(\sum_{i=1}^n 1^2\right) = n \sum_{i=1}^n x_i^2.$$
+          <p>Como el enunciado señala que los $x_i$ no son todos iguales, los vectores $\mathbf{u}$ y $\mathbf{v}$ no son colineales y la desigualdad es <b>estricta</b>: $\Var[\hat\beta] &lt; \Var[\tilde\beta]$. $\blacksquare$</p>
+
+          <p><b>Demostración de la segunda desigualdad: $\Var[\tilde\beta] \le \Var[\tilde{\tilde\beta}]$</b></p>
+          <p>Queremos demostrar que:</p>
+          $$\frac{n\sigma^2}{\left(\sum_{i=1}^n x_i\right)^2} \le \frac{\sigma^2}{n^2}\sum_{i=1}^n \frac{1}{x_i^2} \iff \frac{1}{\bar x^2} \le \frac{1}{n}\sum_{i=1}^n \frac{1}{x_i^2}, \qquad \text{donde } \bar x = \frac{1}{n}\sum_{i=1}^n x_i.$$
+          <p><b>Método 1 (Desigualdad de Jensen):</b> La función $g(u) = \frac{1}{u^2}$ definida sobre $(0, \infty)$ tiene segunda derivada $g''(u) = \frac{6}{u^4} &gt; 0$, por lo que es estrictamente convexa. Por la desigualdad de Jensen para la muestra finita:</p>
+          $$g(\bar x) \le \frac{1}{n}\sum_{i=1}^n g(x_i) \iff \frac{1}{\bar x^2} \le \frac{1}{n}\sum_{i=1}^n \frac{1}{x_i^2}.$$
+          <p>Multiplicando ambos miembros por $\sigma^2/n$ obtenemos directamente:</p>
+          $$\frac{\sigma^2}{n \bar x^2} = \frac{n\sigma^2}{\left(\sum x_i\right)^2} \le \frac{\sigma^2}{n^2}\sum_{i=1}^n \frac{1}{x_i^2} \implies \Var[\tilde\beta] \le \Var[\tilde{\tilde\beta}].$$
+
+          <p><b>Método 2 (Cauchy–Schwarz encadenado):</b></p>
+          <ol>
+            <li>Por Cauchy–Schwarz aplicada a $(\sqrt{x_1}, \dots, \sqrt{x_n})$ y $(1/\sqrt{x_1}, \dots, 1/\sqrt{x_n})$:
+              $$n^2 = \left(\sum_{i=1}^n 1\right)^2 \le \left(\sum_{i=1}^n x_i\right)\left(\sum_{i=1}^n \frac{1}{x_i}\right) \implies \frac{1}{\bar x} \le \frac{1}{n}\sum_{i=1}^n \frac{1}{x_i}.$$</li>
+            <li>Elevando al cuadrado ambos miembros no negativos y aplicando Cauchy–Schwarz a $(1/x_1, \dots, 1/x_n)$ y $(1, \dots, 1)$:
+              $$\frac{1}{\bar x^2} \le \left(\frac{1}{n}\sum_{i=1}^n \frac{1}{x_i}\right)^2 \le \frac{1}{n^2}\cdot n \sum_{i=1}^n \frac{1}{x_i^2} = \frac{1}{n}\sum_{i=1}^n \frac{1}{x_i^2}.$$</li>
+          </ol>
+          <p>Nuevamente, la igualdad estricta solo ocurriría si $x_1 = x_2 = \dots = x_n$. Como no son todos iguales, $\Var[\tilde\beta] &lt; \Var[\tilde{\tilde\beta}]$. $\blacksquare$</p>
+
+          <p><b>Intuición estadística fundamental:</b></p>
+          <ul>
+            <li>$\hat\beta$ asigna a cada observación un peso proporcional a $x_i$: da mucho peso a los puntos con $x_i$ grande (donde la señal $x_i\beta$ es enorme respecto al ruido $\sigma$) y poco peso a los puntos cercanos al origen. Es el estimador óptimo.</li>
+            <li>$\tilde\beta$ promedia sumando las $Y_i$ con igual peso, ignorando que los puntos con $x_i$ grande son más informativos.</li>
+            <li>$\tilde{\tilde\beta}$ divide cada $Y_i$ entre $x_i$: si algún punto tiene $x_i \approx 0$, ¡la división $1/x_i^2$ amplifica el ruido $\sigma^2$ de forma descomunal, arruinando la precisión global del estimador!</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+
+    <!-- Simulación 4: Regresión -->
+    <div class="sim" id="sim-reg">
+      <p class="sim-title">Simulador interactivo 4: Comparación de densidades de los 3 estimadores de la pendiente</p>
+      <p class="sim-desc">Explora las densidades normales teóricas de $\hat\beta$, $\tilde\beta$ y $\tilde{\tilde\beta}$. Cambia la configuración de los puntos $x$ para comprobar cómo los tres estimadores están centrados exactamente en $\beta$, pero $\hat\beta$ siempre tiene la campana más alta y angosta (menor varianza). Selecciona "Punto cercano a 0" para ver el colapso de $\tilde{\tilde\beta}$.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="autoeval">5. Autoevaluación y resumen para llevar</h2>
+
+    <div class="box idea"><span class="box-title">Resumen para llevar: Fórmulas maestras de la Clase 6</span>
+      <ul>
+        <li><b>Estimador vs. Estimación:</b> $\hat\theta(X)$ es una <b>variable aleatoria</b> (antes de ver los datos); $\hat\theta(x)$ es un <b>número real</b> (después de ver los datos).</li>
+        <li><b>Sesgo:</b> $\mathbb{B}(\hat\theta) = \E[\hat\theta] - \theta$. Si $\mathbb{B}(\hat\theta) = 0$, el estimador es <b>insesgado</b>.</li>
+        <li><b>Error Cuadrático Medio:</b>
+          $$\text{MSE}_\theta(\hat\theta) = \E\big[(\hat\theta - \theta)^2\big] = \Var[\hat\theta] + \big[\mathbb{B}(\hat\theta)\big]^2.$$
+        </li>
+        <li><b>Estimador insesgado:</b> $\mathbb{B} = 0 \implies \text{MSE}(\hat\theta) = \Var[\hat\theta]$.</li>
+        <li><b>Estimadores habituales en $N(\mu, \sigma^2)$:</b>
+          $$\E[\bar X] = \mu, \quad \Var(\bar X) = \frac{\sigma^2}{n}, \quad \text{MSE}(\bar X) = \frac{\sigma^2}{n}.$$
+          $$\E[S^2] = \sigma^2, \quad \Var(S^2) = \frac{2\sigma^4}{n-1}, \quad \text{MSE}(S^2) = \frac{2\sigma^4}{n-1}.$$
+          $$\E[S_n^2] = \frac{n-1}{n}\sigma^2, \quad \mathbb{B}(S_n^2) = -\frac{\sigma^2}{n} &lt; 0.$$
+        </li>
+      </ul>
+    </div>
+
+    <h3>Preguntas conceptuales</h3>
+    <div id="quiz-1"></div>
+    <div id="quiz-2"></div>
+    <div id="quiz-3"></div>
+
+    <h3>Verificación numérica rápida</h3>
+    <p>Resuelve los siguientes ejercicios cortos y escribe tu respuesta numérica para comprobar:</p>
+    <div id="nc-1"></div>
+    <div id="nc-2"></div>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../assets/js/stats.js"></script>
+<script src="../assets/js/plot.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+(function () {
+  'use strict';
+  const { dist, fmt, rnorm01, choose } = EM.stats;
+  const ui = EM.ui;
+
+  /* ============================================================
+     SIMULACIÓN 1: Insesgadez y distribuciones de estimadores
+     ============================================================ */
+  (function () {
+    const root = document.getElementById('sim-sesgo');
+    if (!root) return;
+    const ctr = root.querySelector('.controls');
+    const out = ui.readout(root.querySelector('.out'));
+    let mode = 'mu';
+    let n = 5;
+    const M = 1500;
+    const mu_true = 5;
+    const sigma2_true = 4;
+    const sigma_true = 2;
+
+    ui.select(ctr, {
+      label: 'Parámetro a estimar',
+      value: mode,
+      options: [
+        { value: 'mu', label: 'Estimar μ = 5 en N(μ, σ²): X̄ vs. X₁' },
+        { value: 'sigma2', label: 'Estimar σ² = 4 en N(μ, σ²): S² vs. S_n² vs. (X₁−X₂)²/2' }
+      ],
+      onChange: v => { mode = v; run(); }
+    });
+
+    ui.slider(ctr, {
+      tex: 'n', min: 2, max: 30, step: 1, value: n,
+      onInput: v => { n = Math.round(v); run(); }
+    });
+
+    ui.button(ctr, 'Generar nuevas muestras', () => run(), { primary: true });
+
+    const plot = EM.plot.create(root.querySelector('.plot'), { height: 270, legendPos: 'tr' });
+
+    function run() {
+      const est1 = new Float64Array(M);
+      const est2 = new Float64Array(M);
+      const est3 = mode === 'sigma2' ? new Float64Array(M) : null;
+      const x_vals = new Float64Array(n);
+
+      for (let j = 0; j < M; j++) {
+        let sum = 0;
+        for (let i = 0; i < n; i++) {
+          const val = mu_true + sigma_true * rnorm01();
+          x_vals[i] = val;
+          sum += val;
+        }
+        const xbar = sum / n;
+        if (mode === 'mu') {
+          est1[j] = xbar;
+          est2[j] = x_vals[0];
+        } else {
+          let ssq = 0;
+          for (let i = 0; i < n; i++) {
+            const d = x_vals[i] - xbar;
+            ssq += d * d;
+          }
+          est1[j] = ssq / (n - 1);
+          est2[j] = ssq / n;
+          const d12 = x_vals[0] - x_vals[1];
+          est3[j] = (d12 * d12) / 2;
+        }
+      }
+
+      render(est1, est2, est3);
+    }
+
+    function render(est1, est2, est3) {
+      if (mode === 'mu') {
+        const xmin = 0, xmax = 10;
+        plot.setRange({ xmin, xmax, ymin: 0, ymax: 1.25, xlabel: 'Valor del estimador de μ' });
+        const norm_xbar = dist.normal(mu_true, sigma_true / Math.sqrt(n));
+        const norm_x1 = dist.normal(mu_true, sigma_true);
+
+        plot.draw(g => {
+          g.hist(Array.from(est2), { bins: 35, color: 'c2', alpha: 0.35, range: [xmin, xmax], label: 'Histograma X₁' });
+          g.hist(Array.from(est1), { bins: 35, color: 'c1', alpha: 0.45, range: [xmin, xmax], label: 'Histograma X̄' });
+          g.curve(norm_x1.pdf, { color: 'c2', width: 2, label: 'Teórica X₁ ~ N(μ, σ²)' });
+          g.curve(norm_xbar.pdf, { color: 'c1', width: 2.5, label: 'Teórica X̄ ~ N(μ, σ²/n)' });
+          g.vline(mu_true, { color: 'bad', width: 2, label: 'μ = 5' });
+        });
+
+        let s1 = 0, s2 = 0;
+        for (let i = 0; i < M; i++) { s1 += est1[i]; s2 += est2[i]; }
+        const m1 = s1 / M, m2 = s2 / M;
+        let v1 = 0, v2 = 0;
+        for (let i = 0; i < M; i++) { v1 += (est1[i] - m1) ** 2; v2 += (est2[i] - m2) ** 2; }
+        v1 /= (M - 1); v2 /= (M - 1);
+
+        out.set(`$M = ${M}$ réplicas con $n = ${n}$ de $N(\\mu = 5, \\sigma^2 = 4)$:<br>` +
+          `• <b>Media muestral $\\bar X$:</b> Media empírica = <b>${fmt(m1, 3)}</b> (sesgo: <b>${fmt(m1 - mu_true, 3)}</b>) · Var empírica = <b>${fmt(v1, 3)}</b> (teórica $\\sigma^2/n = ${fmt(sigma2_true / n, 3)}$)<br>` +
+          `• <b>Primera observación $X_1$:</b> Media empírica = <b>${fmt(m2, 3)}</b> (sesgo: <b>${fmt(m2 - mu_true, 3)}</b>) · Var empírica = <b>${fmt(v2, 3)}</b> (teórica $\\sigma^2 = 4.00$)<br>` +
+          `Ambos son <b>insesgados</b>, pero $\\bar X$ tiene una varianza <b>${fmt(v2 / v1, 1)} veces menor</b> que $X_1$.`);
+      } else {
+        const xmin = 0, xmax = 14;
+        plot.setRange({ xmin, xmax, ymin: 0, ymax: 0.55, xlabel: 'Valor del estimador de σ²' });
+        plot.draw(g => {
+          g.hist(Array.from(est3), { bins: 40, color: 'c3', alpha: 0.3, range: [xmin, xmax], label: '(X₁−X₂)²/2' });
+          g.hist(Array.from(est2), { bins: 40, color: 'c4', alpha: 0.4, range: [xmin, xmax], label: 'S_n² (divide para n)' });
+          g.hist(Array.from(est1), { bins: 40, color: 'c1', alpha: 0.45, range: [xmin, xmax], label: 'S² (divide para n−1)' });
+          g.vline(sigma2_true, { color: 'bad', width: 2, label: 'σ² = 4' });
+          g.vline(sigma2_true * (n - 1) / n, { color: 'c4', dash: [4, 3], label: 'E[S_n²]' });
+        });
+
+        let s1 = 0, s2 = 0, s3 = 0;
+        for (let i = 0; i < M; i++) { s1 += est1[i]; s2 += est2[i]; s3 += est3[i]; }
+        const m1 = s1 / M, m2 = s2 / M, m3 = s3 / M;
+        const b_Sn2_teo = -sigma2_true / n;
+
+        out.set(`$M = ${M}$ réplicas con $n = ${n}$ de $N(\\mu = 5, \\sigma^2 = 4)$:<br>` +
+          `• <b>Cuasivarianza $S^2$:</b> Media empírica = <b>${fmt(m1, 3)}</b> (sesgo: <b>${fmt(m1 - sigma2_true, 3)}</b> $\\approx 0$, ¡insesgado!)<br>` +
+          `• <b>Varianza $S_n^2$:</b> Media empírica = <b>${fmt(m2, 3)}</b> (sesgo empírico: <b>${fmt(m2 - sigma2_true, 3)}</b>, teórico $-\\sigma^2/n = ${fmt(b_Sn2_teo, 3)}$)<br>` +
+          `• <b>Estimador $(X_1 - X_2)^2/2$:</b> Media empírica = <b>${fmt(m3, 3)}</b> (insesgado, pero enorme varianza).<br>` +
+          `$S_n^2$ subestima $\\sigma^2 = 4$ sistemáticamente porque las desviaciones respecto a $\\bar X$ son menores que respecto a $\\mu$.`);
+      }
+    }
+
+    run();
+  })();
+
+  /* ============================================================
+     SIMULACIÓN 2: Las 4 dianas de Sesgo vs. Varianza
+     ============================================================ */
+  (function () {
+    const root = document.getElementById('sim-diana');
+    if (!root) return;
+    const ctr = root.querySelector('.controls');
+    const out = ui.readout(root.querySelector('.out'));
+    let bias = 0.2;
+    let sd = 0.3;
+    const N_SHOTS = 120;
+
+    const slBias = ui.slider(ctr, {
+      label: 'Sesgo |B|', min: 0.0, max: 2.2, step: 0.05, value: bias,
+      fmt: v => v.toFixed(2),
+      onInput: v => { bias = v; generate(); }
+    });
+
+    const slSd = ui.slider(ctr, {
+      label: 'Desv. Est. σ', min: 0.1, max: 1.8, step: 0.05, value: sd,
+      fmt: v => v.toFixed(2),
+      onInput: v => { sd = v; generate(); }
+    });
+
+    const bGroup = ui.el('div', { class: 'btn-group' });
+    ctr.append(bGroup);
+
+    ui.button(bGroup, '① Bajo sesgo, Baja var', () => { slBias.set(0.1); slSd.set(0.25); bias = 0.1; sd = 0.25; generate(); });
+    ui.button(bGroup, '② Alto sesgo, Baja var', () => { slBias.set(1.6); slSd.set(0.25); bias = 1.6; sd = 0.25; generate(); });
+    ui.button(bGroup, '③ Bajo sesgo, Alta var', () => { slBias.set(0.1); slSd.set(1.2); bias = 0.1; sd = 1.2; generate(); });
+    ui.button(bGroup, '④ Alto sesgo, Alta var', () => { slBias.set(1.6); slSd.set(1.2); bias = 1.6; sd = 1.2; generate(); });
+
+    const plot = EM.plot.create(root.querySelector('.plot'), {
+      xmin: -3.2, xmax: 3.2, ymin: -3.2, ymax: 3.2, height: 320, equal: true,
+      xlabel: 'θ̂₁', ylabel: 'θ̂₂'
+    });
+
+    const shotsX = new Float64Array(N_SHOTS);
+    const shotsY = new Float64Array(N_SHOTS);
+
+    function generate() {
+      const bx = bias / Math.SQRT2;
+      const by = bias / Math.SQRT2;
+      for (let i = 0; i < N_SHOTS; i++) {
+        shotsX[i] = bx + sd * rnorm01();
+        shotsY[i] = by + sd * rnorm01();
+      }
+      render();
+    }
+
+    function render() {
+      const variance = sd * sd;
+      const biasSq = bias * bias;
+      const mse = variance + biasSq;
+      const rmse = Math.sqrt(mse);
+
+      let cx = 0, cy = 0;
+      for (let i = 0; i < N_SHOTS; i++) { cx += shotsX[i]; cy += shotsY[i]; }
+      cx /= N_SHOTS; cy /= N_SHOTS;
+
+      plot.draw(g => {
+        const ctx = g.ctx;
+        const rings = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0];
+        const ringColors = ['rgba(240, 200, 8, 0.25)', 'rgba(230, 80, 80, 0.2)', 'rgba(80, 140, 240, 0.15)', 'rgba(80, 80, 80, 0.08)', 'rgba(80, 80, 80, 0.05)', 'rgba(80, 80, 80, 0.03)'];
+        for (let k = rings.length - 1; k >= 0; k--) {
+          const r = rings[k];
+          const px0 = g.X(-r), px1 = g.X(r);
+          const radPix = Math.abs(px1 - px0) / 2;
+          ctx.beginPath();
+          ctx.arc(g.X(0), g.Y(0), radPix, 0, 2 * Math.PI);
+          ctx.fillStyle = ringColors[k];
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(120, 120, 120, 0.4)';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+
+        g.points(Array.from(shotsX), Array.from(shotsY), { color: 'c1', r: 3.5, label: 'Estimaciones θ̂' });
+
+        ctx.beginPath();
+        ctx.arc(g.X(0), g.Y(0), 5, 0, 2 * Math.PI);
+        ctx.fillStyle = EM.plot.resolveColor('bad');
+        ctx.fill();
+        g.vline(0, { color: 'bad', dash: [3, 3] });
+        g.hline(0, { color: 'bad', dash: [3, 3] });
+
+        ctx.beginPath();
+        ctx.arc(g.X(cx), g.Y(cy), 6, 0, 2 * Math.PI);
+        ctx.fillStyle = EM.plot.resolveColor('c3');
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        if (bias > 0.05) {
+          g.line(0, 0, cx, cy, { color: 'bad', width: 2.2, label: 'Vector Sesgo B' });
+        }
+      });
+
+      out.set(`Sesgo: $\\mathbb{B}(\\hat\\theta) =$ <b>${fmt(bias, 2)}</b> ($\\mathbb{B}^2 = ${fmt(biasSq, 3)}$) ·
+        Desv. Est.: $\\sigma = \\sqrt{\\Var} =$ <b>${fmt(sd, 2)}</b> ($\\Var = ${fmt(variance, 3)}$)<br>
+        Error Cuadrático Medio: $\\text{MSE} = \\Var + \\mathbb{B}^2 =$ <b>${fmt(mse, 3)}</b> · $\\text{RMSE} = \\sqrt{\\text{MSE}} =$ <b>${fmt(rmse, 3)}</b><br>
+        <small class="muted">El punto rojo central es el blanco verdadero $\\theta=(0,0)$. El punto naranja es el centroide empírico $\\E[\\hat\\theta]$.</small>`);
+    }
+
+    generate();
+  })();
+
+  /* ============================================================
+     SIMULACIÓN 3: Bernoulli truncada (Ejemplo 6*)
+     ============================================================ */
+  (function () {
+    const root = document.getElementById('sim-ber-trunc');
+    if (!root) return;
+    const ctr = root.querySelector('.controls');
+    const out = ui.readout(root.querySelector('.out'));
+    let n = 10;
+    let theta_sel = 0.35;
+
+    ui.slider(ctr, {
+      tex: 'n', min: 1, max: 40, step: 1, value: n,
+      onInput: v => { n = Math.round(v); render(); }
+    });
+
+    ui.slider(ctr, {
+      tex: '\\theta', min: 0.01, max: 0.50, step: 0.01, value: theta_sel,
+      fmt: v => v.toFixed(2),
+      onInput: v => { theta_sel = v; render(); }
+    });
+
+    const plot = EM.plot.create(root.querySelector('.plot'), {
+      xmin: 0, xmax: 0.52, ymin: 0, ymax: 0.15, height: 280,
+      xlabel: 'Parámetro θ ∈ [0, 0.5]', legendPos: 'tr'
+    });
+
+    function mseTrunc(th, n_val) {
+      if (th <= 1e-9) return 0;
+      const m = Math.floor(n_val / 2);
+      let s = 0;
+      for (let k = 0; k <= n_val; k++) {
+        const p_k = choose(n_val, k) * Math.pow(th, k) * Math.pow(1 - th, n_val - k);
+        const est = (k <= m) ? (k / n_val) : 0.5;
+        s += (est - th) * (est - th) * p_k;
+      }
+      return s;
+    }
+
+    function biasTrunc(th, n_val) {
+      if (th <= 1e-9) return 0;
+      const m = Math.floor(n_val / 2);
+      let e = 0;
+      for (let k = 0; k <= n_val; k++) {
+        const p_k = choose(n_val, k) * Math.pow(th, k) * Math.pow(1 - th, n_val - k);
+        const est = (k <= m) ? (k / n_val) : 0.5;
+        e += est * p_k;
+      }
+      return e - th;
+    }
+
+    function render() {
+      const mse_xbar_fn = th => (th * (1 - th)) / n;
+      const mse_trunc_fn = th => mseTrunc(th, n);
+      const max_val = mse_xbar_fn(0.5);
+      plot.setRange({ ymax: Math.max(0.01, max_val * 1.25) });
+
+      plot.draw(g => {
+        g.area(th => mse_xbar_fn(th), 0, 0.5, { color: 'bad', alpha: 0.12 });
+        g.area(th => mse_trunc_fn(th), 0, 0.5, { color: 'good', alpha: 0.25, label: 'MSE(θ̂) truncado' });
+        g.curve(mse_xbar_fn, { from: 0, to: 0.5, color: 'c2', width: 2.2, label: 'MSE(X̄) = θ(1−θ)/n' });
+        g.curve(mse_trunc_fn, { from: 0, to: 0.5, color: 'c1', width: 2.5 });
+        g.vline(theta_sel, { color: 'ink', dash: [4, 4], label: `θ = ${theta_sel.toFixed(2)}` });
+      });
+
+      const m_xbar = mse_xbar_fn(theta_sel);
+      const m_trunc = mse_trunc_fn(theta_sel);
+      const b_trunc = biasTrunc(theta_sel, n);
+      const red = ((m_xbar - m_trunc) / m_xbar) * 100;
+
+      out.set(`Para $n = ${n}$ y $\\theta = ${fmt(theta_sel, 2)}$:<br>` +
+        `• $\\text{MSE}(\\bar X) =$ <b>${fmt(m_xbar, 5)}</b> (insesgado, $\\Var = ${fmt(m_xbar, 5)}$)<br>` +
+        `• $\\text{MSE}(\\hat\\theta) =$ <b>${fmt(m_trunc, 5)}</b> (sesgado: sesgo $\\mathbb{B} = ${fmt(b_trunc, 4)}$, sesgo$^2 = ${fmt(b_trunc * b_trunc, 5)}$)<br>` +
+        `• <b>Reducción de error:</b> $\\hat\\theta$ reduce el MSE en un <b>${fmt(red, 1)} %</b> frente a $\\bar X$.<br>` +
+        `<small class="muted">Para todo $\\theta \\in (0, 0.5]$, la curva de $\\hat\\theta$ cae estrictamente por debajo de la de $\\bar X$.</small>`);
+    }
+
+    render();
+  })();
+
+  /* ============================================================
+     SIMULACIÓN 4: Regresión por el origen (Ejemplo 7)
+     ============================================================ */
+  (function () {
+    const root = document.getElementById('sim-reg');
+    if (!root) return;
+    const ctr = root.querySelector('.controls');
+    const out = ui.readout(root.querySelector('.out'));
+    let beta = 2.0;
+    let sigma = 1.0;
+    let cfg = 'unif';
+
+    const configs = {
+      unif: { label: 'Espaciado uniforme: x = [1, 2, 3, 4, 5]', xs: [1, 2, 3, 4, 5] },
+      close0: { label: 'Punto cercano a 0: x = [0.2, 1, 2, 3, 5]', xs: [0.2, 1, 2, 3, 5] },
+      clust: { label: 'Concentrado: x = [2.8, 2.9, 3.0, 3.1, 3.2]', xs: [2.8, 2.9, 3.0, 3.1, 3.2] }
+    };
+
+    ui.select(ctr, {
+      label: 'Configuración de x',
+      value: cfg,
+      options: Object.entries(configs).map(([k, v]) => ({ value: k, label: v.label })),
+      onChange: v => { cfg = v; render(); }
+    });
+
+    ui.slider(ctr, {
+      tex: '\\beta', min: -4.0, max: 4.0, step: 0.5, value: beta,
+      fmt: v => v.toFixed(1),
+      onInput: v => { beta = v; render(); }
+    });
+
+    ui.slider(ctr, {
+      tex: '\\sigma', min: 0.5, max: 3.0, step: 0.25, value: sigma,
+      fmt: v => v.toFixed(2),
+      onInput: v => { sigma = v; render(); }
+    });
+
+    const plot = EM.plot.create(root.querySelector('.plot'), { height: 280, xlabel: 'Valor estimado de β', legendPos: 'tr' });
+
+    function render() {
+      const xs = configs[cfg].xs;
+      const n = xs.length;
+      const sig2 = sigma * sigma;
+
+      const sum_x2 = xs.reduce((s, x) => s + x * x, 0);
+      const var_ols = sig2 / sum_x2;
+      const sd_ols = Math.sqrt(var_ols);
+
+      const sum_x = xs.reduce((s, x) => s + x, 0);
+      const var_sum = (n * sig2) / (sum_x * sum_x);
+      const sd_sum = Math.sqrt(var_sum);
+
+      const sum_inv_x2 = xs.reduce((s, x) => s + 1 / (x * x), 0);
+      const var_avg = (sig2 / (n * n)) * sum_inv_x2;
+      const sd_avg = Math.sqrt(var_avg);
+
+      const norm_ols = dist.normal(beta, sd_ols);
+      const norm_sum = dist.normal(beta, sd_sum);
+      const norm_avg = dist.normal(beta, sd_avg);
+
+      const max_sd = Math.max(sd_ols, sd_sum, sd_avg);
+      const xmin = beta - 3.8 * max_sd;
+      const xmax = beta + 3.8 * max_sd;
+      const ymax = Math.max(norm_ols.pdf(beta), norm_sum.pdf(beta), norm_avg.pdf(beta)) * 1.25;
+
+      plot.setRange({ xmin, xmax, ymin: 0, ymax });
+
+      plot.draw(g => {
+        g.curve(norm_avg.pdf, { color: 'c3', width: 2, label: 'β̃̃ = (1/n)∑(Yᵢ/xᵢ)' });
+        g.curve(norm_sum.pdf, { color: 'c2', width: 2, label: 'β̃ = (∑Yᵢ)/(∑xᵢ)' });
+        g.curve(norm_ols.pdf, { color: 'c1', width: 2.8, label: 'β̂ = (∑xᵢYᵢ)/(∑xᵢ²)' });
+        g.vline(beta, { color: 'ink', dash: [4, 4], label: `β = ${beta.toFixed(1)}` });
+      });
+
+      out.set(`Para $n = ${n}$ observaciones con $\\sigma = ${fmt(sigma, 2)}$:<br>` +
+        `• <b>Mínimos cuadrados $\\hat\\beta$:</b> $\\Var[\\hat\\beta] =$ <b>${fmt(var_ols, 4)}</b> (desv: ${fmt(sd_ols, 4)}) — <i>¡Mínima varianza siempre!</i><br>` +
+        `• <b>Cociente de sumas $\\tilde\\beta$:</b> $\\Var[\\tilde\\beta] =$ <b>${fmt(var_sum, 4)}</b> (desv: ${fmt(sd_sum, 4)}) — Eficiencia relativa: ${fmt((var_ols / var_sum) * 100, 1)} %<br>` +
+        `• <b>Promedio de cocientes $\\tilde{\\tilde\\beta}$:</b> $\\Var[\\tilde{\\tilde\\beta}] =$ <b>${fmt(var_avg, 4)}</b> (desv: ${fmt(sd_avg, 4)}) — Eficiencia relativa: ${fmt((var_ols / var_avg) * 100, 1)} %<br>` +
+        `Comprueba cómo se cumple estrictamente: $\\Var[\\hat\\beta] = ${fmt(var_ols, 4)} \\le \\Var[\\tilde\\beta] = ${fmt(var_sum, 4)} \\le \\Var[\\tilde{\\tilde\\beta}] = ${fmt(var_avg, 4)}$.`);
+    }
+
+    render();
+  })();
+
+  /* ============================================================
+     AUTOEVALUACIÓN
+     ============================================================ */
+  ui.quiz('#quiz-1', {
+    question: '1. ¿Cuál es la diferencia conceptual precisa entre un <i>estimador</i> y una <i>estimación</i>?',
+    options: [
+      'No hay diferencia alguna: son términos sinónimos usados indistintamente.',
+      'El estimador es una variable aleatoria (función de la muestra) antes de recolectar datos; la estimación es el número concreto resultante tras observar la muestra.',
+      'La estimación siempre es insesgada, mientras que el estimador siempre tiene sesgo positivo.',
+      'El estimador es el parámetro poblacional verdadero $\\theta$ y la estimación es la media muestral $\\bar X$.'
+    ],
+    answer: 1,
+    explain: 'Un estimador $\\hat\\theta(X_1,\\dots,X_n)$ es un estadístico (variable aleatoria con distribución muestral propia). Al evaluarlo en una muestra concreta observada $(x_1,\\dots,x_n)$, obtenemos un único número fijo llamado la estimación puntual.'
+  });
+
+  ui.quiz('#quiz-2', {
+    question: '2. Si un estimador $\\hat\\theta$ tiene sesgo $\\mathbb{B}(\\hat\\theta) = -0.4$ y varianza $\\Var[\\hat\\theta] = 0.20$, ¿cuál es su error cuadrático medio ($\text{MSE}$)?',
+    options: [
+      '$0.20 - 0.40 = -0.20$',
+      '$0.20 + (-0.4)^2 = 0.36$',
+      '$0.20 + (-0.4) = -0.20$',
+      '$\\sqrt{0.20 + 0.16} = 0.60$'
+    ],
+    answer: 1,
+    explain: 'Por el Teorema de descomposición Sesgo–Varianza: $\\text{MSE} = \\Var[\\hat\\theta] + [\\mathbb{B}(\\hat\\theta)]^2 = 0.20 + (-0.4)^2 = 0.20 + 0.16 = 0.36$. (El $\\text{RMSE}$ sería $\\sqrt{0.36} = 0.60$).'
+  });
+
+  ui.quiz('#quiz-3', {
+    question: '3. ¿Puede un estimador sesgado ser estrictamente preferido a uno insesgado bajo el criterio del MSE?',
+    options: [
+      'Nunca: por definición matemática un estimador insesgado siempre minimiza el MSE.',
+      'Solo si el tamaño de la muestra es infinitamente grande ($n \\to \\infty$).',
+      'Sí: si la reducción que logra en su varianza supera al cuadrado del sesgo que introduce (es decir, $\\Var[\\hat\\theta_{\\text{sesg}}] + \\mathbb{B}^2 &lt; \\Var[\\hat\\theta_{\\text{insesg}}]$).',
+      'Únicamente si los datos provienen de una distribución normal.'
+    ],
+    answer: 2,
+    explain: 'El MSE balancea tanto el sesgo como la varianza: $\\text{MSE} = \\Var + \\mathbb{B}^2$. Como vimos en el Ejercicio 6 con $\\hat\\theta = \\min\\{\\bar X, 1/2\\}$, tolerar un leve sesgo a cambio de reducir la varianza puede producir un error cuadrático medio estrictamente menor.'
+  });
+
+  ui.numcheck('#nc-1', {
+    prompt: 'Se extrae una muestra i.i.d. de tamaño $n = 16$ de una población $N(\\mu, \\sigma^2 = 32)$. Calcula el $\\text{MSE}$ de la cuasivarianza muestral $S^2$ para estimar $\sigma^2$:',
+    answer: 136.53,
+    tol: 0.25,
+    hint: 'Como $S^2$ es insesgado, $\\text{MSE}(S^2) = \\Var(S^2) = \\frac{2\\sigma^4}{n-1}$. Aquí $\\sigma^2 = 32 \\implies \\sigma^4 = 1024$ y $n - 1 = 15$.'
+  });
+
+  ui.numcheck('#nc-2', {
+    prompt: 'Un estimador $\\hat\\theta$ satisface $\\E[\\hat\\theta] = 12$ al estimar el parámetro $\\theta = 10$. Si su varianza es $\\Var[\\hat\\theta] = 5$, calcula su $\\text{MSE}$:',
+    answer: 9.0,
+    tol: 0.05,
+    hint: 'Calcula primero el sesgo: $\\mathbb{B} = \\E[\\hat\\theta] - \\theta = 12 - 10 = 2$. Luego aplica $\\text{MSE} = \\Var + \\mathbb{B}^2 = 5 + 2^2$.'
+  });
+
+})();
+</script>
+</body>
+</html>

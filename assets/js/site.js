@@ -19,6 +19,8 @@ EM.SITE = [
     { id: 'clase-03', title: 'Clase 3 · Distribuciones muestrales: χ² y t', href: 'temas/clase-03.html', desc: 'Estadísticos, X̄ ~ N(μ, σ²/n), (n−1)S²/σ² ~ χ², la t de Student.' },
     { id: 'clase-04', title: 'Clase 4 · La distribución F', href: 'temas/clase-04.html', desc: 'F de Fisher–Snedecor, cociente de varianzas, propiedad del recíproco.' },
     { id: 'clase-05', title: 'Clase 5 · Teorema del límite central', href: 'temas/clase-05.html', desc: 'TLC, aproximaciones normales, corrección por continuidad.' },
+    { id: 'clase-06', title: 'Clase 6 · Estimación puntual: sesgo y MSE', href: 'temas/clase-06.html', desc: 'Estimadores puntuales, insesgadez, sesgo, error cuadrático medio (MSE) y compromiso sesgo–varianza.' },
+    { id: 'clase-07', title: 'Clase 7 · Comparación de estimadores y error de estimación', href: 'temas/clase-07.html', desc: 'Eficiencia relativa, insesgadez asintótica, simulación Monte Carlo, cota de error 2σ y tamaño de muestra.' },
   ]},
   { group: 'Herramientas', items: [
     { id: 'formulario', title: 'Formulario completo (Est. I + Est Mat)', href: 'herramientas/formulario.html', desc: 'Todas las fórmulas esenciales en una página: modelos, FGM, transformaciones, estadísticos de orden, χ², t, F y TLC.' },
@@ -27,5 +29,6 @@ EM.SITE = [
   ]},
   { group: 'Deberes', items: [
     { id: 'lista-1-1', title: 'Lista 1.1 · Transformaciones y estadísticos de orden', href: 'deberes/lista-1-1.html', desc: 'Pistas graduales, soluciones completas y verificación por simulación.' },
+    { id: 'lista-1-2', title: 'Lista 1.2 · Teorema del límite central', href: 'deberes/lista-1-2.html', desc: 'Estimación Monte Carlo de π, procesos multiplicativos, sumas de Poisson y particiones aleatorias con simulaciones.' },
   ]},
 ];

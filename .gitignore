@@ -6,6 +6,7 @@ scripts/build/
 
 # Entorno de trabajo local
 .claude/
+.agents/
 .venv/
 venv/
 

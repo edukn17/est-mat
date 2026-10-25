@@ -1,0 +1,820 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clase 7 · Comparación de estimadores, insesgadez asintótica y error de estimación</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/theme.js"></script>
+<style>
+  .badge.star { background: var(--plot-c4, #e67e22); color: #fff; font-size: 0.72rem; padding: 2px 7px; border-radius: 4px; vertical-align: middle; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+  .table-wrap { overflow-x: auto; margin: 1.2rem 0; }
+  table.tabla { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+  table.tabla th, table.tabla td { padding: 9px 12px; border: 1px solid var(--border, #e2e8f0); text-align: center; }
+  table.tabla th { background: var(--surface-2, #f8fafc); font-weight: 600; color: var(--ink); }
+  table.tabla td.izq { text-align: left; }
+  .code-block { margin: 1rem 0; border-radius: 8px; overflow-x: auto; background: var(--code-bg, #1e293b); color: #f1f5f9; padding: 1rem 1.2rem; font-family: var(--font-mono, monospace); font-size: 0.88rem; line-height: 1.5; border: 1px solid var(--border, rgba(255,255,255,0.1)); }
+  .code-block code { background: transparent; padding: 0; color: inherit; font-size: inherit; }
+  .comp-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.82rem; font-weight: 600; font-family: var(--font-mono); }
+  .tag-win { background: rgba(34, 197, 94, 0.15); color: var(--good, #16a34a); }
+  .tag-loss { background: rgba(239, 68, 68, 0.15); color: var(--bad, #dc2626); }
+</style>
+</head>
+<body data-page="clase-07" data-root="../">
+<main id="contenido">
+
+  <header class="page-head">
+    <p class="kicker">Clase 7 · Unidad 2 — Teoría de la estimación</p>
+    <h1>Comparación de estimadores, insesgadez asintótica y error de estimación</h1>
+    <p class="lead">Cinco problemas fundamentales sobre eficiencia de estimadores puntuales, el comportamiento del sesgo cuando $n \to \infty$, la cota de error de estimación $b = 2\sigma_{\hat\theta}$ y el cálculo del tamaño de muestra.</p>
+  </header>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="comparacion">Comparando estimadores insesgados</h2>
+    <p>En la práctica estadística es muy común contar con más de un estimador insesgado para un mismo parámetro poblacional $\theta$. Si dos estimadores $\hat\theta_1$ y $\hat\theta_2$ carecen de sesgo sistemático ($\E[\hat\theta_1] = \E[\hat\theta_2] = \theta$), ¿con cuál debemos quedarnos?</p>
+    
+    <p>El criterio canónico es el <b>error cuadrático medio (MSE)</b>. Recordando la descomposición fundamental:</p>
+    $$\text{MSE}(\hat\theta) = \Var(\hat\theta) + \big[\mathbb{B}(\hat\theta)\big]^2.$$
+    <p>Cuando los estimadores son ambos insesgados, el sesgo se anula ($\mathbb{B} = 0$), de modo que el MSE coincide exactamente con la <b>varianza</b>:</p>
+    $$\text{MSE}(\hat\theta) = \Var(\hat\theta).$$
+    <p>El estimador con menor varianza es más eficiente: sus valores se agrupan con mayor densidad alrededor del parámetro objetivo $\theta$, minimizando el error esperado de estimación.</p>
+
+    <!-- ---------------- Ejercicio 1 ---------------- -->
+    <div class="box ejercicio" id="ej-1">
+      <span class="box-title">Ejercicio 1 · Media muestral vs. mínimo escalado en la población Exponencial</span>
+      <p>Sea $X_1, \dots, X_n$ una muestra aleatoria independiente e idénticamente distribuida ($\iid$) de una población $\text{Exp}(\delta)$, donde $\delta &gt; 0$ es un parámetro desconocido de escala (media poblacional $\delta$), con función de densidad:</p>
+      $$f(x) = \frac{1}{\delta}e^{-x/\delta}, \qquad x &gt; 0.$$
+      <ol class="pasos">
+        <li>Demuestre que la media muestral $\bar X = \frac{1}{n}\sum_{i=1}^n X_i$ es un estimador insesgado para $\delta$.</li>
+        <li>Demuestre que el estadístico $n X_{(1)} = n \min(X_1, \dots, X_n)$ es también un estimador insesgado para $\delta$.</li>
+        <li>¿Cuál estimador es mejor para estimar $\delta$: $\bar X$ o $n X_{(1)}$? Justifique con base en sus errores cuadráticos medios y su comportamiento asintótico.</li>
+      </ol>
+
+      <details class="pista"><summary>Pista para el literal 1</summary><div>
+        <p>Recuerde que para una variable exponencial $X_i \sim \text{Exp}(\delta)$, $\E[X_i] = \delta$ y $\Var(X_i) = \delta^2$. Aplique la linealidad del operador esperanza a $\bar X = \frac{1}{n}\sum_{i=1}^n X_i$.</p>
+      </div></details>
+
+      <details class="pista"><summary>Pista para el literal 2</summary><div>
+        <p>Utilice la función de supervivencia del mínimo $X_{(1)}$ vista en la Clase 2: para variables independientes, $\P(X_{(1)} &gt; t) = [\P(X_1 &gt; t)]^n$. Como $\P(X_i &gt; t) = e^{-t/\delta}$, deduzca la distribución exacta de $X_{(1)}$ e identifique su parámetro de escala.</p>
+      </div></details>
+
+      <details class="pista"><summary>Pista para el literal 3</summary><div>
+        <p>Como ambos estimadores son insesgados, compare directamente $\Var(\bar X)$ con $\Var(n X_{(1)})$. Observe qué ocurre con cada varianza cuando el tamaño de muestra $n$ se incrementa sin límite ($n \to \infty$).</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <h4>1. Insesgadez de la media muestral $\bar X$</h4>
+        <ol class="pasos">
+          <li>Por propiedades de la distribución exponencial $\text{Exp}(\delta)$, cada observación tiene esperanza y varianza:
+            $$\E[X_i] = \delta, \qquad \Var(X_i) = \delta^2, \quad \forall i = 1, \dots, n.$$</li>
+          <li>Aplicando la linealidad de la esperanza a $\bar X$:
+            $$\E[\bar X] = \E\left[\frac{1}{n}\sum_{i=1}^n X_i\right] = \frac{1}{n}\sum_{i=1}^n \E[X_i] = \frac{1}{n}(n \delta) = \delta.$$
+            Por lo tanto, $\bar X$ es un estimador <b>insesgado</b> de $\delta$.</li>
+          <li>Su varianza es:
+            $$\Var(\bar X) = \Var\left[\frac{1}{n}\sum_{i=1}^n X_i\right] = \frac{1}{n^2}\sum_{i=1}^n \Var(X_i) = \frac{1}{n^2}(n \delta^2) = \frac{\delta^2}{n}.$$</li>
+        </ol>
+
+        <h4>2. Insesgadez del mínimo escalado $n X_{(1)}$</h4>
+        <ol class="pasos">
+          <li>Determinamos la distribución del primer estadístico de orden $X_{(1)} = \min(X_1, \dots, X_n)$ mediante la probabilidad de cola (función de supervivencia):
+            $$\P(X_{(1)} &gt; t) = \P(X_1 &gt; t, X_2 &gt; t, \dots, X_n &gt; t) = \prod_{i=1}^n \P(X_i &gt; t) = \big(e^{-t/\delta}\big)^n = e^{-nt/\delta} = e^{-\frac{t}{\delta/n}}, \quad t &gt; 0.$$</li>
+          <li>Reconocemos de inmediato que $X_{(1)}$ sigue una distribución exponencial con parámetro de escala (media) $\delta/n$:
+            $$X_{(1)} \sim \text{Exp}\left(\text{media } \frac{\delta}{n}\right).$$
+            En consecuencia, sus momentos teóricos son:
+            $$\E[X_{(1)}] = \frac{\delta}{n}, \qquad \Var(X_{(1)}) = \left(\frac{\delta}{n}\right)^2 = \frac{\delta^2}{n^2}.$$</li>
+          <li>Evaluamos la esperanza del estimador transformado $\hat\delta_2 = n X_{(1)}$:
+            $$\E\big[n X_{(1)}\big] = n\,\E[X_{(1)}] = n\left(\frac{\delta}{n}\right) = \delta.$$
+            Por lo tanto, $n X_{(1)}$ también es un estimador <b>insesgado</b> para $\delta$.</li>
+          <li>Calculamos su varianza utilizando las propiedades de la varianza bajo escalamiento:
+            $$\Var\big(n X_{(1)}\big) = n^2\,\Var(X_{(1)}) = n^2 \left(\frac{\delta^2}{n^2}\right) = \delta^2.$$</li>
+        </ol>
+
+        <h4>3. Comparación de estimadores: ¿cuál es mejor?</h4>
+        <ol class="pasos">
+          <li>Puesto que ambos estimadores son insesgados ($\mathbb{B} = 0$), sus errores cuadráticos medios coinciden con sus respectivas varianzas:
+            $$\text{MSE}_\delta(\bar X) = \Var(\bar X) = \frac{\delta^2}{n}, \qquad \text{MSE}_\delta(n X_{(1)}) = \Var(n X_{(1)}) = \delta^2.$$</li>
+          <li>Para cualquier muestra con más de una observación ($n &gt; 1$):
+            $$\frac{\delta^2}{n} &lt; \delta^2 \iff \text{MSE}_\delta(\bar X) &lt; \text{MSE}_\delta(n X_{(1)}).$$
+            Por tanto, **$\bar X$ es estrictamente superior a $n X_{(1)}$**.</li>
+          <li><b>Eficiencia relativa y comportamiento asintótico:</b>
+            $$\text{eff}\big(\bar X, n X_{(1)}\big) = \frac{\Var(n X_{(1)})}{\Var(\bar X)} = \frac{\delta^2}{\delta^2/n} = n.$$
+            La media muestral $\bar X$ es $n$ veces más eficiente. Más trascendente aún:
+            $$\lim_{n\to\infty} \Var(\bar X) = \lim_{n\to\infty} \frac{\delta^2}{n} = 0 \quad (\bar X \text{ es consistente en media cuadrática}),$$
+            mientras que
+            $$\Var\big(n X_{(1)}\big) = \delta^2 \quad (\text{constante para todo } n).$$
+            La variable $n X_{(1)}$ tiene exactamente distribución $\text{Exp}(\delta)$ para cualquier tamaño de muestra. Aunque tengamos $n = 10\,000$ observaciones, el estimador $n X_{(1)}$ conserva la incertidumbre de una sola observación original $X_1$, desperdiciando el $99.99\%$ de la información muestral.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- ---------------- Simulación 1 ---------------- -->
+    <div class="sim" id="sim-exp-min">
+      <p class="sim-title">Simulación interactiva 1 · Densidades de $\bar X$ vs. $n X_{(1)}$ en la población $\text{Exp}(\delta)$</p>
+      <p class="sim-desc">Compara la distribución muestral de ambos estimadores insesgados al variar la media poblacional $\delta$ y el tamaño de muestra $n$. Observa cómo la densidad exacta de la media muestral $\bar X \sim \text{Gamma}(n, \delta/n)$ colapsa en un pico estrecho sobre $\delta$, mientras que la densidad de $n X_{(1)} \sim \text{Exp}(\delta)$ permanece inmutable sin importar el valor de $n$.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+
+    <div class="box nota"><span class="box-title">Lección clave sobre suficiencia e información</span>
+      <p>La media muestral $\bar X$ promedia toda la muestra y reduce la dispersión a ritmo $1/n$. En cambio, $n X_{(1)}$ descarta $n-1$ datos y se queda únicamente con el mínimo. Aunque el factor de corrección $n$ compensa el sesgo a la perfección, no puede recuperar la información de dispersión perdida.</p>
+    </div>
+
+    <!-- ---------------- Ejercicio 2 ---------------- -->
+    <div class="box ejercicio" id="ej-2">
+      <span class="box-title">Ejercicio 2 · Estimación de la correlación $\rho$ con un par normal estándar</span>
+      <p>Considere dos variables aleatorias continuas $(X_1, X_2)$ con distribución normal bivariada estándar, es decir, $X_1 \sim N(0, 1)$, $X_2 \sim N(0, 1)$ y coeficiente de correlación lineal $\rho = \text{Corr}(X_1, X_2) \ne 0$.</p>
+      <ol class="pasos">
+        <li>Demuestre que el producto cruzado $\hat\rho = X_1 X_2$ es un estimador insesgado para el parámetro de correlación $\rho$.</li>
+        <li>Calcule el error cuadrático medio $\text{MSE}(\hat\rho)$. <em>(Sugerencia: use la propiedad de la esperanza iterada $\E[\hat\rho^2] = \E\big[\E(X_1^2 X_2^2 \mid X_2)\big]$ y la distribución condicional de una normal bivariada).</em></li>
+      </ol>
+
+      <details class="pista"><summary>Pista para el literal 1</summary><div>
+        <p>Escriba la definición de covarianza: $\Cov(X_1, X_2) = \E[X_1 X_2] - \E[X_1]\E[X_2]$. ¿Cuáles son las medias marginales $\E[X_1]$ y $\E[X_2]$?</p>
+      </div></details>
+
+      <details class="pista"><summary>Pista para el literal 2</summary><div>
+        <p>En una normal bivariada estándar, la distribución condicional de $X_1$ dado $X_2 = x_2$ es $X_1 \mid X_2 \sim N(\rho X_2, 1 - \rho^2)$. Calcule $\E[X_1^2 \mid X_2] = \Var(X_1 \mid X_2) + (\E[X_1 \mid X_2])^2$ y recuerde que para una variable normal estándar $Z \sim N(0, 1)$ se tiene $\E[Z^2] = 1$ y $\E[Z^4] = 3$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <h4>1. Demostración de insesgadez: $\E[\hat\rho] = \rho$</h4>
+        <ol class="pasos">
+          <li>Por hipótesis, $X_1, X_2 \sim N(0, 1)$, lo que implica $\E[X_1] = 0$, $\E[X_2] = 0$, y $\Var(X_1) = \Var(X_2) = 1$.</li>
+          <li>Por la definición fundamental del coeficiente de correlación de Pearson:
+            $$\rho = \frac{\Cov(X_1, X_2)}{\sqrt{\Var(X_1)\Var(X_2)}} = \frac{\E[X_1 X_2] - \E[X_1]\E[X_2]}{\sqrt{1 \cdot 1}} = \E[X_1 X_2] - (0)(0) = \E[X_1 X_2].$$</li>
+          <li>Dado que $\hat\rho = X_1 X_2$:
+            $$\E[\hat\rho] = \E[X_1 X_2] = \rho.$$
+            Por consiguiente, $\hat\rho = X_1 X_2$ es un estimador <b>insesgado</b> de la correlación poblacional $\rho$.</li>
+        </ol>
+
+        <h4>2. Cálculo del error cuadrático medio: $\text{MSE}(\hat\rho)$</h4>
+        <ol class="pasos">
+          <li>Al ser $\hat\rho$ insesgado, su error cuadrático medio es idéntico a su varianza:
+            $$\text{MSE}(\hat\rho) = \Var(\hat\rho) = \E[\hat\rho^2] - \big(\E[\hat\rho]\big)^2 = \E\big[X_1^2 X_2^2\big] - \rho^2.$$</li>
+          <li>Para hallar $\E[X_1^2 X_2^2]$, recurrimos a la <b>ley de las esperanzas iteradas</b> condicionando sobre $X_2$:
+            $$\E\big[X_1^2 X_2^2\big] = \E\Big[\E\big(X_1^2 X_2^2 \mid X_2\big)\Big] = \E\Big[X_2^2\,\E\big(X_1^2 \mid X_2\big)\Big].$$</li>
+          <li>Propiedades de la distribución condicional de la normal bivariada estándar:
+            $$X_1 \mid X_2 \sim N\big(\rho X_2, \; 1 - \rho^2\big).$$
+            Por tanto, el segundo momento condicional es:
+            $$\E\big[X_1^2 \mid X_2\big] = \Var(X_1 \mid X_2) + \big(\E[X_1 \mid X_2]\big)^2 = (1 - \rho^2) + \rho^2 X_2^2.$$</li>
+          <li>Sustituimos este resultado en la esperanza total:
+            $$\E\big[X_1^2 X_2^2\big] = \E\Big[X_2^2\big((1 - \rho^2) + \rho^2 X_2^2\big)\Big] = (1 - \rho^2)\E[X_2^2] + \rho^2 \E[X_2^4].$$</li>
+          <li>Como $X_2 \sim N(0, 1)$, sus momentos centrales pares son $\E[X_2^2] = 1$ y $\E[X_2^4] = 3$:
+            $$\E\big[X_1^2 X_2^2\big] = (1 - \rho^2)(1) + \rho^2(3) = 1 - \rho^2 + 3\rho^2 = 1 + 2\rho^2.$$</li>
+          <li>Finalmente, calculamos la varianza restando $(\E[\hat\rho])^2 = \rho^2$:
+            $$\text{MSE}(\hat\rho) = \Var(\hat\rho) = (1 + 2\rho^2) - \rho^2 = \boxed{1 + \rho^2}.$$</li>
+        </ol>
+        <p class="small muted">Nota adicional: observe que incluso si las variables están perfectamente correlacionadas ($|\rho| = 1$), $\text{MSE}(\hat\rho) = 1 + 1^2 = 2 &gt; 0$. Para estimar la correlación de forma precisa se requiere promediar productos cruzados a lo largo de una muestra de tamaño $n$.</p>
+      </div></details>
+    </div>
+
+    <!-- ---------------- Ejercicio 3 ---------------- -->
+    <div class="box ejercicio" id="ej-3">
+      <span class="box-title">Ejercicio 3 <span class="badge star">★ reto</span> · La media muestral como el mejor estimador lineal insesgado</span>
+      <p>Sean $X_1, \dots, X_n$ variables aleatorias independientes e idénticamente distribuidas con media común $\E[X_i] = \theta$ y varianza común $\Var(X_i) = \sigma^2 &lt; \infty$. Considere la clase de todas las combinaciones lineales de la muestra:</p>
+      $$\hat\theta_n = \sum_{i=1}^n a_i X_i, \qquad a_1, \dots, a_n \in \R.$$
+      <p>Bajo la condición de que $\hat\theta_n$ sea un estimador <b>insesgado</b> para $\theta$ (lo cual exige $\sum_{i=1}^n a_i = 1$), demuestre rigurosamente que la varianza $\Var(\hat\theta_n)$ alcanza su valor mínimo absoluto si y solo si todos los coeficientes son idénticos:</p>
+      $$a_1 = a_2 = \cdots = a_n = \frac{1}{n} \implies \hat\theta_n = \bar X.$$
+
+      <details class="pista"><summary>Pista 1</summary><div>
+        <p>Calcule $\E[\hat\theta_n]$ y compruebe por qué la condición $\sum_{i=1}^n a_i = 1$ caracteriza exactamente a todos los estimadores lineales insesgados. Luego use la independencia para escribir $\Var(\hat\theta_n)$ en términos de $\sum a_i^2$.</p>
+      </div></details>
+
+      <details class="pista"><summary>Pista 2</summary><div>
+        <p>Para probar la minimalidad, descomponga cada coeficiente como $a_i = \frac{1}{n} + \big(a_i - \frac{1}{n}\big)$ y eleve al cuadrado, o aplique la desigualdad de Cauchy–Schwarz a los vectores $\mathbf{a} = (a_1, \dots, a_n)$ y $\mathbf{1} = (1, \dots, 1)$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso (dos demostraciones elegantes)</summary><div>
+        <h4>Condición de insesgadez y expresión de la varianza</h4>
+        <ol class="pasos">
+          <li>Calculamos la esperanza de la combinación lineal:
+            $$\E[\hat\theta_n] = \E\left[\sum_{i=1}^n a_i X_i\right] = \sum_{i=1}^n a_i \E[X_i] = \theta \sum_{i=1}^n a_i.$$
+            Para que $\E[\hat\theta_n] = \theta$ para cualquier valor posible de $\theta$, es estrictamente necesario y suficiente que:
+            $$\sum_{i=1}^n a_i = 1.$$</li>
+          <li>Como las observaciones $X_i$ son independientes, la varianza de la suma lineal es la suma de las varianzas ponderadas por el cuadrado de los pesos:
+            $$\Var(\hat\theta_n) = \Var\left(\sum_{i=1}^n a_i X_i\right) = \sum_{i=1}^n a_i^2 \Var(X_i) = \sigma^2 \sum_{i=1}^n a_i^2.$$
+            Por lo tanto, minimizar la varianza de $\hat\theta_n$ equivale exactamente al problema de optimización cuadrática:
+            $$\min_{a_1,\dots,a_n} \sum_{i=1}^n a_i^2 \quad \text{sujeto a} \quad \sum_{i=1}^n a_i = 1.$$</li>
+        </ol>
+
+        <h4>Método 1 · Descomposición ortogonal alrededor de $1/n$</h4>
+        <ol class="pasos">
+          <li>Expresamos cada coeficiente $a_i$ como la desviación respecto al valor uniforme $\frac{1}{n}$:
+            $$a_i = \frac{1}{n} + \left(a_i - \frac{1}{n}\right).$$</li>
+          <li>Elevamos al cuadrado y sumamos sobre los $n$ índices:
+            $$\sum_{i=1}^n a_i^2 = \sum_{i=1}^n \left[\frac{1}{n^2} + \frac{2}{n}\left(a_i - \frac{1}{n}\right) + \left(a_i - \frac{1}{n}\right)^2\right] = \sum_{i=1}^n \frac{1}{n^2} + \frac{2}{n}\sum_{i=1}^n \left(a_i - \frac{1}{n}\right) + \sum_{i=1}^n \left(a_i - \frac{1}{n}\right)^2.$$</li>
+          <li>Observamos el término cruzado central:
+            $$\sum_{i=1}^n \left(a_i - \frac{1}{n}\right) = \sum_{i=1}^n a_i - n\left(\frac{1}{n}\right) = 1 - 1 = 0.$$
+            ¡El término lineal se anula por completo debido a la restricción de insesgadez!</li>
+          <li>Nos queda la identidad exacta:
+            $$\sum_{i=1}^n a_i^2 = \frac{n}{n^2} + \sum_{i=1}^n \left(a_i - \frac{1}{n}\right)^2 = \frac{1}{n} + \sum_{i=1}^n \left(a_i - \frac{1}{n}\right)^2.$$</li>
+          <li>Como cada sumando $\left(a_i - \frac{1}{n}\right)^2 \ge 0$, se concluye que:
+            $$\sum_{i=1}^n a_i^2 \ge \frac{1}{n},$$
+            con igualdad estricta si y solo si cada término cuadrático se anula:
+            $$a_i - \frac{1}{n} = 0 \iff a_i = \frac{1}{n}, \quad \forall i = 1, \dots, n.$$</li>
+        </ol>
+
+        <h4>Método 2 · Desigualdad de Cauchy–Schwarz en $\R^n$</h4>
+        <ol class="pasos">
+          <li>Consideremos los vectores $\mathbf{a} = (a_1, a_2, \dots, a_n)$ y $\mathbf{u} = (1, 1, \dots, 1) \in \R^n$.</li>
+          <li>Por la desigualdad de Cauchy–Schwarz:
+            $$\big(\mathbf{a} \cdot \mathbf{u}\big)^2 \le \|\mathbf{a}\|^2 \|\mathbf{u}\|^2 \iff \left(\sum_{i=1}^n a_i \cdot 1\right)^2 \le \left(\sum_{i=1}^n a_i^2\right) \left(\sum_{i=1}^n 1^2\right).$$</li>
+          <li>Sustituyendo $\sum_{i=1}^n a_i = 1$ y $\sum_{i=1}^n 1^2 = n$:
+            $$1^2 \le n \sum_{i=1}^n a_i^2 \implies \sum_{i=1}^n a_i^2 \ge \frac{1}{n}.$$</li>
+          <li>La igualdad en Cauchy–Schwarz se alcanza si y solo si los vectores son colineales: $\mathbf{a} = c\,\mathbf{u}$, lo que implica $a_1 = a_2 = \cdots = a_n = c$. Como la suma debe ser $1$, $n c = 1 \implies c = \frac{1}{n}$.</li>
+        </ol>
+
+        <h4>Conclusión fundamental</h4>
+        <p>La varianza mínima absoluta entre todas las combinaciones lineales insesgadas es $\frac{\sigma^2}{n}$, y se alcanza de forma única con la <b>media muestral</b> $\bar X = \frac{1}{n}\sum_{i=1}^n X_i$. Este resultado constituye el cimiento del célebre teorema de Gauss–Márkov en regresión lineal (estimador BLUE: <em>Best Linear Unbiased Estimator</em>).</p>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="asintotica">Insesgadez asintótica y simulación Monte Carlo</h2>
+    
+    <div class="box definicion"><span class="box-title">Definición · Estimador asintóticamente insesgado</span>
+      <p>Sea $\hat\theta_n$ una sucesión de estimadores del parámetro $\theta$ construidos con muestras de tamaño $n$. Decimos que $\hat\theta_n$ es un estimador <b>asintóticamente insesgado</b> para $\theta$ si su sesgo desaparece cuando el tamaño de muestra tiende a infinito:</p>
+      $$\lim_{n\to\infty} \mathbb{B}(\hat\theta_n) = 0 \iff \lim_{n\to\infty} \E[\hat\theta_n] = \theta.$$
+    </div>
+
+    <div class="box idea"><span class="box-title">Insesgadez exacta vs. insesgadez asintótica</span>
+      <p>Un estimador puede ser sesgado para cualquier tamaño de muestra finito $n$ y, sin embargo, ser perfectamente admisible si su sesgo se desvanece al crecer la muestra. El ejemplo clásico es la varianza muestral sesgada:</p>
+      $$S_n^2 = \frac{1}{n}\sum_{i=1}^n (X_i - \bar X)^2 \implies \E[S_n^2] = \frac{n-1}{n}\sigma^2 = \sigma^2 - \frac{\sigma^2}{n}.$$
+      <p>Para cualquier $n$ finito, $\mathbb{B}(S_n^2) = -\frac{\sigma^2}{n} \ne 0$ (es sesgado a la baja). Pero al tomar el límite:</p>
+      $$\lim_{n\to\infty} \mathbb{B}(S_n^2) = \lim_{n\to\infty} \left(-\frac{\sigma^2}{n}\right) = 0 \implies S_n^2 \text{ es asintóticamente insesgado}.$$
+      <p>Sin embargo, <b>no todo estimador sesgado es asintóticamente insesgado</b>. Si el sesgo no depende de $n$ o tiende a una constante distinta de cero, la acumulación de datos no corregirá el error de calibración.</p>
+    </div>
+
+    <!-- ---------------- Ejercicio 4 ---------------- -->
+    <div class="box ejercicio" id="ej-4">
+      <span class="box-title">Ejercicio 4 · Estimación de $\lambda^2$ en una población Poisson</span>
+      <p>Sean $X_1, \dots, X_n$ variables aleatorias $\iid$ con distribución de Poisson de parámetro $\lambda &gt; 0$ desconocido, con función de probabilidad $\P(X = k) = \frac{e^{-\lambda}\lambda^k}{k!}$ ($k = 0, 1, 2, \dots$). Considere el estadístico propuesto:</p>
+      $$T_n := (\bar X_n)^2 - \bar X_n.$$
+      <ol class="pasos">
+        <li><b>(a)</b> Demuestre que $T_n$ es un estimador <b>sesgado</b> de $\lambda^2$.</li>
+        <li><b>(b)</b> Encuentre la expresión analítica del sesgo $\mathbb{B}[T_n]$ y, a partir de ella, construya un estimador $\hat\theta_n$ que sea rigurosamente <b>insesgado</b> para $\lambda^2$.</li>
+        <li><b>(c)</b> Demuestre que $T_n$ <b>no</b> es asintóticamente insesgado para $\lambda^2$.</li>
+        <li><b>(d)</b> Verifique numéricamente los literales (b) y (c) mediante simulación Monte Carlo.</li>
+      </ol>
+
+      <details class="pista"><summary>Pista para (a) y (b)</summary><div>
+        <p>Para $X_i \iid \text{Poisson}(\lambda)$, se tiene $\E[\bar X_n] = \lambda$ y $\Var(\bar X_n) = \frac{\lambda}{n}$. Use la identidad de momentos $\E[(\bar X_n)^2] = \Var(\bar X_n) + (\E[\bar X_n])^2$.</p>
+      </div></details>
+
+      <details class="pista"><summary>Pista para (c)</summary><div>
+        <p>Tome el límite cuando $n \to \infty$ del sesgo $\mathbb{B}[T_n]$ obtenido en el literal (b). ¿Da cero o queda un término dependiente de $\lambda$?</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <h4>(a) Demostración del sesgo de $T_n$</h4>
+        <ol class="pasos">
+          <li>Para una población Poisson($\lambda$), la media y varianza poblacionales son $\E[X_i] = \lambda$ y $\Var(X_i) = \lambda$.</li>
+          <li>Para la media muestral $\bar X_n = \frac{1}{n}\sum_{i=1}^n X_i$:
+            $$\E[\bar X_n] = \lambda, \qquad \Var(\bar X_n) = \frac{\lambda}{n}.$$</li>
+          <li>Calculamos el segundo momento ordinario de la media muestral:
+            $$\E\big[(\bar X_n)^2\big] = \Var(\bar X_n) + \big(\E[\bar X_n]\big)^2 = \frac{\lambda}{n} + \lambda^2.$$</li>
+          <li>Aplicando la linealidad de la esperanza a $T_n = (\bar X_n)^2 - \bar X_n$:
+            $$\E[T_n] = \E\big[(\bar X_n)^2\big] - \E[\bar X_n] = \left(\lambda^2 + \frac{\lambda}{n}\right) - \lambda = \lambda^2 - \left(1 - \frac{1}{n}\right)\lambda = \lambda^2 - \frac{n-1}{n}\lambda.$$</li>
+          <li>Para todo tamaño de muestra $n \ge 2$, como $\lambda &gt; 0$ se tiene que $\frac{n-1}{n}\lambda \ne 0$, por lo que:
+            $$\E[T_n] = \lambda^2 - \frac{n-1}{n}\lambda \ne \lambda^2.$$
+            Por lo tanto, $T_n$ es un estimador <b>sesgado</b> de $\lambda^2$.</li>
+        </ol>
+
+        <h4>(b) Expresión del sesgo y corrección a un estimador insesgado</h4>
+        <ol class="pasos">
+          <li>El sesgo exacto de $T_n$ como estimador de $\lambda^2$ es:
+            $$\mathbb{B}[T_n] = \E[T_n] - \lambda^2 = -\frac{n-1}{n}\lambda.$$
+            El estimador subestima sistemáticamente a $\lambda^2$ en una cantidad proporcional a $\lambda$.</li>
+          <li>Para corregirlo y fabricar un estimador insesgado de $\lambda^2$, observemos de nuevo el segundo momento de la media:
+            $$\E\big[(\bar X_n)^2\big] = \lambda^2 + \frac{\lambda}{n}.$$
+            El término "parásito" que acompaña a $\lambda^2$ es $+\frac{\lambda}{n}$, no $-\lambda$. Como $\E[\bar X_n] = \lambda$, podemos restar exactamente su estimador insesgado $\frac{\bar X_n}{n}$:
+            $$\hat\theta_n := (\bar X_n)^2 - \frac{\bar X_n}{n} = \bar X_n\left(\bar X_n - \frac{1}{n}\right).$$</li>
+          <li>Comprobamos su esperanza:
+            $$\E[\hat\theta_n] = \E\big[(\bar X_n)^2\big] - \frac{1}{n}\E[\bar X_n] = \left(\lambda^2 + \frac{\lambda}{n}\right) - \frac{\lambda}{n} = \lambda^2.$$
+            ¡El estimador $\hat\theta_n = (\bar X_n)^2 - \frac{\bar X_n}{n}$ es estrictamente <b>insesgado</b> para $\lambda^2$ para cualquier $n \ge 1$!</li>
+          <li>En términos de $T_n$, la corrección equivale a sumar:
+            $$\hat\theta_n = T_n + \frac{n-1}{n}\bar X_n.$$</li>
+        </ol>
+
+        <h4>(c) Inexistencia de insesgadez asintótica para $T_n$</h4>
+        <ol class="pasos">
+          <li>Tomamos el límite cuando $n \to \infty$ del sesgo analítico de $T_n$:
+            $$\lim_{n\to\infty} \mathbb{B}[T_n] = \lim_{n\to\infty} \left(-\frac{n-1}{n}\lambda\right) = -\lambda \lim_{n\to\infty}\left(1 - \frac{1}{n}\right) = -\lambda.$$</li>
+          <li>Dado que la tasa de Poisson es estrictamente positiva ($\lambda &gt; 0$), el límite del sesgo es $-\lambda \ne 0$.</li>
+          <li>Equivalentemente:
+            $$\lim_{n\to\infty} \E[T_n] = \lim_{n\to\infty} \left(\lambda^2 - \frac{n-1}{n}\lambda\right) = \lambda^2 - \lambda \ne \lambda^2.$$
+            Por lo tanto, **$T_n$ NO es asintóticamente insesgado** para $\lambda^2$. Su sesgo es persistente y nunca desaparece.</li>
+          <li><em>Contraste didáctico:</em> el estimador ingenuo $(\bar X_n)^2$ tiene esperanza $\lambda^2 + \frac{\lambda}{n}$, con sesgo $+\frac{\lambda}{n} \to 0$ cuando $n \to \infty$. Por ende, $(\bar X_n)^2$ <b>sí</b> es asintóticamente insesgado, mientras que $T_n$ se descalibra por haber restado incorrectamente $\bar X_n$ completo en lugar de $\frac{\bar X_n}{n}$.</li>
+        </ol>
+
+        <h4>(d) Código reproducible en R</h4>
+        <p>A continuación se presenta el script limpio en R para reproducir la verificación Monte Carlo:</p>
+        <div class="code-block"><code><span style="color:#6ee7b7"># Verificación Monte Carlo del Ejercicio 4</span>
+<span style="color:#93c5fd">set.seed</span>(<span style="color:#fca5a5">2026</span>)
+lambda <- <span style="color:#fca5a5">2.5</span>
+M <- <span style="color:#fca5a5">100000</span>  <span style="color:#6ee7b7"># Número de réplicas</span>
+n_vals <- <span style="color:#93c5fd">c</span>(<span style="color:#fca5a5">2</span>, <span style="color:#fca5a5">5</span>, <span style="color:#fca5a5">10</span>, <span style="color:#fca5a5">25</span>, <span style="color:#fca5a5">50</span>, <span style="color:#fca5a5">100</span>)
+
+<span style="color:#93c5fd">cat</span>(<span style="color:#fca5a5">"lambda^2 objetivo ="</span>, lambda^<span style="color:#fca5a5">2</span>, <span style="color:#fca5a5">"\n"</span>)
+<span style="color:#93c5fd">for</span> (n <span style="color:#93c5fd">in</span> n_vals) {
+  <span style="color:#6ee7b7"># Por aditividad: sum(X_i) ~ Poisson(n * lambda)</span>
+  s_n <- <span style="color:#93c5fd">rpois</span>(M, lambda = n * lambda)
+  x_bar <- s_n / n
+  
+  T_n <- x_bar^<span style="color:#fca5a5">2</span> - x_bar
+  theta_hat <- x_bar^<span style="color:#fca5a5">2</span> - (x_bar / n)
+  
+  sesgo_sim_T <- <span style="color:#93c5fd">mean</span>(T_n) - lambda^<span style="color:#fca5a5">2</span>
+  sesgo_teor_T <- -((n - <span style="color:#fca5a5">1</span>) / n) * lambda
+  sesgo_sim_hat <- <span style="color:#93c5fd">mean</span>(theta_hat) - lambda^<span style="color:#fca5a5">2</span>
+  
+  <span style="color:#93c5fd">cat</span>(<span style="color:#93c5fd">sprintf</span>(<span style="color:#fca5a5">"n = %3d | Sesgo T_n sim: %+.4f (teor: %+.4f) | Sesgo theta_hat sim: %+.4f\n"</span>,
+              n, sesgo_sim_T, sesgo_teor_T, sesgo_sim_hat))
+}</code></div>
+      </div></details>
+    </div>
+
+    <!-- ---------------- Simulación 2 ---------------- -->
+    <div class="sim" id="sim-poisson-sesgo">
+      <p class="sim-title">Simulación interactiva 2 · Laboratorio Monte Carlo del Ejercicio 4</p>
+      <p class="sim-desc">Mueve los deslizadores de $\lambda$ y $n$ para comparar las trayectorias teóricas de $\E[T_k]$ (línea roja), $\E[(\bar X_k)^2]$ (línea naranja discontinua) y el estimador insesgado $\E[\hat\theta_k]$ (línea verde sobre $\lambda^2$). Los puntos grandes representan los promedios empíricos de $M = 2000$ réplicas simuladas en tiempo real.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="error-estimacion">Error de estimación y determinación del tamaño de muestra</h2>
+
+    <div class="box definicion"><span class="box-title">Definición · Error de estimación y cota $b$</span>
+      <p>El <b>error de estimación</b> $\varepsilon$ es la distancia absoluta entre el estimador puntual $\hat\theta$ y el parámetro verdadero $\theta$:</p>
+      $$\varepsilon = |\hat\theta - \theta|.$$
+      <p>Dado que $\hat\theta$ es una variable aleatoria que varía de muestra a muestra, $\varepsilon$ es también una variable aleatoria. No podemos garantizar con certeza absoluta que el error sea cero, pero sí podemos exigir que el error sea menor que una cota tolerable $b &gt; 0$ con una alta probabilidad fijada $\gamma \in (0, 1)$:</p>
+      $$\P(\varepsilon &lt; b) = \P(|\hat\theta - \theta| &lt; b) = \P(\theta - b &lt; \hat\theta &lt; \theta + b) = 1 - \alpha = \gamma.$$
+    </div>
+
+    <h3>La regla empírica de las 2 desviaciones estándar ($b = 2\sigma_{\hat\theta}$)</h3>
+    <p>¿Qué tan probable es que un estimador insesgado se aleje a lo sumo $2\sigma_{\hat\theta}$ de su media? En el texto de Wackerly, Mendenhall y Scheaffer se resalta un hecho matemático notable: para prácticamente cualquier distribución continua o discreta acampanada, al menos el $\approx 95\%$ de la masa de probabilidad se concentra a menos de $2$ desviaciones estándar de su esperanza matemática:</p>
+
+    <div class="table-wrap">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Distribución de $\hat\theta$</th>
+            <th>Media $\mu$</th>
+            <th>Desviación estándar $\sigma$</th>
+            <th>Intervalo $(\mu - 2\sigma, \; \mu + 2\sigma)$</th>
+            <th>Probabilidad exacta $\P(|\hat\theta - \mu| &lt; 2\sigma)$</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="izq"><b>Normal</b> $N(\mu, \sigma^2)$</td>
+            <td>$\mu$</td>
+            <td>$\sigma$</td>
+            <td>$(\mu - 2\sigma, \; \mu + 2\sigma)$</td>
+            <td>$2\Phi(2) - 1 = \mathbf{0.9544}$</td>
+          </tr>
+          <tr>
+            <td class="izq"><b>Uniforme continua</b> $U(a, b)$</td>
+            <td>$\frac{a+b}{2}$</td>
+            <td>$\frac{b-a}{\sqrt{12}} \approx 0.2887(b-a)$</td>
+            <td>$(\mu - 0.577(b-a), \; \mu + 0.577(b-a))$</td>
+            <td>Cubre $[a,b]$ entero: $\mathbf{1.0000}$</td>
+          </tr>
+          <tr>
+            <td class="izq"><b>Exponencial</b> $\text{Exp}(\beta)$</td>
+            <td>$\beta$</td>
+            <td>$\beta$</td>
+            <td>$(-\beta, \; 3\beta) \Rightarrow (0, \; 3\beta)$</td>
+            <td>$1 - e^{-3} = \mathbf{0.9502}$</td>
+          </tr>
+          <tr>
+            <td class="izq"><b>Peor caso universal</b> (Chebyshev)</td>
+            <td>$\mu$</td>
+            <td>$\sigma$</td>
+            <td>$(\mu - 2\sigma, \; \mu + 2\sigma)$</td>
+            <td>$\ge 1 - \frac{1}{2^2} = \mathbf{\ge 0.7500}$</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="box teorema"><span class="box-title">Criterio de diseño: cota de error al $95\%$</span>
+      <p>Si $\hat\theta$ es un estimador insesgado de $\theta$ ($\E[\hat\theta] = \theta$) y su distribución muestral es aproximadamente normal (lo cual suele cumplirse por el Teorema del Límite Central cuando el tamaño de muestra $n$ es moderado o grande), la <b>cota de error de estimación al $\approx 95\%$ de confiabilidad</b> se define como:</p>
+      $$b = 2\sigma_{\hat\theta} = 2\sqrt{\Var(\hat\theta)}.$$
+      <p>Si se utiliza el cuantil normal estándar exacto para un coeficiente de confianza de dos colas $\gamma = 0.95$ ($\alpha = 0.05$, $\alpha/2 = 0.025$), se emplea el valor crítico $z_{0.025} \approx 1.96$:</p>
+      $$b = z_{\alpha/2}\,\sigma_{\hat\theta} = 1.96\,\sigma_{\hat\theta}.$$
+    </div>
+
+    <!-- ---------------- Ejercicio 5 ---------------- -->
+    <div class="box ejercicio" id="ej-5">
+      <span class="box-title">Ejercicio 5 · Tamaño de muestra en estudio de fauna silvestre</span>
+      <p>Un servicio estatal de fauna silvestre desea estimar el número promedio de días que cada cazador con licencia se dedica a esta actividad durante una temporada en una reserva ecológica, estableciendo un límite tolerable en el error de estimación igual a $b = 2$ días de caza.</p>
+      <p>Estudios y encuestas de temporadas anteriores han demostrado que la desviación estándar de los días dedicados a la caza es aproximadamente $\sigma \approx 10$ días. ¿Cuántos cazadores deben ser seleccionados e incluidos en la muestra aleatoria para satisfacer los requerimientos del estudio?</p>
+
+      <div id="nc-ej5" style="margin: 1.2rem 0;"></div>
+
+      <details class="pista"><summary>Pista 1</summary><div>
+        <p>Identifique el parámetro objetivo $\theta = \mu$ (promedio poblacional de días) y el estimador natural $\hat\theta = \bar Y$. ¿Cuál es el error estándar de la media muestral $\sigma_{\bar Y}$?</p>
+      </div></details>
+
+      <details class="pista"><summary>Pista 2</summary><div>
+        <p>Iguale la cota de error al margen admisible: $2\sigma_{\bar Y} = b$ (o $1.96\sigma_{\bar Y} = b$). Despeje la raíz cuadrada $\sqrt{n}$ y eleve al cuadrado.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <h4>1. Identificación del modelo y estimador</h4>
+        <ol class="pasos">
+          <li>Parámetro objetivo: $\theta = \mu$, media poblacional de días de caza por persona.</li>
+          <li>Estimador puntual insesgado: la media muestral $\hat\theta = \bar Y = \frac{1}{n}\sum_{i=1}^n Y_i$.</li>
+          <li>Error estándar del estimador:
+            $$\sigma_{\bar Y} = \frac{\sigma}{\sqrt{n}} = \frac{10}{\sqrt{n}}.$$</li>
+          <li>Margen de error máximo tolerado: $b = 2$ días.</li>
+        </ol>
+
+        <h4>2. Enfoque 1 · Regla clásica de las dos desviaciones estándar ($b = 2\sigma_{\bar Y}$)</h4>
+        <ol class="pasos">
+          <li>Imponemos la condición de diseño estipulada en clase (cota empírica al $\approx 95.44\%$):
+            $$b = 2\sigma_{\bar Y} \implies 2\left(\frac{10}{\sqrt{n}}\right) = 2.$$</li>
+          <li>Simplificando la ecuación:
+            $$\frac{20}{\sqrt{n}} = 2 \implies \sqrt{n} = \frac{20}{2} = 10.$$</li>
+          <li>Elevando al cuadrado ambos miembros:
+            $$n = 10^2 = \boxed{100 \text{ cazadores}}.$$</li>
+        </ol>
+
+        <h4>3. Enfoque 2 · Uso del cuantil normal estándar exacto ($z_{0.025} = 1.96$)</h4>
+        <ol class="pasos">
+          <li>Si se busca una probabilidad de cobertura exactamente igual a $\gamma = 0.95$:
+            $$\P\big(|\bar Y - \mu| &lt; 2\big) = 0.95 \iff z_{0.025}\left(\frac{\sigma}{\sqrt{n}}\right) \le b.$$</li>
+          <li>Sustituyendo los valores conocidos:
+            $$1.96\left(\frac{10}{\sqrt{n}}\right) \le 2 \implies \frac{19.6}{\sqrt{n}} \le 2 \implies \sqrt{n} \ge 9.8.$$</li>
+          <li>Elevando al cuadrado:
+            $$n \ge 9.8^2 = 96.04.$$</li>
+          <li>Como el tamaño de muestra $n$ debe ser un número entero y siempre se redondea hacia arriba al entero inmediatamente superior para no superar el error máximo permitido:
+            $$n = \lceil 96.04 \rceil = \boxed{97 \text{ cazadores}}.$$</li>
+        </ol>
+
+        <p class="small muted"><b>Conclusión práctica:</b> la regla aproximada de $2\sigma$ arroja $n = 100$, ofreciendo un margen ligeramente más conservador y seguro ($100$ vs. $97$). En reportes oficiales de la FCNM · ESPOL, ambas soluciones se consideran matemáticamente correctas cuando se explicita la cota elegida.</p>
+      </div></details>
+    </div>
+
+    <!-- ---------------- Simulación 3 ---------------- -->
+    <div class="sim" id="sim-error-n">
+      <p class="sim-title">Simulación interactiva 3 · Explorador de error de estimación y tamaño de muestra</p>
+      <p class="sim-desc">Mueve los deslizadores de la desviación estándar poblacional $\sigma$, el margen de error deseado $b$ y el tamaño de muestra $n$. Observa cómo la campana de error $\bar Y - \mu \sim N(0, \sigma^2/n)$ se contrae y cómo el área de probabilidad atrapada dentro de la banda sombreada $[-b, b]$ crece hasta superar el $95\%$.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="autoeval">Autoevaluación y resumen para llevar</h2>
+
+    <p>Comprueba tu comprensión respondiendo a estas preguntas conceptuales y ejercicios de cálculo rápido:</p>
+
+    <div id="quiz-1" style="margin-bottom: 1.5rem;"></div>
+    <div id="quiz-2" style="margin-bottom: 1.5rem;"></div>
+    <div id="quiz-3" style="margin-bottom: 1.5rem;"></div>
+
+    <h3>Ejercicios numéricos rápidos</h3>
+    <div id="nc-1" style="margin-bottom: 1.2rem;"></div>
+    <div id="nc-2" style="margin-bottom: 1.5rem;"></div>
+
+    <div class="box idea"><span class="box-title">Ideas clave para llevar de la Clase 7</span>
+      <ol class="pasos">
+        <li><b>Eficiencia entre insesgados:</b> si $\E[\hat\theta_1] = \E[\hat\theta_2] = \theta$, el criterio decisivo es la varianza $\Var(\hat\theta)$, pues $\text{MSE} = \Var$. El estimador con menor varianza aprovecha mejor la muestra y tiene mayor eficiencia relativa.</li>
+        <li><b>La media muestral es óptima:</b> entre todas las combinaciones lineales insesgadas $\sum a_i X_i$ de observaciones $\iid$, la media muestral $\bar X$ ($a_i = 1/n$) minimiza de forma única la varianza gracias a la descomposición ortogonal y Cauchy–Schwarz.</li>
+        <li><b>Insesgadez asintótica:</b> que un estimador sea sesgado para $n$ finito no lo descalifica, siempre que $\lim_{n\to\infty} \mathbb{B}(\hat\theta_n) = 0$. Cuidado: estimadores como $T_n = (\bar X)^2 - \bar X$ en Poisson tienen un sesgo residual $-\lambda$ que <em>no</em> desaparece al aumentar $n$.</li>
+        <li><b>Cota de error $b = 2\sigma_{\hat\theta}$ y el $95\%$:</b> por la regla empírica y el TLC, para casi cualquier distribución acampanada se concentra al menos el $95\%$ de probabilidad en $\mu \pm 2\sigma$.</li>
+        <li><b>Diseño de tamaño muestral:</b> para estimar una media $\mu$ con error a lo sumo $b$, la fórmula $n = \big(\frac{2\sigma}{b}\big)^2$ revela que reducir el error a la mitad exige <b>cuadruplicar</b> el tamaño de muestra ($n \propto 1/b^2$).</li>
+      </ol>
+    </div>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../assets/js/stats.js"></script>
+<script src="../assets/js/plot.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+(function () {
+  'use strict';
+  const { dist, fmt, util } = EM.stats;
+
+  /* ================= Simulación 1: Media vs. Mínimo en Exponencial ================= */
+  (function () {
+    const root = document.getElementById('sim-exp-min');
+    if (!root) return;
+    let delta = 4.0;
+    let n = 5;
+
+    const ctr = root.querySelector('.controls');
+    EM.ui.slider(ctr, {
+      tex: '\\delta',
+      min: 1, max: 10, step: 0.5, value: delta,
+      fmt: v => v.toFixed(1),
+      onInput: v => { delta = v; render(); }
+    });
+    EM.ui.slider(ctr, {
+      tex: 'n',
+      min: 2, max: 40, step: 1, value: n,
+      fmt: v => v.toString(),
+      onInput: v => { n = v; render(); }
+    });
+
+    const p = EM.plot.create(root.querySelector('.plot'), {
+      xmin: 0, xmax: 15, ymin: 0, ymax: 0.6,
+      height: 280, xlabel: 'Valor del estimador', ylabel: 'Densidad',
+      legendPos: 'tr'
+    });
+    const out = EM.ui.readout(root.querySelector('.out'));
+
+    function render() {
+      // Media muestral: Gamma(shape=n, scale=delta/n)
+      const gDist = dist.gamma(n, delta / n);
+      // Mínimo escalado: Exp(scale=delta)
+      const eDist = dist.exp(delta);
+
+      const xmax = Math.max(12, delta * 3.2);
+      const mode = n > 1 ? (n - 1) * (delta / n) : 0;
+      const peakG = gDist.pdf(mode);
+      const peakE = eDist.pdf(0);
+      const ymax = Math.max(peakG, peakE, 0.4) * 1.22;
+
+      p.setRange({ xmin: 0, xmax: xmax, ymin: 0, ymax: ymax });
+
+      const varXbar = (delta * delta) / n;
+      const varMin = delta * delta;
+
+      p.draw(g => {
+        // Curva Gamma de X_bar
+        g.area(gDist.pdf, 0, xmax, { color: 'c1', alpha: 0.28, label: 'Densidad X̄ ~ Gamma(n, δ/n)' });
+        g.curve(gDist.pdf, { color: 'c1', width: 2.5 });
+        // Curva Exp de n X_(1)
+        g.area(eDist.pdf, 0, xmax, { color: 'c2', alpha: 0.16, label: 'Densidad n X₍₁₎ ~ Exp(δ)' });
+        g.curve(eDist.pdf, { color: 'c2', width: 2.2, dash: [5, 4] });
+        // Línea vertical en el parámetro verdadero delta
+        g.vline(delta, { color: 'accent', width: 1.8, label: 'δ verdadero' });
+      });
+
+      out.set(`
+        Parámetro objetivo: $\\delta = ${fmt(delta, 1)}$ · Tamaño muestral: $n = ${n}$<br>
+        • <b>Media muestral $\\bar X$</b>: $\\E[\\bar X] = ${fmt(delta, 1)}$ (insesgado) · $\\Var(\\bar X) = \\frac{\\delta^2}{n} = \\frac{${fmt(delta * delta, 1)}}{${n}} = $ <b>${fmt(varXbar, 3)}</b><br>
+        • <b>Mínimo escalado $n X_{(1)}$</b>: $\\E[n X_{(1)}] = ${fmt(delta, 1)}$ (insesgado) · $\\Var(n X_{(1)}) = \\delta^2 = $ <b>${fmt(varMin, 3)}</b> (¡no disminuye con $n$!)<br>
+        • <b>Eficiencia relativa</b>: $\\mathrm{eff}(\\bar X, n X_{(1)}) = \\frac{\\Var(n X_{(1)})}{\\Var(\\bar X)} = n = $ <b>${n}</b> (la media muestral $\\bar X$ es ${n} veces más precisa).
+      `);
+    }
+    render();
+  })();
+
+  /* ================= Simulación 2: Laboratorio Poisson y sesgo de T_n ================= */
+  (function () {
+    const root = document.getElementById('sim-poisson-sesgo');
+    if (!root) return;
+    let lambda = 2.5;
+    let n = 20;
+    const M = 2000;
+
+    const ctr = root.querySelector('.controls');
+    EM.ui.slider(ctr, {
+      tex: '\\lambda',
+      min: 0.5, max: 5.0, step: 0.5, value: lambda,
+      fmt: v => v.toFixed(1),
+      onInput: v => { lambda = v; render(); }
+    });
+    EM.ui.slider(ctr, {
+      tex: 'n',
+      min: 2, max: 60, step: 1, value: n,
+      fmt: v => v.toString(),
+      onInput: v => { n = v; render(); }
+    });
+    EM.ui.button(ctr, 'Resimular réplicas', () => render(), { primary: true });
+
+    const p = EM.plot.create(root.querySelector('.plot'), {
+      xmin: 1, xmax: 60, ymin: 0, ymax: 35,
+      height: 290, xlabel: 'Tamaño de muestra (k)', ylabel: 'Esperanza teórica / Promedio empírico',
+      legendPos: 'tr'
+    });
+    const out = EM.ui.readout(root.querySelector('.out'));
+
+    function render() {
+      const lam2 = lambda * lambda;
+      const eTn = k => lam2 - ((k - 1) / k) * lambda;
+      const eXbar2 = k => lam2 + (lambda / k);
+      const eThetaHat = () => lam2;
+
+      const maxK = Math.max(20, n);
+      const ymin = Math.max(0, Math.floor(lam2 - lambda - 1));
+      const ymax = Math.ceil(Math.max(lam2 + lambda, eXbar2(1)) * 1.15);
+
+      p.setRange({ xmin: 1, xmax: maxK, ymin: ymin, ymax: ymax });
+
+      // Simulación Monte Carlo: suma de n Poisson(lambda) es Poisson(n * lambda)
+      const poisSum = dist.poisson(n * lambda);
+      let sumTn = 0, sumXbar2 = 0, sumThetaHat = 0;
+      for (let i = 0; i < M; i++) {
+        const s = poisSum.rand();
+        const xb = s / n;
+        const tn = xb * xb - xb;
+        const xb2 = xb * xb;
+        const th = xb * xb - xb / n;
+        sumTn += tn;
+        sumXbar2 += xb2;
+        sumThetaHat += th;
+      }
+      const empTn = sumTn / M;
+      const empXbar2 = sumXbar2 / M;
+      const empThetaHat = sumThetaHat / M;
+
+      const teorTn = eTn(n);
+      const teorXbar2 = eXbar2(n);
+      const sesgoTeorTn = -((n - 1) / n) * lambda;
+      const sesgoEmpTn = empTn - lam2;
+
+      p.draw(g => {
+        // Línea horizontal de lambda^2 objetivo
+        g.hline(lam2, { color: 'accent', width: 1.8, label: 'λ² objetivo' });
+
+        // Curva teórica E[T_k]
+        g.curve(eTn, { color: 'bad', width: 2.2, label: 'E[T_k] (sesgado)', from: 1, to: maxK });
+
+        // Curva teórica E[(Xbar_k)^2]
+        g.curve(eXbar2, { color: 'c3', width: 2.0, dash: [4, 4], label: 'E[(X̄_k)²]', from: 1, to: maxK });
+
+        // Curva teórica E[theta_hat] (insesgado exacto)
+        g.curve(eThetaHat, { color: 'good', width: 2.2, label: 'E[θ̂_k] (insesgado)', from: 1, to: maxK });
+
+        // Puntos empíricos simulados para el n actual
+        g.points([n], [empTn], { color: 'bad', r: 5, label: `Promedio empírico T_${n}` });
+        g.points([n], [empXbar2], { color: 'c3', r: 5, label: `Promedio empírico (X̄_${n})²` });
+        g.points([n], [empThetaHat], { color: 'good', r: 5, label: `Promedio empírico θ̂_${n}` });
+        g.vline(n, { color: 'muted', width: 1, dash: [2, 3] });
+      });
+
+      out.set(`
+        <b>Parámetros:</b> $\\lambda = ${fmt(lambda, 1)}$, $\\lambda^2 = ${fmt(lam2, 2)}$ · Tamaño muestral: $n = ${n}$ ($M = ${M}$ réplicas simuladas)<br>
+        • <b>$T_n = (\\bar X)^2 - \\bar X$</b>: Promedio empírico = <b>${fmt(empTn, 3)}</b> · Teórico $\\E[T_n] = ${fmt(teorTn, 3)}$ · Sesgo empírico = <b>${fmt(sesgoEmpTn, 3)}</b> (teórico $-\\frac{n-1}{n}\\lambda = ${fmt(sesgoTeorTn, 3)}$)<br>
+        • <b>$(\\bar X)^2$</b>: Promedio empírico = <b>${fmt(empXbar2, 3)}</b> · Teórico $\\E[(\\bar X)^2] = ${fmt(teorXbar2, 3)}$ · Sesgo empírico = <b>${fmt(empXbar2 - lam2, 3)}</b> (teórico $+\\frac{\\lambda}{n} = +${fmt(lambda / n, 3)}$)<br>
+        • <b>$\\hat\\theta_n = (\\bar X)^2 - \\frac{\\bar X}{n}$</b>: Promedio empírico = <b>${fmt(empThetaHat, 3)}</b> · Teórico $\\E[\\hat\\theta_n] = ${fmt(lam2, 2)}$ · Sesgo empírico = <b>${fmt(empThetaHat - lam2, 3)}</b> (teórico $0.000$)<br>
+        <span class="small muted">Nota cómo para $n \\to \\infty$, el sesgo de $T_n$ tiende a $-\\lambda = -${fmt(lambda, 1)}$, confirmando empíricamente que <b>no</b> es asintóticamente insesgado.</span>
+      `);
+    }
+    render();
+  })();
+
+  /* ================= Simulación 3: Error de estimación y tamaño de muestra ================= */
+  (function () {
+    const root = document.getElementById('sim-error-n');
+    if (!root) return;
+    let sigma = 10;
+    let b = 2.0;
+    let n = 50;
+
+    const ctr = root.querySelector('.controls');
+    EM.ui.slider(ctr, {
+      tex: '\\sigma',
+      min: 2, max: 20, step: 1, value: sigma,
+      fmt: v => v.toString(),
+      onInput: v => { sigma = v; render(); }
+    });
+    EM.ui.slider(ctr, {
+      tex: 'b',
+      min: 0.5, max: 4.0, step: 0.25, value: b,
+      fmt: v => v.toFixed(2),
+      onInput: v => { b = v; render(); }
+    });
+    EM.ui.slider(ctr, {
+      tex: 'n',
+      min: 10, max: 200, step: 5, value: n,
+      fmt: v => v.toString(),
+      onInput: v => { n = v; render(); }
+    });
+
+    const p = EM.plot.create(root.querySelector('.plot'), {
+      xmin: -6, xmax: 6, ymin: 0, ymax: 0.8,
+      height: 280, xlabel: 'Error de estimación (Ȳ − μ)', ylabel: 'Densidad',
+      legendPos: 'tr'
+    });
+    const out = EM.ui.readout(root.querySelector('.out'));
+
+    function render() {
+      const se = sigma / Math.sqrt(n);
+      const norm = dist.normal(0, se);
+      const probWithin = norm.cdf(b) - norm.cdf(-b);
+
+      const xLimit = Math.max(b * 1.8, se * 3.5);
+      const yPeak = norm.pdf(0);
+      const ymax = Math.max(0.5, yPeak * 1.25);
+
+      p.setRange({ xmin: -xLimit, xmax: xLimit, ymin: 0, ymax: ymax });
+
+      const nRegla2 = Math.ceil(Math.pow((2 * sigma) / b, 2));
+      const nExacto95 = Math.ceil(Math.pow((1.96 * sigma) / b, 2));
+      const twoSe = 2 * se;
+      const cumpleRegla2 = (twoSe <= b);
+
+      p.draw(g => {
+        // Área sombreada dentro de [-b, b]
+        g.area(norm.pdf, -b, b, { color: 'accent', alpha: 0.35, label: `P(|Ȳ−μ| < b) = ${fmt(probWithin, 4)}` });
+        // Curva normal de Y_bar - mu
+        g.curve(norm.pdf, { color: 'c1', width: 2.2, label: `N(0, σ_Ȳ²), σ_Ȳ = ${fmt(se, 2)}` });
+        // Líneas verticales en -b y +b
+        g.vline(-b, { color: 'bad', dash: [4, 3], label: '−b' });
+        g.vline(b, { color: 'bad', dash: [4, 3], label: '+b' });
+        // Cota 2 * se
+        if (twoSe < xLimit) {
+          g.vline(twoSe, { color: 'c3', dash: [2, 2], label: '+2σ_Ȳ' });
+        }
+      });
+
+      out.set(`
+        <b>Parámetros fijados:</b> $\\sigma = ${sigma}$, margen tolerable $b = ${fmt(b, 2)}$ días, tamaño de muestra $n = ${n}$<br>
+        • Error estándar de la media: $\\sigma_{\\bar Y} = \\frac{\\sigma}{\\sqrt{n}} = \\frac{${sigma}}{\\sqrt{${n}}} = $ <b>${fmt(se, 3)}</b> días<br>
+        • Cota de dos desviaciones: $2\\sigma_{\\bar Y} = 2(${fmt(se, 3)}) = $ <b>${fmt(twoSe, 3)}</b> días ${cumpleRegla2 ? '<span class="comp-tag tag-win">✓ Cumple 2σ_Ȳ ≤ b</span>' : '<span class="comp-tag tag-loss">✗ No cumple 2σ_Ȳ ≤ b</span>'}<br>
+        • Probabilidad de estar dentro del margen: $\\P(|\\bar Y - \\mu| &lt; ${fmt(b, 2)}) = $ <b>${fmt(probWithin, 4)}</b> (${(probWithin * 100).toFixed(2)} % de confianza)<br>
+        • <b>Tamaño muestral necesario calculado:</b><br>
+        &emsp;— Con regla de 2 desviaciones ($2\\sigma_{\\bar Y} = b$): $n = \\big(\\frac{2(${sigma})}{${fmt(b, 2)}}\\big)^2 = $ <b>${nRegla2}</b> cazadores.<br>
+        &emsp;— Con cuantil normal $z_{0.025} = 1.96$ ($95\\%$ de confianza exacto): $n = \\lceil\\big(\\frac{1.96(${sigma})}{${fmt(b, 2)}}\\big)^2\\rceil = $ <b>${nExacto95}</b> cazadores.
+      `);
+    }
+    render();
+  })();
+
+  /* ================= Widgets de Ejercicio 5 y Autoevaluación ================= */
+  EM.ui.numcheck('#nc-ej5', {
+    prompt: 'Ingresa el tamaño de muestra requerido $n$ para el Ejercicio 5:',
+    answer: 98.5,
+    tol: 2.5,
+    placeholder: 'ej. 100 o 97',
+    hint: 'Con la regla $2\\sigma_{\\bar Y} = b$ resulta $n = 100$; con el cuantil $z_{0.025} = 1.96$ resulta $n = 97$. Ambos son aceptados.'
+  });
+
+  EM.ui.quiz('#quiz-1', {
+    question: '1. Sean $\\hat\\theta_1$ y $\\hat\\theta_2$ dos estimadores insesgados para un mismo parámetro $\\theta$, con $\\Var(\\hat\\theta_1) &lt; \\Var(\\hat\\theta_2)$. ¿Cuál estimador es preferible y por qué?',
+    options: [
+      '$\\hat\\theta_2$, porque al tener mayor varianza cubre un rango más amplio de posibles valores muestrales.',
+      '$\\hat\\theta_1$, porque para estimadores insesgados $\\text{MSE} = \\Var$, y menor varianza implica que la distribución está más concentrada alrededor del verdadero $\\theta$.',
+      'Son indistinguibles matemáticamente, porque ambos tienen sesgo sistemático igual a cero.',
+      'Depende del valor verdadero del parámetro $\\theta$, pues la insesgadez no garantiza orden en el error cuadrático medio.'
+    ],
+    answer: 1,
+    explain: 'Como $\\text{MSE}(\\hat\\theta) = \\Var(\\hat\\theta) + [\\mathbb{B}(\\hat\\theta)]^2$, cuando ambos son insesgados el sesgo es 0 y $\\text{MSE} = \\Var$. El estimador con menor varianza comete en promedio errores cuadráticos menores y posee mayor eficiencia relativa.'
+  });
+
+  EM.ui.quiz('#quiz-2', {
+    question: '2. Un estimador $\\hat\\theta_n$ tiene sesgo dado por $\\mathbb{B}(\\hat\\theta_n) = \\frac{3}{n+2}$. ¿Qué se puede afirmar sobre este estimador?',
+    options: [
+      'Es insesgado para cualquier tamaño de muestra finito $n$.',
+      'Es sesgado para todo $n$ finito, y además no es asintóticamente insesgado porque el sesgo nunca se hace exactamente cero.',
+      'Es sesgado para todo $n$ finito, pero sí es asintóticamente insesgado porque $\\lim_{n\\to\\infty} \\mathbb{B}(\\hat\\theta_n) = 0$.',
+      'No es posible saberlo sin conocer la distribución de la población de origen.'
+    ],
+    answer: 2,
+    explain: 'Para cualquier $n$ finito, $\\mathbb{B}(\\hat\\theta_n) = \\frac{3}{n+2} &gt; 0$ (es sesgado hacia arriba). Sin embargo, $\\lim_{n\\to\\infty} \\frac{3}{n+2} = 0$, por lo que satisface la definición formal de insesgadez asintótica.'
+  });
+
+  EM.ui.quiz('#quiz-3', {
+    question: '3. En la determinación del tamaño de muestra mediante la cota $b = 2\\sigma_{\\bar Y} = \\frac{2\\sigma}{\\sqrt{n}}$, si deseamos reducir el margen de error admisible a la mitad ($b\' = b/2$), ¿cómo cambia el tamaño muestral necesario $n$?',
+    options: [
+      'Se duplica ($2n$).',
+      'Se cuadruplica ($4n$).',
+      'Se multiplica por $\\sqrt{2}$.',
+      'Se reduce a la mitad ($n/2$).'
+    ],
+    answer: 1,
+    explain: 'Despejando $n$ de la fórmula $b = \\frac{2\\sigma}{\\sqrt{n}}$ se obtiene $n = \\frac{4\\sigma^2}{b^2}$. Como $n$ es inversamente proporcional al cuadrado del error ($1/b^2$), si $b$ se divide por 2, el denominador $(b/2)^2 = b^2/4$ hace que el tamaño de muestra requerido se multiplique exactamente por 4.'
+  });
+
+  EM.ui.numcheck('#nc-1', {
+    prompt: 'Si $X_1, \\dots, X_{25} \\iid \\text{Exp}(\\delta = 5)$, calcula el error cuadrático medio $\\text{MSE}(\\bar X)$:',
+    answer: 1.0,
+    tol: 0.02,
+    placeholder: 'ej. 1',
+    hint: 'La media $\\bar X$ es insesgada, por lo que $\\text{MSE}(\\bar X) = \\Var(\\bar X) = \\frac{\\delta^2}{n} = \\frac{5^2}{25} = 1$.'
+  });
+
+  EM.ui.numcheck('#nc-2', {
+    prompt: 'Si $\\sigma = 6$ y se fija una cota de error $b = 1.5$ con la regla $b = 2\\sigma_{\\bar Y}$, ¿cuál es el tamaño de muestra $n$ requerido?',
+    answer: 64,
+    tol: 0.5,
+    placeholder: 'ej. 64',
+    hint: 'Plantea $2\\left(\\frac{6}{\\sqrt{n}}\\right) = 1.5 \\implies \\frac{12}{\\sqrt{n}} = 1.5 \\implies \\sqrt{n} = 8 \\implies n = 64$.'
+  });
+
+})();
+</script>
+</body>
+</html>

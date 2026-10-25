@@ -17,10 +17,13 @@ traen pistas graduales, solución completa paso a paso y verificación numérica
 | `temas/clase-03.html` | Distribuciones muestrales, χ² y t de Student |
 | `temas/clase-04.html` | Distribución F de Fisher |
 | `temas/clase-05.html` | Teorema del límite central |
+| `temas/clase-06.html` | Estimación puntual, sesgo y error cuadrático medio (ECM) |
+| `temas/clase-07.html` | Sesgo asintótico, cota del error y tamaño de muestra |
 | `herramientas/formulario.html` | Formulario (Est. I + Est Mat): versión completa y de examen (2 págs.), en PDF/LaTeX |
 | `herramientas/distribuciones.html` | Laboratorio de distribuciones |
 | `herramientas/tablas.html` | Tablas χ², t, F, normal estándar y K-S, transcritas e interactivas |
-| `deberes/lista-1-1.html` | Lista 1.1 resuelta |
+| `deberes/lista-1-1.html` | Lista 1.1 resuelta (transformaciones y estadísticos de orden) |
+| `deberes/lista-1-2.html` | Lista 1.2 resuelta (teorema del límite central) |
 
 ## Uso local
 
@@ -74,10 +77,10 @@ est-mat/
 ├── assets/
 │   ├── css/style.css
 │   └── js/{theme,stats,plot,site,ui}.js
-├── temas/                  repaso + clases 01–05
+├── temas/                  repaso + clases 01–07
 ├── herramientas/           distribuciones.html, tablas.html, formulario.html
 │                           formulario.tex/.pdf y formulario-2p.tex/.pdf
-├── deberes/                lista-1-1.html
+├── deberes/                lista-1-1.html, lista-1-2.html
 ├── scripts/                pipeline de tablas
 └── tests/                  stats.test.js, smoke.js, shot.sh
 ```

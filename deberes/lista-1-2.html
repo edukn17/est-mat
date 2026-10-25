@@ -1,0 +1,934 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lista 1.2 · Teorema del límite central</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/theme.js"></script>
+<style>
+  /* estilos propios de esta página (no tocan la hoja común) */
+  .tecnica { font-family: var(--font-ui); font-size: 14px; color: var(--muted); margin: 10px 0 4px; }
+  .tecnica a { font-weight: 600; }
+  .figs { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin: 12px 0; }
+  .fig { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 6px 10px 8px; }
+  .fig figcaption { font: 13px/1.4 var(--font-ui); color: var(--muted); text-align: center; }
+  .fig .controls { margin: 4px 0; }
+  .indice-partes { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+  .indice-partes > div { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 14px; }
+  .indice-partes h3 { margin: 4px 0 6px; font-size: 15px; }
+  .indice-partes ol { margin: 0; padding-left: 1.6em; font-size: 16px; }
+  .chk { border: 1px dashed var(--line); border-radius: var(--radius); padding: 4px 12px; margin: 12px 0; background: var(--surface); }
+  .chk-title { font: 600 13px var(--font-ui); color: var(--muted); margin: 6px 0 0; }
+  .resultado { border: 2px solid var(--good); border-radius: var(--radius); padding: 8px 14px; margin: 12px 0; background: var(--surface); }
+  details.verif > summary { color: var(--accent); }
+  .sol-inciso { font-family: var(--font-ui); font-size: 17px; margin: 22px 0 6px; padding-top: 8px; border-top: 1px dashed var(--line); }
+  .pasos-uso { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-family: var(--font-ui); font-size: 14px; margin: 10px 0; }
+  .pasos-uso span.pu { background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; }
+  .pasos-uso span.flecha { color: var(--muted); }
+</style>
+</head>
+<body data-root="../" data-page="lista-1-2">
+<main id="contenido">
+
+  <header class="page-head">
+    <p class="kicker">Deber · Lista 1.2 · II PAO 2026</p>
+    <h1>Teorema del límite central</h1>
+    <p class="lead">Guía interactiva de los 5 ejercicios de la Lista 1.2: estimación Monte Carlo, procesos multiplicativos vía logaritmos, sumas de Poisson y particiones aleatorias. Con comprobador numérico, pistas graduales, soluciones paso a paso y verificación por simulación.</p>
+    <p><span class="badge">FCNM · ESPOL · II PAO 2026</span></p>
+  </header>
+
+  <section>
+    <h2 id="como-usar">Cómo usar esta página</h2>
+    <p>Esta guía está diseñada para que resuelvas cada ejercicio por ti mismo antes de consultar la respuesta. Para cada problema te sugerimos:</p>
+    <div class="pasos-uso">
+      <span class="pu">1 · Intenta solo (papel y lápiz)</span><span class="flecha">→</span>
+      <span class="pu">2 · Pista 1</span><span class="flecha">→</span>
+      <span class="pu">3 · Pistas 2 y 3</span><span class="flecha">→</span>
+      <span class="pu">4 · Solución completa</span><span class="flecha">→</span>
+      <span class="pu">5 · Verificación por simulación</span>
+    </div>
+    <ul>
+      <li>Antes de abrir la solución, ingresa tus cálculos en el cuadro <b>“Comprueba tu respuesta”</b> para validar tu avance sin desvelar los pasos.</li>
+      <li>Cada ejercicio identifica su <b>técnica</b> principal y enlaza a la sección teórica correspondiente de la <a href="../temas/clase-05.html">Clase 5 (TLC)</a> o de la <a href="../temas/clase-01.html">Clase 1 (Transformaciones)</a>.</li>
+      <li>Las soluciones detallan cada paso formal: identificación de variables, momentos, estandarización asintótica y justificación rigurosa.</li>
+    </ul>
+
+    <div class="box cuidado">
+      <span class="box-title">Estrategias y trampas frecuentes de este deber</span>
+      <ol>
+        <li><b>Linealización de productos mediante logaritmos.</b> En los ejercicios 2, 3 y 5 se estudian productos de variables aleatorias independientes $M_n = \prod_{i=1}^n X_i$. El TLC no se aplica directamente a un producto, sino a su logaritmo:
+          $$\ln M_n = \sum_{i=1}^n \ln X_i.$$
+          Al tomar logaritmos, el producto se convierte en una suma de variables i.i.d. $Y_i = \ln X_i$, a la que sí es aplicable el teorema.</li>
+        <li><b>Equivalencia de eventos en procesos monótonos.</b> En problemas de tiempos de parada $N$ donde los factores son positivos y $X_i \ge 1$ (como en el dado del Ejercicio 3), el producto es monótono no decreciente: $\{N \le n\} \iff \{M_n &gt; \text{umbral}\}$. Análogamente, cuando los factores cumplen $0 &lt; X_i &lt; 1$ (como en la vara del Ejercicio 5), la longitud decrece monótonamente: $\{N &gt; n\} \iff \{L_n \ge \text{umbral}\}$.</li>
+        <li><b>Estandarización cuidadosa.</b> Recuerda distinguir si estás aproximando la suma $S_n = \sum_{i=1}^n Y_i$ (con desviación estándar $\sigma\sqrt{n}$) o la media muestral $\bar Y = \frac{1}{n}S_n$ (con desviación estándar $\sigma/\sqrt{n}$). Ambas conducen exactamente al mismo estadístico $Z$.</li>
+        <li><b>Desigualdad de Jensen y arrastre de volatilidad.</b> Como la función $\ln x$ es cóncava, $\E[\ln F] &lt; \ln \E[F]$. Por eso, en un proceso multiplicativo con $\E[F]=1$, la media aritmética se conserva pero la mediana decae continuamente, haciendo que más de la mitad de las trayectorias pierdan valor.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section>
+    <h2 id="indice">Índice de ejercicios</h2>
+    <div class="indice-partes">
+      <div>
+        <h3>Lista 1.2 · Los 5 ejercicios</h3>
+        <ol>
+          <li value="1"><a href="#ej-1">Ejercicio 1 · Estimación de $\pi$ por Monte Carlo</a></li>
+          <li value="2"><a href="#ej-2">Ejercicio 2 · Precio multiplicativo de una acción y Jensen</a></li>
+          <li value="3"><a href="#ej-3">Ejercicio 3 · Lanzamientos de un dado y producto de anotaciones</a></li>
+          <li value="4"><a href="#ej-4">Ejercicio 4 · Suma de Poisson y límite $\lim_{n\to\infty} e^{-n}\sum_{k=0}^n \frac{n^k}{k!} = \frac{1}{2}$</a></li>
+          <li value="5"><a href="#ej-5">Ejercicio 5 · Particiones sucesivas de una vara con $\text{Beta}(3, 1)$</a></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       EJERCICIOS DEL DEBER
+       ================================================================ -->
+  <section>
+    <h2 id="ejercicios">Ejercicios del deber</h2>
+
+    <!-- ========================= EJERCICIO 1 ========================= -->
+    <div class="box ejercicio" id="ej-1">
+      <span class="box-title">Ejercicio 1 · Estimación de $\pi$ por Monte Carlo</span>
+      <p>Se generan $n$ puntos $(U_i, V_i)$ independientes y uniformemente distribuidos en el cuadrado $[0, 1]^2$. Para cada punto se define la variable indicadora $I_i = 1$ si $U_i^2 + V_i^2 \le 1$, y $0$ en otro caso, y con ellas el estimador
+      $$\hat{\pi}_n = \frac{4}{n}\sum_{i=1}^n I_i.$$</p>
+      <ol type="a">
+        <li>Muestre que $\E(\hat{\pi}_n) = \pi$ y calcule $\Var(\hat{\pi}_n)$.</li>
+        <li>Usando el TLC, determine el menor $n$ tal que $\P(|\hat{\pi}_n - \pi| &lt; 0.01) \ge 0.95$.</li>
+      </ol>
+      <p class="tecnica">Técnica: variables indicadoras Bernoulli + tamaño muestral asintótico por el TLC → <a href="../temas/clase-05.html">Clase 5 · Teorema del límite central</a></p>
+
+      <div class="chk" id="chk-1"><p class="chk-title">Comprueba tu respuesta (sin ver la solución)</p></div>
+
+      <details class="pista"><summary>Pista 1 · distribución de las indicadoras $I_i$</summary><div>
+        <p>Los puntos $(U_i, V_i)$ caen uniformemente en el cuadrado $[0,1]^2$ de área 1. La condición $U_i^2 + V_i^2 \le 1$ define un cuarto de disco de radio 1. Calcula el área de esa región: esa es la probabilidad de éxito $p = \P(I_i = 1)$. Como $I_i \in \{0, 1\}$, cada $I_i$ es una variable aleatoria de Bernoulli con dicho parámetro $p$.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 2 · propiedades de esperanza y varianza</summary><div>
+        <p>Para (a), expresa $\hat\pi_n = \frac{4}{n}\sum_{i=1}^n I_i$. Por la linealidad de la esperanza:
+        $$\E[\hat\pi_n] = \frac{4}{n}\sum_{i=1}^n \E[I_i].$$
+        Como los puntos se generan de forma independiente, las variables $I_1, \dots, I_n$ son mutuamente independientes. Usa la propiedad de la varianza para sumas de independientes:
+        $$\Var(\hat\pi_n) = \left(\frac{4}{n}\right)^2 \sum_{i=1}^n \Var(I_i).$$</p>
+      </div></details>
+      <details class="pista"><summary>Pista 3 · estandarización con el TLC para (b)</summary><div>
+        <p>Nota que $\hat\pi_n = 4\bar I_n$, donde $\bar I_n$ es la media muestral. Por el TLC:
+        $$Z_n = \frac{\hat\pi_n - \pi}{\sqrt{\Var(\hat\pi_n)}} \dto Z \sim N(0, 1).$$
+        Estandariza la desigualdad $|\hat\pi_n - \pi| &lt; 0.01$ dividiendo entre la desviación estándar $\sqrt{\Var(\hat\pi_n)}$. Igualando al cuantil normal bilateral $z_{0.025} \approx 1.96$, despeja $n$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <p class="sol-inciso">(a) Esperanza y varianza del estimador $\hat\pi_n$</p>
+        <ol class="pasos">
+          <li><b>Distribución de cada variable indicadora $I_i$.</b>
+            El vector aleatorio $(U_i, V_i)$ tiene distribución uniforme continua en el cuadrado $[0, 1]^2$. Su densidad conjunta es $f(u, v) = 1$ en $[0,1]^2$ y el área total de dicho soporte es $1$.
+            La probabilidad de que un punto caiga en el interior del círculo unidad es:
+            $$p = \P(U_i^2 + V_i^2 \le 1) = \iint_{\substack{u^2 + v^2 \le 1 \\ 0\le u, v\le 1}} 1\,du\,dv = \frac{\pi (1)^2}{4} = \frac{\pi}{4}.$$
+            Como $I_i$ toma el valor 1 si el punto cae en el cuarto de círculo y 0 en caso contrario, cada $I_i$ sigue una distribución Bernoulli con parámetro $p = \pi/4$:
+            $$\E[I_i] = p = \frac{\pi}{4},$$
+            $$\Var(I_i) = p(1 - p) = \frac{\pi}{4}\left(1 - \frac{\pi}{4}\right) = \frac{\pi(4 - \pi)}{16}.$$</li>
+          <li><b>Insesgadez del estimador $\hat\pi_n$.</b>
+            Por linealidad de la esperanza matemática:
+            $$\E(\hat{\pi}_n) = \E\left(\frac{4}{n}\sum_{i=1}^n I_i\right) = \frac{4}{n}\sum_{i=1}^n \E(I_i) = \frac{4}{n}\cdot n\cdot \frac{\pi}{4} = \pi.$$
+            En consecuencia, $\hat\pi_n$ es un estimador insesgado de $\pi$.</li>
+          <li><b>Cálculo de la varianza.</b>
+            Como los puntos $(U_i, V_i)$ se generan de manera independiente, las variables indicadoras $I_1, \dots, I_n$ son mutuamente independientes. Por la propiedad de la varianza de combinaciones lineales de variables independientes:
+            $$\Var(\hat{\pi}_n) = \Var\left(\frac{4}{n}\sum_{i=1}^n I_i\right) = \left(\frac{4}{n}\right)^2 \sum_{i=1}^n \Var(I_i) = \frac{16}{n^2}\cdot n\cdot \frac{\pi(4 - \pi)}{16} = \frac{\pi(4 - \pi)}{n}.$$
+            <div class="resultado">$$\E(\hat\pi_n) = \pi, \qquad \Var(\hat\pi_n) = \frac{\pi(4 - \pi)}{n} \approx \frac{2.69677}{n}.$$</div>
+            El coeficiente pedido en el comprobador es $n\,\Var(\hat\pi_n) = \pi(4 - \pi) \approx 2.6968$.</li>
+        </ol>
+
+        <p class="sol-inciso">(b) Menor tamaño muestral $n$ mediante el TLC</p>
+        <ol class="pasos">
+          <li><b>Formulación asintótica por el TLC.</b>
+            El estimador puede expresarse como $\hat\pi_n = 4 \bar I_n$, donde $\bar I_n = \frac{1}{n}\sum_{i=1}^n I_i$ es la media muestral de variables i.i.d. con media finita $\mu = \pi/4$ y varianza finita $\sigma^2 = \pi(4-\pi)/16$.
+            Por el Teorema del Límite Central:
+            $$Z_n = \frac{\hat\pi_n - \E(\hat\pi_n)}{\sqrt{\Var(\hat\pi_n)}} = \frac{\hat\pi_n - \pi}{\sqrt{\frac{\pi(4 - \pi)}{n}}} \dto Z \sim N(0, 1).$$</li>
+          <li><b>Estandarización del evento de precisión.</b>
+            Dividiendo la desigualdad por la desviación estándar $\sigma_{\hat\pi_n} = \sqrt{\frac{\pi(4-\pi)}{n}}$:
+            $$\P(|\hat{\pi}_n - \pi| &lt; 0.01) = \P\left(\left|\frac{\hat{\pi}_n - \pi}{\sqrt{\frac{\pi(4-\pi)}{n}}}\right| &lt; \frac{0.01}{\sqrt{\frac{\pi(4-\pi)}{n}}}\right) \approx \P\left(|Z| &lt; \frac{0.01\sqrt{n}}{\sqrt{\pi(4-\pi)}}\right).$$</li>
+          <li><b>Determinación del cuantil crítico.</b>
+            Deseamos garantizar que dicha probabilidad sea al menos $0.95$:
+            $$\P(|Z| &lt; z^*) = 2\Phi(z^*) - 1 \ge 0.95 \iff \Phi(z^*) \ge 0.975 \iff z^* \ge z_{0.025}.$$
+            De la tabla de la distribución normal estándar:
+            $$z_{0.025} \approx 1.96 \quad (\text{con mayor exactitud, } z_{0.025} \approx 1.959964).$$</li>
+          <li><b>Despeje del tamaño de muestra $n$.</b>
+            Requerimos que:
+            $$\frac{0.01\sqrt{n}}{\sqrt{\pi(4-\pi)}} \ge z_{0.025} \iff \sqrt{n} \ge \frac{z_{0.025}\sqrt{\pi(4-\pi)}}{0.01} \iff n \ge \frac{z_{0.025}^2\,\pi(4-\pi)}{0.01^2}.$$
+            Evaluando numéricamente con $\pi(4-\pi) \approx 2.696766$:
+            <ul>
+              <li>Con el cuantil convencional $z_{0.025} = 1.96$:
+                $$n \ge \frac{(1.96)^2 \cdot 2.696766}{0.0001} = \frac{3.8416 \cdot 2.696766}{0.0001} \approx 103\,599.04 \implies n = 103\,600.$$</li>
+              <li>Con el cuantil continuo exacto $z_{0.025} \approx 1.959964$:
+                $$n \ge \frac{(1.959964)^2 \cdot 2.696766}{0.0001} \approx \frac{3.841459 \cdot 2.696766}{0.0001} \approx 103\,595.2 \implies n = 103\,596.$$</li>
+            </ul>
+            <div class="resultado">$$n \ge \frac{z_{0.025}^2\,\pi(4-\pi)}{0.01^2} \implies n = 103\,600 \quad (\text{o } 103\,596 \text{ con el cuantil de alta precisión}).$$</div>
+          </li>
+        </ol>
+      </div></details>
+
+      <details class="verif"><summary>Verificación por simulación</summary><div>
+        <div class="sim" id="sim-1">
+          <p class="sim-title">Estimación de $\pi$ por dardos y distribución de $\hat\pi_n$</p>
+          <p class="sim-desc">A la izquierda se lanzan $n$ dardos en $[0,1]^2$ y se cuentan los que caen en el cuarto de círculo. A la derecha se muestra el histograma de 250 réplicas independientes de $\hat\pi_n$ comparado con la curva normal teórica del TLC.</p>
+          <div class="controls"></div>
+          <div class="figs" style="margin:0">
+            <figure class="fig" style="margin:0">
+              <div class="plot" data-k="darts"></div>
+              <figcaption>Dardos en $[0,1]^2$: dentro (verde) vs. fuera (gris).</figcaption>
+            </figure>
+            <figure class="fig" style="margin:0">
+              <div class="plot" data-k="hist"></div>
+              <figcaption>Histograma de $\hat\pi_n$ vs. campana $N\big(\pi, \frac{\pi(4-\pi)}{n}\big)$.</figcaption>
+            </figure>
+          </div>
+          <div class="out"></div>
+        </div>
+      </div></details>
+    </div>
+
+    <!-- ========================= EJERCICIO 2 ========================= -->
+    <div class="box ejercicio" id="ej-2">
+      <span class="box-title">Ejercicio 2 · Precio multiplicativo de una acción y desigualdad de Jensen</span>
+      <p>El precio de una acción comienza en $P_0 = 100$ dólares. Cada día, de forma independiente, el precio se multiplica por un factor $F_i$ que vale $1.02$ o $0.98$, con probabilidad $1/2$ cada uno:
+      $$P_n = P_0 \prod_{i=1}^n F_i.$$</p>
+      <ol type="a">
+        <li>Muestre que $\E(P_n) = 100$ para todo $n$.</li>
+        <li>Estime la probabilidad de que después de 250 días el precio supere los 100 dólares.</li>
+        <li>Calcule $\E(\log F)$ y $\log \E(F)$. ¿Cuál es mayor? Use esta comparación para explicar por qué, aunque el precio esperado se mantiene en 100, el resultado de (b) es menor que $1/2$.</li>
+      </ol>
+      <p class="tecnica">Técnica: transformación logarítmica de productos a sumas + TLC + desigualdad de Jensen → <a href="../temas/clase-05.html">Clase 5 · Teorema del límite central</a></p>
+
+      <div class="chk" id="chk-2"><p class="chk-title">Comprueba tu respuesta (sin ver la solución)</p></div>
+
+      <details class="pista"><summary>Pista 1 · independencia y producto de esperanzas en (a)</summary><div>
+        <p>Calcula primero la esperanza de un factor diario $F_i$: $\E[F_i] = \frac{1}{2}(1.02) + \frac{1}{2}(0.98)$. Como los factores diarios $F_1, \dots, F_n$ son mutuamente independientes, la esperanza de su producto es el producto de las esperanzas.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 2 · transformar el producto en suma para (b)</summary><div>
+        <p>El evento $P_{250} &gt; 100$ equivale a $\prod_{i=1}^{250} F_i &gt; 1$. Aplica logaritmo natural para convertirlo en la suma $S_{250} = \sum_{i=1}^{250} \ln F_i &gt; 0$. Encuentra la media $\mu_Y$ y la varianza $\sigma_Y^2$ de $Y_i = \ln F_i$ y estandariza con el TLC.<br>
+        (Alternativamente, sea $K \sim \text{Bin}(250, 0.5)$ el número de subidas: $P_{250} &gt; 100 \iff K \ge 127$, y aplica aproximación normal con corrección por continuidad).</p>
+      </div></details>
+      <details class="pista"><summary>Pista 3 · concavidad del logaritmo y arrastre por volatilidad en (c)</summary><div>
+        <p>Evalúa $\E[\ln F] = \frac{1}{2}\ln(1.02) + \frac{1}{2}\ln(0.98) = \frac{1}{2}\ln(1.02 \times 0.98)$. Fíjate en que $1.02 \times 0.98 = 0.9996 &lt; 1$. Compara con $\ln \E[F] = \ln(1) = 0$. ¿Qué dice la desigualdad de Jensen para funciones cóncavas?</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <p class="sol-inciso">(a) Esperanza del precio $P_n$ para todo $n$</p>
+        <ol class="pasos">
+          <li><b>Esperanza de un factor diario.</b> Cada factor $F_i$ es una variable discreta que toma los valores $1.02$ y $0.98$ con probabilidad $1/2$ cada uno:
+            $$\E[F_i] = \frac{1}{2}(1.02) + \frac{1}{2}(0.98) = \frac{2.00}{2} = 1.$$</li>
+          <li><b>Esperanza del producto de variables independientes.</b>
+            Por hipótesis, los factores $F_1, F_2, \dots, F_n$ son mutuamente independientes. La esperanza del producto de variables independientes es el producto de sus esperanzas:
+            $$\E(P_n) = \E\left(P_0 \prod_{i=1}^n F_i\right) = P_0 \prod_{i=1}^n \E(F_i) = 100 \cdot (1)^n = 100 \quad \text{dólares}.$$
+            <div class="resultado">$$\E(P_n) = 100 \quad \text{para todo } n \ge 1.$$</div>
+          </li>
+        </ol>
+
+        <p class="sol-inciso">(b) Estimación de $\P(P_{250} &gt; 100)$ tras 250 días</p>
+        <ol class="pasos">
+          <li><b>Equivalencia del evento mediante logaritmos.</b>
+            El precio al día 250 supera los 100 dólares si y solo si:
+            $$P_{250} &gt; 100 \iff 100 \prod_{i=1}^{250} F_i &gt; 100 \iff \prod_{i=1}^{250} F_i &gt; 1.$$
+            Aplicando el logaritmo natural (función estrictamente creciente):
+            $$S_{250} = \sum_{i=1}^{250} \ln F_i &gt; 0.$$
+          </li>
+          <li><b>Camino 1: Aplicación directa del TLC a la suma de logaritmos.</b>
+            Definimos la variable aleatoria $Y_i = \ln F_i$. Sus posibles valores son $\ln(1.02)$ y $\ln(0.98)$ con probabilidad $1/2$ cada uno:
+            <ul>
+              <li><b>Media de $Y_i$:</b>
+                $$\mu_Y = \E[\ln F_i] = \frac{1}{2}\ln(1.02) + \frac{1}{2}\ln(0.98) = \frac{1}{2}\ln(1.02 \times 0.98) = \frac{1}{2}\ln(0.9996) \approx -0.00020004.$$</li>
+              <li><b>Varianza de $Y_i$:</b>
+                Como los dos valores son simétricos respecto a su punto medio $\mu_Y$, la desviación de cada punto respecto a la media es $\delta = \frac{\ln(1.02) - \ln(0.98)}{2} = \frac{1}{2}\ln\left(\frac{1.02}{0.98}\right) \approx 0.02000267$. Por ende:
+                $$\sigma_Y^2 = \Var(Y_i) = \delta^2 \approx (0.02000267)^2 \approx 0.000400107, \qquad \sigma_Y \approx 0.02000267.$$</li>
+              <li><b>Momentos de la suma $S_{250}$:</b>
+                $$\E[S_{250}] = 250 \mu_Y = 125 \ln(0.9996) \approx -0.050010,$$
+                $$\Var(S_{250}) = 250 \sigma_Y^2 \approx 0.100027 \implies \text{DE}(S_{250}) = \sqrt{250}\,\sigma_Y \approx 0.316270.$$</li>
+              <li><b>Estandarización por el TLC:</b>
+                $$z = \frac{0 - \E[S_{250}]}{\text{DE}(S_{250})} \approx \frac{0 - (-0.050010)}{0.316270} \approx +0.15812.$$
+                $$\P(P_{250} &gt; 100) = \P(S_{250} &gt; 0) \approx \P(Z &gt; 0.1581) = 1 - \Phi(0.1581) \approx 0.4372.$$</li>
+            </ul>
+          </li>
+          <li><b>Camino 2: Conteo de días alcistas (Binomial con corrección por continuidad).</b>
+            Sea $K$ el número de días en que el precio sube ($F_i = 1.02$). En los restantes $250 - K$ días el precio baja ($F_i = 0.98$). Como los días son independientes, $K \sim \text{Bin}(250, 0.5)$:
+            $$P_{250} = 100 (1.02)^K (0.98)^{250 - K} &gt; 100 \iff K \ln\left(\frac{1.02}{0.98}\right) &gt; 250 \ln\left(\frac{1}{0.98}\right).$$
+            $$K &gt; \frac{250 \ln(1/0.98)}{\ln(1.02/0.98)} \approx \frac{5.05067}{0.040005} \approx 126.25 \iff K \ge 127.$$
+            Para $K \sim \text{Bin}(250, 0.5)$, la media es $\mu_K = 125$ y la varianza es $\sigma_K^2 = 250(0.5)(0.5) = 62.5 \implies \sigma_K \approx 7.90569$.
+            Aplicando la corrección por continuidad para la variable entera $K \ge 127 \iff K \ge 126.5$:
+            $$\P(K \ge 127) \approx \P\left(Z \ge \frac{126.5 - 125}{\sqrt{62.5}}\right) = \P(Z \ge 0.1897) = 1 - \Phi(0.1897) \approx 0.4248.$$
+            *(El valor exacto de la masa binomial acumulada da $\sum_{k=127}^{250} \binom{250}{k} 0.5^{250} \approx 0.42478$). Ambas respuestas son válidas.*
+            <div class="resultado">$$\P(P_{250} &gt; 100) \approx 0.4372 \quad (\text{TLC directo en } \sum \ln F_i) \quad \text{o bien } 0.4248 \quad (\text{con corrección por continuidad}).$$</div>
+          </li>
+        </ol>
+
+        <p class="sol-inciso">(c) Comparación de $\E(\log F)$ con $\log \E(F)$ y desigualdad de Jensen</p>
+        <ol class="pasos">
+          <li><b>Cálculo explícito de ambas cantidades:</b>
+            $$\log \E(F) = \ln(1) = 0,$$
+            $$\E(\log F) = \frac{1}{2}\ln(1.02) + \frac{1}{2}\ln(0.98) = \frac{1}{2}\ln(1.02 \times 0.98) = \frac{1}{2}\ln(0.9996) \approx -0.00020004.$$
+            Por consiguiente:
+            $$\log \E(F) = 0 &gt; \E(\log F) \approx -0.0002.$$</li>
+          <li><b>Fundamentación matemática (Desigualdad de Jensen).</b>
+            La función logaritmo natural $g(x) = \ln x$ es dos veces diferenciable con $g''(x) = -1/x^2 &lt; 0$ para todo $x &gt; 0$, por lo que es estrictamente cóncava. Para cualquier variable aleatoria no constante $F &gt; 0$, la desigualdad de Jensen establece que:
+            $$\E[\ln F] &lt; \ln \E[F].$$</li>
+          <li><b>Explicación probabilística: por qué la probabilidad es menor que $1/2$.</b>
+            <ul>
+              <li><b>Arrastre por volatilidad (volatility drag):</b> Un rendimiento porcentual positivo no compensa a un rendimiento porcentual negativo de igual magnitud: multiplicar por $1.02$ y luego por $0.98$ produce $1.02 \times 0.98 = 0.9996 &lt; 1$, lo que genera una pérdida neta acumulada del $0.04\%$.</li>
+              <li><b>Evolución de la mediana vs. la media:</b> Como la tasa de crecimiento logarítmico esperada es estrictamente negativa ($\mu_Y \approx -0.0002$), la <b>mediana</b> del precio a los 250 días cae de forma continua:
+                $$\text{Mediana}(P_{250}) = 100 \times e^{\text{Mediana}(S_{250})} \approx 100 \times (0.9996)^{125} \approx 95.12 \text{ dólares}.$$
+                Al ser la mediana inferior a 100, estrictamente más de la mitad de las trayectorias ($57.5\%$) terminan con pérdidas ($P_{250} &lt; 100$).</li>
+              <li><b>Asimetría de la distribución del precio:</b> El precio $P_{250} = 100 e^{S_{250}}$ tiene distribución lognormal, fuertemente asimétrica hacia la derecha. Una pequeña proporción de trayectorias afortunadas (aquellas con muchos días alcistas) alcanzan precios muy elevados (por ejemplo 180 o 250 dólares) y compensan las pérdidas de la mayoría, logrando que el precio promedio global se mantenga en 100 dólares.</li>
+            </ul>
+            <div class="resultado">$$\E[\ln F] \approx -0.0002 &lt; \ln \E[F] = 0.$$ La concavidad del logaritmo penaliza las oscilaciones multiplicativas. La mediana decae a $\approx 95.12$ dólares, por lo que la probabilidad de terminar por encima de 100 es menor a $1/2$ ($\approx 42.5\%$).</div>
+          </li>
+        </ol>
+      </div></details>
+
+      <details class="verif"><summary>Verificación por simulación</summary><div>
+        <div class="sim" id="sim-2">
+          <p class="sim-title">Trayectorias del precio y distribución del log-retorno</p>
+          <p class="sim-desc">A la izquierda, 25 trayectorias de precios durante 250 días: verde si terminan por encima de 100 dólares, naranja si terminan por debajo. A la derecha, histograma de $\ln(P_{250}/100) = \sum_{i=1}^{250} \ln F_i$ frente a la normal del TLC.</p>
+          <div class="controls"></div>
+          <div class="figs" style="margin:0">
+            <figure class="fig" style="margin:0">
+              <div class="plot" data-k="paths"></div>
+              <figcaption>25 trayectorias: $P_0 = 100$. Verde: $P_{250} &gt; 100$. Naranja: $P_{250} \le 100$.</figcaption>
+            </figure>
+            <figure class="fig" style="margin:0">
+              <div class="plot" data-k="dist"></div>
+              <figcaption>Histograma de $\ln(P_{250}/100)$ vs. normal $N(-0.05, 0.10)$.</figcaption>
+            </figure>
+          </div>
+          <div class="out"></div>
+        </div>
+      </div></details>
+    </div>
+
+    <!-- ========================= EJERCICIO 3 ========================= -->
+    <div class="box ejercicio" id="ej-3">
+      <span class="box-title">Ejercicio 3 · Lanzamientos de un dado y producto de anotaciones</span>
+      <p>Se realizan lanzamientos independientes y sucesivos de un dado legal. En cada lanzamiento:
+      <ul>
+        <li>si sale $1, 2$ o $3$, anotamos el número $1$;</li>
+        <li>si sale $4$, anotamos el número $2$;</li>
+        <li>si sale $5$ o $6$, anotamos el número $3$.</li>
+      </ul>
+      Sea $N$ el número de lanzamientos necesarios para que el producto de los números anotados supere $100\,000$. Estime $\P(N \le 25)$.</p>
+      <p class="tecnica">Técnica: equivalencia de eventos para un proceso monótono + transformación logarítmica + TLC → <a href="../temas/clase-05.html">Clase 5 · Teorema del límite central</a></p>
+
+      <div class="chk" id="chk-3"><p class="chk-title">Comprueba tu respuesta (sin ver la solución)</p></div>
+
+      <details class="pista"><summary>Pista 1 · distribución de la variable de un lanzamiento</summary><div>
+        <p>Sea $X_i$ el número anotado en el lanzamiento $i$. El dado tiene 6 caras equiprobables. Halla los valores posibles de $X_i$ y sus probabilidades $\P(X_i = 1)$, $\P(X_i = 2)$ y $\P(X_i = 3)$.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 2 · propiedad de monotonía del producto acumulado</summary><div>
+        <p>Observa que todos los posibles valores de $X_i$ cumplen $X_i \ge 1$. Por lo tanto, el producto acumulado $M_n = \prod_{i=1}^n X_i$ es una sucesión no decreciente. ¿Qué significa que se requieran a lo sumo 25 lanzamientos para superar $100\,000$? Demuestra que $\{N \le 25\} \iff \{M_{25} &gt; 100\,000\}$.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 3 · logaritmos y momentos para el TLC</summary><div>
+        <p>Toma logaritmo natural: $\prod_{i=1}^{25} X_i &gt; 100\,000 \iff S_{25} = \sum_{i=1}^{25} \ln X_i &gt; \ln(100\,000) \approx 11.5129$. Calcula la media $\mu = \E[\ln X_i]$ y la varianza $\sigma^2 = \Var(\ln X_i)$, luego aplica el TLC a $S_{25}$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Distribución de la variable anotada $X_i$.</b>
+            Sea $X_i$ el valor anotado en el lanzamiento $i$. Dado que el dado es legal (cada cara aparece con probabilidad $1/6$):
+            $$X_i = \begin{cases}
+              1, &amp; \text{si sale } 1, 2, 3 \implies \P(X_i = 1) = \frac{3}{6} = \frac{1}{2}, \\[4pt]
+              2, &amp; \text{si sale } 4 \implies \P(X_i = 2) = \frac{1}{6}, \\[4pt]
+              3, &amp; \text{si sale } 5, 6 \implies \P(X_i = 3) = \frac{2}{6} = \frac{1}{3}.
+            \end{cases}$$
+            Verificación: $\frac{1}{2} + \frac{1}{6} + \frac{1}{3} = \frac{3 + 1 + 2}{6} = 1$.</li>
+          <li><b>Equivalencia fundamental de eventos por monotonía.</b>
+            Como $X_i \in \{1, 2, 3\}$, todos los factores son mayores o iguales a $1$. Por consiguiente, la sucesión de productos acumulados:
+            $$M_n = \prod_{i=1}^n X_i$$
+            es una sucesión monótona no decreciente: $M_1 \le M_2 \le M_3 \le \dots \le M_n \le \dots$.
+            La variable de parada $N$ es el primer índice en que el producto rebasa $100\,000$:
+            $$N = \min\{n \ge 1 : M_n &gt; 100\,000\}.$$
+            Por la monotonía del producto:
+            $$\{N \le 25\} \iff \{M_{25} &gt; 100\,000\}.$$
+            *(Justificación: si $N \le 25$, existió algún paso $k \le 25$ en que $M_k &gt; 100\,000$, y al ser los factores posteriores $\ge 1$, $M_{25} \ge M_k &gt; 100\,000$. A la inversa, si $M_{25} &gt; 100\,000$, el primer cruce ocurrió necesariamente en o antes del lanzamiento 25).*</li>
+          <li><b>Linealización mediante logaritmos.</b>
+            Aplicando el logaritmo natural al producto:
+            $$\prod_{i=1}^{25} X_i &gt; 100\,000 \iff S_{25} = \sum_{i=1}^{25} \ln X_i &gt; \ln(100\,000) \approx 11.512925.$$
+            *(Nota: si se utiliza $\log_{10}$, el umbral es $5$ y la estandarización conduce con exactitud al mismo valor de $z$).*</li>
+          <li><b>Momentos de la variable $Y_i = \ln X_i$.</b>
+            La variable $Y_i$ toma los valores:
+            - $\ln(1) = 0$ con probabilidad $1/2$,
+            - $\ln(2) \approx 0.693147$ con probabilidad $1/6$,
+            - $\ln(3) \approx 1.098612$ con probabilidad $1/3$.
+            Calculamos su media:
+            $$\mu = \E[\ln X_i] = \frac{1}{2}\ln(1) + \frac{1}{6}\ln(2) + \frac{1}{3}\ln(3) = \frac{\ln 2 + 2\ln 3}{6} = \frac{\ln(2 \cdot 3^2)}{6} = \frac{\ln 18}{6} \approx 0.481729.$$
+            Calculamos su segundo momento:
+            $$\E[(\ln X_i)^2] = \frac{1}{2}(0)^2 + \frac{1}{6}(\ln 2)^2 + \frac{1}{3}(\ln 3)^2 \approx \frac{0.480453}{6} + \frac{1.206949}{3} \approx 0.482392.$$
+            Por lo tanto, la varianza y la desviación estándar valen:
+            $$\sigma^2 = \Var(\ln X_i) = \E[(\ln X_i)^2] - \mu^2 \approx 0.482392 - (0.481729)^2 \approx 0.482392 - 0.232063 \approx 0.250329,$$
+            $$\sigma = \sqrt{\sigma^2} \approx 0.500329 \approx 0.5004.$$</li>
+          <li><b>Momentos de la suma $S_{25}$ y aplicación del TLC.</b>
+            Como los lanzamientos son mutuamente independientes, por el TLC la suma de $n = 25$ variables i.i.d. se aproxima por una normal:
+            $$\E[S_{25}] = 25 \mu = 25 \cdot \frac{\ln 18}{6} \approx 12.043216,$$
+            $$\Var(S_{25}) = 25 \sigma^2 \approx 25 \times 0.250329 \approx 6.25823 \implies \text{DE}(S_{25}) = 5\sigma \approx 2.501646.$$</li>
+          <li><b>Estandarización y aproximación normal:</b>
+            Estandarizando el umbral $\ln(100\,000) \approx 11.512925$:
+            $$z = \frac{11.512925 - \E[S_{25}]}{\text{DE}(S_{25})} \approx \frac{11.512925 - 12.043216}{2.501646} \approx \frac{-0.530291}{2.501646} \approx -0.21198 \approx -0.2120.$$
+            Por la simetría de la distribución normal estándar:
+            $$\P(N \le 25) = \P(S_{25} &gt; 11.5129) \approx \P(Z &gt; -0.2120) = \Phi(0.2120) \approx 0.5839.$$
+            <div class="resultado">$$\P(N \le 25) \approx \Phi(0.2120) \approx 0.5839 \quad (\approx 58.39\%).$$</div>
+          </li>
+        </ol>
+      </div></details>
+
+      <details class="verif"><summary>Verificación por simulación</summary><div>
+        <div class="sim" id="sim-3">
+          <p class="sim-title">Juego del dado: distribución de $S_{25} = \sum_{i=1}^{25} \ln X_i$</p>
+          <p class="sim-desc">Se simulan 2000 partidas independientes de 25 tiradas del dado. La condición $N \le 25$ se cumple cuando $S_{25} &gt; \ln(100\,000) \approx 11.513$ (región sombreada a la derecha de la línea vertical).</p>
+          <div class="controls"></div>
+          <div class="plot"></div>
+          <div class="out"></div>
+        </div>
+      </div></details>
+    </div>
+
+    <!-- ========================= EJERCICIO 4 ========================= -->
+    <div class="box ejercicio" id="ej-4">
+      <span class="box-title">Ejercicio 4 · Suma de Poisson y el límite analítico $\lim_{n\to\infty} e^{-n}\sum_{k=0}^n \frac{n^k}{k!} = \frac{1}{2}$</span>
+      <p>Sean $X_1, X_2, \dots$ variables aleatorias i.i.d. con distribución $\text{Poisson}(1)$, y defina $S_n = X_1 + \dots + X_n$.</p>
+      <ol type="a">
+        <li>Identifique la distribución de $S_n$.</li>
+        <li>Usando el TLC, demuestre que
+          $$\lim_{n\to\infty} e^{-n}\sum_{k=0}^n \frac{n^k}{k!} = \frac{1}{2}.$$</li>
+      </ol>
+      <p class="tecnica">Técnica: aditividad de la Poisson (vía FGM) + interpretación probabilística de un límite analítico mediante el TLC → <a href="../temas/clase-05.html#ej-3">Clase 5 · Ejemplo 3</a></p>
+
+      <div class="chk" id="chk-4"><p class="chk-title">Comprueba tu respuesta (sin ver la solución)</p></div>
+
+      <details class="pista"><summary>Pista 1 · FGM de una suma independiente para (a)</summary><div>
+        <p>Para $X_i \sim \text{Poisson}(1)$, su función generadora de momentos es $M_{X_i}(t) = \exp(e^t - 1)$. Como las variables son independientes, la FGM de la suma es el producto de las FGM individuales: $M_{S_n}(t) = [M_{X_i}(t)]^n$. ¿A qué distribución conocida corresponde?</p>
+      </div></details>
+      <details class="pista"><summary>Pista 2 · reconocer la probabilidad acumulada para (b)</summary><div>
+        <p>Escribe la función de masa de probabilidad de $S_n \sim \text{Poisson}(n)$. Comprueba que el término $e^{-n}\frac{n^k}{k!}$ es precisamente $\P(S_n = k)$, de modo que la sumatoria dada es exactamente $\P(S_n \le n)$.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 3 · estandarización y paso al límite</summary><div>
+        <p>Estandariza $S_n$ restando su media $\E[S_n] = n$ y dividiendo entre su desviación estándar $\sqrt{\Var(S_n)} = \sqrt{n}$:
+        $$W_n = \frac{S_n - n}{\sqrt{n}}.$$
+        Por el TLC, $W_n \dto Z \sim N(0, 1)$. Reescribe el evento $\{S_n \le n\}$ en términos de $W_n$ y calcula el límite de su función de distribución acumulada en $0$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <p class="sol-inciso">(a) Identificación de la distribución de $S_n$</p>
+        <ol class="pasos">
+          <li><b>FGM de una variable Poisson individual.</b>
+            Para $X_i \sim \text{Poisson}(\lambda = 1)$, su función generadora de momentos viene dada por:
+            $$M_{X_i}(t) = \E[e^{t X_i}] = \sum_{k=0}^\infty e^{tk}\frac{e^{-1} 1^k}{k!} = e^{-1}\sum_{k=0}^\infty \frac{(e^t)^k}{k!} = e^{-1}e^{e^t} = \exp(e^t - 1), \quad \forall t\in\R.$$</li>
+          <li><b>FGM de la suma de variables independientes.</b>
+            Como $X_1, \dots, X_n$ son independientes, la FGM de su suma $S_n = \sum_{i=1}^n X_i$ es el producto de sus FGM:
+            $$M_{S_n}(t) = \prod_{i=1}^n M_{X_i}(t) = \big[\exp(e^t - 1)\big]^n = \exp\big(n(e^t - 1)\big).$$</li>
+          <li><b>Conclusión por unicidad de la FGM.</b>
+            La función $\exp(n(e^t - 1))$ corresponde a la FGM de una variable aleatoria con distribución de Poisson de parámetro $\lambda = n$. Por el teorema de unicidad de la FGM:
+            <div class="resultado">$$S_n \sim \text{Poisson}(n), \qquad \E[S_n] = n, \quad \Var(S_n) = n.$$</div>
+          </li>
+        </ol>
+
+        <p class="sol-inciso">(b) Demostración del límite mediante el TLC</p>
+        <ol class="pasos">
+          <li><b>Interpretación probabilística de la suma analítica.</b>
+            Dado que $S_n \sim \text{Poisson}(n)$, su función de masa de probabilidad en el entero $k \ge 0$ es $\P(S_n = k) = \frac{e^{-n} n^k}{k!}$.
+            La expresión matemática del límite corresponde a la probabilidad acumulada de $S_n$ evaluada en $n$:
+            $$e^{-n}\sum_{k=0}^n \frac{n^k}{k!} = \sum_{k=0}^n e^{-n}\frac{n^k}{k!} = \sum_{k=0}^n \P(S_n = k) = \P(S_n \le n).$$</li>
+          <li><b>Aplicación del Teorema del Límite Central.</b>
+            Los sumandos $X_1, X_2, \dots$ son i.i.d. con media común $\mu = \E[X_i] = 1$ y varianza común $\sigma^2 = \Var(X_i) = 1 &lt; \infty$.
+            Definimos la variable estandarizada:
+            $$W_n = \frac{S_n - n\mu}{\sigma\sqrt{n}} = \frac{S_n - n}{\sqrt{n}}.$$
+            Por el Teorema del Límite Central, la distribución acumulada de $W_n$ converge puntualmente a la de una normal estándar:
+            $$W_n \dto Z \sim N(0, 1) \iff \lim_{n\to\infty} \P(W_n \le w) = \Phi(w), \quad \forall w \in \R.$$</li>
+          <li><b>Estandarización del evento $\{S_n \le n\}$.</b>
+            Restando $n$ y dividiendo entre $\sqrt{n} &gt; 0$ en ambos miembros de la desigualdad:
+            $$\P(S_n \le n) = \P\left(\frac{S_n - n}{\sqrt{n}} \le \frac{n - n}{\sqrt{n}}\right) = \P(W_n \le 0) = F_{W_n}(0).$$</li>
+          <li><b>Evaluación del límite.</b>
+            Dado que la función de distribución normal estándar $\Phi(w) = \frac{1}{\sqrt{2\pi}}\int_{-\infty}^w e^{-t^2/2}dt$ es continua en todo $\R$ (y en particular en $w = 0$):
+            $$\lim_{n\to\infty} e^{-n}\sum_{k=0}^n \frac{n^k}{k!} = \lim_{n\to\infty} \P(W_n \le 0) = \Phi(0) = \frac{1}{2}. \qquad \blacksquare$$
+            <div class="resultado">$$\lim_{n\to\infty} e^{-n}\sum_{k=0}^n \frac{n^k}{k!} = \Phi(0) = \frac{1}{2}.$$</div>
+          </li>
+        </ol>
+      </div></details>
+
+      <details class="verif"><summary>Verificación interactiva</summary><div>
+        <div class="sim" id="sim-4">
+          <p class="sim-title">El límite $\lim_{n\to\infty} e^{-n}\sum_{k=0}^n \frac{n^k}{k!} = \frac{1}{2}$</p>
+          <p class="sim-desc">Mueve el deslizador de $n$: a la izquierda se grafican las probabilidades $\P(S_n = k)$ de $\text{Poisson}(n)$, coloreando los términos $k \le n$ (azul) frente a $k &gt; n$ (gris). A la derecha se traza la sucesión $a_n = \P(S_n \le n)$ convergiendo hacia $1/2$.</p>
+          <div class="controls"></div>
+          <div class="figs" style="margin:0">
+            <figure class="fig" style="margin:0">
+              <div class="plot" data-k="pmf"></div>
+              <figcaption>$\text{Poisson}(n)$: términos $k \le n$ (azul) vs. $k &gt; n$ (gris) y campana normal.</figcaption>
+            </figure>
+            <figure class="fig" style="margin:0">
+              <div class="plot" data-k="seq"></div>
+              <figcaption>Sucesión $a_n = \P(S_n \le n)$ para $n = 1,\dots,150$ y límite $0.5$.</figcaption>
+            </figure>
+          </div>
+          <div class="out"></div>
+        </div>
+      </div></details>
+    </div>
+
+    <!-- ========================= EJERCICIO 5 ========================= -->
+    <div class="box ejercicio" id="ej-5">
+      <span class="box-title">Ejercicio 5 · Particiones sucesivas de una vara con $\text{Beta}(3, 1)$</span>
+      <p>Se tiene una vara de longitud 1. En el primer paso se parte en un punto elegido según una distribución $\text{Beta}(3, 1)$, y nos quedamos con ese pedazo. Luego este pedazo se vuelve a partir según una proporción independiente con distribución $\text{Beta}(3, 1)$, y así sucesivamente. El juego termina cuando la vara que tenemos mide menos de $e^{-8}$ unidades. ¿Cuál es la probabilidad de que se requieran más de 24 particiones para terminar el juego?</p>
+      <p><em>(Pista del enunciado: si $X \sim \text{Beta}(\alpha, 1)$, entonces $Y = -\log(X) \sim \text{Exp}(\beta = 1/\alpha)$).</em></p>
+      <p class="tecnica">Técnica: transformación $Y_i = -\ln X_i \sim \text{Exp}(\beta=1/3)$ + equivalencia $\{N > 24\} \iff \{L_{24} \ge e^{-8}\}$ + TLC y comparación con la ley Gamma exacta → <a href="../temas/clase-01.html">Clase 1</a> y <a href="../temas/clase-05.html">Clase 5</a></p>
+
+      <div class="chk" id="chk-5"><p class="chk-title">Comprueba tu respuesta (sin ver la solución)</p></div>
+
+      <details class="pista"><summary>Pista 1 · modelo multiplicativo y evento de parada</summary><div>
+        <p>Sea $X_i \sim \text{Beta}(3,1)$ la proporción de vara que se conserva en el corte $i$. Tras $n$ particiones, la longitud restante es $L_n = \prod_{i=1}^n X_i$. El juego termina cuando $L_n &lt; e^{-8}$. ¿Cuándo se cumple que se necesitan <b>más de 24 cortes</b>? Ocurre si y solo si tras el corte 24 la vara aún no ha alcanzado dicho umbral, es decir, $L_{24} \ge e^{-8}$.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 2 · demostración de la pista del enunciado</summary><div>
+        <p>Para $X \sim \text{Beta}(\alpha, 1)$, su densidad en $(0,1)$ es $f_X(x) = \alpha x^{\alpha - 1}$. Aplica la fórmula del cambio de variable univariado a $Y = -\ln X$: despeja $x = e^{-y}$, calcula $|dx/dy| = e^{-y}$ y obtén la densidad $f_Y(y)$. Identifica que es una exponencial con parámetro de escala $\beta = 1/\alpha$.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 3 · linealización y aplicación del TLC</summary><div>
+        <p>Aplica $-\ln$ a ambos lados de $L_{24} \ge e^{-8}$: la desigualdad se invierte y queda $S_{24} = \sum_{i=1}^{24} (-\ln X_i) \le 8$. Como cada $-\ln X_i \iid \text{Exp}(\beta = 1/3)$, calcula la media $\E[S_{24}]$ y la varianza $\Var(S_{24})$. Luego estandariza y aproxima con el TLC.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Modelo del proceso de cortes sucesivos.</b>
+            Sean $X_1, X_2, \dots$ variables aleatorias independientes e idénticamente distribuidas con distribución $\text{Beta}(3, 1)$, donde $X_i$ representa la fracción retenida en la partición $i$.
+            Tras $n$ pasos, la longitud residual de la vara es el producto:
+            $$L_n = X_1 \cdot X_2 \\cdots X_n = \prod_{i=1}^n X_i.$$
+            Como cada $X_i \in (0, 1)$ casi seguramente, la sucesión de longitudes es estrictamente decreciente: $1 &gt; L_1 &gt; L_2 &gt; \dots &gt; 0$.</li>
+          <li><b>Equivalencia del evento de parada.</b>
+            El juego se detiene en el primer paso $N$ donde la longitud cae por debajo de $e^{-8}$:
+            $$N = \min\{n \ge 1 : L_n &lt; e^{-8}\}.$$
+            Requerir más de 24 particiones para concluir ($N &gt; 24$) significa exactamente que al cabo de 24 particiones el juego todavía <em>no</em> ha finalizado:
+            $$\{N &gt; 24\} \iff \{L_{24} \ge e^{-8}\}.$$</li>
+          <li><b>Demostración de la pista del enunciado (Transformación univariada).</b>
+            Para una variable aleatoria $X \sim \text{Beta}(\alpha, 1)$, su función de densidad en $(0, 1)$ es:
+            $$f_X(x) = \frac{\Gamma(\alpha + 1)}{\Gamma(\alpha)\Gamma(1)} x^{\alpha - 1}(1 - x)^{1 - 1} = \alpha x^{\alpha - 1}, \qquad 0 &lt; x &lt; 1.$$
+            Definimos la transformación $Y = -\ln X$. Dado que $x \in (0, 1)$, el soporte transformado es $y \in (0, \infty)$.
+            La transformación inversa es $x = g^{-1}(y) = e^{-y}$, con derivada $\frac{dx}{dy} = -e^{-y} \implies \left|\frac{dx}{dy}\right| = e^{-y}$.
+            Por el método del Jacobiano univariado:
+            $$f_Y(y) = f_X(e^{-y})\left|\frac{dx}{dy}\right| = \alpha (e^{-y})^{\alpha - 1} e^{-y} = \alpha e^{-\alpha y}, \qquad y &gt; 0.$$
+            En la parametrización del Formulario oficial de ESPOL (donde $\text{Exp}(\beta)$ tiene escala y media $\beta$):
+            $$Y = -\ln X \sim \text{Exp}\left(\beta = \frac{1}{\alpha}\right), \qquad \E[Y] = \beta = \frac{1}{\alpha}, \quad \Var(Y) = \beta^2 = \frac{1}{\alpha^2}.$$</li>
+          <li><b>Distribución de cada corte para $\alpha = 3$.</b>
+            Para cada corte $i$:
+            $$Y_i = -\ln X_i \iid \text{Exp}\left(\beta = \frac{1}{3}\right),$$
+            con media y varianza individuales dadas por:
+            $$\mu = \E[Y_i] = \frac{1}{3}, \qquad \sigma^2 = \Var(Y_i) = \left(\frac{1}{3}\right)^2 = \frac{1}{9}.$$</li>
+          <li><b>Linealización del evento.</b>
+            Tomando logaritmo natural en la condición $L_{24} \ge e^{-8}$ y multiplicando por $-1$ (lo cual invierte el sentido de la desigualdad):
+            $$L_{24} \ge e^{-8} \iff \ln L_{24} \ge -8 \iff -\ln L_{24} \le 8 \iff S_{24} = \sum_{i=1}^{24} (-\ln X_i) \le 8.$$</li>
+          <li><b>Momentos de la suma $S_{24}$.</b>
+            Para $n = 24$ variables exponenciales independientes:
+            $$\E[S_{24}] = 24 \mu = 24 \cdot \frac{1}{3} = 8,$$
+            $$\Var(S_{24}) = 24 \sigma^2 = 24 \cdot \frac{1}{9} = \frac{24}{9} = \frac{8}{3} \approx 2.6667 \implies \text{DE}(S_{24}) = \sqrt{\frac{8}{3}} \approx 1.63299.$$</li>
+          <li><b>Aproximación por el Teorema del Límite Central.</b>
+            Por el TLC, la variable estandarizada $W_{24} = \frac{S_{24} - \E[S_{24}]}{\text{DE}(S_{24})} = \frac{S_{24} - 8}{\sqrt{8/3}}$ converge en distribución a una normal estándar $Z \sim N(0, 1)$. Estandarizando el evento:
+            $$\P(N &gt; 24) = \P(S_{24} \le 8) = \P\left(\frac{S_{24} - 8}{\sqrt{8/3}} \le \frac{8 - 8}{\sqrt{8/3}}\right) \approx \P(Z \le 0) = \Phi(0) = \frac{1}{2} = 0.5000.$$
+            <div class="resultado">$$\P(N &gt; 24) \approx \Phi(0) = 0.5000 \quad (\text{por el TLC}).$$</div>
+          </li>
+          <li><b>Comparación con la solución analítica exacta (Distribución Gamma).</b>
+            Por la propiedad reproductiva de la distribución Gamma (Clase 2), la suma de 24 variables exponenciales independientes de parámetro de escala $\beta = 1/3$ se distribuye exactamente como:
+            $$S_{24} \sim \text{Gamma}\left(\alpha = 24, \;\beta = \frac{1}{3}\right).$$
+            La probabilidad acumulada exacta es:
+            $$\P(S_{24} \le 8) = F_{\text{Gamma}(24, 1/3)}(8) = \int_0^8 \frac{1}{(1/3)^{24}\Gamma(24)} y^{23} e^{-3y}\,dy \approx 0.5272.$$
+            *(¿Por qué el valor exacto $0.5272$ es ligeramente superior a $0.5000$? Porque la distribución Gamma posee asimetría positiva $\alpha_3 = 2/\sqrt{24} \approx 0.408$. En distribuciones asimétricas a la derecha, la mediana es estrictamente menor que la media: para $\text{Gamma}(24, 1/3)$ la media es $8.000$, pero su mediana es $\approx 7.889 &lt; 8$. Por tanto, el punto $8$ se ubica por encima de la mediana y acumula más del $50\%$ de la masa probabilística).*
+          </li>
+        </ol>
+      </div></details>
+
+      <details class="verif"><summary>Verificación por simulación</summary><div>
+        <div class="sim" id="sim-5">
+          <p class="sim-title">Partición de la vara y distribución de la suma exponencial</p>
+          <p class="sim-desc">Se simulan 2500 varas sometidas a 24 cortes independientes con distribución $\text{Beta}(3,1)$. El histograma de $S_{24} = -\ln L_{24} = \sum_{i=1}^{24}(-\ln X_i)$ se compara con la densidad exacta $\text{Gamma}(24, 1/3)$ y la campana normal del TLC $N(8, 8/3)$.</p>
+          <div class="controls"></div>
+          <div class="plot"></div>
+          <div class="out"></div>
+        </div>
+      </div></details>
+    </div>
+
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../assets/js/stats.js"></script>
+<script src="../assets/js/plot.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+(function () {
+  'use strict';
+  const S = EM.stats, D = S.dist, fmt = S.fmt, ui = EM.ui;
+  const $id = id => document.getElementById(id);
+
+  function sim(id) {
+    const root = $id(id);
+    const plots = {};
+    root.querySelectorAll('.plot').forEach((d, i) => { plots[d.dataset.k || i] = d; });
+    return { root, ctl: root.querySelector('.controls'), plots, out: ui.readout(root.querySelector('.out')) };
+  }
+
+  function check(id, items) {
+    const host = $id(id);
+    items.forEach(o => ui.numcheck(host, o));
+  }
+
+  // Redibujar gráficos cuando se desplieguen detalles
+  document.querySelectorAll('#contenido details').forEach(d => {
+    d.addEventListener('toggle', () => { if (d.open) EM.plot.redrawAll(); });
+  });
+
+  /* =========================== EJERCICIO 1 =========================== */
+  (function ej1() {
+    check('chk-1', [
+      { prompt: '(a) Coeficiente $n\\,\\Var(\\hat\\pi_n) = \\pi(4-\\pi) \\approx$', answer: 2.6968, tol: 0.005 },
+      { prompt: '(b) Menor entero $n \\approx$', answer: 103598, tol: 10 },
+    ]);
+
+    const s = sim('sim-1');
+    let n = 200;
+    const pDarts = EM.plot.create(s.plots.darts, {
+      xmin: 0, xmax: 1.05, ymin: 0, ymax: 1.05, height: 260, xlabel: 'u', ylabel: 'v', equal: true
+    });
+    const pHist = EM.plot.create(s.plots.hist, {
+      xmin: 2.3, xmax: 4.0, ymin: 0, ymax: 4, height: 260, xlabel: '\\hat\\pi_n'
+    });
+
+    function run() {
+      const M = 250;
+      const uIn = [], vIn = [], uOut = [], vOut = [];
+      let kSample = 0;
+      for (let i = 0; i < n; i++) {
+        const u = Math.random(), v = Math.random();
+        if (u * u + v * v <= 1) {
+          uIn.push(u); vIn.push(v); kSample++;
+        } else {
+          uOut.push(u); vOut.push(v);
+        }
+      }
+      const piSample = 4 * kSample / n;
+
+      const p = Math.PI / 4;
+      const piVals = new Float64Array(M);
+      for (let m = 0; m < M; m++) {
+        let hits = 0;
+        for (let i = 0; i < n; i++) {
+          if (Math.random() < p) hits++;
+        }
+        piVals[m] = 4 * hits / n;
+      }
+
+      const meanPi = S.mean(piVals);
+      const sdPi = S.sd(piVals);
+      const teoSd = Math.sqrt(Math.PI * (4 - Math.PI) / n);
+
+      pDarts.draw(g => {
+        g.param(t => Math.cos(t), t => Math.sin(t), 0, Math.PI / 2, { color: 'accent', width: 2.2 });
+        g.line(0, 0, 1, 0, { color: 'muted', width: 1 });
+        g.line(0, 0, 0, 1, { color: 'muted', width: 1 });
+        g.line(1, 0, 1, 1, { color: 'line', dash: [3, 3] });
+        g.line(0, 1, 1, 1, { color: 'line', dash: [3, 3] });
+        if (uIn.length) g.points(uIn, vIn, { color: 'good', r: 2.2, alpha: 0.75, label: `Dentro (${kSample})` });
+        if (uOut.length) g.points(uOut, vOut, { color: 'muted', r: 2.2, alpha: 0.45, label: `Fuera (${n - kSample})` });
+      });
+
+      const normDist = D.normal(Math.PI, teoSd);
+      const lo = Math.max(1.8, Math.PI - 3.6 * teoSd);
+      const hi = Math.min(4.5, Math.PI + 3.6 * teoSd);
+      pHist.setRange({ xmin: lo, xmax: hi, ymin: 0, ymax: normDist.pdf(Math.PI) * 1.35 });
+      pHist.draw(g => {
+        g.hist(piVals, { bins: 24, range: [lo, hi], color: 'c2', alpha: 0.55, label: 'Réplicas de $\\hat\\pi_n$' });
+        g.curve(normDist.pdf, { color: 'c1', width: 2.2, label: `Normal($\\pi$, ${fmt(teoSd, 3)})` });
+        g.vline(Math.PI, { color: 'accent', dash: [4, 3], width: 1.5, label: '$\\pi$' });
+      });
+
+      s.out.set(`Muestra actual: $n = ${n}$ puntos · dentro: <b>${kSample}</b> · $\\hat\\pi_{${n}} = 4\\times\\frac{${kSample}}{${n}} =$ <b>${fmt(piSample, 4)}</b> (error: ${fmt(Math.abs(piSample - Math.PI), 4)})<br>` +
+        `De las $M = ${M}$ réplicas: media muestral = <b>${fmt(meanPi, 4)}</b> (teórica: $\\pi \\approx 3.1416$) · ` +
+        `DE muestral = <b>${fmt(sdPi, 4)}</b> (teórica: $\\sqrt{\\pi(4-\\pi)/n} = ${fmt(teoSd, 4)}$)<br>` +
+        `Con $n=${n}$, la desviación estándar es $\\approx ${fmt(teoSd, 3)}$; para reducir el margen a $0.01$ al $95\\%$ de confianza se requiere $n \\ge 103\\,600$.`);
+    }
+
+    ui.slider(s.ctl, { tex: 'n', min: 50, max: 500, step: 25, value: n, onInput: v => { n = Math.round(v); run(); } });
+    ui.button(s.ctl, 'Lanzar simulación', run, { primary: true });
+    run();
+  })();
+
+  /* =========================== EJERCICIO 2 =========================== */
+  (function ej2() {
+    check('chk-2', [
+      { prompt: '(b) $\\P(P_{250} > 100) \\approx$', answer: 0.431, tol: 0.01 },
+      { prompt: '(c) $\\E[\\ln F] \\approx$', answer: -0.0002, tol: 0.00005 },
+    ]);
+
+    const s = sim('sim-2');
+    const pPaths = EM.plot.create(s.plots.paths, {
+      xmin: 0, xmax: 250, ymin: 55, ymax: 165, height: 260, xlabel: 'días (t)', ylabel: 'P_t'
+    });
+    const pDist = EM.plot.create(s.plots.dist, {
+      xmin: -1.0, xmax: 0.9, ymin: 0, ymax: 1.5, height: 260, xlabel: '\\ln(P_{250}/100)'
+    });
+
+    function run() {
+      const days = 250;
+      const numPaths = 25;
+      const paths = [];
+
+      for (let p = 0; p < numPaths; p++) {
+        const traj = new Float64Array(days + 1);
+        traj[0] = 100;
+        for (let t = 1; t <= days; t++) {
+          const factor = Math.random() < 0.5 ? 1.02 : 0.98;
+          traj[t] = traj[t - 1] * factor;
+        }
+        paths.push(traj);
+      }
+
+      const M = 1500;
+      const finalPrices = new Float64Array(M);
+      const logRets = new Float64Array(M);
+      let winM = 0;
+      for (let m = 0; m < M; m++) {
+        let k = 0;
+        for (let i = 0; i < days; i++) {
+          if (Math.random() < 0.5) k++;
+        }
+        const pFinal = 100 * Math.pow(1.02, k) * Math.pow(0.98, days - k);
+        finalPrices[m] = pFinal;
+        logRets[m] = Math.log(pFinal / 100);
+        if (pFinal > 100) winM++;
+      }
+
+      pPaths.draw(g => {
+        g.hline(100, { color: 'muted', dash: [4, 3], width: 1.5 });
+        for (const traj of paths) {
+          const win = traj[days] > 100;
+          const col = win ? 'good' : 'c2';
+          for (let t = 0; t < days; t++) {
+            g.line(t, traj[t], t + 1, traj[t + 1], { color: col, width: 1.3, alpha: 0.75 });
+          }
+        }
+      });
+
+      const muL = 250 * 0.5 * Math.log(0.9996); // ≈ -0.05001
+      const sdL = Math.sqrt(250) * 0.5 * Math.log(1.02 / 0.98); // ≈ 0.31627
+      const normL = D.normal(muL, sdL);
+
+      pDist.setRange({ ymax: normL.pdf(muL) * 1.3 });
+      pDist.draw(g => {
+        g.hist(logRets, { bins: 28, range: [-1.0, 0.9], color: 'c2', alpha: 0.55, label: 'Muestras simuladas' });
+        g.curve(normL.pdf, { color: 'c1', width: 2.2, label: `Normal TLC: $N(${fmt(muL, 3)},\\, ${fmt(sdL**2, 3)})$` });
+        g.vline(0, { color: 'accent', dash: [4, 3], width: 1.5, label: '$P_{250}=100$' });
+      });
+
+      const sortedPrices = Array.from(finalPrices).sort((a, b) => a - b);
+      const medianPrice = sortedPrices[Math.floor(M / 2)];
+      const meanPrice = S.mean(finalPrices);
+
+      s.out.set(`De $M = ${M}$ réplicas a los 250 días:<br>` +
+        `Precio medio muestral: <b>${fmt(meanPrice, 2)} dólares</b> (teórico: $\\E[P_{250}] = 100$ dólares)<br>` +
+        `Mediana muestral: <b>${fmt(medianPrice, 2)} dólares</b> (teórica: $100\\times(0.9996)^{125} \\approx 95.12$ dólares)<br>` +
+        `Proporción con $P_{250} > 100$: <b>${fmt(100 * winM / M, 1)} %</b> (${winM} de ${M}) · TLC directo: <b>43.7 %</b> · Binomial exacta: <b>42.5 %</b><br>` +
+        `<em>Desigualdad de Jensen:</em> $\\E[\\ln F] = \\frac12\\ln(0.9996) \\approx -0.0002 &lt; \\ln \\E[F] = 0$.`);
+    }
+
+    ui.button(s.ctl, 'Simular nuevas trayectorias', run, { primary: true });
+    run();
+  })();
+
+  /* =========================== EJERCICIO 3 =========================== */
+  (function ej3() {
+    check('chk-3', [
+      { prompt: '$\\E[\\ln X_i] = \\frac{\\ln 18}{6} \\approx$', answer: 0.4817, tol: 0.002 },
+      { prompt: '$\\text{DE}(\\ln X_i) \\approx$', answer: 0.5004, tol: 0.002 },
+      { prompt: '$\\P(N \\le 25) \\approx$', answer: 0.5839, tol: 0.015 },
+    ]);
+
+    const s = sim('sim-3');
+    const plot = EM.plot.create(s.plots[0], {
+      xmin: 4, xmax: 20, ymin: 0, ymax: 0.22, height: 260, xlabel: 'S_{25} = \\sum_{i=1}^{25} \\ln X_i'
+    });
+
+    const muY = Math.log(18) / 6; // ≈ 0.481729
+    const ey2 = (Math.log(2) ** 2 + 2 * Math.log(3) ** 2) / 6; // ≈ 0.482392
+    const varY = ey2 - muY * muY; // ≈ 0.250329
+    const sdY = Math.sqrt(varY); // ≈ 0.500329
+
+    const muS25 = 25 * muY; // ≈ 12.0432
+    const varS25 = 25 * varY; // ≈ 6.2582
+    const sdS25 = 5 * sdY; // ≈ 2.5016
+    const normS = D.normal(muS25, sdS25);
+    const threshold = Math.log(100000); // ≈ 11.5129
+
+    function run() {
+      const M = 2000;
+      const sVals = new Float64Array(M);
+      let winCount = 0;
+      const l1 = Math.log(1), l2 = Math.log(2), l3 = Math.log(3);
+
+      for (let m = 0; m < M; m++) {
+        let sumL = 0;
+        for (let i = 0; i < 25; i++) {
+          const r = Math.random();
+          if (r < 0.5) sumL += l1;
+          else if (r < 4 / 6) sumL += l2;
+          else sumL += l3;
+        }
+        sVals[m] = sumL;
+        if (sumL > threshold) winCount++;
+      }
+
+      const simMean = S.mean(sVals);
+      const simSd = S.sd(sVals);
+
+      plot.draw(g => {
+        g.area(normS.pdf, threshold, 20, { color: 'accent', alpha: 0.3, label: 'Área TLC ($S_{25} > 11.51$)' });
+        g.hist(sVals, { bins: 32, range: [4, 20], color: 'c2', alpha: 0.55, label: 'Partidas simuladas' });
+        g.curve(normS.pdf, { color: 'c1', width: 2.2, label: `Normal TLC: $N(${fmt(muS25, 2)},\\, ${fmt(sdS25, 2)}^2)$` });
+        g.vline(threshold, { color: 'accent', dash: [4, 3], width: 1.6, label: '$\\ln(100\\,000) \\approx 11.51$' });
+      });
+
+      const pTlc = 1 - normS.cdf(threshold);
+      s.out.set(`De $M = ${M}$ partidas simuladas de 25 tiradas:<br>` +
+        `Partidas con $N \\le 25$ (producto $> 100\\,000$): <b>${fmt(100 * winCount / M, 2)} %</b> (${winCount} de ${M})<br>` +
+        `Aproximación por el TLC: $\\Phi(0.2120) = $ <b>${fmt(100 * pTlc, 2)} %</b> (${fmt(pTlc, 4)})<br>` +
+        `Media de $S_{25}$: simulada <b>${fmt(simMean, 3)}</b> · teórica $25\\mu = ${fmt(muS25, 3)}$<br>` +
+        `DE de $S_{25}$: simulada <b>${fmt(simSd, 3)}</b> · teórica $5\\sigma = ${fmt(sdS25, 3)}$`);
+    }
+
+    ui.button(s.ctl, 'Simular 2000 partidas', run, { primary: true });
+    run();
+  })();
+
+  /* =========================== EJERCICIO 4 =========================== */
+  (function ej4() {
+    check('chk-4', [
+      { prompt: 'Valor del límite $\\lim_{n\\to\\infty} e^{-n}\\sum_{k=0}^n \\frac{n^k}{k!} =$', answer: 0.5, tol: 0.001 },
+    ]);
+
+    const s = sim('sim-4');
+    let n = 20;
+
+    const pPmf = EM.plot.create(s.plots.pmf, {
+      height: 260, xlabel: 'k', ylabel: 'P(S_n = k)'
+    });
+    const pSeq = EM.plot.create(s.plots.seq, {
+      xmin: 1, xmax: 150, ymin: 0.48, ymax: 0.76, height: 260, xlabel: 'n', ylabel: 'a_n'
+    });
+
+    const seqNs = [], seqAs = [];
+    for (let m = 1; m <= 150; m++) {
+      seqNs.push(m);
+      seqAs.push(D.poisson(m).cdf(m));
+    }
+
+    function render() {
+      const P = D.poisson(n);
+      const sd = Math.sqrt(n);
+      const norm = D.normal(n, sd);
+      const lo = Math.max(0, Math.floor(n - 3.8 * sd));
+      const hi = Math.ceil(n + 3.8 * sd);
+
+      const ksBlue = [], psBlue = [];
+      const ksGray = [], psGray = [];
+      for (let k = lo; k <= hi; k++) {
+        const prob = P.pmf(k);
+        if (k <= n) { ksBlue.push(k); psBlue.push(prob); }
+        else { ksGray.push(k); psGray.push(prob); }
+      }
+
+      const maxY = Math.max(norm.pdf(n), P.pmf(n)) * 1.35;
+      pPmf.setRange({ xmin: lo - 0.5, xmax: hi + 0.5, ymin: 0, ymax: maxY });
+      pPmf.draw(g => {
+        g.bars(ksBlue, psBlue, { width: 0.85, color: 'c1', alpha: 0.75, label: `k ≤ ${n} (suma acumulada)` });
+        g.bars(ksGray, psGray, { width: 0.85, color: 'muted', alpha: 0.35, label: `k > ${n}` });
+        g.curve(norm.pdf, { color: 'c2', width: 2, label: `Normal($n, n$)` });
+        g.vline(n, { color: 'accent', dash: [4, 3], width: 1.5, label: `k = n = ${n}` });
+      });
+
+      const currentAn = P.cdf(n);
+      pSeq.draw(g => {
+        g.hline(0.5, { color: 'good', width: 2, label: 'Límite TLC = 0.5' });
+        g.curve(x => 0.5 + 2 / (3 * Math.sqrt(2 * Math.PI * x)), { color: 'c2', dash: [3, 3], width: 1.5, label: '0.5 + \\frac{2}{3\\sqrt{2\\pi n}}' });
+        for (let i = 0; i < seqNs.length - 1; i++) {
+          g.line(seqNs[i], seqAs[i], seqNs[i + 1], seqAs[i + 1], { color: 'c1', width: 1.8 });
+        }
+        g.points([n], [currentAn], { color: 'accent', r: 4.5, label: `a_{${n}}` });
+      });
+
+      const edgeworth = 2 / (3 * Math.sqrt(2 * Math.PI * n));
+      s.out.set(`Para $n = ${n}$ sumandos:<br>` +
+        `Suma exacta $a_{${n}} = e^{-${n}}\\sum_{k=0}^{${n}}\\frac{${n}^k}{k!} = \\P(S_{${n}} \\le ${n}) =$ <b>${fmt(currentAn, 5)}</b><br>` +
+        `Distancia al límite: $a_{${n}} - 0.5 =$ <b>${fmt(currentAn - 0.5, 5)}</b> · ` +
+        `Aproximación de Edgeworth $\\frac{2}{3\\sqrt{2\\pi n}} \\approx$ <b>${fmt(edgeworth, 5)}</b><br>` +
+        `Por el TLC: $W_n = \\frac{S_n - n}{\\sqrt{n}} \\dto Z \\sim N(0,1) \\implies \\lim_{n\\to\\infty} a_n = \\Phi(0) = $ <b>0.5</b>.`);
+    }
+
+    ui.slider(s.ctl, { tex: 'n', min: 1, max: 150, step: 1, value: n, onInput: v => { n = Math.round(v); render(); } });
+    render();
+  })();
+
+  /* =========================== EJERCICIO 5 =========================== */
+  (function ej5() {
+    check('chk-5', [
+      { prompt: '$\\P(N > 24) \\approx$', answer: 0.5136, tol: 0.015 },
+    ]);
+
+    const s = sim('sim-5');
+    const plot = EM.plot.create(s.plots[0], {
+      xmin: 2, xmax: 15, ymin: 0, ymax: 0.28, height: 260, xlabel: 'S_{24} = -\\ln L_{24}'
+    });
+
+    const muS = 8;
+    const varS = 8 / 3;
+    const sdS = Math.sqrt(varS);
+    const normS = D.normal(muS, sdS);
+    const gammaS = D.gamma(24, 1 / 3);
+
+    function run() {
+      const M = 2500;
+      const sVals = new Float64Array(M);
+      let winCount = 0;
+
+      for (let m = 0; m < M; m++) {
+        let sumY = 0;
+        for (let i = 0; i < 24; i++) {
+          const u = Math.random();
+          sumY += -Math.log(u === 0 ? 1e-12 : u) / 3;
+        }
+        sVals[m] = sumY;
+        if (sumY <= 8) winCount++;
+      }
+
+      const simMean = S.mean(sVals);
+      const simSd = S.sd(sVals);
+
+      plot.draw(g => {
+        g.area(gammaS.pdf, 2, 8, { color: 'accent', alpha: 0.25, label: 'Región $S_{24} \\le 8$ ($N > 24$)' });
+        g.hist(sVals, { bins: 32, range: [2, 15], color: 'c2', alpha: 0.55, label: 'Varas simuladas' });
+        g.curve(gammaS.pdf, { color: 'c1', width: 2.4, label: 'Gamma(24, 1/3) exacta' });
+        g.curve(normS.pdf, { color: 'c4', width: 2, dash: [4, 3], label: 'Normal(8, 8/3) TLC' });
+        g.vline(8, { color: 'accent', dash: [4, 3], width: 1.6, label: 'Umbral 8' });
+      });
+
+      const pGammaExact = gammaS.cdf(8);
+
+      s.out.set(`De $M = ${M}$ varas simuladas tras 24 cortes:<br>` +
+        `Proporción con $N > 24$ ($L_{24} \\ge e^{-8} \\iff S_{24} \\le 8$): <b>${fmt(100 * winCount / M, 2)} %</b> (${winCount} de ${M})<br>` +
+        `Probabilidad exacta $\\text{Gamma}(24, 1/3)$: <b>${fmt(100 * pGammaExact, 2)} %</b> (${fmt(pGammaExact, 4)})<br>` +
+        `Aproximación por el TLC: $\\Phi(0) = $ <b>50.00 %</b> (0.5000)<br>` +
+        `Media de $S_{24}$: simulada <b>${fmt(simMean, 3)}</b> (teórica 8.000) · DE: simulada <b>${fmt(simSd, 3)}</b> (teórica $\\sqrt{8/3} \\approx ${fmt(sdS, 3)}$)<br>` +
+        `<em>Por qué difieren:</em> La densidad Gamma es asimétrica a la derecha (asimetría $= 2/\\sqrt{24} \\approx 0.408$). Su mediana es $\\approx 7.889 &lt; 8$, por lo que la probabilidad acumulada hasta 8 supera el 50 %.`);
+    }
+
+    ui.button(s.ctl, 'Simular 2500 varas', run, { primary: true });
+    run();
+  })();
+
+})();
+</script>
+</body>
+</html>
