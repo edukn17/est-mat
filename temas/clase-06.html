@@ -31,7 +31,7 @@
 
     <div class="box idea"><span class="box-title">El gran giro de la inferencia estadística</span>
       <p>En las Clases 1 a 5 (Probabilidad deductiva y Distribuciones muestrales), el flujo de razonamiento iba <b>hacia adelante</b>: suponíamos conocidos los parámetros poblacionales ($\mu, \sigma^2, p, \lambda$) y deducíamos cómo debían distribuirse los datos de una muestra aleatoria.</p>
-      $$\text{Parámetro conocido } \theta \;\xrightarrow{\;\text{Probabilidad directiva}\;}\; \text{Distribución de la muestra } (X_1, \dots, X_n).$$
+      $$\text{Parámetro conocido } \theta \;\xrightarrow{\;\text{Probabilidad deductiva}\;}\; \text{Distribución de la muestra } (X_1, \dots, X_n).$$
       <p>A partir de esta clase y durante todo el resto del curso, <b>invertimos la dirección de la pregunta</b> (Inferencia inductiva): en la vida real <em>nadie nos da el valor verdadero de $\theta$</em>. Lo único que tenemos en nuestras manos son los datos numéricos recolectados $x_1, \dots, x_n$ y queremos adivinar o inferir el valor de $\theta$.</p>
       $$\text{Datos observados } (x_1, \dots, x_n) \;\xrightarrow{\;\text{Estimación inductiva}\;}\; \text{¿Cuál es el valor del parámetro desconocido } \theta\text{?}$$
     </div>
@@ -474,7 +474,7 @@
             <li>Elevando al cuadrado ambos miembros no negativos y aplicando Cauchy–Schwarz a $(1/x_1, \dots, 1/x_n)$ y $(1, \dots, 1)$:
               $$\frac{1}{\bar x^2} \le \left(\frac{1}{n}\sum_{i=1}^n \frac{1}{x_i}\right)^2 \le \frac{1}{n^2}\cdot n \sum_{i=1}^n \frac{1}{x_i^2} = \frac{1}{n}\sum_{i=1}^n \frac{1}{x_i^2}.$$</li>
           </ol>
-          <p>Nuevamente, la igualdad estricta solo ocurriría si $x_1 = x_2 = \dots = x_n$. Como no son todos iguales, $\Var[\tilde\beta] &lt; \Var[\tilde{\tilde\beta}]$. $\blacksquare$</p>
+          <p>Nuevamente, la igualdad solo ocurriría si $x_1 = x_2 = \dots = x_n$. Como no son todos iguales, $\Var[\tilde\beta] &lt; \Var[\tilde{\tilde\beta}]$. $\blacksquare$</p>
 
           <p><b>Intuición estadística fundamental:</b></p>
           <ul>
@@ -949,7 +949,7 @@
   });
 
   ui.quiz('#quiz-2', {
-    question: '2. Si un estimador $\\hat\\theta$ tiene sesgo $\\mathbb{B}(\\hat\\theta) = -0.4$ y varianza $\\Var[\\hat\\theta] = 0.20$, ¿cuál es su error cuadrático medio ($\text{MSE}$)?',
+    question: '2. Si un estimador $\\hat\\theta$ tiene sesgo $\\mathbb{B}(\\hat\\theta) = -0.4$ y varianza $\\Var[\\hat\\theta] = 0.20$, ¿cuál es su error cuadrático medio ($\\text{MSE}$)?',
     options: [
       '$0.20 - 0.40 = -0.20$',
       '$0.20 + (-0.4)^2 = 0.36$',
@@ -973,7 +973,7 @@
   });
 
   ui.numcheck('#nc-1', {
-    prompt: 'Se extrae una muestra i.i.d. de tamaño $n = 16$ de una población $N(\\mu, \\sigma^2 = 32)$. Calcula el $\\text{MSE}$ de la cuasivarianza muestral $S^2$ para estimar $\sigma^2$:',
+    prompt: 'Se extrae una muestra i.i.d. de tamaño $n = 16$ de una población $N(\\mu, \\sigma^2 = 32)$. Calcula el $\\text{MSE}$ de la cuasivarianza muestral $S^2$ para estimar $\\sigma^2$:',
     answer: 136.53,
     tol: 0.25,
     hint: 'Como $S^2$ es insesgado, $\\text{MSE}(S^2) = \\Var(S^2) = \\frac{2\\sigma^4}{n-1}$. Aquí $\\sigma^2 = 32 \\implies \\sigma^4 = 1024$ y $n - 1 = 15$.'
