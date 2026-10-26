@@ -708,6 +708,120 @@ vuelve normal.
 \end{warnbox}
 
 % =====================================================================
+\section{Estimación puntual, sesgo y error cuadrático medio \textmd{(Clase 6)}}
+
+\begin{defbox}[frametitle={Estimador puntual frente a estimación puntual}]
+Sea $X_1,\dots,X_n$ una muestra aleatoria de una población cuya distribución depende de un parámetro desconocido $\theta\in\Omega$.
+\begin{itemize}
+  \item \textbf{Estimador puntual:} estadístico $\hat\theta = T(X_1,\dots,X_n)$. Es una \textbf{variable aleatoria} (función de la muestra) que no depende de parámetros desconocidos; posee distribución muestral, esperanza y varianza.
+  \item \textbf{Estimación puntual:} número real fijado $\hat\theta(x_1,\dots,x_n) = T(x_1,\dots,x_n)$, correspondiente al valor observado del estimador al evaluarlo en una muestra concreta.
+\end{itemize}
+\end{defbox}
+
+\begin{defbox}[frametitle={Insesgamiento y sesgo}]
+Un estimador $\hat\theta$ es \textbf{insesgado} para $\theta$ si su valor esperado coincide con el parámetro:
+\[
+\E[\hat\theta] = \theta \quad\forall\theta\in\Omega
+\qquad\Longleftrightarrow\qquad
+B(\hat\theta) = \E[\hat\theta] - \theta = 0.
+\]
+Si $\E[\hat\theta]\ne\theta$, el estimador es \textbf{sesgado} con sesgo $B(\hat\theta) = \E[\hat\theta] - \theta$.
+\end{defbox}
+
+\begin{thmbox}[frametitle={Descomposición del Error Cuadrático Medio (MSE)}]
+El \textbf{error cuadrático medio} ($\text{MSE}_\theta(\hat\theta)$) cuantifica la discrepancia cuadrática global entre el estimador y el parámetro:
+\[
+\text{MSE}_\theta(\hat\theta) = \E\big[(\hat\theta - \theta)^2\big] = \Var(\hat\theta) + \big[B(\hat\theta)\big]^2 .
+\]
+En palabras: $\text{MSE} = \text{Varianza} + (\text{Sesgo})^2$.
+Si $\hat\theta$ es \textbf{insesgado} ($B(\hat\theta)=0$):
+\[
+\text{MSE}_\theta(\hat\theta) = \Var(\hat\theta).
+\]
+\end{thmbox}
+
+\begin{notebox}[frametitle={Estimadores fundamentales en población normal $N(\mu,\sigma^2)$}]
+Muestra $X_1,\dots,X_n \iid N(\mu,\sigma^2)$ con $n \ge 2$:
+
+\smallskip
+\begingroup\footnotesize
+\setlength{\tabcolsep}{4pt}
+\noindent
+\begin{tabular}{@{}p{3.6cm} p{1.4cm} p{3.1cm} p{3.4cm} p{3.4cm}@{}}
+\toprule
+\textbf{Estimador} & $\mathbf{\E}$ & \textbf{Sesgo} $B$ & $\mathbf{\Var}$ & $\mathbf{\text{MSE}}$\\
+\midrule
+\rr Media: $\bar X = \frac{1}{n}\sum_{i=1}^n X_i$ & $\mu$ & $0$ (insesgado) & $\dfrac{\sigma^2}{n}$ & $\dfrac{\sigma^2}{n}$\\[6pt]
+\rr Cuasivarianza: $S^2 = \frac{1}{n-1}\sum_{i=1}^n (X_i-\bar X)^2$ & $\sigma^2$ & $0$ (insesgado) & $\dfrac{2\sigma^4}{n-1}$ & $\dfrac{2\sigma^4}{n-1}$\\[6pt]
+\rr Varianza muestral: $S_n^2 = \frac{1}{n}\sum_{i=1}^n (X_i-\bar X)^2$ & $\dfrac{n-1}{n}\sigma^2$ & $-\dfrac{\sigma^2}{n} < 0$ (a la baja) & $\dfrac{2(n-1)\sigma^4}{n^2}$ & $\dfrac{2n-1}{n^2}\sigma^4$\\[6pt]
+\rr Con dos datos: $\frac{(X_1-X_2)^2}{2}$ & $\sigma^2$ & $0$ (insesgado) & $2\sigma^4$ & $2\sigma^4$\\
+\bottomrule
+\end{tabular}
+\endgroup
+
+\smallskip
+\textbf{Corrección de Bessel:} $S^2 = \frac{n}{n-1}S_n^2$. Como $\sum(X_i-\bar X)^2$ minimiza la suma de cuadrados de desviaciones respecto a cualquier punto, $S_n^2$ subestima sistemáticamente a $\sigma^2$; multiplicar por $\frac{n}{n-1}$ elimina exactamente dicho sesgo negativo.
+\end{notebox}
+
+% =====================================================================
+\section{Insesgamiento asintótico, cota del error y tamaño de muestra \textmd{(Clase 7)}}
+
+\begin{defbox}[frametitle={Estimador asintóticamente insesgado}]
+Una sucesión de estimadores $\{\hat\theta_n\}$ es \textbf{asintóticamente insesgada} si su sesgo tiende a cero cuando el tamaño de muestra $n$ tiende a infinito:
+\[
+\lim_{n\to\infty} B(\hat\theta_n) = 0
+\qquad\Longleftrightarrow\qquad
+\lim_{n\to\infty} \E[\hat\theta_n] = \theta .
+\]
+\begin{itemize}
+  \item \textbf{Ejemplo asintóticamente insesgado:} $S_n^2$ tiene sesgo $B(S_n^2) = -\frac{\sigma^2}{n} \to 0$ cuando $n\to\infty$ (sí lo es).
+  \item \textbf{Ejemplo no asintóticamente insesgado:} para estimar $\theta = \lambda^2$ con $X_i\iid\text{Poisson}(\lambda)$, el estimador $T_n = (\bar X)^2 - \bar X$ tiene $\E[T_n] = \lambda^2 - \frac{n-1}{n}\lambda \to \lambda^2 - \lambda$, por lo que $B(T_n) \to -\lambda \ne 0$ (no lo es). Estimador insesgado corregido: $\hat\theta_n = (\bar X)^2 - \frac{\bar X}{n}$.
+\end{itemize}
+\end{defbox}
+
+\begin{defbox}[frametitle={Error de estimación y cota $b$}]
+El \textbf{error de estimación} es la distancia absoluta $\varepsilon = |\hat\theta - \theta|$. Se exige que $\Prob(\varepsilon < b) = 1-\alpha$ para una tolerancia admisible $b > 0$.
+\begin{itemize}
+  \item \textbf{Cota empírica (regla de dos desvíos, confianza $\approx 95\%$):} por el TLC y la regla empírica,
+  \[
+  b = 2\sigma_{\hat\theta} = 2\sqrt{\Var(\hat\theta)}.
+  \]
+  \item \textbf{Forma exacta con cuantil normal estándar:} $b = z_{\alpha/2}\,\sigma_{\hat\theta}$ (para $95\%$, $z_{0.025} \approx 1.96$).
+\end{itemize}
+\end{defbox}
+
+\begingroup\footnotesize
+\setlength{\tabcolsep}{5pt}
+\noindent
+\begin{tabular}{@{}p{3.5cm} p{2.4cm} p{4.6cm} p{5.5cm}@{}}
+\toprule
+\textbf{Parámetro objetivo} $\theta$ & \textbf{Estimador} $\hat\theta$ & \textbf{Error estándar} $\sigma_{\hat\theta}$ & \textbf{Propiedad / Cota máxima}\\
+\midrule
+\rr Media $\mu$ & $\bar Y$ & $\sigma_{\bar Y} = \dfrac{\sigma}{\sqrt n}$ & \rr Insesgado: $\E[\bar Y]=\mu$\\[7pt]
+\rr Proporción $p$ & $\hat p = \dfrac{Y}{n}$ & $\sigma_{\hat p} = \sqrt{\dfrac{p(1-p)}{n}}$ & \rr $\sigma_{\hat p} \le \dfrac{1}{2\sqrt n}$ (máximo en $p = 0.5$)\\[9pt]
+\rr Dif.\ de medias $\mu_1 - \mu_2$ & $\bar Y_1 - \bar Y_2$ & $\sigma_{\bar Y_1-\bar Y_2} = \sqrt{\dfrac{\sigma_1^2}{n_1} + \dfrac{\sigma_2^2}{n_2}}$ & \rr Muestras independientes\\[9pt]
+\rr Dif.\ proporciones $p_1 - p_2$ & $\hat p_1 - \hat p_2$ & $\sigma_{\hat p_1-\hat p_2} = \sqrt{\dfrac{p_1(1-p_1)}{n_1} + \dfrac{p_2(1-p_2)}{n_2}}$ & \rr Muestras independientes\\
+\bottomrule
+\end{tabular}
+\endgroup
+
+\begin{thmbox}[frametitle={Tamaño de muestra requerido para cota de error $b$}]
+Despejando $n$ de la cota empírica $b = 2\sigma_{\hat\theta}$ ($\approx 95\%$):
+\begin{itemize}
+  \item \textbf{Para la media $\mu$:}
+  \[
+  2\frac{\sigma}{\sqrt n} = b \quad\Longrightarrow\quad n = \left(\frac{2\sigma}{b}\right)^2 .
+  \]
+  \textit{Regla de cuadruplicación:} reducir el margen $b$ a la mitad exige \textbf{cuatro veces} más datos ($n \propto 1/b^2$).
+  \item \textbf{Para la proporción $p$:}
+  \[
+  2\sqrt{\frac{p(1-p)}{n}} = b \quad\Longrightarrow\quad n = \frac{4p(1-p)}{b^2} \le \frac{1}{b^2} .
+  \]
+  La cota \textbf{conservadora} (peor caso) se alcanza en $p = 0.5$, garantizando que el error no supere $b$ sin requerir conocimiento previo de $p$.
+\end{itemize}
+\end{thmbox}
+
+% =====================================================================
 \section{Cómo leer las tablas y los valores críticos}
 
 \begin{notebox}[frametitle={La regla que evita todos los líos de colas}]
@@ -770,6 +884,11 @@ $F$ & \rr bloque $\nu_2$ (denominador), fila $q$, columna $\nu_1$ (numerador) & 
 \rr Cociente de varianzas muestrales & \rr Resultado d) (sección 11) & \rr $\frac{S_1^2/\sigma_1^2}{S_2^2/\sigma_2^2}\sim F_{(n_1-1,n_2-1)}$\\
 \rr Suma o media con $n$ grande & \rr TLC (sección 12) & \rr $\bar Y\adist N(\mu,\sigma^2/n)$\\
 \rr Variable entera aproximada por normal & \rr Corrección $\pm0.5$ (sección 12) & \rr ensancha medio punto\\
+\rr Calidad de un estimador puntual & \rr Descomposición MSE (sección 13) & \rr $\text{MSE} = \Var + [B(\hat\theta)]^2$\\
+\rr Insesgamiento de $S^2$ vs $S_n^2$ & \rr Corrección de Bessel (sección 13) & \rr $S^2 = \frac{n}{n-1}S_n^2$\\
+\rr Margen de error de estimación al 95\% & \rr Cota empírica (sección 14) & \rr $b = 2\sigma_{\hat\theta}$\\
+\rr Tamaño de muestra para estimar $\mu$ & \rr Fórmula de $n$ (sección 14) & \rr $n = (2\sigma/b)^2$\\
+\rr Tamaño de muestra conservador para $p$ & \rr Cota peor caso (sección 14) & \rr $n \le 1/b^2$\\
 \bottomrule
 \end{tabular}
 \endgroup

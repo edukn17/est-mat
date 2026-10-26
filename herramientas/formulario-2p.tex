@@ -249,7 +249,20 @@ Bernoulli: Bin$(n,p)\adist N(np,np(1-p))$ si $np\ge5$ y $n(1-p)\ge5$. Sin $\sigm
 \end{itemize}
 
 % =====================================================================
-\fh{11. Tablas y valores críticos}
+\fh{11. Estimación puntual y ECM (Clase 6)}
+Insesgado: $\E[\hat\theta]=\theta\iff B(\hat\theta)=\E[\hat\theta]-\theta=0$. Descomposición MSE:
+$\text{MSE}_\theta(\hat\theta)=\E[(\hat\theta-\theta)^2]=\Var(\hat\theta)+[B(\hat\theta)]^2$; si insesgado, $\text{MSE}=\Var$.
+En $N(\mu,\sigma^2)$: $\bar X$ insesgado ($\Var=\frac{\sigma^2}{n}$); cuasivarianza $S^2$ insesgada ($\Var=\frac{2\sigma^4}{n-1}$); varianza $S_n^2$ sesgada con $B=-\frac{\sigma^2}{n}<0$; Bessel: $S^2=\frac{n}{n-1}S_n^2$. Con dos datos: $\frac{(X_1-X_2)^2}{2}$ insesgado ($\Var=2\sigma^4$).
+
+% =====================================================================
+\fh{12. Cota de error y tamaño de muestra (Clase 7)}
+Asintóticamente insesgado: $\lim_{n\to\infty}B(\hat\theta_n)=0$ ($S_n^2$ sí lo es; $T_n=(\bar X)^2-\bar X$ en Poisson no).
+Cota $b$ ($\approx95\%$): $b=2\sigma_{\hat\theta}$ o $z_{\alpha/2}\sigma_{\hat\theta}$. Errores estándar:
+$\sigma_{\bar Y}=\frac{\sigma}{\sqrt n}$;\ $\sigma_{\hat p}=\sqrt{\frac{p(1-p)}{n}}\le\frac{1}{2\sqrt n}$;\ $\sigma_{\bar Y_1-\bar Y_2}=\sqrt{\frac{\sigma_1^2}{n_1}+\frac{\sigma_2^2}{n_2}}$;\ $\sigma_{\hat p_1-\hat p_2}=\sqrt{\frac{p_1(1-p_1)}{n_1}+\frac{p_2(1-p_2)}{n_2}}$.
+Tamaño de muestra: para $\mu$, $n=\big(\frac{2\sigma}{b}\big)^2$ ($n\propto 1/b^2$); para $p$, $n=\frac{4p(1-p)}{b^2}\le\frac{1}{b^2}$ (conservador en $p=0.5$).
+
+% =====================================================================
+\fh{13. Tablas y valores críticos}
 Las tablas ESPOL dan área a la \textbf{izquierda} $q$: $\Prob(X\le x)=q$. \textbf{Crítico con cola derecha $\alpha$ = tabla en columna $q=1-\alpha$.} El percentil $100p$ es $x_p$; el crítico al $5\%$ es el percentil 95.
 \begin{itemize}
   \item $Z$: $\Phi(z_\alpha)=1-\alpha$, $\Phi(-z)=1-\Phi(z)$.

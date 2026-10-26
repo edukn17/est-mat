@@ -185,7 +185,7 @@
         </tbody>
       </table>
     </div>
-    <p class="small muted">Para $t_{(\nu)}$ y $F_{(\nu_1,\nu_2)}$: $F_F(x)=I_{\nu_1x/(\nu_1x+\nu_2)}\big(\tfrac{\nu_1}{2},\tfrac{\nu_2}{2}\big)$ y, para $t\ge0$, $F_t(t)=1-\tfrac12 I_{\nu/(\nu+t^2)}\big(\tfrac\nu2,\tfrac12\big)$ (simetría si $t&lt;0$). En la práctica se usan las tablas (§13).</p>
+    <p class="small muted">Para $t_{(\nu)}$ y $F_{(\nu_1,\nu_2)}$: $F_F(x)=I_{\nu_1x/(\nu_1x+\nu_2)}\big(\tfrac{\nu_1}{2},\tfrac{\nu_2}{2}\big)$ y, para $t\ge0$, $F_t(t)=1-\tfrac12 I_{\nu/(\nu+t^2)}\big(\tfrac\nu2,\tfrac12\big)$ (simetría si $t&lt;0$). En la práctica se usan las tablas (§15).</p>
 
     <div class="box teorema"><span class="box-title">Relaciones entre modelos (casi todas por FGM)</span>
       <ul>
@@ -390,7 +390,130 @@
 
   <!-- ================================================================ -->
   <section>
-    <h2 id="tablas">13. Cómo leer las tablas y los valores críticos</h2>
+    <h2 id="estimacion-puntual">13. Estimación puntual, sesgo y error cuadrático medio <span class="formula-tag">(Clase 6)</span></h2>
+
+    <div class="box definicion"><span class="box-title">Estimador puntual frente a estimación</span>
+      <p>Un <b>estimador puntual</b> $\hat\theta = T(X_1,\dots,X_n)$ es una variable aleatoria y estadística (función de la muestra aleatoria). Una <b>estimación puntual</b> $\hat\theta(x_1,\dots,x_n)$ es un número real fijado, correspondiente al valor observado del estimador al evaluarlo en una muestra concreta.</p>
+    </div>
+
+    <div class="box definicion"><span class="box-title">Insesgamiento y sesgo</span>
+      <p>Un estimador $\hat\theta$ es <b>insesgado</b> para el parámetro $\theta$ si su valor esperado coincide con el parámetro:</p>
+      $$\E[\hat\theta] = \theta \iff B(\hat\theta) = \E[\hat\theta] - \theta = 0.$$
+      <p>Si $\E[\hat\theta]\ne\theta$, el estimador es <b>sesgado</b> con sesgo $B(\hat\theta) = \E[\hat\theta] - \theta$.</p>
+    </div>
+
+    <div class="box teorema"><span class="box-title">Descomposición del error cuadrático medio (MSE)</span>
+      <p>El <b>error cuadrático medio</b> ($\text{MSE}_\theta(\hat\theta)$, por sus siglas en inglés) cuantifica la discrepancia cuadrática global entre el estimador y el parámetro:</p>
+      $$\text{MSE}_\theta(\hat\theta) = \E\big[(\hat\theta - \theta)^2\big] = \Var(\hat\theta) + \big[B(\hat\theta)\big]^2.$$
+      <p>En palabras: $\text{MSE} = \text{Varianza} + (\text{Sesgo})^2$. Si $\hat\theta$ es insesgado ($B=0$): $\text{MSE}_\theta(\hat\theta) = \Var(\hat\theta)$.</p>
+    </div>
+
+    <div class="box nota"><span class="box-title">Estimadores fundamentales en población normal $N(\mu, \sigma^2)$</span>
+      <div class="table-wrap">
+        <table class="tabla compact">
+          <thead>
+            <tr><th class="f">Estimador</th><th class="f">Esperanza $\E$</th><th class="m">Sesgo $B$</th><th class="f">Varianza $\Var$</th><th class="f">$\text{MSE}$</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="f">Media: $\bar X = \frac{1}{n}\sum_{i=1}^n X_i$</td>
+              <td class="f">$\mu$</td>
+              <td class="m">$0$ (insesgado)</td>
+              <td class="f">$\dfrac{\sigma^2}{n}$</td>
+              <td class="f">$\dfrac{\sigma^2}{n}$</td>
+            </tr>
+            <tr>
+              <td class="f">Cuasivarianza: $S^2 = \frac{1}{n-1}\sum_{i=1}^n (X_i-\bar X)^2$</td>
+              <td class="f">$\sigma^2$</td>
+              <td class="m">$0$ (insesgado)</td>
+              <td class="f">$\dfrac{2\sigma^4}{n-1}$</td>
+              <td class="f">$\dfrac{2\sigma^4}{n-1}$</td>
+            </tr>
+            <tr>
+              <td class="f">Varianza muestral: $S_n^2 = \frac{1}{n}\sum_{i=1}^n (X_i-\bar X)^2$</td>
+              <td class="f">$\dfrac{n-1}{n}\sigma^2$</td>
+              <td class="m">$-\dfrac{\sigma^2}{n} &lt; 0$ (a la baja)</td>
+              <td class="f">$\dfrac{2(n-1)\sigma^4}{n^2}$</td>
+              <td class="f">$\dfrac{2n-1}{n^2}\sigma^4$</td>
+            </tr>
+            <tr>
+              <td class="f">Con dos datos: $\frac{(X_1-X_2)^2}{2}$</td>
+              <td class="f">$\sigma^2$</td>
+              <td class="m">$0$ (insesgado)</td>
+              <td class="f">$2\sigma^4$</td>
+              <td class="f">$2\sigma^4$</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p><b>Corrección de Bessel:</b> $S^2 = \frac{n}{n-1}S_n^2$. Multiplicar por $\frac{n}{n-1}$ corrige el sesgo negativo de la varianza muestral dividida por $n$.</p>
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="error-estimacion">14. Insesgamiento asintótico, cota del error y tamaño de muestra <span class="formula-tag">(Clase 7)</span></h2>
+
+    <div class="box definicion"><span class="box-title">Estimador asintóticamente insesgado</span>
+      <p>Una sucesión de estimadores $\{\hat\theta_n\}$ es <b>asintóticamente insesgada</b> si su sesgo tiende a cero cuando el tamaño de muestra $n$ tiende a infinito:</p>
+      $$\lim_{n\to\infty} B(\hat\theta_n) = 0 \iff \lim_{n\to\infty} \E[\hat\theta_n] = \theta.$$
+      <ul>
+        <li><b>Ejemplo asintóticamente insesgado:</b> $S_n^2$ tiene sesgo $B(S_n^2) = -\frac{\sigma^2}{n} \to 0$ cuando $n\to\infty$ (sí lo es).</li>
+        <li><b>Ejemplo no asintóticamente insesgado:</b> para estimar $\theta = \lambda^2$ con $X_i\sim\text{Pois}(\lambda)$, el estimador $T_n = (\bar X)^2 - \bar X$ tiene $\E[T_n] = \lambda^2 - \lambda + \frac{\lambda}{n}$, por lo que $B(T_n) \to -\lambda \ne 0$ (no lo es).</li>
+      </ul>
+    </div>
+
+    <div class="box definicion"><span class="box-title">Error de estimación y cota $b$</span>
+      <p>El <b>error de estimación</b> es el valor absoluto de la diferencia entre el estimador y el parámetro: $\varepsilon = |\hat\theta - \theta|$. Se exige que la probabilidad de que no supere una cota de tolerancia $b$ sea un nivel de confianza prefijado $1-\alpha = \gamma$:</p>
+      $$\P(\varepsilon &lt; b) = \P\big(|\hat\theta - \theta| &lt; b\big) = 1 - \alpha = \gamma.$$
+      <p><b>Cota empírica (regla de dos desvíos, confianza $\approx 95\%$):</b> $b = 2\sigma_{\hat\theta}$ (o formalmente con cuantil normal, $b = z_{\alpha/2}\sigma_{\hat\theta}$, con $z_{0.025} = 1.96$).</p>
+    </div>
+
+    <div class="table-wrap">
+      <table class="tabla compact">
+        <thead>
+          <tr><th class="f">Parámetro objetivo $\theta$</th><th class="f">Estimador puntual $\hat\theta$</th><th class="f">Error estándar $\sigma_{\hat\theta}$</th><th class="f">Propiedad / Cota máxima</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="f">Media $\mu$</td>
+            <td class="f">$\bar Y$</td>
+            <td class="f">$\sigma_{\bar Y} = \dfrac{\sigma}{\sqrt{n}}$</td>
+            <td class="f">Insesgado: $\E[\bar Y]=\mu$</td>
+          </tr>
+          <tr>
+            <td class="f">Proporción $p$</td>
+            <td class="f">$\hat p = \dfrac{Y}{n}$</td>
+            <td class="f">$\sigma_{\hat p} = \sqrt{\dfrac{p(1-p)}{n}}$</td>
+            <td class="f">$\sigma_{\hat p} \le \dfrac{1}{2\sqrt{n}}$ (máximo en $p = 0.5$)</td>
+          </tr>
+          <tr>
+            <td class="f">Diferencia de medias $\mu_1 - \mu_2$</td>
+            <td class="f">$\bar Y_1 - \bar Y_2$</td>
+            <td class="f">$\sigma_{\bar Y_1-\bar Y_2} = \sqrt{\dfrac{\sigma_1^2}{n_1} + \dfrac{\sigma_2^2}{n_2}}$</td>
+            <td class="f">Muestras independientes</td>
+          </tr>
+          <tr>
+            <td class="f">Diferencia de proporciones $p_1 - p_2$</td>
+            <td class="f">$\hat p_1 - \hat p_2$</td>
+            <td class="f">$\sigma_{\hat p_1-\hat p_2} = \sqrt{\dfrac{p_1(1-p_1)}{n_1} + \dfrac{p_2(1-p_2)}{n_2}}$</td>
+            <td class="f">Muestras independientes</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="box teorema"><span class="box-title">Tamaño muestral requerido para una cota $b$</span>
+      <ul>
+        <li><b>Para la media $\mu$:</b> igualando $2\sigma/\sqrt{n} = b \implies n = \left(\dfrac{2\sigma}{b}\right)^2$. Reducir la cota $b$ a la mitad exige cuadruplicar el tamaño muestral $n$.</li>
+        <li><b>Para la proporción $p$:</b> igualando $2\sqrt{p(1-p)/n} = b \implies n = \dfrac{4p(1-p)}{b^2}$. En el escenario más desfavorable o conservador ($p=0.5$): $n \le \dfrac{1}{b^2}$.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="tablas">15. Cómo leer las tablas y los valores críticos</h2>
     <div class="box idea"><span class="box-title">La regla que evita todos los líos de colas</span>
       <p>Las tablas ESPOL dan el valor con <b>área a la IZQUIERDA</b> $q$: $\P(X\le x)=q$. En clase se escribe el valor crítico con <b>área $\alpha$ a la DERECHA</b>. Entonces:</p>
       $$\text{valor crítico con cola derecha }\alpha \;=\; \text{valor de la tabla en la columna } q=1-\alpha .$$
@@ -415,7 +538,7 @@
 
   <!-- ================================================================ -->
   <section>
-    <h2 id="mapa">14. Mapa rápido: qué usar en cada caso</h2>
+    <h2 id="mapa">16. Mapa rápido: qué usar en cada caso</h2>
     <div class="table-wrap"><table class="tabla compact text-left">
       <thead><tr><th>Si te piden…</th><th>Usa</th><th>Fórmula clave</th></tr></thead>
       <tbody>
@@ -433,6 +556,11 @@
         <tr><td>Cociente de varianzas muestrales</td><td>Resultado d) (§11)</td><td>$\frac{S_1^2/\sigma_1^2}{S_2^2/\sigma_2^2}\sim F_{(n_1-1,n_2-1)}$</td></tr>
         <tr><td>Suma o media con $n$ grande</td><td>TLC (§12)</td><td>$\bar Y\overset{a}{\sim}N(\mu,\sigma^2/n)$</td></tr>
         <tr><td>Variable entera aproximada por normal</td><td>Corrección $\pm0.5$ (§12)</td><td>ensancha medio punto</td></tr>
+        <tr><td>Calidad de un estimador puntual</td><td>Descomposición MSE (§13)</td><td>$\text{MSE} = \Var + B^2$</td></tr>
+        <tr><td>Insesgamiento de $S^2$ vs $S_n^2$</td><td>Corrección de Bessel (§13)</td><td>$S^2 = \frac{n}{n-1}S_n^2$</td></tr>
+        <tr><td>Margen de error de estimación al 95%</td><td>Cota empírica (§14)</td><td>$b = 2\sigma_{\hat\theta}$</td></tr>
+        <tr><td>Tamaño de muestra para estimar $\mu$</td><td>Fórmula de $n$ (§14)</td><td>$n = (2\sigma/b)^2$</td></tr>
+        <tr><td>Tamaño de muestra conservador para $p$</td><td>Cota peor caso (§14)</td><td>$n \le 1/b^2$</td></tr>
       </tbody>
     </table></div>
     <p class="small muted">¿Falta algún resultado? Aparecerá aquí a medida que avancen las clases. Los temas en detalle están en el <a href="distribuciones.html">laboratorio de distribuciones</a>, en <a href="tablas.html">cómo leer las tablas</a> y en el <a href="../temas/repaso.html">repaso de Estadística I</a>.</p>
