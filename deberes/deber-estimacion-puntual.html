@@ -1,0 +1,1260 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deber · Estimación puntual (Unidad II) · Estadística Matemática</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/theme.js"></script>
+<style>
+  /* Estilos específicos para la guía interactiva del deber */
+  .tecnica { font-family: var(--font-ui); font-size: 14px; color: var(--muted); margin: 10px 0 4px; }
+  .tecnica a { font-weight: 600; }
+  .figs { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin: 12px 0; }
+  .fig { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 8px 12px; }
+  .fig figcaption { font: 13px/1.4 var(--font-ui); color: var(--muted); text-align: center; margin-top: 4px; }
+  .fig .controls { margin: 4px 0; }
+  .indice-partes { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin: 14px 0; }
+  .indice-partes > div { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 16px; }
+  .indice-partes h3 { margin: 2px 0 8px; font-size: 15px; }
+  .indice-partes ol { margin: 0; padding-left: 1.5em; font-size: 15px; }
+  .chk { border: 1px dashed var(--line); border-radius: var(--radius); padding: 8px 14px; margin: 12px 0; background: var(--surface); }
+  .chk-title { font: 600 13px var(--font-ui); color: var(--muted); margin: 4px 0 6px; }
+  .resultado { border: 2px solid var(--good); border-radius: var(--radius); padding: 10px 16px; margin: 12px 0; background: var(--surface); }
+  details.verif > summary { color: var(--accent); font-weight: 600; }
+  .sol-inciso { font-family: var(--font-ui); font-size: 17px; font-weight: 600; margin: 22px 0 8px; padding-top: 10px; border-top: 1px dashed var(--line); color: var(--ink); }
+  .pasos-uso { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-family: var(--font-ui); font-size: 14px; margin: 10px 0; }
+  .pasos-uso span.pu { background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; }
+  .pasos-uso span.flecha { color: var(--muted); }
+  .sim-title { font: 600 15px var(--font-ui); margin: 0 0 4px; color: var(--ink); }
+  .sim-desc { font-size: 14px; color: var(--muted); margin: 0 0 10px; }
+</style>
+</head>
+<body data-root="../" data-page="deber-estimacion-puntual">
+<main id="contenido">
+
+  <header class="page-head">
+    <p class="kicker">Deber · Estimación puntual (Unidad II) · II PAO 2026</p>
+    <h1>Estimación puntual: momentos, verosimilitud, insesgadez, eficiencia y consistencia</h1>
+    <p class="lead">Solución pedagógica rigurosa y verificación interactiva de los 5 ejercicios del deber oficial de Estadística Matemática (FCNM · ESPOL, Prof. Christian E. Galarza). Incluye comprobadores numéricos instantáneos, pistas desplegables en tres niveles, deducciones matemáticas completas y simuladores Monte Carlo para contrastar la teoría con la práctica.</p>
+    <p><span class="badge">FCNM · ESPOL · Christian E. Galarza · II PAO 2026</span></p>
+  </header>
+
+  <section>
+    <h2 id="como-usar">Cómo usar esta página</h2>
+    <p>La indicación formal de la cátedra es <em>“Resuelva los siguientes ejercicios justificando cada paso”</em>. Para aprovechar al máximo esta herramienta antes de consultar las soluciones:</p>
+    <div class="pasos-uso">
+      <span class="pu">1 · Resuelve en papel y lápiz</span><span class="flecha">→</span>
+      <span class="pu">2 · Consulta las pistas graduales</span><span class="flecha">→</span>
+      <span class="pu">3 · Comprueba tu valor numérico</span><span class="flecha">→</span>
+      <span class="pu">4 · Contrasta con la solución formal</span><span class="flecha">→</span>
+      <span class="pu">5 · Experimenta con el simulador</span>
+    </div>
+    <ul>
+      <li>Usa la sección <b>“Comprueba tu respuesta”</b>: introduce tus valores calculados para validar tu razonamiento sin desvelar la deducción.</li>
+      <li>Cada ejercicio identifica su <b>técnica</b> matemática y enlaza a los conceptos de <a href="../temas/clase-06.html">Clase 6 (Sesgo y MSE)</a> y <a href="../temas/clase-07.html">Clase 7 (Eficiencia y comparación)</a>.</li>
+      <li>Las soluciones detallan cada justificación: verificación de condiciones de regularidad, derivación de verosimilitudes, cálculo exacto de integrales y transformaciones mediante el Jacobiano.</li>
+    </ul>
+
+    <div class="box cuidado">
+      <span class="box-title">Conceptos clave y trampas habituales de la Unidad II</span>
+      <ol>
+        <li><b>El compromiso sesgo-varianza (Bias-Variance Tradeoff):</b> El error cuadrático medio descompone en $\text{MSE}(\hat\theta) = \Var(\hat\theta) + [\text{Sesgo}(\hat\theta)]^2$. Un estimador sesgado puede ser estrictamente preferible a cualquier estimador insesgado si la reducción de varianza supera el cuadrado del sesgo introducido (como se comprueba en el Ejercicio 1).</li>
+        <li><b>Propiedad de invarianza de Zehna:</b> Si $\hat\theta$ es el Estimador de Máxima Verosimilitud (EMV) de $\theta$, entonces para cualquier función medible $g(\theta)$, el EMV de $g(\theta)$ es idénticamente $\widehat{g(\theta)} = g(\hat\theta)$. El método de los momentos también comparte esta cualidad cuando la relación es biyectiva.</li>
+        <li><b>La condición de soporte de Cramér-Rao:</b> La cota de Rao-Cramér requiere que el soporte $\{x: f(x|\theta) &gt; 0\}$ <b>no dependa del parámetro $\theta$</b> para permitir el intercambio de la derivada con respecto a $\theta$ y la integral sobre el soporte. Si el soporte depende de $\theta$ (como en los Ejercicios 4 y 5), la cota de Cramér-Rao <b>no es aplicable</b> y los estimadores basados en estadísticos de orden alcanzan velocidades ultrarrápidas de varianza $O(1/n^2)$.</li>
+        <li><b>Insesgamiento finito vs. consistencia asintótica:</b> Que un estimador presente sesgo en muestras finitas no impide que sea consistente. Si el sesgo converge a 0 y la varianza decae a 0 cuando $n \to \infty$, el estimador es consistente en media cuadrática y converge en probabilidad.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section>
+    <h2 id="indice">Índice del deber</h2>
+    <div class="indice-partes">
+      <div>
+        <h3>Los 5 ejercicios del deber</h3>
+        <ol>
+          <li value="1"><a href="#ej-1">Ejercicio 1 · Normal con media cero: EMV de $\sigma^2$, eficiencia y familia de menor MSE</a></li>
+          <li value="2"><a href="#ej-2">Ejercicio 2 · Modelo geométrico de fracasos: coincidencia EMM–EMV, invarianza y normalidad asintótica</a></li>
+          <li value="3"><a href="#ej-3">Ejercicio 3 · Densidad de Rayleigh: EMV de escala, Jacobiano, Gamma exacta y cota de Fisher</a></li>
+          <li value="4"><a href="#ej-4">Ejercicio 4 · Densidad potencia: momentos vs. máximo $X_{(n)}$, tasa $O(1/n^2)$ y fallo de Cramér-Rao</a></li>
+          <li value="5"><a href="#ej-5">Ejercicio 5 · Exponencial desplazada: EMVs en frontera, distribución del mínimo $X_{(1)}$ y consistencia</a></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       EJERCICIO 1
+       ================================================================ -->
+  <section>
+    <div class="box ejercicio" id="ej-1">
+      <span class="box-title">Ejercicio 1 · Muestra normal con media cero: EMV de $\sigma^2$, eficiencia y familia de menor MSE</span>
+      <p>Sea $X_1, \dots, X_n$ una muestra aleatoria de una variable aleatoria $X \sim N(0, \sigma^2)$, con $\sigma^2 &gt; 0$ desconocido.</p>
+      <ol type="a">
+        <li>Encuentre el EMV de $\sigma^2$ y denótelo por $T_1$.</li>
+        <li>Verifique que $T_1$ es insesgado y calcule $\Var(T_1)$.</li>
+        <li>Encuentre el límite inferior de la varianza de los estimadores insesgados de $\sigma^2$ y verifique si $T_1$ es eficiente.</li>
+        <li>Considere la familia de estimadores $T_c = c \sum_{i=1}^n X_i^2$, con $c &gt; 0$. Calcule el error cuadrático medio $\text{MSE}(T_c)$ en función de $c$ y encuentre el valor de $c$ que lo minimiza. ¿Qué puede concluir al comparar este estimador con $T_1$?</li>
+        <li>Verifique que el estimador de menor MSE obtenido en (d), a pesar de ser sesgado, es consistente para $\sigma^2$.</li>
+      </ol>
+      <p class="tecnica">Técnicas: Función de verosimilitud para parámetro de escala $\sigma^2$ · Cota de Rao-Cramér para parámetro cuadrático · Optimización del compromiso sesgo-varianza → <a href="../temas/clase-06.html">Clase 6 · MSE y sesgo</a> y <a href="../temas/clase-07.html">Clase 7 · Eficiencia relativa</a></p>
+
+      <div class="chk" id="chk-1"><p class="chk-title">Comprueba tu respuesta (sin ver la solución)</p></div>
+
+      <details class="pista"><summary>Pista 1 · Derivación del EMV y distribución de los cuadrados</summary><div>
+        <p>Trabaja directamente con el parámetro $\theta = \sigma^2$. La densidad individual es $f(x|\theta) = (2\pi\theta)^{-1/2}\exp(-x^2/(2\theta))$. Al plantear la log-verosimilitud $\ell(\theta)$, la derivada respecto a $\theta$ involucra $\sum_{i=1}^n X_i^2$. Recuerda además que si $X_i \sim N(0, \sigma^2)$, entonces $X_i/\sigma \sim N(0,1)$, por lo que $(X_i/\sigma)^2 \sim \chi^2_1$, cuya varianza es $2$.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 2 · Información de Fisher para $\sigma^2$</summary><div>
+        <p>Para la cota de Cramér-Rao, calcula $I_F(\theta) = -\E\left[\frac{\partial^2\ln f(X|\theta)}{\partial\theta^2}\right]$ tomando $\theta = \sigma^2$. Ten cuidado con los signos y los exponentes de $\theta$. Como $T_1$ es insesgado para $\theta$, compáralo con $\text{LI}(\theta) = \frac{1}{n I_F(\theta)}$.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 3 · Minimización de la parábola en $c$</summary><div>
+        <p>Escribe $\E[T_c] = c n \sigma^2$ y $\Var(T_c) = c^2 (2n\sigma^4)$. El sesgo es $\E[T_c] - \sigma^2 = (nc - 1)\sigma^2$. Suma la varianza y el sesgo al cuadrado: obtendrás una expresión cuadrática en $c$ con coeficiente principal positivo. Deriva respecto a $c$ e iguala a 0.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa y rigurosa</summary><div>
+        <p class="sol-inciso">(a) Estimador de Máxima Verosimilitud (EMV) de $\sigma^2$</p>
+        <ol class="pasos">
+          <li><b>Parámetro de trabajo.</b> Denotemos $\theta = \sigma^2 &gt; 0$. La función de densidad de probabilidad de $X \sim N(0, \theta)$ es:
+            $$f(x|\theta) = \frac{1}{\sqrt{2\pi\theta}} \exp\left(-\frac{x^2}{2\theta}\right) = (2\pi)^{-1/2}\,\theta^{-1/2} \exp\left(-\frac{x^2}{2\theta}\right), \quad x \in \R.$$</li>
+          <li><b>Función de verosimilitud conjunta.</b> Dado que $X_1, \dots, X_n$ son independientes e idénticamente distribuidas (i.i.d.):
+            $$L(\theta) = \prod_{i=1}^n f(X_i|\theta) = (2\pi)^{-n/2}\,\theta^{-n/2}\exp\left(-\frac{1}{2\theta}\sum_{i=1}^n X_i^2\right).$$</li>
+          <li><b>Función de log-verosimilitud.</b> Aplicando el logaritmo natural:
+            $$\ell(\theta) = \ln L(\theta) = -\frac{n}{2}\ln(2\pi) - \frac{n}{2}\ln\theta - \frac{1}{2\theta}\sum_{i=1}^n X_i^2.$$</li>
+          <li><b>Ecuación de verosimilitud y punto crítico.</b> Derivando respecto a $\theta$:
+            $$\frac{d\ell(\theta)}{d\theta} = -\frac{n}{2\theta} + \frac{1}{2\theta^2}\sum_{i=1}^n X_i^2 = 0.$$
+            Multiplicando por $2\theta^2$ (dado que $\theta &gt; 0$):
+            $$-n\theta + \sum_{i=1}^n X_i^2 = 0 \iff n\theta = \sum_{i=1}^n X_i^2 \iff \hat\theta = \frac{1}{n}\sum_{i=1}^n X_i^2.$$</li>
+          <li><b>Criterio de la segunda derivada.</b> Derivando nuevamente:
+            $$\frac{d^2\ell(\theta)}{d\theta^2} = \frac{n}{2\theta^2} - \frac{1}{\theta^3}\sum_{i=1}^n X_i^2.$$
+            Evaluando en $\theta = \hat\theta$:
+            $$\left.\frac{d^2\ell(\theta)}{d\theta^2}\right|_{\theta = \hat\theta} = \frac{n}{2\hat\theta^2} - \frac{n\hat\theta}{\hat\theta^3} = \frac{n}{2\hat\theta^2} - \frac{n}{\hat\theta^2} = -\frac{n}{2\hat\theta^2} &lt; 0.$$
+            Al ser la segunda derivada estrictamente negativa en todo el soporte para cualquier muestra no idénticamente nula, se confirma que el punto crítico es un máximo global único.</li>
+        </ol>
+        <div class="resultado">$$T_1 = \widehat{\sigma^2} = \frac{1}{n}\sum_{i=1}^n X_i^2.$$</div>
+
+        <p class="sol-inciso">(b) Verificación de insesgamiento y cálculo de $\Var(T_1)$</p>
+        <ol class="pasos">
+          <li><b>Esperanza de $T_1$.</b> Por hipótesis, $X_i \sim N(0, \sigma^2)$, luego $\E[X_i] = 0$ y $\Var(X_i) = \sigma^2$. Recordando que $\Var(X_i) = \E[X_i^2] - (\E[X_i])^2$, deducimos:
+            $$\E[X_i^2] = \Var(X_i) + (\E[X_i])^2 = \sigma^2 + 0 = \sigma^2.$$
+            Por linealidad de la esperanza:
+            $$\E[T_1] = \E\left[\frac{1}{n}\sum_{i=1}^n X_i^2\right] = \frac{1}{n}\sum_{i=1}^n \E[X_i^2] = \frac{1}{n}\cdot n\sigma^2 = \sigma^2.$$
+            Como $\E[T_1] = \sigma^2$, concluimos que $T_1$ es un estimador <b>insesgado</b> de $\sigma^2$.</li>
+          <li><b>Varianza de una observación al cuadrado.</b> Estandarizando: $Z_i = \frac{X_i}{\sigma} \sim N(0, 1)$, por lo que $Z_i^2 = \frac{X_i^2}{\sigma^2} \sim \chi^2_1$.
+            La varianza de una chi-cuadrado con 1 grado de libertad es $2(1) = 2$. Por lo tanto:
+            $$\Var(X_i^2) = \Var(\sigma^2 Z_i^2) = \sigma^4 \Var(Z_i^2) = \sigma^4 \cdot 2 = 2\sigma^4.$$</li>
+          <li><b>Varianza de $T_1$.</b> Dado que las variables $X_1, \dots, X_n$ son mutuamente independientes, las variables $X_1^2, \dots, X_n^2$ también lo son:
+            $$\Var(T_1) = \Var\left(\frac{1}{n}\sum_{i=1}^n X_i^2\right) = \frac{1}{n^2}\sum_{i=1}^n \Var(X_i^2) = \frac{1}{n^2}\cdot n(2\sigma^4) = \frac{2\sigma^4}{n}.$$</li>
+        </ol>
+        <div class="resultado">$$\E[T_1] = \sigma^2 \quad (\text{insesgado}), \qquad \Var(T_1) = \frac{2\sigma^4}{n}.$$</div>
+
+        <p class="sol-inciso">(c) Límite inferior de Cramér-Rao y eficiencia de $T_1$</p>
+        <ol class="pasos">
+          <li><b>Condiciones de regularidad.</b> El soporte de la densidad normal es $\R$, el cual no depende de $\sigma^2$. La densidad es tres veces diferenciable respecto a $\theta = \sigma^2$. Se satisfacen las condiciones de regularidad de Cramér-Rao.</li>
+          <li><b>Información de Fisher de una sola observación.</b> Con $\theta = \sigma^2$:
+            $$\ln f(X|\theta) = -\frac{1}{2}\ln(2\pi) - \frac{1}{2}\ln\theta - \frac{X^2}{2\theta}.$$
+            Calculamos la primera y segunda derivada con respecto a $\theta$:
+            $$\frac{\partial\ln f(X|\theta)}{\partial\theta} = -\frac{1}{2\theta} + \frac{X^2}{2\theta^2}, \qquad \frac{\partial^2\ln f(X|\theta)}{\partial\theta^2} = \frac{1}{2\theta^2} - \frac{X^2}{\theta^3}.$$
+            Tomando esperanza matemática y usando que $\E[X^2] = \theta = \sigma^2$:
+            $$\E\left[\frac{\partial^2\ln f(X|\theta)}{\partial\theta^2}\right] = \frac{1}{2\theta^2} - \frac{\E[X^2]}{\theta^3} = \frac{1}{2\theta^2} - \frac{\theta}{\theta^3} = -\frac{1}{2\theta^2} = -\frac{1}{2\sigma^4}.$$
+            Por consiguiente, la información de Fisher contenida en una observación es:
+            $$I_F(\sigma^2) = -\E\left[\frac{\partial^2\ln f(X|\sigma^2)}{\partial(\sigma^2)^2}\right] = \frac{1}{2\sigma^4}.$$</li>
+          <li><b>Cota inferior para estimadores insesgados.</b> Para una muestra de tamaño $n$, la información de Fisher total es $I_n(\sigma^2) = n I_F(\sigma^2) = \frac{n}{2\sigma^4}$. El límite inferior de la varianza (LI) es:
+            $$\text{LI}(\sigma^2) = \frac{1}{n I_F(\sigma^2)} = \frac{1}{\frac{n}{2\sigma^4}} = \frac{2\sigma^4}{n}.$$</li>
+          <li><b>Verificación de eficiencia.</b> Calculamos el cociente de eficiencia:
+            $$\text{eff}(T_1) = \frac{\text{LI}(\sigma^2)}{\Var(T_1)} = \frac{\frac{2\sigma^4}{n}}{\frac{2\sigma^4}{n}} = 1.$$</li>
+        </ol>
+        <div class="resultado">$$\text{LI}(\sigma^2) = \frac{2\sigma^4}{n}, \qquad \text{eff}(T_1) = 1 \implies T_1 \text{ es un estimador eficiente (UMVUE)}.$$</div>
+
+        <p class="sol-inciso">(d) Familia de estimadores $T_c = c \sum_{i=1}^n X_i^2$, minimización del MSE y comparación</p>
+        <ol class="pasos">
+          <li><b>Esperanza y sesgo de $T_c$.</b>
+            $$\E[T_c] = c \sum_{i=1}^n \E[X_i^2] = c(n\sigma^2) = nc\sigma^2.$$
+            El sesgo de $T_c$ respecto a $\sigma^2$ es:
+            $$\text{Sesgo}(T_c) = \E[T_c] - \sigma^2 = nc\sigma^2 - \sigma^2 = (nc - 1)\sigma^2.$$</li>
+          <li><b>Varianza de $T_c$.</b>
+            $$\Var(T_c) = c^2 \sum_{i=1}^n \Var(X_i^2) = c^2 (n \cdot 2\sigma^4) = 2nc^2\sigma^4.$$</li>
+          <li><b>Cálculo del error cuadrático medio $\text{MSE}(T_c)$.</b>
+            $$\text{MSE}(T_c) = \Var(T_c) + [\text{Sesgo}(T_c)]^2 = 2nc^2\sigma^4 + (nc - 1)^2\sigma^4 = \sigma^4 \Big[ 2nc^2 + (nc-1)^2 \Big].$$
+            Expandiendo el término cuadrático interior:
+            $$2nc^2 + (n^2c^2 - 2nc + 1) = (n^2 + 2n)c^2 - 2nc + 1 = n(n+2)c^2 - 2nc + 1.$$
+            De modo que:
+            $$\text{MSE}(T_c) = \sigma^4 \Big[ n(n+2)c^2 - 2nc + 1 \Big].$$</li>
+          <li><b>Minimización respecto a $c &gt; 0$.</b> Derivando respecto a $c$:
+            $$\frac{d\,\text{MSE}(T_c)}{dc} = \sigma^4 \Big[ 2n(n+2)c - 2n \Big] = 0 \iff 2n\Big[(n+2)c - 1\Big] = 0.$$
+            Despejando $c$:
+            $$c^* = \frac{1}{n+2}.$$
+            La segunda derivada es $\frac{d^2\,\text{MSE}(T_c)}{dc^2} = 2n(n+2)\sigma^4 &gt; 0$, confirmando un mínimo global estricto.</li>
+          <li><b>MSE mínimo alcanzado por $T_{c^*}$.</b> Evaluando en $c^* = \frac{1}{n+2}$:
+            $$\begin{aligned}
+            \text{MSE}(T_{c^*}) &= \sigma^4 \left[ n(n+2)\left(\frac{1}{n+2}\right)^2 - 2n\left(\frac{1}{n+2}\right) + 1 \right] \\
+            &= \sigma^4 \left[ \frac{n}{n+2} - \frac{2n}{n+2} + 1 \right] = \sigma^4 \left[ 1 - \frac{n}{n+2} \right] = \frac{2\sigma^4}{n+2}.
+            \end{aligned}$$</li>
+          <li><b>Comparación fundamental con $T_1$.</b> Notemos que $T_1$ corresponde a elegir $c = 1/n$, lo que da $\text{MSE}(T_1) = \Var(T_1) = \frac{2\sigma^4}{n}$.
+            Como $n+2 &gt; n$ para todo $n \ge 1$:
+            $$\text{MSE}(T_{c^*}) = \frac{2\sigma^4}{n+2} &lt; \frac{2\sigma^4}{n} = \text{MSE}(T_1).$$
+            <b>Conclusión conceptual:</b> A pesar de que $T_1$ es el estimador insesgado de mínima varianza (eficiente en la clase de insesgados), el estimador sesgado $T_{c^*} = \frac{1}{n+2}\sum_{i=1}^n X_i^2$ tiene <b>menor error cuadrático medio global</b>. Este es el principio del compromiso sesgo-varianza: al aceptar un pequeño sesgo hacia cero ($\E[T_{c^*}] = \frac{n}{n+2}\sigma^2$), la varianza se reduce más de lo que penaliza el sesgo al cuadrado.</li>
+        </ol>
+        <div class="resultado">$$c^* = \frac{1}{n+2}, \qquad \text{MSE}(T_{c^*}) = \frac{2\sigma^4}{n+2} &lt; \text{MSE}(T_1) = \frac{2\sigma^4}{n}.$$</div>
+
+        <p class="sol-inciso">(e) Consistencia del estimador sesgado $T_{c^*}$</p>
+        <ol class="pasos">
+          <li><b>Criterio de convergencia en media cuadrática.</b> Un estimador es consistente si converge en probabilidad a la constante objetivo $\sigma^2$. Una condición suficiente bien conocida es que su error cuadrático medio tienda a cero:
+            $$\lim_{n\to\infty} \text{MSE}(T_{c^*}) = \lim_{n\to\infty} \frac{2\sigma^4}{n+2} = 0.$$</li>
+          <li><b>Demostración formal mediante la desigualdad de Chebyshev.</b> Para cualquier $\varepsilon &gt; 0$:
+            $$\P(|T_{c^*} - \sigma^2| \ge \varepsilon) \le \frac{\E[(T_{c^*} - \sigma^2)^2]}{\varepsilon^2} = \frac{\text{MSE}(T_{c^*})}{\varepsilon^2} = \frac{2\sigma^4}{(n+2)\varepsilon^2}.$$
+            Tomando el límite cuando $n \to \infty$:
+            $$\lim_{n\to\infty} \P(|T_{c^*} - \sigma^2| \ge \varepsilon) \le \lim_{n\to\infty} \frac{2\sigma^4}{(n+2)\varepsilon^2} = 0.$$
+            Por la definición de límite en probabilidad:
+            $$T_{c^*} \xrightarrow{\;P\;} \sigma^2.$$
+            Por tanto, $T_{c^*}$ es un estimador <b>consistente</b> de $\sigma^2$. El sesgo relativo $\frac{n}{n+2} - 1 = -\frac{2}{n+2} \to 0$ desaparece conforme $n \to \infty$.</li>
+        </ol>
+      </div></details>
+
+      <details class="verif"><summary>Verificación por simulación</summary><div>
+        <div class="sim" id="sim-1">
+          <p class="sim-title">Carrera de estimadores: Compromiso sesgo-varianza en $N(0, \sigma^2)$</p>
+          <p class="sim-desc">Explora la curva analítica de $\text{MSE}(T_c)/\sigma^4$ y contrástala con la distribución empírica de $M = 2500$ réplicas Monte Carlo. Observa cómo $T_{c^*} = \frac{1}{n+2}\sum X_i^2$ bate a $T_1 = \frac{1}{n}\sum X_i^2$ en error cuadrático medio.</p>
+          <div class="controls"></div>
+          <div class="figs">
+            <figure class="fig">
+              <div class="plot" data-k="curve"></div>
+              <figcaption>Curva analítica de $\text{MSE}(T_c)/\sigma^4$ con mínimo en $c^* = 1/(n+2)$ frente a $T_1$ en $c = 1/n$.</figcaption>
+            </figure>
+            <figure class="fig">
+              <div class="plot" data-k="hist"></div>
+              <figcaption>Histograma empírico de $T_1$ (azul) frente a $T_{c^*}$ (púrpura) para $\sigma^2$.</figcaption>
+            </figure>
+          </div>
+          <div class="out"></div>
+        </div>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       EJERCICIO 2
+       ================================================================ -->
+  <section>
+    <div class="box ejercicio" id="ej-2">
+      <span class="box-title">Ejercicio 2 · Modelo geométrico de fracasos: coincidencia EMM–EMV, invarianza y normalidad asintótica</span>
+      <p>El número de intentos fallidos antes de que un sistema logre establecer una conexión se modela mediante la función de probabilidad
+      $$\P(X = x) = \theta(1 - \theta)^x, \quad x = 0, 1, 2, \dots, \quad 0 &lt; \theta &lt; 1.$$
+      Sea $X_1, \dots, X_n$ una muestra aleatoria de $X$.</p>
+      <ol type="a">
+        <li>Verifique que los estimadores de $\theta$ por el método de los momentos y de máxima verosimilitud coinciden.</li>
+        <li>Utilizando la propiedad de invarianza de los EMV, encuentre el EMV de $g(\theta) = \E[X] = \frac{1 - \theta}{\theta}$. Verifique que es insesgado y calcule su varianza.</li>
+        <li>Calcule $I_F(\theta)$ y el límite inferior de la varianza de los estimadores insesgados de $g(\theta)$. ¿Es eficiente el estimador obtenido en (b)?</li>
+        <li>Verifique que el EMV de $\theta$ es consistente.</li>
+        <li>Encuentre la distribución aproximada del EMV de $\theta$ cuando $n$ es grande.</li>
+      </ol>
+      <p class="tecnica">Técnicas: Distribución geométrica de fallos · Método de momentos · Estimador de Máxima Verosimilitud e invarianza de Zehna · Teorema de Cramér-Rao generalizado · Método Delta / Normalidad asintótica del EMV → <a href="../temas/clase-06.html">Clase 6 · Estimadores puntuales</a> y <a href="../temas/clase-07.html">Clase 7 · Eficiencia</a></p>
+
+      <div class="chk" id="chk-2"><p class="chk-title">Comprueba tu respuesta (sin ver la solución)</p></div>
+
+      <details class="pista"><summary>Pista 1 · Suma de la serie geométrica y momentos</summary><div>
+        <p>Para $\E[X]$, calcula $\sum_{x=0}^\infty x(1-\theta)^x = (1-\theta)\sum_{x=1}^\infty x(1-\theta)^{x-1} = \frac{1-\theta}{\theta^2}$. Multiplicando por $\theta$, obtienes $\E[X] = \frac{1-\theta}{\theta} = \frac{1}{\theta} - 1$. Iguala esto a la media muestral $\bar X$. Para la verosimilitud, agrupa las potencias: $L(\theta) = \theta^n (1-\theta)^{\sum X_i}$.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 2 · Propiedad de invarianza y varianza geométrica</summary><div>
+        <p>Por el Teorema de Zehna, $\widehat{g(\theta)} = g(\hat\theta)$. Sustituye $\hat\theta = \frac{1}{\bar X + 1}$ en la fórmula $g(\theta) = \frac{1-\theta}{\theta} = \frac{1}{\theta} - 1$. Verás que el estimador resulta ser extraordinariamente sencillo. Recuerda que la varianza de una Geométrica de fallos es $\Var(X) = \frac{1-\theta}{\theta^2}$.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 3 · Cota para funciones $g(\theta)$ y distribución asintótica</summary><div>
+        <p>La información de Fisher de una sola observación es $I_F(\theta) = -\E[\ell''(X|\theta)] = \frac{1}{\theta^2(1-\theta)}$. La cota de Rao-Cramér para estimadores insesgados de una función diferenciable $g(\theta)$ es $\text{LI}(g(\theta)) = \frac{[g'(\theta)]^2}{n I_F(\theta)}$. Para la distribución asintótica de $\hat\theta$, usa la teoría clásica del EMV $\sqrt{n}(\hat\theta - \theta) \xrightarrow{d} N(0, 1/I_F(\theta))$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa y rigurosa</summary><div>
+        <p class="sol-inciso">(a) Coincidencia de estimadores: EMM y EMV</p>
+        <ol class="pasos">
+          <li><b>Cálculo de la esperanza poblacional $\E[X]$.</b>
+            Recordemos la serie geométrica para $|q| &lt; 1$: $\sum_{x=0}^\infty q^x = \frac{1}{1 - q}$.
+            Derivando respecto a $q$:
+            $$\sum_{x=1}^\infty x q^{x-1} = \frac{d}{dq}\left(\frac{1}{1-q}\right) = \frac{1}{(1-q)^2}.$$
+            Multiplicando por $q$: $\sum_{x=0}^\infty x q^x = \frac{q}{(1-q)^2}$. Tomando $q = 1 - \theta$:
+            $$\E[X] = \sum_{x=0}^\infty x\,\theta(1-\theta)^x = \theta \sum_{x=0}^\infty x(1-\theta)^x = \theta \cdot \frac{1-\theta}{[1 - (1-\theta)]^2} = \theta \cdot \frac{1-\theta}{\theta^2} = \frac{1-\theta}{\theta}.$$
+            Alternativamente: $\E[X] = \frac{1}{\theta} - 1$.</li>
+          <li><b>Estimador por el método de los momentos (EMM).</b>
+            Igualamos el primer momento teórico $\mu_1 = \E[X]$ al primer momento muestral $m_1 = \bar X$:
+            $$\frac{1 - \tilde\theta}{\tilde\theta} = \bar X \iff \frac{1}{\tilde\theta} - 1 = \bar X \iff \frac{1}{\tilde\theta} = \bar X + 1 \iff \tilde\theta = \frac{1}{\bar X + 1}.$$</li>
+          <li><b>Estimador de máxima verosimilitud (EMV).</b>
+            La verosimilitud de la muestra i.i.d. $X_1, \dots, X_n$ es:
+            $$L(\theta) = \prod_{i=1}^n \theta(1-\theta)^{X_i} = \theta^n (1-\theta)^{\sum_{i=1}^n X_i} = \theta^n (1-\theta)^{n\bar X}.$$
+            La log-verosimilitud es:
+            $$\ell(\theta) = \ln L(\theta) = n\ln\theta + \left(\sum_{i=1}^n X_i\right)\ln(1-\theta) = n\ln\theta + n\bar X \ln(1-\theta).$$
+            Derivando con respecto a $\theta$:
+            $$\frac{d\ell(\theta)}{d\theta} = \frac{n}{\theta} - \frac{n\bar X}{1 - \theta} = 0.$$
+            Dividiendo entre $n$ y multiplicando por $\theta(1-\theta)$:
+            $$\frac{1}{\theta} = \frac{\bar X}{1-\theta} \iff 1 - \theta = \bar X \theta \iff 1 = (\bar X + 1)\theta \iff \hat\theta = \frac{1}{\bar X + 1}.$$
+            Verificamos la concavidad mediante la segunda derivada:
+            $$\frac{d^2\ell(\theta)}{d\theta^2} = -\frac{n}{\theta^2} - \frac{n\bar X}{(1-\theta)^2} &lt; 0, \quad \forall\,\theta \in (0, 1),$$
+            ya que $n &gt; 0$, $\theta^2 &gt; 0$, $(1-\theta)^2 &gt; 0$ y $\bar X \ge 0$.
+            Por tanto, $\hat\theta = \frac{1}{\bar X + 1}$ es el único máximo global.</li>
+          <li><b>Conclusión.</b> Ambos métodos producen idéntico estimador: $\tilde\theta = \hat\theta = \frac{1}{\bar X + 1}$.</li>
+        </ol>
+        <div class="resultado">$$\tilde\theta = \hat\theta = \frac{1}{\bar X + 1}.$$</div>
+
+        <p class="sol-inciso">(b) Invarianza del EMV para $g(\theta) = \E[X]$, insesgamiento y varianza</p>
+        <ol class="pasos">
+          <li><b>Propiedad de invarianza de los EMV (Teorema de Zehna).</b>
+            Si $\hat\theta$ es el EMV de $\theta$, entonces para toda función medible $g$, el EMV de $g(\theta)$ es $\widehat{g(\theta)} = g(\hat\theta)$.
+            Como $g(\theta) = \frac{1-\theta}{\theta} = \frac{1}{\theta} - 1$:
+            $$\widehat{g(\theta)} = g(\hat\theta) = \frac{1}{\hat\theta} - 1 = \frac{1}{\frac{1}{\bar X + 1}} - 1 = (\bar X + 1) - 1 = \bar X.$$
+            ¡El EMV de la media poblacional es simplemente la media muestral $\bar X$!</li>
+          <li><b>Verificación de insesgamiento.</b>
+            $$\E[\widehat{g(\theta)}] = \E[\bar X] = \E\left[\frac{1}{n}\sum_{i=1}^n X_i\right] = \frac{1}{n}\sum_{i=1}^n \E[X_i] = \E[X] = \frac{1-\theta}{\theta} = g(\theta).$$
+            Por tanto, $\widehat{g(\theta)} = \bar X$ es un estimador <b>estrictamente insesgado</b> de $g(\theta)$.</li>
+          <li><b>Cálculo de la varianza.</b>
+            Para la distribución geométrica de fallos, determinemos $\Var(X)$:
+            $$\sum_{x=0}^\infty x(x-1)q^x = q^2 \frac{d^2}{dq^2}\left(\frac{1}{1-q}\right) = q^2 \frac{2}{(1-q)^3} = \frac{2(1-\theta)^2}{\theta^3}.$$
+            Luego $\E[X(X-1)] = \theta \cdot \frac{2(1-\theta)^2}{\theta^3} = \frac{2(1-\theta)^2}{\theta^2}$.
+            Por tanto:
+            $$\begin{aligned}
+            \Var(X) &= \E[X(X-1)] + \E[X] - (\E[X])^2 \\
+            &= \frac{2(1-\theta)^2}{\theta^2} + \frac{1-\theta}{\theta} - \frac{(1-\theta)^2}{\theta^2} = \frac{(1-\theta)^2}{\theta^2} + \frac{\theta(1-\theta)}{\theta^2} = \frac{1-\theta}{\theta^2}.
+            \end{aligned}$$
+            Como las $X_i$ son independientes:
+            $$\Var(\widehat{g(\theta)}) = \Var(\bar X) = \frac{\Var(X)}{n} = \frac{1 - \theta}{n\theta^2}.$$</li>
+        </ol>
+        <div class="resultado">$$\widehat{g(\theta)} = \bar X, \qquad \E[\bar X] = \frac{1-\theta}{\theta} \quad (\text{insesgado}), \qquad \Var(\bar X) = \frac{1-\theta}{n\theta^2}.$$</div>
+
+        <p class="sol-inciso">(c) Información de Fisher y eficiencia de $\widehat{g(\theta)}$</p>
+        <ol class="pasos">
+          <li><b>Información de Fisher de una sola observación.</b>
+            La función de masa de una observación es $f(x|\theta) = \theta(1-\theta)^x$.
+            $$\ln f(X|\theta) = \ln\theta + X\ln(1-\theta).$$
+            Derivamos respecto a $\theta$:
+            $$\frac{\partial\ln f(X|\theta)}{\partial\theta} = \frac{1}{\theta} - \frac{X}{1-\theta}, \qquad \frac{\partial^2\ln f(X|\theta)}{\partial\theta^2} = -\frac{1}{\theta^2} - \frac{X}{(1-\theta)^2}.$$
+            Tomando la esperanza matemática y recordando que $\E[X] = \frac{1-\theta}{\theta}$:
+            $$\begin{aligned}
+            \E\left[\frac{\partial^2\ln f(X|\theta)}{\partial\theta^2}\right] &= -\frac{1}{\theta^2} - \frac{\E[X]}{(1-\theta)^2} = -\frac{1}{\theta^2} - \frac{\frac{1-\theta}{\theta}}{(1-\theta)^2} \\
+            &= -\frac{1}{\theta^2} - \frac{1}{\theta(1-\theta)} = -\left[\frac{(1-\theta) + \theta}{\theta^2(1-\theta)}\right] = -\frac{1}{\theta^2(1-\theta)}.
+            \end{aligned}$$
+            Por tanto, la información de Fisher es:
+            $$I_F(\theta) = -\E\left[\frac{\partial^2\ln f(X|\theta)}{\partial\theta^2}\right] = \frac{1}{\theta^2(1-\theta)}.$$</li>
+          <li><b>Límite inferior de Cramér-Rao para estimadores insesgados de $g(\theta)$.</b>
+            Para una función derivable $g(\theta)$, la cota inferior de la varianza es:
+            $$\text{LI}(g(\theta)) = \frac{[g'(\theta)]^2}{n I_F(\theta)}.$$
+            Derivando $g(\theta) = \frac{1}{\theta} - 1$:
+            $$g'(\theta) = -\frac{1}{\theta^2} \implies [g'(\theta)]^2 = \frac{1}{\theta^4}.$$
+            Sustituyendo $I_F(\theta)$:
+            $$\text{LI}(g(\theta)) = \frac{\frac{1}{\theta^4}}{n \cdot \frac{1}{\theta^2(1-\theta)}} = \frac{1}{n\theta^4} \cdot \theta^2(1-\theta) = \frac{1-\theta}{n\theta^2}.$$</li>
+          <li><b>Conclusión de eficiencia.</b>
+            Comparando con la varianza de $\widehat{g(\theta)} = \bar X$:
+            $$\Var(\bar X) = \frac{1-\theta}{n\theta^2} = \text{LI}(g(\theta)) \implies \text{eff}(\bar X) = \frac{\text{LI}(g(\theta))}{\Var(\bar X)} = 1.$$
+            En consecuencia, $\bar X$ alcanza la cota inferior de Rao-Cramér y es un estimador <b>eficiente</b> (UMVUE) para la media $g(\theta)$.</li>
+        </ol>
+        <div class="resultado">$$I_F(\theta) = \frac{1}{\theta^2(1-\theta)}, \qquad \text{LI}(g(\theta)) = \frac{1-\theta}{n\theta^2}, \qquad \text{eff}(\bar X) = 1 \implies \bar X \text{ es eficiente}.$$</div>
+
+        <p class="sol-inciso">(d) Consistencia del EMV $\hat\theta$</p>
+        <ol class="pasos">
+          <li><b>Aplicación de la Ley de los Grandes Números.</b>
+            Dado que $X_1, \dots, X_n$ son variables i.i.d. con esperanza finita $\E[X] = \frac{1-\theta}{\theta}$, por la Ley Débil de los Grandes Números (LGN de Khinchin):
+            $$\bar X \xrightarrow{\;P\;} \E[X] = \frac{1-\theta}{\theta}.$$</li>
+          <li><b>Teorema del Mapeo Continuo (Continuous Mapping Theorem).</b>
+            Consideremos la función $h(u) = \frac{1}{u + 1}$. Como $\bar X \ge 0$, el denominador $u + 1 \ge 1 &gt; 0$ nunca se anula en el dominio de interés, por lo que $h$ es continua en $[0, \infty)$.
+            Aplicando el Teorema del Mapeo Continuo:
+            $$\hat\theta = h(\bar X) = \frac{1}{\bar X + 1} \xrightarrow{\;P\;} h\left(\frac{1-\theta}{\theta}\right) = \frac{1}{\frac{1-\theta}{\theta} + 1} = \frac{1}{\frac{1-\theta + \theta}{\theta}} = \frac{1}{\frac{1}{\theta}} = \theta.$$
+            Por lo tanto, $\hat\theta \xrightarrow{P} \theta$, lo que demuestra que $\hat\theta$ es un estimador <b>consistente</b> de $\theta$.</li>
+        </ol>
+
+        <p class="sol-inciso">(e) Distribución asintótica del EMV para $n$ grande</p>
+        <ol class="pasos">
+          <li><b>Vía propiedad asintótica general del EMV.</b>
+            El modelo geométrico satisface todas las condiciones clásicas de regularidad de Cramér (pertenece a la familia exponencial uniparamétrica de rango completo con soporte $\{0, 1, 2, \dots\}$ independiente de $\theta$). Por consiguiente:
+            $$\sqrt{n}(\hat\theta - \theta) \xrightarrow{\;d\;} N\left(0, \frac{1}{I_F(\theta)}\right).$$
+            Sustituyendo la información de Fisher calculada en (c):
+            $$\frac{1}{I_F(\theta)} = \frac{1}{\frac{1}{\theta^2(1-\theta)}} = \theta^2(1-\theta).$$
+            Por tanto:
+            $$\sqrt{n}(\hat\theta - \theta) \xrightarrow{\;d\;} N\big(0, \theta^2(1-\theta)\big).$$</li>
+          <li><b>Verificación alternativa mediante el Método Delta.</b>
+            Por el Teorema del Límite Central aplicado a $\bar X$:
+            $$\sqrt{n}\left(\bar X - \mu\right) \xrightarrow{\;d\;} N\big(0, \sigma^2\big), \quad \text{donde } \mu = \frac{1-\theta}{\theta}, \quad \sigma^2 = \frac{1-\theta}{\theta^2}.$$
+            Sea $h(u) = \frac{1}{u+1}$, con $h'(u) = -\frac{1}{(u+1)^2}$. Evaluando en $\mu$:
+            $$h'(\mu) = -\frac{1}{(\mu + 1)^2} = -\frac{1}{\left(\frac{1}{\theta}\right)^2} = -\theta^2.$$
+            Por el Método Delta de primer orden:
+            $$\sqrt{n}(h(\bar X) - h(\mu)) = \sqrt{n}(\hat\theta - \theta) \xrightarrow{\;d\;} N\Big(0, [h'(\mu)]^2 \sigma^2\Big).$$
+            Calculamos la varianza asintótica:
+            $$[h'(\mu)]^2 \sigma^2 = (-\theta^2)^2 \cdot \frac{1-\theta}{\theta^2} = \theta^4 \cdot \frac{1-\theta}{\theta^2} = \theta^2(1-\theta).$$
+            Ambos métodos coinciden con absoluta precisión.</li>
+          <li><b>Forma aproximada para $n$ grande.</b> En términos prácticos para muestras de tamaño $n$ finito grande:
+            $$\hat\theta \stackrel{\cdot}{\sim} N\left(\theta, \frac{\theta^2(1-\theta)}{n}\right).$$</li>
+        </ol>
+        <div class="resultado">$$\sqrt{n}(\hat\theta - \theta) \xrightarrow{\;d\;} N\big(0, \theta^2(1-\theta)\big) \iff \hat\theta \stackrel{\cdot}{\sim} N\left(\theta, \frac{\theta^2(1-\theta)}{n}\right).$$</div>
+      </div></details>
+
+      <details class="verif"><summary>Verificación por simulación</summary><div>
+        <div class="sim" id="sim-2">
+          <p class="sim-title">Normalidad asintótica del EMV geométrico $\hat\theta = \frac{1}{\bar X + 1}$</p>
+          <p class="sim-desc">Genera $M = 2500$ muestras geométricas independientes de tamaño $n$. Compara el histograma empírico de la variable estandarizada $Z_n = \frac{\sqrt{n}(\hat\theta - \theta)}{\theta\sqrt{1-\theta}}$ frente a la campana normal estándar $N(0, 1)$ y comprueba la velocidad de convergencia del TLC.</p>
+          <div class="controls"></div>
+          <div class="plot"></div>
+          <div class="out"></div>
+        </div>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       EJERCICIO 3
+       ================================================================ -->
+  <section>
+    <div class="box ejercicio" id="ej-3">
+      <span class="box-title">Ejercicio 3 · Densidad de Rayleigh: EMV de escala, Jacobiano, Gamma exacta y cota de Fisher</span>
+      <p>Sea $X_1, \dots, X_n$ una muestra aleatoria de la variable aleatoria $X$ con función de densidad
+      $$f(x|\theta) = \frac{x}{\theta^2} \exp\left(-\frac{x^2}{2\theta^2}\right), \quad x &gt; 0, \quad \theta &gt; 0.$$</p>
+      <ol type="a">
+        <li>Encuentre el EMV de $\theta$.</li>
+        <li>Utilice el método del Jacobiano para determinar la distribución de $Y = X^2$. Deduzca la distribución de $T = \sum_{i=1}^n X_i^2$.</li>
+        <li>Verifique si el EMV de $\theta$ es insesgado. En caso de no serlo, proporcione una variante que sea un estimador insesgado.</li>
+        <li>Encuentre el límite inferior de la varianza de los estimadores insesgados de $\theta$.</li>
+        <li>Verifique que el EMV de $\theta$ es consistente y determine la distribución límite de $\sqrt{n}(\hat\theta - \theta)$.</li>
+      </ol>
+      <p class="tecnica">Técnicas: Distribución de Rayleigh · Método del Jacobiano univariado · Propiedad reproductiva de la distribución Gamma · Momentos fraccionarios de la Gamma y funciones de Euler · Cota de Rao-Cramér → <a href="../temas/clase-01.html">Clase 1 · Jacobiano</a> y <a href="../temas/clase-06.html">Clase 6 · Estimación puntual</a></p>
+
+      <div class="chk" id="chk-3"><p class="chk-title">Comprueba tu respuesta (sin ver la solución)</p></div>
+
+      <details class="pista"><summary>Pista 1 · Jacobiano de $Y = X^2$</summary><div>
+        <p>Para $x &gt; 0$, la transformación $y = x^2$ es biyectiva con inversa $x = \sqrt{y}$ y derivada $\frac{dx}{dy} = \frac{1}{2\sqrt{y}}$. Al sustituir en $f_Y(y) = f_X(\sqrt{y})\left|\frac{dx}{dy}\right|$, el término $\sqrt{y}$ se simplifica con el denominador, dejando una densidad exponencial con media $2\theta^2$, equivalente a $\text{Gamma}(1, 2\theta^2)$.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 2 · Distribución de la suma $T$ y momento $\E[\sqrt{T}]$</summary><div>
+        <p>La suma de $n$ exponenciales independientes de media $\beta = 2\theta^2$ es una $\text{Gamma}(n, \beta=2\theta^2)$. El EMV es $\hat\theta = \frac{1}{\sqrt{2n}} T^{1/2}$. Para calcular $\E[T^{1/2}]$, usa la fórmula del momento general de una Gamma: $\E[T^k] = \frac{\Gamma(n+k)}{\Gamma(n)}\beta^k$ con $k = 1/2$.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 3 · Información de Fisher y constante de corrección</summary><div>
+        <p>La constante para insesgar es la inversa del factor multiplicativo que acompaña a $\theta$. Para la cota de Cramér-Rao, calcula la segunda derivada de $\ln f(X|\theta) = \ln X - 2\ln\theta - \frac{X^2}{2\theta^2}$ respecto a $\theta$. Recuerda que $\E[X^2] = 2\theta^2$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa y rigurosa</summary><div>
+        <p class="sol-inciso">(a) Estimador de Máxima Verosimilitud de $\theta$</p>
+        <ol class="pasos">
+          <li><b>Función de verosimilitud conjunta.</b>
+            $$L(\theta) = \prod_{i=1}^n f(X_i|\theta) = \prod_{i=1}^n \left[\frac{X_i}{\theta^2}\exp\left(-\frac{X_i^2}{2\theta^2}\right)\right] = \left(\prod_{i=1}^n X_i\right) \theta^{-2n} \exp\left(-\frac{1}{2\theta^2}\sum_{i=1}^n X_i^2\right).$$</li>
+          <li><b>Función de log-verosimilitud.</b>
+            $$\ell(\theta) = \sum_{i=1}^n \ln X_i - 2n\ln\theta - \frac{1}{2\theta^2}\sum_{i=1}^n X_i^2.$$</li>
+          <li><b>Ecuación de verosimilitud y punto crítico.</b>
+            $$\frac{d\ell(\theta)}{d\theta} = -\frac{2n}{\theta} + \frac{1}{\theta^3}\sum_{i=1}^n X_i^2 = 0.$$
+            Multiplicando por $\theta^3$ (con $\theta &gt; 0$):
+            $$-2n\theta^2 + \sum_{i=1}^n X_i^2 = 0 \iff 2n\theta^2 = \sum_{i=1}^n X_i^2 \iff \hat\theta^2 = \frac{1}{2n}\sum_{i=1}^n X_i^2.$$
+            Como $\theta &gt; 0$, tomamos la raíz positiva:
+            $$\hat\theta = \sqrt{\frac{1}{2n}\sum_{i=1}^n X_i^2}.$$</li>
+          <li><b>Comprobación de máximo.</b>
+            $$\frac{d^2\ell(\theta)}{d\theta^2} = \frac{2n}{\theta^2} - \frac{3}{\theta^4}\sum_{i=1}^n X_i^2.$$
+            Evaluando en $\theta = \hat\theta$:
+            $$\left.\frac{d^2\ell(\theta)}{d\theta^2}\right|_{\hat\theta} = \frac{2n}{\hat\theta^2} - \frac{3(2n\hat\theta^2)}{\hat\theta^4} = \frac{2n}{\hat\theta^2} - \frac{6n}{\hat\theta^2} = -\frac{4n}{\hat\theta^2} &lt; 0.$$
+            Se confirma que es un máximo global único.</li>
+        </ol>
+        <div class="resultado">$$\hat\theta = \sqrt{\frac{1}{2n}\sum_{i=1}^n X_i^2}.$$</div>
+
+        <p class="sol-inciso">(b) Método del Jacobiano para $Y = X^2$ y distribución de $T = \sum_{i=1}^n X_i^2$</p>
+        <ol class="pasos">
+          <li><b>Transformación univariada.</b>
+            Sea $y = g(x) = x^2$. Como el soporte de $X$ es $(0, \infty)$, la función $g$ es estrictamente creciente, diferenciable y biyectiva de $(0, \infty)$ en $(0, \infty)$.
+            La transformación inversa es $x = g^{-1}(y) = \sqrt{y}$.
+            El Jacobiano del cambio de variable es:
+            $$J = \frac{dx}{dy} = \frac{d}{dy}\big(y^{1/2}\big) = \frac{1}{2\sqrt{y}}.$$</li>
+          <li><b>Densidad de $Y = X^2$.</b> Aplicando la fórmula del cambio de variable:
+            $$f_Y(y) = f_X(g^{-1}(y)) \left|\frac{dx}{dy}\right| = \left[\frac{\sqrt{y}}{\theta^2}\exp\left(-\frac{(\sqrt{y})^2}{2\theta^2}\right)\right] \cdot \frac{1}{2\sqrt{y}} = \frac{1}{2\theta^2}\exp\left(-\frac{y}{2\theta^2}\right), \quad y &gt; 0.$$
+            Reconocemos inmediatamente la función de densidad de una variable aleatoria exponencial con parámetro de escala (media) $\beta = 2\theta^2$:
+            $$Y = X^2 \sim \text{Exp}(\text{media } 2\theta^2) \equiv \text{Gamma}(\alpha = 1, \beta = 2\theta^2).$$</li>
+          <li><b>Distribución de la suma $T = \sum_{i=1}^n X_i^2$.</b>
+            Como las $X_i$ son i.i.d., las variables $Y_i = X_i^2$ son i.i.d. con distribución $\text{Gamma}(1, 2\theta^2)$.
+            Por la propiedad reproductiva de la distribución Gamma (aditividad del parámetro de forma $\alpha$ bajo idéntico parámetro de escala $\beta$), o vía la Función Generadora de Momentos:
+            $$M_T(t) = \prod_{i=1}^n M_{Y_i}(t) = \left[(1 - 2\theta^2 t)^{-1}\right]^n = (1 - 2\theta^2 t)^{-n}.$$
+            Esta es la FGM característica de una distribución Gamma con parámetros $\alpha = n$ y escala $\beta = 2\theta^2$:
+            $$T = \sum_{i=1}^n X_i^2 \sim \text{Gamma}(n, 2\theta^2).$$
+            Su densidad explícita es:
+            $$f_T(t) = \frac{1}{\Gamma(n)(2\theta^2)^n} t^{n-1} \exp\left(-\frac{t}{2\theta^2}\right), \quad t &gt; 0.$$</li>
+        </ol>
+        <div class="resultado">$$Y = X^2 \sim \text{Exp}(2\theta^2) = \text{Gamma}(1, 2\theta^2), \qquad T = \sum_{i=1}^n X_i^2 \sim \text{Gamma}(n, 2\theta^2).$$</div>
+
+        <p class="sol-inciso">(c) Insesgamiento de $\hat\theta$ y construcción de la variante insesgada $\hat\theta^*$</p>
+        <ol class="pasos">
+          <li><b>Expresión del estimador en términos de $T$.</b>
+            $$\hat\theta = \sqrt{\frac{T}{2n}} = \frac{1}{\sqrt{2n}} T^{1/2}.$$</li>
+          <li><b>Momento de orden $1/2$ de una variable Gamma.</b>
+            Para una variable aleatoria $W \sim \text{Gamma}(\alpha, \beta)$, el momento de orden $k$ (con $k &gt; -\alpha$) viene dado por:
+            $$\E[W^k] = \int_0^\infty w^k \frac{w^{\alpha-1}e^{-w/\beta}}{\Gamma(\alpha)\beta^\alpha} dw = \frac{\beta^k \Gamma(\alpha + k)}{\Gamma(\alpha)}.$$
+            Aplicando esto a $T \sim \text{Gamma}(n, 2\theta^2)$ con $k = 1/2$:
+            $$\E[T^{1/2}] = \frac{(2\theta^2)^{1/2}\Gamma(n + 1/2)}{\Gamma(n)} = \sqrt{2}\,\theta \frac{\Gamma(n + 1/2)}{\Gamma(n)}.$$</li>
+          <li><b>Esperanza de $\hat\theta$.</b>
+            $$\E[\hat\theta] = \frac{1}{\sqrt{2n}}\E[T^{1/2}] = \frac{1}{\sqrt{2n}} \cdot \sqrt{2}\,\theta \frac{\Gamma(n + 1/2)}{\Gamma(n)} = \theta \frac{\Gamma(n + 1/2)}{\sqrt{n}\Gamma(n)}.$$
+            Por las propiedades de la función Gamma (desigualdad de Gautschi), el cociente cumple $\frac{\Gamma(n + 1/2)}{\sqrt{n}\Gamma(n)} &lt; 1$ para todo entero positivo $n$.
+            Por consiguiente, $\E[\hat\theta] \ne \theta$: el estimador de máxima verosimilitud $\hat\theta$ es <b>sesgado</b> (subestima sistemáticamente al parámetro $\theta$).</li>
+          <li><b>Construcción del estimador insesgado $\hat\theta^*$.</b>
+            Definimos la constante correctora multiplicando por el recíproco:
+            $$\hat\theta^* = \frac{\sqrt{n}\,\Gamma(n)}{\Gamma(n + 1/2)}\,\hat\theta = \frac{\Gamma(n)}{\sqrt{2}\,\Gamma(n + 1/2)}\sqrt{\sum_{i=1}^n X_i^2}.$$
+            Verificamos inmediatamente su insesgadez:
+            $$\E[\hat\theta^*] = \frac{\sqrt{n}\,\Gamma(n)}{\Gamma(n + 1/2)}\,\E[\hat\theta] = \frac{\sqrt{n}\,\Gamma(n)}{\Gamma(n + 1/2)}\left(\theta \frac{\Gamma(n + 1/2)}{\sqrt{n}\Gamma(n)}\right) = \theta.$$</li>
+        </ol>
+        <div class="resultado">$$\E[\hat\theta] = \theta \frac{\Gamma(n + 1/2)}{\sqrt{n}\Gamma(n)} \quad (\text{sesgado}), \qquad \hat\theta^* = \frac{\sqrt{n}\,\Gamma(n)}{\Gamma(n + 1/2)}\hat\theta \quad (\text{insesgado}).$$</div>
+
+        <p class="sol-inciso">(d) Límite inferior de Rao-Cramér para estimadores insesgados de $\theta$</p>
+        <ol class="pasos">
+          <li><b>Log-densidad de una sola observación.</b>
+            $$\ln f(X|\theta) = \ln X - 2\ln\theta - \frac{X^2}{2\theta^2}.$$</li>
+          <li><b>Derivadas primera y segunda respecto a $\theta$.</b>
+            $$\frac{\partial\ln f(X|\theta)}{\partial\theta} = -\frac{2}{\theta} + \frac{X^2}{\theta^3}, \qquad \frac{\partial^2\ln f(X|\theta)}{\partial\theta^2} = \frac{2}{\theta^2} - \frac{3X^2}{\theta^4}.$$</li>
+          <li><b>Esperanza de la segunda derivada.</b>
+            Como $X^2 \sim \text{Exp}(2\theta^2)$, se tiene $\E[X^2] = 2\theta^2$. Sustituyendo:
+            $$\E\left[\frac{\partial^2\ln f(X|\theta)}{\partial\theta^2}\right] = \frac{2}{\theta^2} - \frac{3\E[X^2]}{\theta^4} = \frac{2}{\theta^2} - \frac{3(2\theta^2)}{\theta^4} = \frac{2}{\theta^2} - \frac{6}{\theta^2} = -\frac{4}{\theta^2}.$$
+            Por lo tanto, la información de Fisher contenida en una observación es:
+            $$I_F(\theta) = -\E\left[\frac{\partial^2\ln f(X|\theta)}{\partial\theta^2}\right] = \frac{4}{\theta^2}.$$</li>
+          <li><b>Cota de Rao-Cramér.</b> Para estimadores insesgados de $\theta$ en una muestra de tamaño $n$:
+            $$\text{LI}(\theta) = \frac{1}{n I_F(\theta)} = \frac{1}{n\left(\frac{4}{\theta^2}\right)} = \frac{\theta^2}{4n}.$$</li>
+        </ol>
+        <div class="resultado">$$I_F(\theta) = \frac{4}{\theta^2}, \qquad \text{LI}(\theta) = \frac{\theta^2}{4n}.$$</div>
+
+        <p class="sol-inciso">(e) Consistencia y distribución asintótica de $\sqrt{n}(\hat\theta - \theta)$</p>
+        <ol class="pasos">
+          <li><b>Consistencia de $\hat\theta$.</b>
+            Por la Ley Débil de los Grandes Números, al ser $X_i^2$ i.i.d. con media $2\theta^2$:
+            $$\frac{1}{n}\sum_{i=1}^n X_i^2 \xrightarrow{\;P\;} \E[X^2] = 2\theta^2.$$
+            Definiendo la función continua $h(u) = \sqrt{\frac{u}{2}}$ para $u \ge 0$:
+            $$\hat\theta = h\left(\frac{1}{n}\sum_{i=1}^n X_i^2\right) \xrightarrow{\;P\;} h(2\theta^2) = \sqrt{\frac{2\theta^2}{2}} = \theta.$$
+            Por lo tanto, $\hat\theta$ es un estimador <b>consistente</b> de $\theta$.</li>
+          <li><b>Distribución asintótica del EMV.</b>
+            Dado que la distribución de Rayleigh cumple con todas las condiciones de regularidad y el soporte $(0, \infty)$ no depende de $\theta$, el teorema de normalidad asintótica del EMV garantiza que:
+            $$\sqrt{n}(\hat\theta - \theta) \xrightarrow{\;d\;} N\left(0, \frac{1}{I_F(\theta)}\right) = N\left(0, \frac{\theta^2}{4}\right).$$
+            *(Comprobación por Método Delta:* $\Var(X^2) = (2\theta^2)^2 = 4\theta^4$. Con $h(u) = \sqrt{u/2}$, $h'(2\theta^2) = \frac{1}{2\sqrt{2(2\theta^2)}} = \frac{1}{4\theta}$. La varianza asintótica es $[h'(2\theta^2)]^2 \Var(X^2) = \frac{1}{16\theta^2}\cdot 4\theta^4 = \frac{\theta^2}{4}$, confirmando idéntico resultado).*</li>
+        </ol>
+        <div class="resultado">$$\hat\theta \xrightarrow{\;P\;} \theta \quad (\text{consistente}), \qquad \sqrt{n}(\hat\theta - \theta) \xrightarrow{\;d\;} N\left(0, \frac{\theta^2}{4}\right).$$</div>
+      </div></details>
+
+      <details class="verif"><summary>Verificación por simulación</summary><div>
+        <div class="sim" id="sim-3">
+          <p class="sim-title">Distribución Gamma de la suma de cuadrados y corrección de sesgo en Rayleigh</p>
+          <p class="sim-desc">Comprueba la distribución exacta de $T = \sum X_i^2 \sim \text{Gamma}(n, 2\theta^2)$ y la distribución empírica de $\hat\theta$ frente a la variante insesgada $\hat\theta^*$ sobre $M = 2000$ muestras.</p>
+          <div class="controls"></div>
+          <div class="figs">
+            <figure class="fig">
+              <div class="plot" data-k="gamma"></div>
+              <figcaption>Distribución de $T = \sum X_i^2$ frente a la densidad teórica $\text{Gamma}(n, 2\theta^2)$.</figcaption>
+            </figure>
+            <figure class="fig">
+              <div class="plot" data-k="theta"></div>
+              <figcaption>Comparación empírica: $\hat\theta$ sesgado (azul) vs $\hat\theta^*$ insesgado (púrpura).</figcaption>
+            </figure>
+          </div>
+          <div class="out"></div>
+        </div>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       EJERCICIO 4
+       ================================================================ -->
+  <section>
+    <div class="box ejercicio" id="ej-4">
+      <span class="box-title">Ejercicio 4 · Densidad potencia: momentos vs. máximo $X_{(n)}$, tasa $O(1/n^2)$ y fallo de Cramér-Rao</span>
+      <p>Sea $X_1, \dots, X_n$ una muestra aleatoria de la variable aleatoria $X$ con función de densidad
+      $$f(x|\theta) = \frac{3x^2}{\theta^3}\mathbf{1}_{(0 &lt; x &lt; \theta)}, \quad \theta &gt; 0.$$</p>
+      <ol type="a">
+        <li>Encuentre el estimador de $\theta$ por el método de los momentos, $\tilde\theta$. ¿Es insesgado?</li>
+        <li>Encuentre el EMV de $\theta$, $\hat\theta$.</li>
+        <li>Determine la función de densidad de $X_{(n)}$ y verifique si $\hat\theta$ es insesgado. En caso de no serlo, encuentre una constante $a_n$ tal que $\hat\theta^* = a_n X_{(n)}$ sea insesgado.</li>
+        <li>Calcule $\text{MSE}(\tilde\theta)$ y $\text{MSE}(\hat\theta^*)$. ¿Cuál de los dos estimadores prefiere? Justifique.</li>
+        <li>Verifique que $\hat\theta$ es consistente para $\theta$.</li>
+        <li>Explique por qué no es posible utilizar la cota inferior de Rao-Cramér en este modelo.</li>
+      </ol>
+      <p class="tecnica">Técnicas: Densidad con soporte dependiente del parámetro · Estadísticos de orden extremo $X_{(n)}$ · Tasa de convergencia cuadrática $O(1/n^2)$ frente a la paramétrica regular $O(1/n)$ · Ruptura de las condiciones de regularidad de Cramér-Rao → <a href="../temas/clase-02.html">Clase 2 · Estadísticos de orden</a> y <a href="../temas/clase-07.html">Clase 7 · Eficiencia</a></p>
+
+      <div class="chk" id="chk-4"><p class="chk-title">Comprueba tu respuesta (sin ver la solución)</p></div>
+
+      <details class="pista"><summary>Pista 1 · Momentos y verosimilitud en soporte acotado</summary><div>
+        <p>Calcula $\E[X] = \int_0^\theta x \frac{3x^2}{\theta^3}dx$. Igualando a $\bar X$ obtendrás $\tilde\theta$. Para el EMV, nota que la verosimilitud es $L(\theta) = 3^n(\prod X_i^2)\theta^{-3n}$ solo cuando $\theta &gt; \max(X_1,\dots,X_n) = X_{(n)}$; si $\theta \le X_{(n)}$, vale 0. Dado que $\theta^{-3n}$ es estrictamente decreciente en su dominio, ¿dónde se alcanza el máximo?</p>
+      </div></details>
+      <details class="pista"><summary>Pista 2 · Acumulada del máximo $X_{(n)}$ y sus momentos</summary><div>
+        <p>Primero halla $F_X(x) = \int_0^x \frac{3t^2}{\theta^3}dt = (x/\theta)^3$ para $0 &lt; x &lt; \theta$. La función de distribución acumulada del máximo es $F_{X_{(n)}}(y) = [F_X(y)]^n = (y/\theta)^{3n}$. Deriva para obtener la densidad y calcula $\E[X_{(n)}]$ y $\E[X_{(n)}^2]$ integrando potencias de $y$.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 3 · Comparación de órdenes de convergencia en MSE</summary><div>
+        <p>Calcula $\Var(X)$ y luego $\text{MSE}(\tilde\theta) = \Var(\tilde\theta) = \frac{16}{9n}\Var(X)$, que será de orden $1/n$. En cambio, para $\hat\theta^*$, $\Var(X_{(n)})$ disminuye con denominador $(3n)(3n+2)$, que es de orden $1/n^2$. Para la parte (f), analiza la derivada de Leibniz al diferenciar una integral cuyo límite superior depende de $\theta$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa y rigurosa</summary><div>
+        <p class="sol-inciso">(a) Estimador de momentos $\tilde\theta$ e insesgadez</p>
+        <ol class="pasos">
+          <li><b>Primer momento teórico $\E[X]$.</b>
+            $$\E[X] = \int_{-\infty}^\infty x f(x|\theta)dx = \int_0^\theta x\left(\frac{3x^2}{\theta^3}\right)dx = \frac{3}{\theta^3}\int_0^\theta x^3 dx = \frac{3}{\theta^3}\left[\frac{\theta^4}{4}\right] = \frac{3}{4}\theta.$$</li>
+          <li><b>Deducción del estimador de momentos.</b>
+            Igualamos $\E[X]$ a la media muestral $\bar X$:
+            $$\frac{3}{4}\tilde\theta = \bar X \iff \tilde\theta = \frac{4}{3}\bar X.$$</li>
+          <li><b>Verificación de insesgamiento.</b> Por linealidad de la esperanza:
+            $$\E[\tilde\theta] = \E\left[\frac{4}{3}\bar X\right] = \frac{4}{3}\E[X] = \frac{4}{3}\left(\frac{3}{4}\theta\right) = \theta.$$
+            Por consiguiente, $\tilde\theta$ es un estimador <b>insesgado</b> de $\theta$.</li>
+        </ol>
+        <div class="resultado">$$\tilde\theta = \frac{4}{3}\bar X, \qquad \E[\tilde\theta] = \theta \quad (\text{insesgado}).$$</div>
+
+        <p class="sol-inciso">(b) Estimador de Máxima Verosimilitud $\hat\theta$</p>
+        <ol class="pasos">
+          <li><b>Planteamiento de la función de verosimilitud conjunta.</b>
+            $$L(\theta) = \prod_{i=1}^n \frac{3 X_i^2}{\theta^3}\mathbf{1}_{(0 &lt; X_i &lt; \theta)} = 3^n \left(\prod_{i=1}^n X_i^2\right) \theta^{-3n} \prod_{i=1}^n \mathbf{1}_{(0 &lt; X_i &lt; \theta)}.$$</li>
+          <li><b>Análisis del soporte conjunto.</b>
+            La condición indicadora conjunta exige que $0 &lt; X_i &lt; \theta$ para todo $i = 1, \dots, n$. Esto es idénticamente equivalente a que el valor mínimo de la muestra sea positivo y el valor máximo de la muestra sea menor estricto que $\theta$:
+            $$X_{(1)} &gt; 0 \quad \text{y} \quad X_{(n)} &lt; \theta, \quad \text{donde } X_{(n)} = \max(X_1, \dots, X_n).$$
+            Por tanto, considerando los datos observados fijos, la verosimilitud como función exclusiva de $\theta$ es:
+            $$L(\theta) = \begin{cases}
+            \dfrac{3^n \prod_{i=1}^n X_i^2}{\theta^{3n}}, & \theta &gt; X_{(n)}, \\
+            0, & \theta \le X_{(n)}.
+            \end{cases}$$</li>
+          <li><b>Maximización en el dominio admisible.</b>
+            Para todo $\theta &gt; X_{(n)}$, la función $\theta^{-3n}$ es continua, diferenciable y <b>estrictamente decreciente</b>, ya que $\frac{dL}{d\theta} = -3n \cdot \frac{3^n \prod X_i^2}{\theta^{3n+1}} &lt; 0$.
+            Para maximizar una función estrictamente decreciente, se debe elegir el valor admisible más pequeño posible de su argumento.
+            La función $L(\theta)$ es positiva para $\theta &gt; X_{(n)}$ y tiende a su valor supremo cuando $\theta \to X_{(n)}^+$. En la clausura del modelo probabilístico (o considerando la definición compacta de verosimilitud con soporte $0 &lt; x \le \theta$):
+            $$\hat\theta = X_{(n)} = \max(X_1, \dots, X_n).$$</li>
+        </ol>
+        <div class="resultado">$$\hat\theta = X_{(n)} = \max(X_1, \dots, X_n).$$</div>
+
+        <p class="sol-inciso">(c) Distribución del máximo $X_{(n)}$, sesgo y constante de corrección $a_n$</p>
+        <ol class="pasos">
+          <li><b>Función de distribución acumulada de una observación $X$.</b>
+            Para $x \in (0, \theta)$:
+            $$F(x) = \int_0^x \frac{3t^2}{\theta^3}dt = \left[\frac{t^3}{\theta^3}\right]_0^x = \frac{x^3}{\theta^3} = \left(\frac{x}{\theta}\right)^3.$$</li>
+          <li><b>Función de distribución acumulada de $X_{(n)}$.</b>
+            Por independencia de las observaciones:
+            $$F_{X_{(n)}}(y) = \P(X_{(n)} \le y) = \P(X_1 \le y, \dots, X_n \le y) = [F(y)]^n = \left[\left(\frac{y}{\theta}\right)^3\right]^n = \frac{y^{3n}}{\theta^{3n}}, \quad 0 &lt; y &lt; \theta.$$</li>
+          <li><b>Función de densidad de probabilidad de $X_{(n)}$.</b>
+            Derivando respecto a $y$:
+            $$f_{X_{(n)}}(y) = \frac{d}{dy}\left(\frac{y^{3n}}{\theta^{3n}}\right) = \frac{3n\,y^{3n-1}}{\theta^{3n}}\mathbf{1}_{(0 &lt; y &lt; \theta)}.$$</li>
+          <li><b>Esperanza de $\hat\theta = X_{(n)}$.</b>
+            $$\E[\hat\theta] = \int_0^\theta y f_{X_{(n)}}(y)dy = \int_0^\theta y \left(\frac{3n\,y^{3n-1}}{\theta^{3n}}\right)dy = \frac{3n}{\theta^{3n}}\int_0^\theta y^{3n}dy = \frac{3n}{\theta^{3n}}\left[\frac{\theta^{3n+1}}{3n+1}\right] = \frac{3n}{3n+1}\theta.$$
+            Como $\frac{3n}{3n+1} &lt; 1$, se tiene $\E[\hat\theta] \ne \theta$. El EMV $\hat\theta$ es <b>sesgado</b> por subestimación.</li>
+          <li><b>Constante de insesgamiento $a_n$.</b> Buscamos $a_n$ tal que $\E[a_n X_{(n)}] = \theta$:
+            $$a_n \E[X_{(n)}] = a_n \left(\frac{3n}{3n+1}\theta\right) = \theta \iff a_n = \frac{3n+1}{3n} = 1 + \frac{1}{3n}.$$
+            El estimador insesgado ajustado es:
+            $$\hat\theta^* = \frac{3n+1}{3n}X_{(n)}.$$</li>
+        </ol>
+        <div class="resultado">$$f_{X_{(n)}}(y) = \frac{3n\,y^{3n-1}}{\theta^{3n}}\mathbf{1}_{(0 &lt; y &lt; \theta)}, \qquad \E[\hat\theta] = \frac{3n}{3n+1}\theta, \qquad a_n = \frac{3n+1}{3n}, \qquad \hat\theta^* = \frac{3n+1}{3n}X_{(n)}.$$</div>
+
+        <p class="sol-inciso">(d) Cálculo analítico de $\text{MSE}(\tilde\theta)$ frente a $\text{MSE}(\hat\theta^*)$ y preferencia justificada</p>
+        <ol class="pasos">
+          <li><b>Cálculo de $\text{MSE}(\tilde\theta)$.</b>
+            Como $\tilde\theta$ es insesgado, $\text{MSE}(\tilde\theta) = \Var(\tilde\theta) = \left(\frac{4}{3}\right)^2 \frac{\Var(X)}{n} = \frac{16}{9n}\Var(X)$.
+            Determinemos $\Var(X)$:
+            $$\E[X^2] = \int_0^\theta x^2 \left(\frac{3x^2}{\theta^3}\right)dx = \frac{3}{\theta^3}\int_0^\theta x^4 dx = \frac{3}{\theta^3}\left[\frac{\theta^5}{5}\right] = \frac{3}{5}\theta^2.$$
+            $$\Var(X) = \E[X^2] - (\E[X])^2 = \frac{3}{5}\theta^2 - \left(\frac{3}{4}\theta\right)^2 = \left(\frac{3}{5} - \frac{9}{16}\right)\theta^2 = \frac{48 - 45}{80}\theta^2 = \frac{3}{80}\theta^2.$$
+            Sustituyendo:
+            $$\text{MSE}(\tilde\theta) = \frac{16}{9n} \cdot \frac{3}{80}\theta^2 = \frac{48}{720\,n}\theta^2 = \frac{\theta^2}{15n}.$$
+            Observamos que $\text{MSE}(\tilde\theta)$ decae a una tasa estándar regular de orden $O(1/n)$.</li>
+          <li><b>Cálculo de $\text{MSE}(\hat\theta^*)$.</b>
+            Como $\hat\theta^*$ es insesgado, $\text{MSE}(\hat\theta^*) = \Var(\hat\theta^*) = \left(\frac{3n+1}{3n}\right)^2 \Var(X_{(n)})$.
+            Calculemos primero $\E[X_{(n)}^2]$:
+            $$\E[X_{(n)}^2] = \int_0^\theta y^2 \left(\frac{3n\,y^{3n-1}}{\theta^{3n}}\right)dy = \frac{3n}{\theta^{3n}}\int_0^\theta y^{3n+1}dy = \frac{3n}{\theta^{3n}}\left[\frac{\theta^{3n+2}}{3n+2}\right] = \frac{3n}{3n+2}\theta^2.$$
+            Ahora calculamos la varianza de $X_{(n)}$:
+            $$\begin{aligned}
+            \Var(X_{(n)}) &= \E[X_{(n)}^2] - (\E[X_{(n)}])^2 = \left[ \frac{3n}{3n+2} - \left(\frac{3n}{3n+1}\right)^2 \right] \theta^2 \\
+            &= \frac{3n(3n+1)^2 - 9n^2(3n+2)}{(3n+2)(3n+1)^2}\theta^2 = \frac{3n\big[(9n^2 + 6n + 1) - 3n(3n+2)\big]}{(3n+2)(3n+1)^2}\theta^2 \\
+            &= \frac{3n\big(9n^2 + 6n + 1 - 9n^2 - 6n\big)}{(3n+2)(3n+1)^2}\theta^2 = \frac{3n}{(3n+2)(3n+1)^2}\theta^2.
+            \end{aligned}$$
+            Sustituyendo en la varianza de $\hat\theta^*$:
+            $$\text{MSE}(\hat\theta^*) = \frac{(3n+1)^2}{9n^2} \cdot \frac{3n}{(3n+2)(3n+1)^2}\theta^2 = \frac{3n}{9n^2(3n+2)}\theta^2 = \frac{\theta^2}{3n(3n+2)}.$$</li>
+          <li><b>Comparación y justificación de preferencia.</b>
+            Analicemos el cociente de ambos errores cuadráticos medios:
+            $$\frac{\text{MSE}(\hat\theta^*)}{\text{MSE}(\tilde\theta)} = \frac{\frac{\theta^2}{3n(3n+2)}}{\frac{\theta^2}{15n}} = \frac{15n}{3n(3n+2)} = \frac{5}{3n+2}.$$
+            - Para $n = 1$: $\frac{5}{3(1)+2} = 1 \implies \text{MSE}(\hat\theta^*) = \text{MSE}(\tilde\theta)$.
+            - Para todo $n \ge 2$: $3n+2 \ge 8 &gt; 5$, lo que implica que $\frac{5}{3n+2} &lt; 1$, es decir:
+              $$\text{MSE}(\hat\theta^*) &lt; \text{MSE}(\tilde\theta), \quad \forall\, n \ge 2.$$
+            <b>Preferencia:</b> Se prefiere <b>abrumadoramente $\hat\theta^*$</b>. La razón fundamental radica en la velocidad asintótica:
+            $$\text{MSE}(\tilde\theta) = O(1/n) \quad \text{frente a} \quad \text{MSE}(\hat\theta^*) = O(1/n^2).$$
+            Para $n=10$, por ejemplo, el cociente es $\frac{5}{32} \approx 0.156$, lo que significa que el estimador basado en el máximo tiene menos del $16\%$ del error cuadrático medio que el estimador de momentos. La información del extremo de frontera comprime la incertidumbre a una tasa cuadrática inalcanzable por la media muestral.</li>
+        </ol>
+        <div class="resultado">$$\text{MSE}(\tilde\theta) = \frac{\theta^2}{15n} = O\left(\frac{1}{n}\right), \qquad \text{MSE}(\hat\theta^*) = \frac{\theta^2}{3n(3n+2)} = O\left(\frac{1}{n^2}\right) \implies \text{Se prefiere } \hat\theta^*.$$</div>
+
+        <p class="sol-inciso">(e) Consistencia formal de $\hat\theta = X_{(n)}$</p>
+        <ol class="pasos">
+          <li><b>Planteamiento del evento de error.</b> Dado cualquier $\varepsilon &gt; 0$ arbitrario (podemos suponer sin pérdida de generalidad que $\varepsilon &lt; \theta$).
+            Dado que $X_i &lt; \theta$ con probabilidad 1 para todo $i$, el estadístico de orden máximo cumple $X_{(n)} \le \theta$ casi seguramente.
+            Por lo tanto, la distancia $|X_{(n)} - \theta| &gt; \varepsilon$ equivale estrictamente al evento unilateral $\{X_{(n)} &lt; \theta - \varepsilon\}$.</li>
+          <li><b>Cálculo de la probabilidad.</b> Usando la acumulada de $X_{(n)}$ obtenida en (c):
+            $$\P(|X_{(n)} - \theta| &gt; \varepsilon) = \P(X_{(n)} &lt; \theta - \varepsilon) = F_{X_{(n)}}(\theta - \varepsilon) = \left(\frac{\theta - \varepsilon}{\theta}\right)^{3n} = \left(1 - \frac{\varepsilon}{\theta}\right)^{3n}.$$</li>
+          <li><b>Límite cuando $n \to \infty$.</b>
+            Como $\varepsilon &gt; 0$ y $\theta &gt; 0$, la base satisface $0 &lt; 1 - \frac{\varepsilon}{\theta} &lt; 1$.
+            Al elevar un número estrictamente menor que 1 a una potencia que tiende a infinito:
+            $$\lim_{n\to\infty} \P(|X_{(n)} - \theta| &gt; \varepsilon) = \lim_{n\to\infty} \left(1 - \frac{\varepsilon}{\theta}\right)^{3n} = 0.$$
+            Por definición formal de convergencia en probabilidad:
+            $$\hat\theta = X_{(n)} \xrightarrow{\;P\;} \theta.$$
+            Por tanto, $\hat\theta$ es un estimador <b>consistente</b> de $\theta$.</li>
+        </ol>
+
+        <p class="sol-inciso">(f) Justificación de la imposibilidad de aplicar la cota de Rao-Cramér</p>
+        <ol class="pasos">
+          <li><b>Violación de la condición de regularidad de soporte.</b>
+            El soporte de la variable aleatoria es $S_X = (0, \theta)$, el cual <b>depende explícitamente del parámetro desconocido $\theta$</b>.
+            La demostración clásica de la cota inferior de Cramér-Rao reposa de forma insoslayable en poder intercambiar el operador derivada respecto a $\theta$ con el operador integral sobre el soporte de la muestra:
+            $$\frac{d}{d\theta}\int_{S_X} f(x|\theta)dx = \int_{S_X} \frac{\partial f(x|\theta)}{\partial\theta}dx.$$</li>
+          <li><b>Ruptura mediante la Regla de Leibniz.</b>
+            Cuando los límites de integración dependen de $\theta$, la regla de diferenciación bajo el signo integral de Leibniz introduce un término de frontera no nulo:
+            $$\frac{d}{d\theta}\int_0^\theta f(x|\theta)dx = f(\theta|\theta)\cdot \frac{d(\theta)}{d\theta} - f(0|\theta)\cdot \frac{d(0)}{d\theta} + \int_0^\theta \frac{\partial f(x|\theta)}{\partial\theta}dx = f(\theta|\theta) + \int_0^\theta \frac{\partial f(x|\theta)}{\partial\theta}dx.$$
+            Como $f(\theta|\theta) = \frac{3\theta^2}{\theta^3} = \frac{3}{\theta} \ne 0$, el término de frontera no se desvanece. En consecuencia, la propiedad fundamental de anulación de la esperanza del puntaje de verosimilitud falla:
+            $$\E\left[\frac{\partial\ln f(X|\theta)}{\partial\theta}\right] \ne 0.$$
+            Esto invalida por completo la aplicación de la desigualdad de Cauchy-Schwarz que sustenta la cota de Cramér-Rao.</li>
+          <li><b>Manifestación empírica en la velocidad de varianza.</b>
+            Bajo condiciones regulares de Cramér-Rao, la varianza de cualquier estimador insesgado está acotada inferiormente a una tasa de orden $O(1/n)$. En este modelo no regular, hemos demostrado que el estimador $\hat\theta^*$ tiene una varianza de orden $O(1/n^2)$, lo que viola la tasa regular y ratifica teóricamente la inaplicabilidad de la cota de Rao-Cramér.</li>
+        </ol>
+      </div></details>
+
+      <details class="verif"><summary>Verificación por simulación</summary><div>
+        <div class="sim" id="sim-4">
+          <p class="sim-title">Comparación empírica de tasas de convergencia: Momentos $O(1/n)$ vs Máximo $O(1/n^2)$</p>
+          <p class="sim-desc">Simula $M = 2500$ muestras generadas mediante el método de inversión ($X = \theta U^{1/3}$). Observa cómo la dispersión del estimador basado en el máximo $\hat\theta^*$ (púrpura) colapsa radicalmente más rápido hacia $\theta$ que el estimador de momentos $\tilde\theta$ (azul).</p>
+          <div class="controls"></div>
+          <div class="plot"></div>
+          <div class="out"></div>
+        </div>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       EJERCICIO 5
+       ================================================================ -->
+  <section>
+    <div class="box ejercicio" id="ej-5">
+      <span class="box-title">Ejercicio 5 · Exponencial desplazada: EMVs en frontera, distribución del mínimo $X_{(1)}$ y consistencia</span>
+      <p>Sea $X_1, \dots, X_n$ una muestra aleatoria de la variable aleatoria $X$ con función de densidad
+      $$f(x|\mu,\sigma) = \frac{1}{\sigma}\exp\left(-\frac{x - \mu}{\sigma}\right)\mathbf{1}_{\{x \ge \mu\}}, \quad \mu \in \R, \quad \sigma &gt; 0.$$</p>
+      <ol type="a">
+        <li>Encuentre los estimadores de $\mu$ y $\sigma$ por el método de los momentos.</li>
+        <li>Encuentre los EMV de $\mu$ y $\sigma$.</li>
+        <li>Determine la distribución de $X_{(1)}$. Calcule el sesgo y el MSE del EMV de $\mu$.</li>
+        <li>Verifique si el EMV de $\sigma$ es insesgado. En caso de no serlo, proporcione una variante insesgada.</li>
+        <li>Verifique que los EMV de $\mu$ y $\sigma$ son consistentes.</li>
+      </ol>
+      <p class="tecnica">Técnicas: Modelo biparamétrico de localización y escala · Distribución exponencial desplazada · Estadístico de orden mínimo $X_{(1)}$ y función de supervivencia · Propiedad sin memoria y suma residual de espaciamientos · Consistencia asintótica en frontera → <a href="../temas/clase-02.html">Clase 2 · Mínimo de variables</a> y <a href="../temas/clase-06.html">Clase 6 · Sesgo y MSE</a></p>
+
+      <div class="chk" id="chk-5"><p class="chk-title">Comprueba tu respuesta (sin ver la solución)</p></div>
+
+      <details class="pista"><summary>Pista 1 · Transformación a exponencial estándar</summary><div>
+        <p>Escribe $X = \mu + Y$, donde $Y \sim \text{Exp}(\text{media } \sigma)$. Entonces $\E[X] = \mu + \sigma$ y $\Var(X) = \sigma^2$. Con esto, iguala la varianza teórica a la varianza muestral $S_n^2$ para despejar $\tilde\sigma$, y luego despeja $\tilde\mu = \bar X - \tilde\sigma$.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 2 · Verosimilitud conjunta y condición sobre $\mu$</summary><div>
+        <p>La condición indicadora es $\prod \mathbf{1}_{\{X_i \ge \mu\}} = 1 \iff \mu \le \min(X_1,\dots,X_n) = X_{(1)}$. Para cualquier $\sigma$ fijado, la verosimilitud contiene el término $\exp\left(\frac{n\mu}{\sigma}\right)$, que es una función <i>estrictamente creciente</i> de $\mu$. Por lo tanto, para maximizarla se debe escoger el mayor $\mu$ admisible, que es $X_{(1)}$. Luego maximiza respecto a $\sigma$.</p>
+      </div></details>
+      <details class="pista"><summary>Pista 3 · Distribución del mínimo $X_{(1)}$</summary><div>
+        <p>Calcula la función de supervivencia $\P(X_{(1)} &gt; t) = [\P(X &gt; t)]^n = [\exp(-(t-\mu)/\sigma)]^n = \exp(-n(t-\mu)/\sigma)$. Esto revela que $X_{(1)} - \mu$ sigue una distribución exponencial con escala $\sigma/n$. A partir de esto, calcula su media, sesgo y varianza de forma inmediata.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa y rigurosa</summary><div>
+        <p class="sol-inciso">(a) Estimadores de $\mu$ y $\sigma$ por el método de los momentos</p>
+        <ol class="pasos">
+          <li><b>Momentos teóricos de la distribución.</b>
+            Sea $Y = X - \mu$. La densidad de $Y$ es $f_Y(y) = \frac{1}{\sigma}e^{-y/\sigma}\mathbf{1}_{\{y \ge 0\}}$, es decir, $Y \sim \text{Exp}(\text{media } \sigma)$.
+            Por tanto:
+            $$\E[Y] = \sigma, \qquad \Var(Y) = \sigma^2.$$
+            Por las propiedades de localización:
+            $$\E[X] = \E[\mu + Y] = \mu + \sigma,$$
+            $$\Var(X) = \Var(\mu + Y) = \Var(Y) = \sigma^2.$$</li>
+          <li><b>Igualación con momentos muestrales.</b>
+            El primer momento muestral es la media muestral $\bar X = \frac{1}{n}\sum_{i=1}^n X_i$.
+            El segundo momento central muestral es $m_2 = \frac{1}{n}\sum_{i=1}^n (X_i - \bar X)^2 = \frac{n-1}{n}S^2$.
+            Igualando los momentos poblacionales a los muestrales:
+            $$\sigma^2 = m_2 \implies \tilde\sigma = \sqrt{m_2} = \sqrt{\frac{1}{n}\sum_{i=1}^n (X_i - \bar X)^2} \quad \left(\text{o } \tilde\sigma = S = \sqrt{\frac{1}{n-1}\sum_{i=1}^n (X_i - \bar X)^2}\right).$$
+            Igualando el primer momento:
+            $$\mu + \tilde\sigma = \bar X \iff \tilde\mu = \bar X - \tilde\sigma.$$</li>
+        </ol>
+        <div class="resultado">$$\tilde\sigma = \sqrt{\frac{1}{n}\sum_{i=1}^n (X_i - \bar X)^2}, \qquad \tilde\mu = \bar X - \tilde\sigma.$$</div>
+
+        <p class="sol-inciso">(b) Estimadores de Máxima Verosimilitud $\hat\mu$ y $\hat\sigma$</p>
+        <ol class="pasos">
+          <li><b>Función de verosimilitud conjunta.</b>
+            $$L(\mu, \sigma) = \prod_{i=1}^n \left[\frac{1}{\sigma}\exp\left(-\frac{X_i - \mu}{\sigma}\right)\mathbf{1}_{\{X_i \ge \mu\}}\right] = \sigma^{-n} \exp\left(-\frac{1}{\sigma}\sum_{i=1}^n (X_i - \mu)\right) \prod_{i=1}^n \mathbf{1}_{\{X_i \ge \mu\}}.$$</li>
+          <li><b>Condición de soporte conjunto.</b>
+            El producto de funciones indicadoras vale 1 si y solo si $X_i \ge \mu$ para todo $i = 1, \dots, n$, lo cual equivale a:
+            $$\mu \le \min(X_1, \dots, X_n) = X_{(1)}.$$
+            Reescribiendo la suma en el exponente: $\sum_{i=1}^n (X_i - \mu) = \sum_{i=1}^n X_i - n\mu$. Así, para $\mu \le X_{(1)}$:
+            $$L(\mu, \sigma) = \sigma^{-n}\exp\left(-\frac{\sum_{i=1}^n X_i}{\sigma}\right)\exp\left(\frac{n\mu}{\sigma}\right).$$</li>
+          <li><b>Maximización con respecto a $\mu$.</b>
+            Fijado cualquier valor de $\sigma &gt; 0$, la verosimilitud depende de $\mu$ únicamente a través del factor multiplicativo $\exp\left(\frac{n\mu}{\sigma}\right)$.
+            Como $n &gt; 0$ y $\sigma &gt; 0$, la función $\mu \mapsto \exp\left(\frac{n\mu}{\sigma}\right)$ es <b>estrictamente creciente</b> en $\mu$.
+            Para maximizar una función creciente en el intervalo $(-\infty, X_{(1)}]$, se debe seleccionar el punto más grande posible del dominio:
+            $$\hat\mu = X_{(1)} = \min(X_1, \dots, X_n).$$</li>
+          <li><b>Maximización concentrada con respecto a $\sigma$.</b>
+            Sustituyendo $\mu = \hat\mu = X_{(1)}$ en la verosimilitud:
+            $$L(X_{(1)}, \sigma) = \sigma^{-n}\exp\left(-\frac{1}{\sigma}\sum_{i=1}^n (X_i - X_{(1)})\right).$$
+            Tomando logaritmo:
+            $$\ell(\sigma) = -n\ln\sigma - \frac{1}{\sigma}\sum_{i=1}^n (X_i - X_{(1)}).$$
+            Derivando respecto a $\sigma$:
+            $$\frac{\partial\ell(\sigma)}{\partial\sigma} = -\frac{n}{\sigma} + \frac{1}{\sigma^2}\sum_{i=1}^n (X_i - X_{(1)}) = 0.$$
+            Multiplicando por $\sigma^2$:
+            $$-n\sigma + \sum_{i=1}^n (X_i - X_{(1)}) = 0 \iff \hat\sigma = \frac{1}{n}\sum_{i=1}^n (X_i - X_{(1)}) = \bar X - X_{(1)}.$$
+            La segunda derivada $\left.\frac{\partial^2\ell}{\partial\sigma^2}\right|_{\hat\sigma} = -\frac{n}{\hat\sigma^2} &lt; 0$ confirma el máximo.</li>
+        </ol>
+        <div class="resultado">$$\hat\mu = X_{(1)} = \min(X_1, \dots, X_n), \qquad \hat\sigma = \frac{1}{n}\sum_{i=1}^n (X_i - X_{(1)}) = \bar X - X_{(1)}.$$</div>
+
+        <p class="sol-inciso">(c) Distribución de $X_{(1)}$, sesgo y MSE del EMV de $\mu$</p>
+        <ol class="pasos">
+          <li><b>Función de supervivencia de $X$.</b> Para $x \ge \mu$:
+            $$\P(X &gt; x) = \int_x^\infty \frac{1}{\sigma}e^{-(t-\mu)/\sigma}dt = \exp\left(-\frac{x - \mu}{\sigma}\right).$$</li>
+          <li><b>Función de supervivencia de $X_{(1)}$.</b> Por independencia de las observaciones:
+            $$\P(X_{(1)} &gt; t) = \P(X_1 &gt; t, \dots, X_n &gt; t) = [\P(X &gt; t)]^n = \left[\exp\left(-\frac{t - \mu}{\sigma}\right)\right]^n = \exp\left(-\frac{n(t - \mu)}{\sigma}\right), \quad t \ge \mu.$$</li>
+          <li><b>Distribución acumulada y densidad de $X_{(1)}$.</b>
+            $$F_{X_{(1)}}(t) = 1 - \exp\left(-\frac{n(t - \mu)}{\sigma}\right) = 1 - \exp\left(-\frac{t - \mu}{\sigma/n}\right), \quad t \ge \mu.$$
+            Derivando respecto a $t$:
+            $$f_{X_{(1)}}(t) = \frac{n}{\sigma}\exp\left(-\frac{n(t - \mu)}{\sigma}\right)\mathbf{1}_{\{t \ge \mu\}}.$$
+            Reconocemos que la variable trasladada sigue una exponencial con parámetro de escala $\sigma/n$:
+            $$X_{(1)} - \mu \sim \text{Exp}\left(\text{media } \frac{\sigma}{n}\right) \iff X_{(1)} \sim \mu + \text{Exp}\left(\frac{\sigma}{n}\right).$$</li>
+          <li><b>Esperanza y sesgo de $\hat\mu = X_{(1)}$.</b>
+            $$\E[\hat\mu] = \E[X_{(1)}] = \mu + \E[X_{(1)} - \mu] = \mu + \frac{\sigma}{n}.$$
+            El sesgo de $\hat\mu$ es:
+            $$\text{Sesgo}(\hat\mu) = \E[\hat\mu] - \mu = \frac{\sigma}{n}.$$</li>
+          <li><b>Varianza y error cuadrático medio de $\hat\mu$.</b>
+            Como la varianza es invariante ante traslaciones constantes:
+            $$\Var(\hat\mu) = \Var(X_{(1)}) = \Var(X_{(1)} - \mu) = \left(\frac{\sigma}{n}\right)^2 = \frac{\sigma^2}{n^2}.$$
+            El error cuadrático medio es:
+            $$\text{MSE}(\hat\mu) = \Var(\hat\mu) + [\text{Sesgo}(\hat\mu)]^2 = \frac{\sigma^2}{n^2} + \left(\frac{\sigma}{n}\right)^2 = \frac{2\sigma^2}{n^2}.$$</li>
+        </ol>
+        <div class="resultado">$$X_{(1)} \sim \mu + \text{Exp}\left(\frac{\sigma}{n}\right), \qquad \text{Sesgo}(\hat\mu) = \frac{\sigma}{n}, \qquad \text{MSE}(\hat\mu) = \frac{2\sigma^2}{n^2} = O\left(\frac{1}{n^2}\right).$$</div>
+
+        <p class="sol-inciso">(d) Insesgamiento de $\hat\sigma$ y variante insesgada $\hat\sigma^*$</p>
+        <ol class="pasos">
+          <li><b>Esperanza de $\hat\sigma = \bar X - X_{(1)}$.</b>
+            Por linealidad de la esperanza:
+            $$\E[\hat\sigma] = \E[\bar X] - \E[X_{(1)}] = (\mu + \sigma) - \left(\mu + \frac{\sigma}{n}\right) = \sigma - \frac{\sigma}{n} = \frac{n - 1}{n}\sigma.$$
+            Como $\frac{n-1}{n} &lt; 1$, se deduce que $\E[\hat\sigma] \ne \sigma$. Por tanto, $\hat\sigma$ es un estimador <b>sesgado</b> (subestima a $\sigma$).</li>
+          <li><b>Construcción de la variante insesgada $\hat\sigma^*$.</b>
+            Multiplicamos por el factor correctivo $\frac{n}{n-1}$:
+            $$\hat\sigma^* = \frac{n}{n - 1}\hat\sigma = \frac{n}{n-1}\left(\frac{1}{n}\sum_{i=1}^n (X_i - X_{(1)})\right) = \frac{1}{n - 1}\sum_{i=1}^n (X_i - X_{(1)}).$$
+            Verificamos inmediatamente su insesgadez:
+            $$\E[\hat\sigma^*] = \frac{n}{n - 1}\E[\hat\sigma] = \frac{n}{n - 1}\left(\frac{n - 1}{n}\sigma\right) = \sigma.$$</li>
+        </ol>
+        <div class="resultado">$$\E[\hat\sigma] = \frac{n-1}{n}\sigma \quad (\text{sesgado}), \qquad \hat\sigma^* = \frac{n}{n-1}\hat\sigma = \frac{1}{n-1}\sum_{i=1}^n (X_i - X_{(1)}) \quad (\text{insesgado}).$$</div>
+
+        <p class="sol-inciso">(e) Consistencia de $\hat\mu$ y $\hat\sigma$</p>
+        <ol class="pasos">
+          <li><b>Consistencia de $\hat\mu = X_{(1)}$.</b>
+            Utilizamos la convergencia en media cuadrática:
+            $$\lim_{n\to\infty} \text{MSE}(\hat\mu) = \lim_{n\to\infty} \frac{2\sigma^2}{n^2} = 0.$$
+            Por la desigualdad de Chebyshev:
+            $$\P(|X_{(1)} - \mu| \ge \varepsilon) \le \frac{\text{MSE}(\hat\mu)}{\varepsilon^2} = \frac{2\sigma^2}{n^2 \varepsilon^2} \xrightarrow{n\to\infty} 0.$$
+            Por lo tanto, $\hat\mu = X_{(1)} \xrightarrow{P} \mu$, lo que demuestra que $\hat\mu$ es consistente para $\mu$.</li>
+          <li><b>Consistencia de $\hat\sigma = \bar X - X_{(1)}$.</b>
+            - Por la Ley Débil de los Grandes Números (LGN de Khinchin), como $X_1, \dots, X_n$ son i.i.d. con $\E[X] = \mu + \sigma$:
+              $$\bar X \xrightarrow{\;P\;} \mu + \sigma.$$
+            - Como acabamos de demostrar:
+              $$X_{(1)} \xrightarrow{\;P\;} \mu.$$
+            - Por el Teorema de Slutsky (o las propiedades de preservación de la convergencia en probabilidad bajo sumas continuas):
+              $$\hat\sigma = \bar X - X_{(1)} \xrightarrow{\;P\;} (\mu + \sigma) - \mu = \sigma.$$
+            Asimismo, para la variante insesgada:
+            $$\hat\sigma^* = \frac{n}{n-1}\hat\sigma \xrightarrow{\;P\;} 1 \cdot \sigma = \sigma.$$
+            Por tanto, ambos estimadores $\hat\mu$ y $\hat\sigma$ son plenamente <b>consistentes</b>.</li>
+        </ol>
+        <div class="resultado">$$\hat\mu \xrightarrow{\;P\;} \mu \quad (\text{consistente}), \qquad \hat\sigma \xrightarrow{\;P\;} \sigma \quad (\text{consistente}).$$</div>
+      </div></details>
+
+      <details class="verif"><summary>Verificación por simulación</summary><div>
+        <div class="sim" id="sim-5">
+          <p class="sim-title">Distribución del mínimo muestral $X_{(1)}$ en la exponencial desplazada</p>
+          <p class="sim-desc">Genera $M = 2500$ réplicas de muestras de tamaño $n$ de la exponencial desplazada $X \sim \mu + \text{Exp}(\sigma)$. Contrasta el histograma de $X_{(1)}$ con la curva teórica $\mu + \text{Exp}(\sigma/n)$, verificando el sesgo $B(\hat\mu) = \sigma/n$ y la consistencia de $\hat\sigma$.</p>
+          <div class="controls"></div>
+          <div class="plot"></div>
+          <div class="out"></div>
+        </div>
+      </div></details>
+    </div>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../assets/js/stats.js"></script>
+<script src="../assets/js/plot.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+(function () {
+  'use strict';
+  const S = EM.stats, D = S.dist, fmt = S.fmt, ui = EM.ui;
+  const $id = id => document.getElementById(id);
+
+  function sim(id) {
+    const root = $id(id);
+    const plots = {};
+    root.querySelectorAll('.plot').forEach((d, i) => { plots[d.dataset.k || i] = d; });
+    return { root, ctl: root.querySelector('.controls'), plots, out: ui.readout(root.querySelector('.out')) };
+  }
+
+  function check(id, items) {
+    const host = $id(id);
+    items.forEach(o => ui.numcheck(host, o));
+  }
+
+  // Redibujar gráficos cuando se desplieguen detalles
+  document.querySelectorAll('#contenido details').forEach(d => {
+    d.addEventListener('toggle', () => { if (d.open) EM.plot.redrawAll(); });
+  });
+
+  /* =========================== EJERCICIO 1 =========================== */
+  (function ej1() {
+    check('chk-1', [
+      { prompt: 'Para $\\sigma = 2$ y $n = 10$, $\\Var(T_1) =$', answer: 3.2, tol: 0.01 },
+      { prompt: 'Para $n = 8$, constante óptima $c^* = \\frac{1}{n+2} =$', answer: 0.1, tol: 0.001 },
+      { prompt: 'Para $n = 8$, cociente $\\frac{\\text{MSE}(T_{c^*})}{\\text{MSE}(T_1)} = \\frac{n}{n+2} =$', answer: 0.8, tol: 0.001 },
+      { prompt: 'Eficiencia de $T_1$, $\\text{eff}(T_1) =$', answer: 1.0, tol: 0.001 },
+    ]);
+
+    const s = sim('sim-1');
+    let n = 8, sigma = 2;
+
+    const pCurve = EM.plot.create(s.plots.curve, {
+      xmin: 0, xmax: 0.28, ymin: 0, ymax: 0.35, height: 260, xlabel: 'c', ylabel: 'MSE(T_c)/\\sigma^4'
+    });
+    const pHist = EM.plot.create(s.plots.hist, {
+      xmin: 0, xmax: 10, ymin: 0, ymax: 0.6, height: 260, xlabel: 'T'
+    });
+
+    function render() {
+      const cStar = 1 / (n + 2);
+      const c1 = 1 / n;
+      const sigma2 = sigma * sigma;
+      const sigma4 = sigma2 * sigma2;
+      const maxC = 2 / n;
+
+      pCurve.setRange({ xmin: 0, xmax: maxC * 1.05, ymin: 0, ymax: (2 / (n + 2)) * 2.2 });
+      pCurve.draw(g => {
+        g.curve(c => (n * (n + 2) * c * c - 2 * n * c + 1), { color: 'c3', width: 2.2, label: 'MSE(Tc)/\\sigma^4' });
+        g.vline(cStar, { color: 'c1', width: 1.8, dash: [4, 3], label: `c^* = 1/${n+2} (${fmt(cStar, 3)})` });
+        g.vline(c1, { color: 'c2', width: 1.8, dash: [4, 3], label: `c_1 = 1/${n} (${fmt(c1, 3)})` });
+        g.points([cStar], [2 / (n + 2)], { color: 'c1', r: 5 });
+        g.points([c1], [2 / n], { color: 'c2', r: 5 });
+      });
+
+      const M = 2500;
+      const t1Vals = new Float64Array(M);
+      const tcVals = new Float64Array(M);
+
+      for (let m = 0; m < M; m++) {
+        let sumSq = 0;
+        for (let i = 0; i < n; i++) {
+          const z = S.rnorm01();
+          const x = sigma * z;
+          sumSq += x * x;
+        }
+        t1Vals[m] = sumSq / n;
+        tcVals[m] = sumSq / (n + 2);
+      }
+
+      const meanT1 = S.mean(t1Vals);
+      const meanTc = S.mean(tcVals);
+      const mseEmpT1 = t1Vals.reduce((acc, v) => acc + (v - sigma2) ** 2, 0) / M;
+      const mseEmpTc = tcVals.reduce((acc, v) => acc + (v - sigma2) ** 2, 0) / M;
+
+      const teoMseT1 = 2 * sigma4 / n;
+      const teoMseTc = 2 * sigma4 / (n + 2);
+
+      const lo = Math.max(0, sigma2 - 3.2 * Math.sqrt(teoMseT1));
+      const hi = sigma2 + 3.5 * Math.sqrt(teoMseT1);
+
+      pHist.setRange({ xmin: lo, xmax: hi, ymin: 0 });
+      pHist.draw(g => {
+        g.hist(t1Vals, { bins: 28, range: [lo, hi], color: 'c2', alpha: 0.45, label: `T1 (c = 1/${n})` });
+        g.hist(tcVals, { bins: 28, range: [lo, hi], color: 'c1', alpha: 0.55, label: `Tc^* (c = 1/${n+2})` });
+        g.vline(sigma2, { color: 'accent', width: 2, label: `\\sigma^2 = ${sigma2}` });
+      });
+
+      s.out.set(`Con $n = ${n}$ y $\\sigma = ${sigma}$ (objetivo $\\sigma^2 = ${sigma2}$):<br>` +
+        `• <b>Estimador $T_1 = \\frac{1}{${n}}\\sum X_i^2$ (Insesgado):</b> Media empírica = <b>${fmt(meanT1, 3)}</b> (teórica ${sigma2}) · ` +
+        `MSE empírico = <b>${fmt(mseEmpT1, 3)}</b> (teórico $\\frac{2\\sigma^4}{n} = ${fmt(teoMseT1, 3)}$)<br>` +
+        `• <b>Estimador $T_{c^*} = \\frac{1}{${n+2}}\\sum X_i^2$ (Sesgado óptimo):</b> Media empírica = <b>${fmt(meanTc, 3)}</b> (teórica $\\frac{n}{n+2}\\sigma^2 = ${fmt(n*sigma2/(n+2), 3)}$) · ` +
+        `MSE empírico = <b>${fmt(mseEmpTc, 3)}</b> (teórico $\\frac{2\\sigma^4}{n+2} = ${fmt(teoMseTc, 3)}$)<br>` +
+        `• Reducción de MSE lograda: <b>${fmt(100 * (1 - teoMseTc / teoMseT1), 1)} %</b>. El sesgo reduce la varianza drásticamente, superando en precisión al estimador insesgado.`);
+    }
+
+    ui.slider(s.ctl, { tex: 'n', min: 2, max: 20, step: 1, value: n, onInput: v => { n = Math.round(v); render(); } });
+    ui.slider(s.ctl, { tex: '\\sigma', min: 1, max: 5, step: 0.5, value: sigma, onInput: v => { sigma = v; render(); } });
+    ui.button(s.ctl, 'Simular 2500 muestras', render, { primary: true });
+    render();
+  })();
+
+  /* =========================== EJERCICIO 2 =========================== */
+  (function ej2() {
+    check('chk-2', [
+      { prompt: 'Para $\\theta = 0.2$, $\\E[X] = \\frac{1-\\theta}{\\theta} =$', answer: 4.0, tol: 0.01 },
+      { prompt: 'Para $\\theta = 0.5$, Información de Fisher $I_F(\\theta) = \\frac{1}{\\theta^2(1-\\theta)} =$', answer: 8.0, tol: 0.01 },
+      { prompt: 'Para $\\theta = 0.4$, Varianza asintótica $\\theta^2(1-\\theta) =$', answer: 0.096, tol: 0.001 },
+      { prompt: 'Para $\\theta = 0.25$ y $n = 12$, Cota inferior para $g(\\theta) =$', answer: 1.0, tol: 0.01 },
+    ]);
+
+    const s = sim('sim-2');
+    let n = 30, theta = 0.35;
+
+    const p = EM.plot.create(s.plots[0], {
+      xmin: -3.5, xmax: 3.5, ymin: 0, ymax: 0.45, height: 260, xlabel: 'Z = \\sqrt{n}(\\hat\\theta - \\theta) / \\sigma_{asint}'
+    });
+
+    function render() {
+      const M = 2500;
+      const asymVar = theta * theta * (1 - theta);
+      const asymSd = Math.sqrt(asymVar);
+
+      const zVals = new Float64Array(M);
+      const thetaHatVals = new Float64Array(M);
+
+      for (let m = 0; m < M; m++) {
+        let sumX = 0;
+        for (let i = 0; i < n; i++) {
+          let fails = 0;
+          while (Math.random() >= theta) fails++;
+          sumX += fails;
+        }
+        const xBar = sumX / n;
+        const thetaHat = 1 / (xBar + 1);
+        thetaHatVals[m] = thetaHat;
+        zVals[m] = Math.sqrt(n) * (thetaHat - theta) / asymSd;
+      }
+
+      const meanZ = S.mean(zVals);
+      const sdZ = S.sd(zVals);
+      const stdNorm = D.normal(0, 1);
+
+      p.draw(g => {
+        g.hist(zVals, { bins: 30, range: [-3.5, 3.5], color: 'c2', alpha: 0.55, label: 'Z simulada' });
+        g.curve(stdNorm.pdf, { color: 'c1', width: 2.2, label: 'N(0, 1) límite' });
+        g.vline(0, { color: 'accent', width: 1.5, dash: [4, 3] });
+      });
+
+      const meanThetaHat = S.mean(thetaHatVals);
+      const in95 = S.prop(zVals, z => Math.abs(z) <= 1.96);
+
+      s.out.set(`Para $n = ${n}$ intentos y parámetro $\\theta = ${theta}$ ($M = ${M}$ réplicas):<br>` +
+        `• Media de $\\hat\\theta$: <b>${fmt(meanThetaHat, 4)}</b> (parámetro real $\\theta = ${theta}$)<br>` +
+        `• Media de $Z_n$: <b>${fmt(meanZ, 3)}</b> (teórica 0.000) · Desviación estándar de $Z_n$: <b>${fmt(sdZ, 3)}</b> (teórica 1.000)<br>` +
+        `• Proporción empírica en el intervalo al 95 % ($|Z| \\le 1.96$): <b>${fmt(100 * in95, 1)} %</b> (teórica 95.0 %)<br>` +
+        `• Por el TLC y método Delta: $\\sqrt{n}(\\hat\\theta - \\theta) \\xrightarrow{d} N(0, \\theta^2(1-\\theta)) = N(0, ${fmt(asymVar, 4)})$.`);
+    }
+
+    ui.slider(s.ctl, { tex: 'n', min: 10, max: 100, step: 5, value: n, onInput: v => { n = Math.round(v); render(); } });
+    ui.slider(s.ctl, { tex: '\\theta', min: 0.1, max: 0.8, step: 0.05, value: theta, onInput: v => { theta = v; render(); } });
+    ui.button(s.ctl, 'Simular 2500 muestras', render, { primary: true });
+    render();
+  })();
+
+  /* =========================== EJERCICIO 3 =========================== */
+  (function ej3() {
+    check('chk-3', [
+      { prompt: 'Para $n = 1$, constante $k_1 = \\frac{2}{\\sqrt{\\pi}} \\approx$', answer: 1.1284, tol: 0.002 },
+      { prompt: 'Para $n = 2$, constante $k_2 = \\frac{4\\sqrt{2}}{3\\sqrt{\\pi}} \\approx$', answer: 1.0638, tol: 0.002 },
+      { prompt: 'Para $\\theta = 2$, Información de Fisher $I_F(\\theta) = \\frac{4}{\\theta^2} =$', answer: 1.0, tol: 0.01 },
+      { prompt: 'Para $\\theta = 2$ y $n = 25$, Cota de Cramér-Rao $\\text{LI}(\\theta) = \\frac{\\theta^2}{4n} =$', answer: 0.04, tol: 0.001 },
+    ]);
+
+    const s = sim('sim-3');
+    let n = 5, theta = 2;
+
+    const pGamma = EM.plot.create(s.plots.gamma, {
+      xmin: 0, xmax: 60, ymin: 0, ymax: 0.08, height: 260, xlabel: 'T = \\sum X_i^2'
+    });
+    const pTheta = EM.plot.create(s.plots.theta, {
+      xmin: 0.5, xmax: 3.5, ymin: 0, ymax: 1.8, height: 260, xlabel: '\\hat\\theta'
+    });
+
+    function render() {
+      const M = 2000;
+      const beta = 2 * theta * theta; // escala de la gamma
+      const gammaDist = D.gamma(n, beta);
+
+      const tVals = new Float64Array(M);
+      const thetaHatVals = new Float64Array(M);
+      const thetaStarVals = new Float64Array(M);
+
+      // Corrección analítica vía gamma
+      const factorCorreccion = (Math.sqrt(n) * S.gamma(n)) / S.gamma(n + 0.5);
+
+      for (let m = 0; m < M; m++) {
+        let sumSq = 0;
+        for (let i = 0; i < n; i++) {
+          const u = Math.random();
+          // Simulación de Rayleigh: X = theta * sqrt(-2 * ln(U))
+          const x = theta * Math.sqrt(-2 * Math.log(u === 0 ? 1e-12 : u));
+          sumSq += x * x;
+        }
+        tVals[m] = sumSq;
+        const thHat = Math.sqrt(sumSq / (2 * n));
+        thetaHatVals[m] = thHat;
+        thetaStarVals[m] = thHat * factorCorreccion;
+      }
+
+      const meanT = S.mean(tVals);
+      const meanHat = S.mean(thetaHatVals);
+      const meanStar = S.mean(thetaStarVals);
+
+      const teoMeanT = n * beta;
+      const teoSdT = Math.sqrt(n * beta * beta);
+      const loT = Math.max(0, teoMeanT - 3.2 * teoSdT);
+      const hiT = teoMeanT + 3.5 * teoSdT;
+
+      pGamma.setRange({ xmin: loT, xmax: hiT, ymin: 0, ymax: gammaDist.pdf(teoMeanT) * 1.35 });
+      pGamma.draw(g => {
+        g.hist(tVals, { bins: 28, range: [loT, hiT], color: 'c2', alpha: 0.5, label: 'T simulada' });
+        g.curve(gammaDist.pdf, { color: 'c1', width: 2.2, label: `Gamma(${n}, ${beta}) teórica` });
+      });
+
+      const teoSeHat = Math.sqrt((theta * theta) / (4 * n));
+      const loTh = Math.max(0.2, theta - 3.5 * teoSeHat);
+      const hiTh = theta + 3.5 * teoSeHat;
+
+      pTheta.setRange({ xmin: loTh, xmax: hiTh, ymin: 0 });
+      pTheta.draw(g => {
+        g.hist(thetaHatVals, { bins: 26, range: [loTh, hiTh], color: 'c2', alpha: 0.45, label: 'EMV sesgado \\hat\\theta' });
+        g.hist(thetaStarVals, { bins: 26, range: [loTh, hiTh], color: 'c1', alpha: 0.55, label: 'Ajustado insesgado \\hat\\theta^*' });
+        g.vline(theta, { color: 'accent', width: 2, label: `\\theta real = ${theta}` });
+      });
+
+      s.out.set(`Para $n = ${n}$ y $\\theta = ${theta}$ (parámetro de escala de Rayleigh):<br>` +
+        `• Suma $T = \\sum X_i^2$: Media simulada = <b>${fmt(meanT, 2)}</b> (teórica $n\\cdot 2\\theta^2 = ${fmt(teoMeanT, 2)}$)<br>` +
+        `• Factor de insesgamiento exacto: $k_n = \\frac{\\sqrt{n}\\Gamma(n)}{\\Gamma(n+1/2)} =$ <b>${fmt(factorCorreccion, 4)}</b><br>` +
+        `• Media del EMV original $\\hat\\theta$: <b>${fmt(meanHat, 4)}</b> (subestima a $\\theta = ${theta}$ por un factor de ${fmt(1/factorCorreccion, 4)})<br>` +
+        `• Media del estimador corregido $\\hat\\theta^*$: <b>${fmt(meanStar, 4)}</b> (¡estrictamente insesgado!)<br>` +
+        `• Cota de Cramér-Rao: $\\text{LI}(\\theta) = \\frac{\\theta^2}{4n} = $ <b>${fmt((theta * theta)/(4 * n), 4)}</b>.`);
+    }
+
+    ui.slider(s.ctl, { tex: 'n', min: 2, max: 20, step: 1, value: n, onInput: v => { n = Math.round(v); render(); } });
+    ui.slider(s.ctl, { tex: '\\theta', min: 1, max: 5, step: 0.5, value: theta, onInput: v => { theta = v; render(); } });
+    ui.button(s.ctl, 'Simular 2000 muestras', render, { primary: true });
+    render();
+  })();
+
+  /* =========================== EJERCICIO 4 =========================== */
+  (function ej4() {
+    check('chk-4', [
+      { prompt: 'Coeficiente $\\E[X]/\\theta =$', answer: 0.75, tol: 0.001 },
+      { prompt: 'Para $n = 5$, constante $a_5 = \\frac{3(5)+1}{3(5)} =$', answer: 1.0667, tol: 0.001 },
+      { prompt: 'Para $n = 6$, cociente $\\frac{\\text{MSE}(\\hat\\theta^*)}{\\text{MSE}(\\tilde\\theta)} = \\frac{5}{3(6)+2} =$', answer: 0.25, tol: 0.001 },
+      { prompt: 'Para $n = 16$, cociente $\\frac{\\text{MSE}(\\hat\\theta^*)}{\\text{MSE}(\\tilde\\theta)} = \\frac{5}{3(16)+2} =$', answer: 0.10, tol: 0.001 },
+    ]);
+
+    const s = sim('sim-4');
+    let n = 8, theta = 4;
+
+    const p = EM.plot.create(s.plots[0], {
+      xmin: 2.5, xmax: 4.5, ymin: 0, ymax: 3.5, height: 270, xlabel: 'Estimaciones de \\theta'
+    });
+
+    function render() {
+      const M = 2500;
+      const tMomVals = new Float64Array(M);
+      const tMaxVals = new Float64Array(M);
+      const an = (3 * n + 1) / (3 * n);
+
+      for (let m = 0; m < M; m++) {
+        let sumX = 0, maxVal = 0;
+        for (let i = 0; i < n; i++) {
+          const u = Math.random();
+          // Inversión: F(x) = (x/theta)^3 = U => X = theta * U^(1/3)
+          const x = theta * Math.cbrt(u);
+          sumX += x;
+          if (x > maxVal) maxVal = x;
+        }
+        tMomVals[m] = (4 / 3) * (sumX / n);
+        tMaxVals[m] = an * maxVal;
+      }
+
+      const meanMom = S.mean(tMomVals);
+      const meanMax = S.mean(tMaxVals);
+      const mseMom = tMomVals.reduce((acc, v) => acc + (v - theta) ** 2, 0) / M;
+      const mseMax = tMaxVals.reduce((acc, v) => acc + (v - theta) ** 2, 0) / M;
+
+      const teoMseMom = (theta * theta) / (15 * n);
+      const teoMseMax = (theta * theta) / (3 * n * (3 * n + 2));
+
+      const lo = Math.max(0.5, theta - 3.5 * Math.sqrt(teoMseMom));
+      const hi = theta + 3.5 * Math.sqrt(teoMseMom);
+
+      p.setRange({ xmin: lo, xmax: hi, ymin: 0 });
+      p.draw(g => {
+        g.hist(tMomVals, { bins: 30, range: [lo, hi], color: 'c2', alpha: 0.45, label: `Momentos \\tilde\\theta: O(1/n)` });
+        g.hist(tMaxVals, { bins: 30, range: [lo, hi], color: 'c1', alpha: 0.65, label: `Máximo \\hat\\theta^*: O(1/n^2)` });
+        g.vline(theta, { color: 'accent', width: 2, label: `\\theta real = ${theta}` });
+      });
+
+      s.out.set(`Con $n = ${n}$ y $\\theta = ${theta}$ ($M = ${M}$ réplicas):<br>` +
+        `• <b>Estimador de momentos $\\tilde\\theta = \\frac{4}{3}\\bar X$:</b> Media = <b>${fmt(meanMom, 3)}</b> (teórica ${theta}) · ` +
+        `MSE empírico = <b>${fmt(mseMom, 4)}</b> (teórico $\\frac{\\theta^2}{15n} = ${fmt(teoMseMom, 4)}$)<br>` +
+        `• <b>Estimador insesgado del máximo $\\hat\\theta^* = \\frac{3n+1}{3n}X_{(n)}$:</b> Media = <b>${fmt(meanMax, 3)}</b> (teórica ${theta}) · ` +
+        `MSE empírico = <b>${fmt(mseMax, 4)}</b> (teórico $\\frac{\\theta^2}{3n(3n+2)} = ${fmt(teoMseMax, 4)}$)<br>` +
+        `• Cociente $\\frac{\\text{MSE}(\\hat\\theta^*)}{\\text{MSE}(\\tilde\\theta)}$: empírico <b>${fmt(mseMax / mseMom, 3)}</b> · ` +
+        `teórico $\\frac{5}{3n+2} = $ <b>${fmt(5 / (3 * n + 2), 3)}</b>.<br>` +
+        `<em>Conclusión visual:</em> La distribución de $\\hat\\theta^*$ es radicalmente más concentrada porque converge a tasa cuadrática $O(1/n^2)$.`);
+    }
+
+    ui.slider(s.ctl, { tex: 'n', min: 2, max: 25, step: 1, value: n, onInput: v => { n = Math.round(v); render(); } });
+    ui.slider(s.ctl, { tex: '\\theta', min: 1, max: 8, step: 0.5, value: theta, onInput: v => { theta = v; render(); } });
+    ui.button(s.ctl, 'Simular 2500 muestras', render, { primary: true });
+    render();
+  })();
+
+  /* =========================== EJERCICIO 5 =========================== */
+  (function ej5() {
+    check('chk-5', [
+      { prompt: 'Para $\\sigma = 6$ y $n = 20$, Sesgo de $\\hat\\mu = \\frac{\\sigma}{n} =$', answer: 0.3, tol: 0.001 },
+      { prompt: 'Para $n = 10$, factor para insesgar $\\hat\\sigma$, $\\frac{n}{n-1} =$', answer: 1.1111, tol: 0.001 },
+      { prompt: 'Para $\\sigma = 4$ y $n = 5$, $\\text{MSE}(\\hat\\mu) = \\frac{2\\sigma^2}{n^2} =$', answer: 1.28, tol: 0.01 },
+      { prompt: 'Para $n = 25$, cociente $\\frac{\\E[\\hat\\sigma]}{\\sigma} = \\frac{n-1}{n} =$', answer: 0.96, tol: 0.001 },
+    ]);
+
+    const s = sim('sim-5');
+    let n = 10, mu = 2, sigma = 3;
+
+    const p = EM.plot.create(s.plots[0], {
+      xmin: 1.8, xmax: 4.5, ymin: 0, ymax: 3.5, height: 260, xlabel: 'X_{(1)} (Estimador de \\mu)'
+    });
+
+    function render() {
+      const M = 2500;
+      const minVals = new Float64Array(M);
+      const sigmaHatVals = new Float64Array(M);
+      const sigmaStarVals = new Float64Array(M);
+
+      for (let m = 0; m < M; m++) {
+        let minX = Infinity, sumX = 0;
+        for (let i = 0; i < n; i++) {
+          const u = Math.random();
+          // Exponencial desplazada: X = mu - sigma * ln(U)
+          const x = mu - sigma * Math.log(u === 0 ? 1e-12 : u);
+          sumX += x;
+          if (x < minX) minX = x;
+        }
+        minVals[m] = minX;
+        const sHat = (sumX / n) - minX;
+        sigmaHatVals[m] = sHat;
+        sigmaStarVals[m] = sHat * (n / (n - 1));
+      }
+
+      const meanMin = S.mean(minVals);
+      const sesgoEmpMu = meanMin - mu;
+      const teoSesgoMu = sigma / n;
+      const teoScaleMin = sigma / n;
+
+      const expMinDist = x => (x < mu) ? 0 : (1 / teoScaleMin) * Math.exp(-(x - mu) / teoScaleMin);
+
+      const lo = Math.max(mu - 0.2, 0);
+      const hi = mu + 4.5 * teoScaleMin;
+
+      p.setRange({ xmin: lo, xmax: hi, ymin: 0, ymax: (1 / teoScaleMin) * 1.25 });
+      p.draw(g => {
+        g.hist(minVals, { bins: 28, range: [lo, hi], color: 'c2', alpha: 0.55, label: `Histograma de X_{(1)}` });
+        g.curve(expMinDist, { color: 'c1', width: 2.2, label: `Exp(\\mu, \\sigma/n = ${fmt(teoScaleMin, 3)}) teórica` });
+        g.vline(mu, { color: 'accent', width: 2, label: `\\mu real = ${mu}` });
+      });
+
+      const meanSigmaHat = S.mean(sigmaHatVals);
+      const meanSigmaStar = S.mean(sigmaStarVals);
+
+      s.out.set(`Con $n = ${n}$, $\\mu = ${mu}$ y $\\sigma = ${sigma}$ ($M = ${M}$ réplicas):<br>` +
+        `• <b>Estimador de localización $\\hat\\mu = X_{(1)}$:</b> Media empírica = <b>${fmt(meanMin, 3)}</b> · ` +
+        `Sesgo empírico = <b>${fmt(sesgoEmpMu, 3)}</b> (teórico $\\frac{\\sigma}{n} = ${fmt(teoSesgoMu, 3)}$)<br>` +
+        `• $\\text{MSE}(\\hat\\mu)$: empírico <b>${fmt(minVals.reduce((a, v) => a + (v - mu) ** 2, 0) / M, 3)}</b> · ` +
+        `teórico $\\frac{2\\sigma^2}{n^2} = $ <b>${fmt(2 * sigma * sigma / (n * n), 3)}</b> (tasa $O(1/n^2)$)<br>` +
+        `• <b>Estimador de escala $\\hat\\sigma$:</b> Media empírica = <b>${fmt(meanSigmaHat, 3)}</b> (teórica $\\frac{n-1}{n}\\sigma = ${fmt((n - 1) * sigma / n, 3)}$)<br>` +
+        `• <b>Variante insesgada $\\hat\\sigma^* = \\frac{n}{n-1}\\hat\\sigma$:</b> Media empírica = <b>${fmt(meanSigmaStar, 3)}</b> (teórica $\\sigma = ${sigma}$).`);
+    }
+
+    ui.slider(s.ctl, { tex: 'n', min: 3, max: 30, step: 1, value: n, onInput: v => { n = Math.round(v); render(); } });
+    ui.slider(s.ctl, { tex: '\\mu', min: 0, max: 5, step: 0.5, value: mu, onInput: v => { mu = v; render(); } });
+    ui.slider(s.ctl, { tex: '\\sigma', min: 1, max: 6, step: 0.5, value: sigma, onInput: v => { sigma = v; render(); } });
+    ui.button(s.ctl, 'Simular 2500 muestras', render, { primary: true });
+    render();
+  })();
+
+})();
+</script>
+</body>
+</html>

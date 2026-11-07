@@ -1,0 +1,877 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clase 10 · Propiedades de los estimadores: Invarianza EMV, Consistencia y Robustez</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/theme.js"></script>
+<style>
+  .badge.star { background: var(--plot-c4, #e67e22); color: #fff; font-size: 0.72rem; padding: 2px 7px; border-radius: 4px; vertical-align: middle; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+  .table-wrap { overflow-x: auto; margin: 1.2rem 0; }
+  table.tabla { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+  table.tabla th, table.tabla td { padding: 9px 12px; border: 1px solid var(--border, #e2e8f0); text-align: center; }
+  table.tabla th { background: var(--surface-2, #f8fafc); font-weight: 600; color: var(--ink); }
+  table.tabla td.izq { text-align: left; }
+  .code-block { margin: 1rem 0; border-radius: 8px; overflow-x: auto; background: var(--code-bg, #1e293b); color: #f1f5f9; padding: 1rem 1.2rem; font-family: var(--font-mono, monospace); font-size: 0.88rem; line-height: 1.5; border: 1px solid var(--border, rgba(255,255,255,0.1)); }
+  .code-block code { background: transparent; padding: 0; color: inherit; font-size: inherit; }
+  .comp-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.82rem; font-weight: 600; font-family: var(--font-mono); }
+  .tag-win { background: rgba(34, 197, 94, 0.15); color: var(--good, #16a34a); }
+  .tag-loss { background: rgba(239, 68, 68, 0.15); color: var(--bad, #dc2626); }
+  .tag-warn { background: rgba(245, 158, 11, 0.15); color: var(--warn, #d97706); }
+  .btn-group { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+  .cat-box { background: var(--surface-2, #f8fafc); border-left: 4px solid var(--bad, #ef4444); padding: 1rem; border-radius: 6px; margin: 1rem 0; }
+</style>
+</head>
+<body data-page="clase-10" data-root="../">
+<main id="contenido">
+
+  <header class="page-head">
+    <p class="kicker">Clase 10 · Unidad 2 — Teoría de la estimación</p>
+    <h1>Propiedades de los estimadores: invarianza EMV, consistencia y robustez</h1>
+    <p class="lead">Principio de invarianza de Zehna y comportamiento asintótico de máxima verosimilitud, convergencia en probabilidad y desigualdades fundamentales (Markov, Chebyshev, Jensen, Cauchy-Schwarz), criterio del error cuadrático medio y robustez estadística frente a datos contaminados.</p>
+  </header>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="invarianza-emv">1. Principio de invarianza de los estimadores de máxima verosimilitud</h2>
+    <p>En la Clase 9 aprendimos a derivar estimadores de máxima verosimilitud (EMV) maximizando la función de verosimilitud $L(\theta)$ o su logaritmo $\ell(\theta)$. No obstante, en la práctica rara vez nos interesa únicamente el parámetro nativo $\theta$. Muy a menudo se requiere estimar una función no trivial $g(\theta)$, tal como:</p>
+    <ul>
+      <li>La desviación estándar $\sigma = \sqrt{\sigma^2}$ o el desvío estándar de la media $\sigma/\sqrt{n}$.</li>
+      <li>La probabilidad de supervivencia o confiabilidad de un componente: $\P(X &gt; t) = e^{-\lambda t}$.</li>
+      <li>La probabilidad acumulada normal de no superar una especificación de calidad: $\P(X \le a) = \Phi\left(\frac{a-\mu}{\sigma}\right)$.</li>
+      <li>El log-odds o razón de momios en modelos logísticos: $\theta / (1 - \theta)$.</li>
+    </ul>
+
+    <p>¿Es necesario reformular toda la función de verosimilitud desde cero y resolver un nuevo problema de optimización para cada transformación $g(\theta)$? La respuesta es un rotundo <b>no</b>, gracias a una de las propiedades más célebres y prácticas de la inferencia estadística.</p>
+
+    <div class="box teorema" id="thm-invarianza">
+      <span class="box-title">Teorema · Principio de invarianza funcional de los EMV</span>
+      <p>Sea $X_1, \dots, X_n$ una muestra aleatoria con función de densidad o probabilidad $f(x;\theta)$, donde $\theta \in \Omega \subseteq \R^k$ es un vector de parámetros. Si $\hat\theta$ es el estimador de máxima verosimilitud de $\theta$, entonces para <b>cualquier función medible</b> $g: \Omega \to \R^m$, el estimador de máxima verosimilitud de $\tau = g(\theta)$ está dado por:</p>
+      $$\widehat{g(\theta)} = g(\hat\theta).$$
+    </div>
+
+    <h3>Justificación teórica: ¿por qué funciona la invarianza?</h3>
+    <p>La demostración del principio de invarianza se divide en dos escenarios bien diferenciados:</p>
+
+    <div class="box idea"><span class="box-title">Caso 1: La función $g(\cdot)$ es biyectiva (uno a uno)</span>
+      <p>Si la función $g$ posee inversa bien definida $g^{-1}$, existe una correspondencia uno a uno entre $\theta$ y $\tau = g(\theta)$. Por tanto, parametrizar la verosimilitud en términos de $\tau$ da lugar a la función inducida:</p>
+      $$L^*(\tau) = L\big(g^{-1}(\tau)\big).$$
+      <p>Maximizar $L^*(\tau)$ respecto a $\tau$ equivale exactamente a maximizar $L(\theta)$ respecto a $\theta$. Como $L(\theta)$ alcanza su máximo absoluto en $\hat\theta$, la función inducida $L^*(\tau)$ alcanza su máximo absoluto en el único valor $\hat\tau$ que satisface:</p>
+      $$g^{-1}(\hat\tau) = \hat\theta \iff \hat\tau = g(\hat\theta).$$
+      <p>En el caso biyectivo, el resultado es directo e intuitivo.</p>
+    </div>
+
+    <div class="box definicion"><span class="box-title">Caso 2: La función $g(\cdot)$ no es inyectiva (Perfil de verosimilitud de Zehna, 1966)</span>
+      <p>Si $g$ no es inyectiva (por ejemplo $g(\theta) = \theta^2$ con $\theta \in \R$, o $g(\mu, \sigma^2) = \mu/\sigma$), existen múltiples valores de $\theta$ en el espacio parametral $\Omega$ que producen el mismo valor transformado $\tau$. ¿Cómo se define formalmente la verosimilitud de $\tau$?</p>
+      <p>Peter W. Zehna (1966) definió la <b>función de verosimilitud inducida</b> (también denominada verosimilitud perfilada) $M(\tau)$ sobre el espacio imagen $\mathcal{T} = g(\Omega)$ mediante el supremo:</p>
+      $$M(\tau) = \sup_{\{\theta \in \Omega \,:\, g(\theta) = \tau\}} L(\theta).$$
+      <p>Por la definición de $\hat\theta$ como estimador de máxima verosimilitud global sobre todo el dominio $\Omega$:</p>
+      $$L(\theta) \le L(\hat\theta), \quad \forall \theta \in \Omega.$$
+      <p>En consecuencia, para cualquier $\tau \in \mathcal{T}$:</p>
+      $$M(\tau) = \sup_{\theta : g(\theta) = \tau} L(\theta) \le L(\hat\theta).$$
+      <p>Por otra parte, si evaluamos $M(\tau)$ en el valor particular candidato $\hat\tau = g(\hat\theta)$:</p>
+      $$M(g(\hat\theta)) = \sup_{\{\theta \,:\, g(\theta) = g(\hat\theta)\}} L(\theta) \ge L(\hat\theta).$$
+      <p>Combinando ambas desigualdades se deduce que $M(g(\hat\theta)) = L(\hat\theta)$, y por ende:</p>
+      $$M(\tau) \le M(g(\hat\theta)), \quad \forall \tau \in \mathcal{T}.$$
+      <p>Esto concluye rigurosamente que $\hat\tau = g(\hat\theta)$ maximiza la verosimilitud inducida $M(\tau)$ sobre todo el espacio transformado, completando la validez del principio de invarianza para cualquier función arbitraria $g$.</p>
+    </div>
+
+    <div class="box cuidado"><span class="box-title">¡Atención! La invarianza preserva la verosimilitud, NO la insesgadez</span>
+      <p>Un error conceptual común consiste en creer que si $\hat\theta$ es un estimador <i>insesgado</i> de $\theta$, entonces $g(\hat\theta)$ también será un estimador insesgado de $g(\theta)$.</p>
+      <p><b>Esto es falso en general para funciones no lineales:</b> por la <i>Desigualdad de Jensen</i>, si $g$ es estrictamente convexa, $\E[g(\hat\theta)] &gt; g(\E[\hat\theta]) = g(\theta)$. Por tanto, aunque el principio de invarianza garantiza que $g(\hat\theta)$ es el EMV de $g(\theta)$, con frecuencia introduce un sesgo finito que solo desaparece cuando $n \to \infty$ (insesgadez asintótica).</p>
+    </div>
+
+    <!-- ---------------- Ejercicio 1 (Ejemplo 4) ---------------- -->
+    <div class="box ejercicio" id="ej-4">
+      <span class="box-title">Ejemplo 4 · EMV para la intensidad cuadrática en una población de Poisson</span>
+      <p>Sean $X_1, \dots, X_n$ variables aleatorias independientes e idénticamente distribuidas ($\iid$) con distribución $\text{Poisson}(\lambda)$, donde $\lambda &gt; 0$ es la tasa de ocurrencia. Encuentre el estimador de máxima verosimilitud para el parámetro cuadrático $g(\lambda) = \lambda^2$ y examine su sesgo sistemático.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Recuerde que el EMV de la media de Poisson es $\hat\lambda = \bar X$. Aplique el Principio de Invarianza para encontrar el EMV de $\lambda^2$. Luego calcule $\E[(\bar X)^2]$ empleando la relación fundamental entre esperanza del cuadrado, varianza y media ($\E[Y^2] = \Var(Y) + (\E[Y])^2$).</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <h4>1. Deducción del EMV para el parámetro nativo $\lambda$</h4>
+        <ol class="pasos">
+          <li>La función de verosimilitud para la muestra Poisson es:
+            $$L(\lambda) = \prod_{i=1}^n \frac{e^{-\lambda}\lambda^{x_i}}{x_i!} = \frac{e^{-n\lambda}\lambda^{\sum_{i=1}^n x_i}}{\prod_{i=1}^n x_i!}.$$</li>
+          <li>Tomando el logaritmo natural (función log-verosimilitud):
+            $$\ell(\lambda) = \ln L(\lambda) = -n\lambda + \left(\sum_{i=1}^n x_i\right)\ln\lambda - \sum_{i=1}^n \ln(x_i!).$$</li>
+          <li>Derivando respecto a $\lambda$ e igualando a cero:
+            $$\frac{d\ell(\lambda)}{d\lambda} = -n + \frac{\sum_{i=1}^n x_i}{\lambda} = 0 \implies \hat\lambda = \frac{1}{n}\sum_{i=1}^n X_i = \bar X.$$
+            Dado que $\frac{d^2\ell}{d\lambda^2} = -\frac{\sum X_i}{\lambda^2} &lt; 0$, $\hat\lambda = \bar X$ es el único maximizador global.</li>
+        </ol>
+
+        <h4>2. Aplicación del principio de invarianza</h4>
+        <p>Queremos estimar $g(\lambda) = \lambda^2$. Por el Principio de Invarianza de los EMV:</p>
+        $$\widehat{\lambda^2} = g(\hat\lambda) = (\bar X)^2.$$
+
+        <h4>3. Evaluación del sesgo de $(\bar X)^2$</h4>
+        <p>Para verificar si $(\bar X)^2$ es insesgado, calculamos su esperanza matemática:</p>
+        $$\E\big[(\bar X)^2\big] = \Var(\bar X) + \big(\E[\bar X]\big)^2.$$
+        <p>Como cada $X_i \sim \text{Poisson}(\lambda)$, se tiene $\E[X_i] = \lambda$ y $\Var(X_i) = \lambda$. Por tanto:</p>
+        $$\E[\bar X] = \lambda, \qquad \Var(\bar X) = \frac{\Var(X_1)}{n} = \frac{\lambda}{n}.$$
+        <p>Sustituyendo estos momentos en la identidad:</p>
+        $$\E\big[(\bar X)^2\big] = \frac{\lambda}{n} + \lambda^2.$$
+        <p>El sesgo del EMV resulta:</p>
+        $$\mathbb{B}\big(\widehat{\lambda^2}\big) = \E\big[(\bar X)^2\big] - \lambda^2 = \frac{\lambda}{n} &gt; 0.$$
+        <p><b>Conclusión formativa:</b> $(\bar X)^2$ es el estimador de máxima verosimilitud de $\lambda^2$, pero es <b>sesgado hacia arriba</b> para cualquier tamaño de muestra finito $n$. No obstante, puesto que $\lim_{n\to\infty} \frac{\lambda}{n} = 0$, es <b>asintóticamente insesgado</b>. El estimador insesgado de varianza mínima (UMVUE) corregido sería $T = (\bar X)^2 - \frac{\bar X}{n}$.</p>
+      </div></details>
+    </div>
+
+    <!-- ---------------- Ejercicio 2 (Ejemplo 5) ---------------- -->
+    <div class="box ejercicio" id="ej-5">
+      <span class="box-title">Ejemplo 5 · EMV para la desviación estándar y probabilidad de cola en una población Normal</span>
+      <p>Sean $X_1, \dots, X_n \iid N(\mu, \sigma^2)$, con parámetros de media $\mu \in \R$ y varianza $\sigma^2 &gt; 0$ desconocidos. Recordando que los EMVs conjuntos de los parámetros son $\hat\mu = \bar X$ y $\widehat{\sigma^2} = S_n^2 = \frac{1}{n}\sum_{i=1}^n (X_i - \bar X)^2$:</p>
+      <ol class="pasos">
+        <li>Encuentre el EMV de la desviación estándar poblacional $\sigma$.</li>
+        <li>Encuentre el EMV de la probabilidad de cola $\P(X_1 \le a)$, donde $a \in \R$ es una constante fijada.</li>
+      </ol>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Exprese $\sigma$ como función de la varianza: $g(\sigma^2) = \sqrt{\sigma^2}$. Para la cola izquierda, estandarice la variable aleatoria $X_1 \sim N(\mu, \sigma^2)$ en términos de la función de distribución acumulada de la normal estándar $\Phi(z)$, identificando a qué función $g(\mu, \sigma^2)$ corresponde.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <h4>1. EMV de la desviación estándar $\sigma$</h4>
+        <ol class="pasos">
+          <li>Definimos la transformación $g(\mu, \sigma^2) = \sqrt{\sigma^2} = \sigma$.</li>
+          <li>Por el Principio de Invarianza, simplemente sustituimos el estimador de máxima verosimilitud de la varianza $\widehat{\sigma^2} = S_n^2$:
+            $$\hat\sigma = g(\hat\mu, \widehat{\sigma^2}) = \sqrt{S_n^2} = \sqrt{\frac{1}{n}\sum_{i=1}^n (X_i - \bar X)^2}.$$
+            <i>Nota: Observe que el EMV divide para $n$, a diferencia de la cuasidesviación muestral $S$ que divide para $n-1$.</i></li>
+        </ol>
+
+        <h4>2. EMV de la probabilidad acumulada $\P(X_1 \le a)$</h4>
+        <ol class="pasos">
+          <li>Como $X_1 \sim N(\mu, \sigma^2)$, tipificamos la variable aleatoria restando su media y dividiendo para su desviación estándar:
+            $$\P(X_1 \le a) = \P\left(\frac{X_1 - \mu}{\sigma} \le \frac{a - \mu}{\sigma}\right) = \Phi\left(\frac{a - \mu}{\sigma}\right),$$
+            donde $\Phi(z) = \int_{-\infty}^z \frac{1}{\sqrt{2\pi}}e^{-u^2/2}du$ es la función de distribución acumulada de una normal estándar $N(0, 1)$.</li>
+          <li>La cantidad objetivo es una función no lineal de los dos parámetros:
+            $$g(\mu, \sigma^2) = \Phi\left(\frac{a - \mu}{\sqrt{\sigma^2}}\right).$$</li>
+          <li>Invocando directamente el principio de invarianza de Zehna, el EMV de dicha probabilidad es la evaluación de $g$ en los estimadores de máxima verosimilitud $(\hat\mu, \widehat{\sigma^2})$:
+            $$\widehat{\P(X_1 \le a)} = \Phi\left(\frac{a - \hat\mu}{\hat\sigma}\right) = \Phi\left(\frac{a - \bar X}{\sqrt{S_n^2}}\right).$$</li>
+        </ol>
+        <p><b>Relevancia práctica:</b> En control de calidad o ingeniería de confiabilidad, este resultado permite estimar de forma inmediata la proporción de piezas que cumplen una tolerancia técnica sin necesidad de integrar ni plantear verosimilitudes numéricas complejas.</p>
+      </div></details>
+    </div>
+
+    <h3>Distribución asintótica de los EMV y el Método Delta</h3>
+    <p>Bajo condiciones generales de regularidad (soporte de la distribución independiente de $\theta$, existencia de derivadas de la log-verosimilitud e información de Fisher finita y positiva $I_F(\theta) &gt; 0$), los estimadores de máxima verosimilitud exhiben un comportamiento óptimo cuando el tamaño de muestra $n$ es grande:</p>
+
+    <div class="box teorema" id="thm-asintotico-emv">
+      <span class="box-title">Teorema · Normalidad asintótica y eficiencia de los EMV</span>
+      <p>Sea $X_1, \dots, X_n \iid f(x;\theta)$ y sea $\hat\theta_n$ el EMV de $\theta$. Conforme $n \to \infty$:</p>
+      $$\sqrt{n}(\hat\theta_n - \theta) \xrightarrow{d} N\left(0, \frac{1}{I_F(\theta)}\right),$$
+      <p>o de forma aproximada para muestras grandes ($n \gg 1$):</p>
+      $$\hat\theta_n \stackrel{\text{asint}}{\sim} N\left(\theta, \frac{1}{n I_F(\theta)}\right) = N(\theta, \text{CRLB}_\theta).$$
+      <p>Asimismo, para cualquier función transformadora $g(\theta)$ continuamente diferenciable con $g'(\theta) \ne 0$, el <b>Método Delta</b> garantiza que:</p>
+      $$\sqrt{n}\big(g(\hat\theta_n) - g(\theta)\big) \xrightarrow{d} N\left(0, \frac{[g'(\theta)]^2}{I_F(\theta)}\right).$$
+    </div>
+
+    <div class="box nota"><span class="box-title">Tres virtudes de los EMV para muestras grandes</span>
+      <ul>
+        <li><b>Asintóticamente insesgados:</b> $\lim_{n\to\infty} \E[\hat\theta_n] = \theta$.</li>
+        <li><b>Asintóticamente eficientes:</b> Su varianza asintótica alcanza la <i>Cota Inferior de Cramér-Rao</i> (CRLB), logrando una eficiencia asintótica del $100\%$.</li>
+        <li><b>Distribución normal límite:</b> Permite construir intervalos de confianza asintóticos (intervalos de Wald): $\hat\theta \pm z_{\alpha/2}\frac{1}{\sqrt{n I_F(\hat\theta)}}$.</li>
+      </ul>
+    </div>
+
+    <h3>Familias de localización, escala y localización-escala</h3>
+    <p>El principio de invarianza de los EMV ante funciones de parámetros se complementa con la noción de invarianza ante transformaciones geométricas de los datos:</p>
+    <ul>
+      <li><b>Familia de localización:</b> Modelada por $Y = X + a$. La función de densidad sufre una traslación rígida: $f_Y(y) = f_X(y - a)$. El parámetro $a$ gobierna el centro de la distribución (por ejemplo, la media $\mu$ en la normal con varianza conocida).</li>
+      <li><b>Familia de escala:</b> Modelada por $Y = b X$ con $b &gt; 0$. La densidad sufre un escalamiento: $f_Y(y) = \frac{1}{b}f_X(y/b)$. El parámetro $b$ controla la dispersión (por ejemplo, el parámetro de escala $\beta$ en la exponencial).</li>
+      <li><b>Familia de localización-escala:</b> Combina ambas transformaciones lineales $Y = a + b X$ con $b &gt; 0$. Su función de densidad toma la forma canónica:
+        $$f_Y(y) = \frac{1}{b}f_X\left(\frac{y - a}{b}\right).$$
+        El ejemplo canónico es la distribución Normal $N(\mu, \sigma^2)$, donde cualquier transformación lineal $Y = a + b X$ permanece estrictamente dentro de la misma familia gaussiana.</li>
+    </ul>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="consistencia">2. Consistencia y convergencia en probabilidad</h2>
+
+    <h3>Motivación: El experimento de la moneda y la Ley de los Grandes Números</h3>
+    <p>Considere el experimento aleatorio clásico de lanzar una moneda con probabilidad de cara $p \in (0, 1)$ una gran cantidad de veces ($n = 1000$). Definimos la variable indicadora de Bernoulli $X_i = 1$ si sale cara y $X_i = 0$ si sale cruz en el $i$-ésimo lanzamiento. La proporción acumulada de caras es la media muestral:</p>
+    $$\hat p_n = \bar X_n = \frac{1}{n}\sum_{i=1}^n X_i.$$
+    <p>Al inicio del experimento (cuando $n$ es pequeño, digamos $n \in \{1, 2, \dots, 15\}$), el valor de $\hat p_n$ salta bruscamente entre $0$, $1$, $0.33$, $0.75$, mostrando una marcada volatilidad estocástica. Sin embargo, conforme $n$ crece y supera los cientos de lanzamientos ($n \to \infty$), las oscilaciones se amortiguan y la trayectoria converge gradualmente hacia el valor verdadero $p = 1/2$.</p>
+    <p>Este fenómeno empírico universal es la manifestación concreta de la <b>convergencia en probabilidad</b> y la propiedad de <b>consistencia</b>.</p>
+
+    <div class="box definicion" id="def-consistencia">
+      <span class="box-title">Definición formal · Estimador consistente</span>
+      <p>Sea $(\hat\theta_n)_{n \ge 1}$ una sucesión de estimadores calculados a partir de muestras de tamaño creciente $n$ para estimar un parámetro desconocido $\theta \in \Omega$. Se dice que $\hat\theta_n$ es un <b>estimador consistente</b> para $\theta$ si para todo margen de tolerancia positivo $\varepsilon &gt; 0$, por pequeño que sea:</p>
+      $$\lim_{n\to\infty} \P(|\hat\theta_n - \theta| &gt; \varepsilon) = 0,$$
+      <p>o equivalentemente:</p>
+      $$\lim_{n\to\infty} \P(|\hat\theta_n - \theta| \le \varepsilon) = 1.$$
+      <p>En el lenguaje de la teoría de probabilidades, la consistencia significa que $\hat\theta_n$ <b>converge en probabilidad</b> a $\theta$, lo cual se denota formalmente como:</p>
+      $$\hat\theta_n \xrightarrow{\;P\;} \theta \quad \text{o bien} \quad \operatorname{plim}_{n\to\infty} \hat\theta_n = \theta.$$
+    </div>
+
+    <div class="box idea"><span class="box-title">Interpretación geométrica del "túnel de tolerancia $\pm\varepsilon$"</span>
+      <p>Imaginemos una franja horizontal fija de ancho $2\varepsilon$ centrada en el parámetro objetivo: $[\theta - \varepsilon, \theta + \varepsilon]$. La consistencia establece que, sin importar cuán estrecha sea esta franja (por ejemplo $\varepsilon = 0.001$), a medida que $n$ avanza hacia el infinito, la masa de probabilidad de que la estimación $\hat\theta_n$ caiga fuera del túnel se reduce hasta ser exactamente cero.</p>
+    </div>
+
+    <h3>Desigualdades fundamentales para demostrar consistencia</h3>
+    <p>Para acotar probabilidades de cola de la forma $\P(|\hat\theta_n - \theta| \ge \varepsilon)$ y verificar formalmente que su límite es cero, disponemos de cuatro desigualdades matemáticas clásicas:</p>
+
+    <!-- Desigualdad de Markov Generalizada -->
+    <div class="box teorema" id="thm-markov">
+      <span class="box-title">1. Desigualdad de Markov Generalizada (DMG)</span>
+      <p>Sea $X$ una variable aleatoria arbitraria. Para cualquier constante real positiva $t &gt; 0$ y cualquier umbral $\lambda &gt; 0$:</p>
+      $$\P(|X| \ge \lambda) \le \frac{\E[|X|^t]}{\lambda^t}.$$
+
+      <details class="solucion"><summary>Demostración analítica rigurosa</summary><div>
+        <p>Sea $f(x)$ la función de densidad de $X$ (análogo con suma para variables discretas). Particionamos la integral de la esperanza del momento de orden $t$ en dos regiones disjuntas:</p>
+        $$\E[|X|^t] = \int_{-\infty}^\infty |x|^t f(x)\,dx = \int_{|x| \ge \lambda} |x|^t f(x)\,dx + \int_{|x| &lt; \lambda} |x|^t f(x)\,dx.$$
+        <p>Dado que $|x|^t \ge 0$ en toda la recta real, descartar la segunda integral solo puede reducir la cantidad:</p>
+        $$\E[|X|^t] \ge \int_{|x| \ge \lambda} |x|^t f(x)\,dx.$$
+        <p>En el dominio de integración $|x| \ge \lambda$, se cumple que $|x|^t \ge \lambda^t$. Reemplazando $|x|^t$ por la constante inferior $\lambda^t$:</p>
+        $$\E[|X|^t] \ge \int_{|x| \ge \lambda} \lambda^t f(x)\,dx = \lambda^t \int_{|x| \ge \lambda} f(x)\,dx = \lambda^t \P(|X| \ge \lambda).$$
+        <p>Dividiendo ambos extremos entre $\lambda^t &gt; 0$, obtenemos de inmediato la desigualdad buscada:</p>
+        $$\P(|X| \ge \lambda) \le \frac{\E[|X|^t]}{\lambda^t}.$$
+      </div></details>
+    </div>
+
+    <div class="box nota"><span class="box-title">Casos particulares cruciales de la DMG</span>
+      <ul>
+        <li><b>Markov clásica ($t = 1$ para variables no negativas $X \ge 0$):</b>
+          $$\P(X \ge \lambda) \le \frac{\E[X]}{\lambda}, \quad \forall \lambda &gt; 0.$$</li>
+        <li><b>Markov de segundo orden ($t = 2$):</b>
+          $$\P(|X| \ge \lambda) \le \frac{\E[X^2]}{\lambda^2} = \frac{\Var(X) + (\E[X])^2}{\lambda^2}.$$</li>
+      </ul>
+    </div>
+
+    <!-- Desigualdad de Chebyshev -->
+    <div class="box teorema" id="thm-chebyshev">
+      <span class="box-title">2. Desigualdad de Chebyshev</span>
+      <p>Sea $Y$ una variable aleatoria con media $\mu = \E[Y]$ y varianza finita $\sigma^2 = \Var(Y)$. Aplicando la DMG con $t = 2$ a la variable centrada $X = Y - \mu$:</p>
+      $$\P(|Y - \E[Y]| &gt; \lambda) \le \frac{\Var(Y)}{\lambda^2}, \quad \forall \lambda &gt; 0.$$
+      <p>Haciendo $\lambda = k\sigma$ con $k &gt; 0$, se obtiene la clásica <b>forma estandarizada</b>:</p>
+      $$\P(|Y - \mu| \ge k\sigma) \le \frac{1}{k^2}.$$
+    </div>
+
+    <!-- Desigualdad de Jensen -->
+    <div class="box teorema" id="thm-jensen">
+      <span class="box-title">3. Desigualdad de Jensen</span>
+      <p>Sea $\phi: \R \to \R$ una función convexa ($\phi''(x) \ge 0$). Si la variable aleatoria $X$ es integrable ($\E[|X|] &lt; \infty$), entonces:</p>
+      $$\E[\phi(X)] \ge \phi\big(\E[X]\big).$$
+      <p><i>Consecuencias directas:</i></p>
+      <ul>
+        <li>Para $\phi(u) = u^2$ (convexa): $\E[X^2] \ge (\E[X])^2 \implies \Var(X) = \E[X^2] - (\E[X])^2 \ge 0$.</li>
+        <li>Para $\phi(u) = -\ln(u)$ (convexa): $\E[-\ln X] \ge -\ln(\E[X]) \iff \E[\ln X] \le \ln(\E[X])$.</li>
+        <li>La media geométrica es siempre menor o igual que la media aritmética.</li>
+      </ul>
+    </div>
+
+    <!-- Desigualdad de Cauchy-Schwarz -->
+    <div class="box teorema" id="thm-cs">
+      <span class="box-title">4. Desigualdad de Cauchy-Schwarz</span>
+      <p>Si las variables aleatorias $X$ e $Y$ poseen momentos de segundo orden finitos ($\E[X^2] &lt; \infty$ y $\E[Y^2] &lt; \infty$), entonces:</p>
+      $$\big|\E[XY]\big| \le \sqrt{\E[X^2]\,\E[Y^2]}.$$
+
+      <details class="solucion"><summary>Demostración elegante mediante trinomio cuadrático</summary><div>
+        <p>Para cualquier número real $t \in \R$, la variable $(t X + Y)^2 \ge 0$ es no negativa en todo momento. Por la monotonía y linealidad de la esperanza:</p>
+        $$P(t) = \E\big[(t X + Y)^2\big] = t^2 \E[X^2] + 2t \E[XY] + \E[Y^2] \ge 0.$$
+        <p>$P(t)$ es un polinomio de segundo grado en $t$ que nunca se vuelve negativo. Por consiguiente, no puede tener dos raíces reales distintas, lo que exige que su discriminante $\Delta = b^2 - 4ac$ sea menor o igual a cero:</p>
+        $$\Delta = \big(2\E[XY]\big)^2 - 4\E[X^2]\E[Y^2] \le 0 \implies 4\big(\E[XY]\big)^2 \le 4\E[X^2]\E[Y^2].$$
+        <p>Dividiendo para 4 y extrayendo la raíz cuadrada a ambos miembros:</p>
+        $$\big|\E[XY]\big| \le \sqrt{\E[X^2]\,\E[Y^2]}.$$
+      </div></details>
+    </div>
+
+    <div class="box nota"><span class="box-title">Propiedades derivadas de Cauchy-Schwarz</span>
+      <ul>
+        <li><b>Variables centradas y coeficiente de correlación:</b> Si $\E[X] = \E[Y] = 0$, $\E[XY] = \Cov(X, Y)$, $\E[X^2] = \Var(X)$ y $\E[Y^2] = \Var(Y)$. Entonces:
+          $$\frac{|\Cov(X, Y)|}{\sqrt{\Var(X)\Var(Y)}} = |\rho| \le 1.$$</li>
+        <li><b>Caso constante $Y \equiv 1$:</b> Sustituyendo $Y = 1$ resulta $|\E[X]| \le \sqrt{\E[X^2]}$, coincidente con la consecuencia de Jensen.</li>
+        <li><b>Generalización:</b> La desigualdad de Cauchy-Schwarz es el caso especial $p = q = 2$ de la <i>Desigualdad de Hölder</i> $\E[|XY|] \le \big(\E[|X|^p]\big)^{1/p}\big(\E[|Y|^q]\big)^{1/q}$ para $1/p + 1/q = 1$.</li>
+      </ul>
+    </div>
+
+    <h3>Criterio del Error Cuadrático Medio para Consistencia</h3>
+    <p>Calcular directamente la probabilidad $\P(|\hat\theta_n - \theta| &gt; \varepsilon)$ a partir de la función de distribución exacta del estimador puede ser extraordinariamente complejo. Afortunadamente, el siguiente teorema proporciona un criterio operativo definitivo basado en el $\text{MSE}$.</p>
+
+    <div class="box teorema" id="thm-8">
+      <span class="box-title">Teorema 8 · Criterio de consistencia mediante el error cuadrático medio</span>
+      <p>Sea $(\hat\theta_n)_{n \ge 1}$ una sucesión de estimadores del parámetro $\theta$. Si el error cuadrático medio tiende a cero cuando el tamaño de muestra crece indefinidamente:</p>
+      $$\lim_{n\to\infty} \text{MSE}_\theta(\hat\theta_n) = 0,$$
+      <p>entonces la sucesión $(\hat\theta_n)_{n \ge 1}$ es un <b>estimador consistente</b> para $\theta$ ($\hat\theta_n \xrightarrow{P} \theta$).</p>
+    </div>
+
+    <!-- ---------------- Ejercicio 3 (Demostración Teorema 8) ---------------- -->
+    <div class="box ejercicio" id="ej-dem-thm8">
+      <span class="box-title">Demostración guiada · Teorema 8 mediante la DMG de segundo orden</span>
+      <p>Demuestre con rigor matemático el Teorema 8 utilizando la Desigualdad de Markov Generalizada con $t = 2$. Luego compare con la demostración de la clase basada en Markov de primer orden y Cauchy-Schwarz.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Defina la variable aleatoria de error $Z_n = \hat\theta_n - \theta$. Aplique la DMG con $t = 2$ y $\lambda = \varepsilon$ al evento $|Z_n| \ge \varepsilon$. Recuerde que $\E[Z_n^2] = \E[(\hat\theta_n - \theta)^2] = \text{MSE}_\theta(\hat\theta_n)$. Aplique el teorema del emparedado (sandwich) cuando $n \to \infty$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Demostración paso a paso</summary><div>
+        <h4>Método 1: Vía DMG de orden 2 ($t = 2$)</h4>
+        <ol class="pasos">
+          <li>Fijamos un margen de tolerancia arbitrario $\varepsilon &gt; 0$. Consideramos la variable de desviación $Z_n = \hat\theta_n - \theta$.</li>
+          <li>Aplicando la Desigualdad de Markov Generalizada con $t = 2$ y umbral $\lambda = \varepsilon$:
+            $$\P(|\hat\theta_n - \theta| \ge \varepsilon) = \P(|Z_n| \ge \varepsilon) \le \frac{\E[|Z_n|^2]}{\varepsilon^2} = \frac{\E\big[(\hat\theta_n - \theta)^2\big]}{\varepsilon^2}.$$</li>
+          <li>Por la definición canónica del error cuadrático medio: $\text{MSE}_\theta(\hat\theta_n) = \E\big[(\hat\theta_n - \theta)^2\big]$. Por tanto:
+            $$0 \le \P(|\hat\theta_n - \theta| \ge \varepsilon) \le \frac{\text{MSE}_\theta(\hat\theta_n)}{\varepsilon^2}.$$</li>
+          <li>Tomamos el límite cuando $n \to \infty$ en todos los términos de la desigualdad:
+            $$0 \le \lim_{n\to\infty} \P(|\hat\theta_n - \theta| \ge \varepsilon) \le \frac{1}{\varepsilon^2} \lim_{n\to\infty} \text{MSE}_\theta(\hat\theta_n) = \frac{1}{\varepsilon^2} \cdot 0 = 0.$$</li>
+          <li>Por el teorema del sándwich (o del encaje):
+            $$\lim_{n\to\infty} \P(|\hat\theta_n - \theta| \ge \varepsilon) = 0.$$
+            Como esto es válido para todo $\varepsilon &gt; 0$, se concluye que $\hat\theta_n \xrightarrow{P} \theta$. $\blacksquare$</li>
+        </ol>
+
+        <h4>Método 2: Vía Markov de orden 1 y Cauchy-Schwarz (versión de la diapositiva)</h4>
+        <p>Aplicando Markov clásica ($t = 1$):</p>
+        $$\P(|\hat\theta_n - \theta| \ge \varepsilon) \le \frac{\E\big[|\hat\theta_n - \theta|\big]}{\varepsilon}.$$
+        <p>Por la desigualdad de Cauchy-Schwarz con $Y \equiv 1$, sabemos que $\E[|X|] \le \sqrt{\E[X^2]}$. Aplicándolo a $X = |\hat\theta_n - \theta|$:</p>
+        $$\E\big[|\hat\theta_n - \theta|\big] \le \sqrt{\E\big[(\hat\theta_n - \theta)^2\big]} = \sqrt{\text{MSE}_\theta(\hat\theta_n)}.$$
+        <p>Sustituyendo:</p>
+        $$\P(|\hat\theta_n - \theta| \ge \varepsilon) \le \frac{\sqrt{\text{MSE}_\theta(\hat\theta_n)}}{\varepsilon} \xrightarrow{n\to\infty} \frac{\sqrt{0}}{\varepsilon} = 0. \quad \blacksquare$$
+      </div></details>
+    </div>
+
+    <div class="box teorema" id="lem-1">
+      <span class="box-title">Lema 1 · Consistencia para estimadores insesgados</span>
+      <p>Sea $\hat\theta_n$ un estimador <b>insesgado</b> de $\theta$ ($\E[\hat\theta_n] = \theta$ para todo $n$). Entonces $\hat\theta_n$ es un estimador consistente de $\theta$ si y solo si:</p>
+      $$\lim_{n\to\infty} \Var(\hat\theta_n) = 0.$$
+
+      <details class="solucion"><summary>Justificación directa</summary><div>
+        <p>Recordando la descomposición del error cuadrático medio:</p>
+        $$\text{MSE}_\theta(\hat\theta_n) = \Var(\hat\theta_n) + [\mathbb{B}(\hat\theta_n)]^2.$$
+        <p>Al ser $\hat\theta_n$ insesgado, el sesgo es idénticamente nulo: $\mathbb{B}(\hat\theta_n) = 0$. En consecuencia, $\text{MSE}_\theta(\hat\theta_n) = \Var(\hat\theta_n)$. Por el Teorema 8, basta que $\lim_{n\to\infty}\Var(\hat\theta_n) = 0$ para garantizar la consistencia en probabilidad.</p>
+      </div></details>
+    </div>
+
+    <!-- ---------------- Ejercicio 4 (Consistencia de X_bar y S^2) ---------------- -->
+    <div class="box ejercicio" id="ej-ldgn-s2">
+      <span class="box-title">Ejemplo de aplicación · Demostración de la Ley Débil de los Grandes Números y consistencia de $S^2$</span>
+      <p>Sea $X_1, \dots, X_n \iid (\mu, \sigma^2)$ con varianza finita $\sigma^2 &lt; \infty$:</p>
+      <ol class="pasos">
+        <li>Demuestre que la media muestral $\bar X_n$ es un estimador consistente de $\mu$ (Ley Débil de los Grandes Números).</li>
+        <li>Bajo el supuesto de normalidad $X_i \iid N(\mu, \sigma^2)$, demuestre que la cuasivarianza muestral $S^2 = \frac{1}{n-1}\sum_{i=1}^n (X_i - \bar X)^2$ es consistente para $\sigma^2$.</li>
+      </ol>
+
+      <details class="solucion"><summary>Solución paso a paso</summary><div>
+        <h4>1. Consistencia de la media muestral $\bar X_n$</h4>
+        <ol class="pasos">
+          <li>Sabemos que $\E[\bar X_n] = \mu$, por lo que $\bar X_n$ es un estimador insesgado de $\mu$.</li>
+          <li>Su varianza es $\Var(\bar X_n) = \frac{\sigma^2}{n}$.</li>
+          <li>Tomando el límite cuando $n \to \infty$:
+            $$\lim_{n\to\infty} \Var(\bar X_n) = \lim_{n\to\infty} \frac{\sigma^2}{n} = 0.$$</li>
+          <li>Por el Lema 1, $\bar X_n$ es consistente para $\mu$, es decir: $\bar X_n \xrightarrow{P} \mu$.</li>
+        </ol>
+
+        <h4>2. Consistencia de la cuasivarianza muestral $S^2$</h4>
+        <ol class="pasos">
+          <li>Por teoría de distribuciones muestrales (Clase 3), para muestras normales $\frac{(n-1)S^2}{\sigma^2} \sim \chi^2_{n-1}$.</li>
+          <li>$S^2$ es insesgado: $\E[S^2] = \sigma^2$.</li>
+          <li>Calculamos su varianza utilizando la propiedad de la distribución chi-cuadrada ($\Var(\chi^2_\nu) = 2\nu$):
+            $$\Var\left(\frac{(n-1)S^2}{\sigma^2}\right) = 2(n-1) \implies \frac{(n-1)^2}{\sigma^4}\Var(S^2) = 2(n-1) \implies \Var(S^2) = \frac{2\sigma^4}{n-1}.$$</li>
+          <li>Evaluamos el límite cuando $n \to \infty$:
+            $$\lim_{n\to\infty} \Var(S^2) = \lim_{n\to\infty} \frac{2\sigma^4}{n-1} = 0.$$</li>
+          <li>Invocando el Lema 1, concluimos que $S^2 \xrightarrow{P} \sigma^2$. Asimismo, el estimador sesgado de máxima verosimilitud $S_n^2 = \frac{n-1}{n}S^2$ satisface $\lim \text{MSE}(S_n^2) = 0$ y también es consistente.</li>
+        </ol>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="robustez">3. Robustez de estimadores</h2>
+
+    <div class="cat-box">
+      <h3>Motivación: El "Efecto Gato" (o el gato caminando sobre el teclado)</h3>
+      <p>Imagine que un investigador toma una muestra de tamaño $n = 5$ de una población centrada:</p>
+      $$\{-5, -1, 0, 2, 4\}.$$
+      <p>Calculamos los dos estadísticos de tendencia central por excelencia:</p>
+      <ul>
+        <li><b>Media aritmética muestral:</b> $\bar X = \frac{-5 + (-1) + 0 + 2 + 4}{5} = \frac{0}{5} = 0$.</li>
+        <li><b>Mediana muestral:</b> dato central ordenado $\tilde X = 0$.</li>
+      </ul>
+      <p>Ambos estadísticos coinciden de forma unánime en que el centro de la distribución es $0$.</p>
+      <p>En un instante de descuido, <b>un gato se pasea por el teclado del computador</b> y pisa el número cero varias veces consecutivas sobre el último registro, alterando la muestra a:</p>
+      $$\{-5, -1, 0, 2, 4000\}.$$
+      <p>Recalculemos de inmediato ambos estadísticos tras la contaminación:</p>
+      <ul>
+        <li><b>Nueva media aritmética:</b> $\bar X = \frac{-5 - 1 + 0 + 2 + 4000}{5} = \frac{3996}{5} = \mathbf{799.2}$.</li>
+        <li><b>Nueva mediana:</b> datos ordenados $\{-5, -1, \mathbf{0}, 2, 4000\} \implies \tilde X = \mathbf{0}$.</li>
+      </ul>
+      <p><b>Lección reveladora:</b> Un solo valor atípico aberrante (outlier) o error tipográfico desvió la media aritmética casi 800 unidades hacia una región vacía donde no habita ningún otro punto de datos. En cambio, <i>la mediana muestral permaneció totalmente inconmovible en $0$</i>.</p>
+    </div>
+
+    <div class="box definicion" id="def-robustez">
+      <span class="box-title">Definición · Estimador robusto y Estadística Robusta</span>
+      <p>Un estimador estadístico se denomina <b>robusto</b> si es insensible a pequeñas violaciones o perturbaciones en los supuestos teóricos del modelo probabilístico (como asimetría o colas pesadas) y, de forma primordial, a la <b>presencia de observaciones atípicas extremas o contaminaciones puntuales</b> en la muestra.</p>
+      <p>La disciplina encargada de diseñar, evaluar y cuantificar el comportamiento de estos procedimientos se denomina <b>Estadística Robusta</b> (fundada por Peter J. Huber y Frank Hampel).</p>
+    </div>
+
+    <h3>El concepto cualitativo de Punto de Ruptura (Breakdown Point)</h3>
+    <p>Para medir el grado de invulnerabilidad de un estimador ante datos corruptos se utiliza el <b>punto de ruptura</b> ($\varepsilon^*$): la proporción mínima de datos contaminados arbitrariamente grande que se requiere inyectar en la muestra para forzar al estimador a tomar valores infinitamente desviados ($\pm\infty$).</p>
+
+    <div class="table-wrap">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Estimador</th>
+            <th>Fórmula / Descripción</th>
+            <th>Punto de ruptura ($\varepsilon^*$)</th>
+            <th>Comportamiento ante outliers</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>Media muestral ($\bar X$)</b></td>
+            <td>$\frac{1}{n}\sum_{i=1}^n X_i$</td>
+            <td>$\varepsilon^* = \frac{1}{n} \xrightarrow{n\to\infty} 0\%$</td>
+            <td><span class="comp-tag tag-loss">No robusto</span>. Un solo dato basta para destruir la estimación.</td>
+          </tr>
+          <tr>
+            <td><b>Mediana muestral ($\tilde X$)</b></td>
+            <td>Percentil 50 ($X_{((n+1)/2)}$)</td>
+            <td>$\varepsilon^* \approx 50\%$</td>
+            <td><span class="comp-tag tag-win">Máxima robustez</span>. Tolera hasta casi la mitad de datos aberrantes.</td>
+          </tr>
+          <tr>
+            <td><b>Media truncada ($\bar X_\alpha$)</b></td>
+            <td>Elimina el $\alpha\%$ superior e inferior y promedia el resto</td>
+            <td>$\varepsilon^* = \alpha$ (ej. $20\%$)</td>
+            <td><span class="comp-tag tag-warn">Robusto y eficiente</span>. Combina resistencia y bajo error estándar.</td>
+          </tr>
+          <tr>
+            <td><b>Media Winsorizada</b></td>
+            <td>Reemplaza outliers por percentiles límite y promedia</td>
+            <td>$\varepsilon^* = \alpha$</td>
+            <td><span class="comp-tag tag-warn">Robusto</span>. No descarta datos pero acota su peso destructivo.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="simuladores">4. Laboratorios interactivos</h2>
+
+    <!-- Simulador 1 -->
+    <div class="sim" id="sim-consistencia">
+      <p class="sim-title">Simulación interactiva 1 · Trayectorias muestrales y consistencia en probabilidad ($\hat\theta_n \xrightarrow{P} \theta$)</p>
+      <p class="sim-desc">Observe la Ley de los Grandes Números en acción. Genere múltiples trayectorias aleatorias de la media muestral acumulada $\bar X_n$ desde $n = 1$ hasta $N$. Examine cómo para tamaños muestrales pequeños las trayectorias se dispersan intensamente, pero al incrementar $n$, quedan atrapadas inexorablemente dentro del túnel de tolerancia horizontal $[\theta - \varepsilon, \theta + \varepsilon]$, haciendo que la probabilidad de salirse converja a cero.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+
+    <!-- Simulador 2 -->
+    <div class="sim" id="sim-robustez">
+      <p class="sim-title">Simulación interactiva 2 · El "Efecto Gato" y la curva de influencia: Media vs. Mediana vs. Media Truncada</p>
+      <p class="sim-desc">Interaccione con la muestra $\{-5, -1, 0, 2, x_{\text{gato}}\}$. Deslice el valor del dato contaminante $x_{\text{gato}}$ o simule el pisotón del gato ($x = 4000$). Observe en tiempo real cómo la media muestral colapsa verticalmente (curva lineal sin freno), mientras que la mediana y la media truncada permanecen blindadas en mesetas horizontales constantes.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="autoevaluacion">5. Autoevaluación interactiva</h2>
+    <p>Ponga a prueba su comprensión teórica y destreza analítica resolviendo los siguientes ejercicios formativos con retroalimentación inmediata.</p>
+
+    <div id="quiz-1"></div>
+    <div id="quiz-2"></div>
+    <div id="quiz-3"></div>
+
+    <div style="margin-top: 2rem;">
+      <h3>Comprobadores numéricos guiados</h3>
+      <div id="nc-1"></div>
+      <div id="nc-2"></div>
+    </div>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../assets/js/stats.js"></script>
+<script src="../assets/js/plot.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+(function () {
+  'use strict';
+  const { dist, fmt } = EM.stats;
+
+  /* ============================================================
+     SIMULACIÓN 1: Consistencia y convergencia en probabilidad
+     ============================================================ */
+  (function () {
+    const root = document.getElementById('sim-consistencia');
+    if (!root) return;
+
+    let model = 'bern';
+    let paramVal = 0.5;
+    let eps = 0.08;
+    let N = 400;
+    let K = 6;
+    let seed = 12345;
+
+    const ctr = root.querySelector('.controls');
+
+    EM.ui.select(ctr, {
+      label: 'Modelo poblacional',
+      value: model,
+      options: [
+        { value: 'bern', label: 'Bernoulli (Lanzamiento de moneda, p)' },
+        { value: 'pois', label: 'Poisson (Conteo, λ)' },
+        { value: 'norm', label: 'Normal (Gaussiana, μ, σ = 1.5)' }
+      ],
+      onChange: v => {
+        model = v;
+        if (model === 'bern') paramVal = 0.5;
+        else if (model === 'pois') paramVal = 4.0;
+        else paramVal = 2.0;
+        updateParamSlider();
+        render();
+      }
+    });
+
+    const sParam = EM.ui.slider(ctr, {
+      tex: 'p',
+      min: 0.1, max: 0.9, step: 0.05, value: paramVal,
+      fmt: v => v.toFixed(2),
+      onInput: v => { paramVal = v; render(); }
+    });
+    const sParamWrap = sParam.input.closest('.slider');
+
+    function updateParamSlider() {
+      if (model === 'bern') {
+        sParam.input.min = 0.1; sParam.input.max = 0.9; sParam.input.step = 0.05;
+        sParam.set(paramVal);
+        sParamWrap.querySelector('.slider-label').innerHTML = EM.ui.tex('p');
+      } else if (model === 'pois') {
+        sParam.input.min = 1; sParam.input.max = 10; sParam.input.step = 0.5;
+        sParam.set(paramVal);
+        sParamWrap.querySelector('.slider-label').innerHTML = EM.ui.tex('\\lambda');
+      } else {
+        sParam.input.min = -5; sParam.input.max = 5; sParam.input.step = 0.5;
+        sParam.set(paramVal);
+        sParamWrap.querySelector('.slider-label').innerHTML = EM.ui.tex('\\mu');
+      }
+    }
+
+    EM.ui.slider(ctr, {
+      tex: '\\varepsilon',
+      min: 0.02, max: 0.25, step: 0.01, value: eps,
+      fmt: v => v.toFixed(2),
+      onInput: v => { eps = v; render(); }
+    });
+
+    EM.ui.slider(ctr, {
+      tex: 'N',
+      min: 50, max: 800, step: 25, value: N,
+      fmt: v => v.toString(),
+      onInput: v => { N = v; render(); }
+    });
+
+    EM.ui.slider(ctr, {
+      label: 'Trayectorias K',
+      min: 1, max: 15, step: 1, value: K,
+      fmt: v => v.toString(),
+      onInput: v => { K = v; render(); }
+    });
+
+    EM.ui.button(ctr, '🎲 Nuevas trayectorias', () => {
+      seed = (seed * 1664525 + 1013904223) >>> 0;
+      render();
+    }, { primary: true });
+
+    const plot = EM.plot.create(root.querySelector('.plot'), {
+      xmin: 1, xmax: N, ymin: paramVal - 0.3, ymax: paramVal + 0.3,
+      height: 320, xlabel: 'Tamaño muestral (n)', ylabel: 'Media muestral acumulada (X̄ₙ)',
+      legendPos: 'tr'
+    });
+    const out = EM.ui.readout(root.querySelector('.out'));
+
+    function render() {
+      let thetaTrue = paramVal;
+      let sigma2 = 1;
+      let distName = '';
+
+      if (model === 'bern') {
+        thetaTrue = paramVal;
+        sigma2 = paramVal * (1 - paramVal);
+        distName = `Bernoulli($p = ${paramVal.toFixed(2)}$)`;
+      } else if (model === 'pois') {
+        thetaTrue = paramVal;
+        sigma2 = paramVal;
+        distName = `Poisson($\\lambda = ${paramVal.toFixed(1)}$)`;
+      } else {
+        thetaTrue = paramVal;
+        sigma2 = 1.5 * 1.5;
+        distName = `Normal($\\mu = ${paramVal.toFixed(1)}, \\sigma = 1.5$)`;
+      }
+
+      const rng = EM.stats.mulberry32(seed);
+      const trajs = [];
+      let insideCount = 0;
+
+      for (let k = 0; k < K; k++) {
+        const traj = new Float64Array(N);
+        let sum = 0;
+        for (let i = 0; i < N; i++) {
+          let x;
+          if (model === 'bern') {
+            x = rng() < paramVal ? 1 : 0;
+          } else if (model === 'pois') {
+            x = EM.stats.rpois(paramVal, rng);
+          } else {
+            x = paramVal + 1.5 * EM.stats.rnorm01(rng);
+          }
+          sum += x;
+          traj[i] = sum / (i + 1);
+        }
+        trajs.push(traj);
+        if (Math.abs(traj[N - 1] - thetaTrue) <= eps) {
+          insideCount++;
+        }
+      }
+
+      const ySpan = Math.max(0.2, eps * 2.8, Math.sqrt(sigma2) * 0.75);
+      const ymin = thetaTrue - ySpan;
+      const ymax = thetaTrue + ySpan;
+
+      plot.setRange({ xmin: 1, xmax: N, ymin, ymax });
+
+      const colors = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6'];
+
+      plot.draw(g => {
+        // Banda sombreada de tolerancia [theta - eps, theta + eps]
+        g.area(() => thetaTrue + eps, 1, N, { color: 'accent', alpha: 0.16, label: `Banda ±ε (ε = ${eps.toFixed(2)})` });
+        g.hline(thetaTrue + eps, { color: 'accent', dash: [4, 4], width: 1.2 });
+        g.hline(thetaTrue - eps, { color: 'accent', dash: [4, 4], width: 1.2 });
+
+        // Línea horizontal en theta verdadero
+        g.hline(thetaTrue, { color: 'ink', width: 2, label: `θ = ${thetaTrue.toFixed(2)}` });
+
+        // Dibujar cada trayectoria individual
+        const ctx = g.ctx;
+        trajs.forEach((traj, idx) => {
+          const colToken = colors[idx % colors.length];
+          const color = EM.plot.resolveColor(colToken);
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(g.state.margin.l, g.state.margin.t,
+                   g.canvas.width / (window.devicePixelRatio || 1) - g.state.margin.l - g.state.margin.r,
+                   g.canvas.height / (window.devicePixelRatio || 1) - g.state.margin.t - g.state.margin.b);
+          ctx.clip();
+
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 1.6;
+          ctx.globalAlpha = 0.85;
+          ctx.beginPath();
+          ctx.moveTo(g.X(1), g.Y(traj[0]));
+          for (let i = 1; i < N; i++) {
+            ctx.lineTo(g.X(i + 1), g.Y(traj[i]));
+          }
+          ctx.stroke();
+          ctx.restore();
+        });
+      });
+
+      const propEmp = (insideCount / K) * 100;
+      const cotaCheb = sigma2 / (N * eps * eps);
+      const probTeorMin = Math.max(0, 1 - cotaCheb);
+
+      out.set(`
+        <b>Población simulada:</b> ${distName} · Parámetro objetivo $\\theta = ${thetaTrue.toFixed(2)}$ · Varianza $\\sigma^2 = ${sigma2.toFixed(3)}$<br>
+        • <b>Franja de tolerancia:</b> $[\\theta - \\varepsilon, \\theta + \\varepsilon] = [${(thetaTrue - eps).toFixed(3)}, ${(thetaTrue + eps).toFixed(3)}]$ con $\\varepsilon = ${eps.toFixed(2)}$<br>
+        • <b>Comprobación empírica en el paso final $n = ${N}$:</b> <b>${insideCount} de ${K}</b> trayectorias (${propEmp.toFixed(1)} %) terminaron dentro de la banda.<br>
+        • <b>Cota de dispersión de Chebyshev:</b> $\\P(|\\bar X_N - \\theta| \\ge ${eps.toFixed(2)}) \\le \\frac{\\sigma^2}{N\\varepsilon^2} = \\frac{${sigma2.toFixed(3)}}{${N} \\cdot (${eps.toFixed(2)})^2} = $ <b>${cotaCheb.toFixed(4)}</b><br>
+        &emsp;$\\implies$ Probabilidad teórica mínima garantizada de no salir de la banda: $\\ge 1 - \\frac{\\sigma^2}{N\\varepsilon^2} = $ <b>${(probTeorMin * 100).toFixed(1)} %</b>.<br>
+        <small style="color:var(--muted)">Al aumentar el tamaño muestral $N$, el embudo de Chebyshev colapsa hacia cero y la probabilidad de que $\\bar X_n$ difiera de $\\theta$ por más de $\\varepsilon$ se anula rigurosamente ($\\hat\\theta_n \\xrightarrow{P} \\theta$).</small>
+      `);
+    }
+
+    updateParamSlider();
+    render();
+  })();
+
+  /* ============================================================
+     SIMULACIÓN 2: El "Efecto Gato" y la Robustez Estadística
+     ============================================================ */
+  (function () {
+    const root = document.getElementById('sim-robustez');
+    if (!root) return;
+
+    let xGato = 4.0;
+    const baseSample = [-5, -1, 0, 2];
+
+    const ctr = root.querySelector('.controls');
+
+    const sOutlier = EM.ui.slider(ctr, {
+      label: 'Valor de X_gato',
+      min: -30, max: 60, step: 1, value: xGato,
+      fmt: v => v.toString(),
+      onInput: v => { xGato = v; render(); }
+    });
+
+    const btnGroup = document.createElement('div');
+    btnGroup.className = 'btn-group';
+    ctr.appendChild(btnGroup);
+
+    EM.ui.button(btnGroup, '🐱 ¡El gato pisa el teclado! (x = 4000)', () => {
+      xGato = 4000;
+      sOutlier.set(60);
+      render();
+    }, { primary: true });
+
+    EM.ui.button(btnGroup, '✓ Muestra original (x = 4)', () => {
+      xGato = 4;
+      sOutlier.set(4);
+      render();
+    });
+
+    EM.ui.button(btnGroup, '⚠️ Outlier negativo (x = −200)', () => {
+      xGato = -200;
+      sOutlier.set(-30);
+      render();
+    });
+
+    const plot = EM.plot.create(root.querySelector('.plot'), {
+      xmin: -30, xmax: 60, ymin: -8, ymax: 14,
+      height: 310, xlabel: 'Valor del dato contaminante (x)', ylabel: 'Estimación resultante T(x)',
+      legendPos: 'tl'
+    });
+    const out = EM.ui.readout(root.querySelector('.out'));
+
+    function calcEstimators(xVal) {
+      const arr = [-5, -1, 0, 2, xVal];
+      const mean = arr.reduce((s, x) => s + x, 0) / 5;
+      const sorted = arr.slice().sort((a, b) => a - b);
+      const median = sorted[2];
+      // Media recortada al 20% (elimina el más bajo y el más alto de los 5 datos, promedia 3)
+      const trimmed = (sorted[1] + sorted[2] + sorted[3]) / 3;
+      return { mean, median, trimmed, sorted };
+    }
+
+    function render() {
+      const current = calcEstimators(xGato);
+
+      // Si xGato está dentro de [-30, 60] usamos su valor; si no, lo indicamos
+      const inWindow = (xGato >= -30 && xGato <= 60);
+
+      plot.draw(g => {
+        // Línea horizontal en 0
+        g.hline(0, { color: 'muted', dash: [3, 3] });
+
+        // Curva de la Media: recta y = (-4 + x) / 5
+        g.curve(x => (-4 + x) / 5, {
+          color: 'bad', width: 2.5,
+          label: 'Media muestral X̄ = (x − 4)/5 (Pendiente 1/5 constante)'
+        });
+
+        // Curva de la Mediana
+        g.curve(x => {
+          const s = [-5, -1, 0, 2, x].sort((a, b) => a - b);
+          return s[2];
+        }, {
+          color: 'good', width: 2.8,
+          label: 'Mediana X̃ (Totalmente acotada entre −1 y 0)'
+        });
+
+        // Curva de la Media truncada al 20%
+        g.curve(x => {
+          const s = [-5, -1, 0, 2, x].sort((a, b) => a - b);
+          return (s[1] + s[2] + s[3]) / 3;
+        }, {
+          color: 'c2', width: 2.2, dash: [5, 4],
+          label: 'Media truncada al 20% (Acotada entre −2 y 0.33)'
+        });
+
+        // Marcador vertical en el valor actual de x si cabe en el gráfico
+        if (inWindow) {
+          g.vline(xGato, { color: 'ink', dash: [3, 3], label: `x = ${xGato}` });
+
+          // Puntos actuales sobre las curvas
+          g.points([xGato], [current.mean], { color: 'bad', r: 5 });
+          g.points([xGato], [current.median], { color: 'good', r: 5 });
+          g.points([xGato], [current.trimmed], { color: 'c2', r: 4 });
+        }
+      });
+
+      const muestraStr = `$\\{-5,\\, -1,\\, 0,\\, 2,\\, \\mathbf{${xGato}}\\}$`;
+
+      out.set(`
+        <b>Muestra actual:</b> ${muestraStr}<br>
+        • <b>Media muestral ($\\bar X$):</b> $\\frac{-5 - 1 + 0 + 2 + (${xGato})}{5} = $ <b style="color:var(--bad); font-size:1.05rem;">${fmt(current.mean, 2)}</b> ${Math.abs(xGato) > 100 ? '<span class="comp-tag tag-loss">¡Colapso por dato atípico!</span>' : ''}<br>
+        • <b>Mediana muestral ($\\tilde X$):</b> Elemento central ordenado = <b style="color:var(--good); font-size:1.05rem;">${fmt(current.median, 2)}</b> <span class="comp-tag tag-win">✓ 100% Inmune</span><br>
+        • <b>Media truncada al $20\\%$ ($\\bar X_{0.2}$):</b> Descarta $\\min$ y $\\max$, promedia los 3 centrales = <b style="color:var(--plot-c2); font-size:1.05rem;">${fmt(current.trimmed, 2)}</b> <span class="comp-tag tag-win">✓ Resistente</span><br>
+        <p style="margin-top:0.5rem; font-size:0.92rem;"><b>Diagnóstico de robustez:</b> La media muestral posee una curva de influencia <i>no acotada</i> (línea roja con pendiente positiva sin fin): cada unidad que se desplaza el dato atípico arrastra a la media en $1/n = 0.20$ unidades. En contraste, la mediana y la media truncada poseen curvas de influencia <i>estrictamente acotadas</i> (mesetas horizontales que se aplanan), neutralizando por completo el pisotón del gato.</p>
+      `);
+    }
+
+    render();
+  })();
+
+  /* ============================================================
+     AUTOEVALUACIÓN Y VERIFICADORES NUMÉRICOS
+     ============================================================ */
+  EM.ui.quiz('#quiz-1', {
+    question: '1. Sean $X_1, \\dots, X_n \\iid N(\\mu, \\sigma^2)$ y sea $\\widehat{\\sigma^2} = S_n^2$ el estimador de máxima verosimilitud de la varianza. ¿Cuál de las siguientes afirmaciones sobre el estimador transformado $\\hat\\sigma = \\sqrt{S_n^2}$ es correcta?',
+    options: [
+      'Por el Principio de Invarianza de Zehna, $\\hat\\sigma = \\sqrt{S_n^2}$ es el EMV de $\\sigma$, pero debido a la Desigualdad de Jensen se convierte en un estimador sesgado para muestras finitas.',
+      'Al ser la raíz cuadrada una función monótona, el Principio de Invarianza garantiza que $\\hat\\sigma$ conserva tanto la condición de EMV como la insesgadez exacta para cualquier $n$.',
+      'El principio de invarianza no es aplicable a $\\sigma$ porque la función $g(u) = \\sqrt{u}$ no es una transformación lineal afín.',
+      '$\\hat\\sigma = \\sqrt{S_n^2}$ no es consistente para $\\sigma$, ya que la raíz cuadrada amplifica la varianza asintótica del estimador.'
+    ],
+    answer: 0,
+    explain: 'El Principio de Invarianza de los EMV asegura que $\\widehat{g(\\theta)} = g(\\hat\\theta)$ para toda función $g$, por lo que $\\hat\\sigma = \\sqrt{S_n^2}$ es en efecto el EMV. Sin embargo, la función raíz cuadrada es estrictamente cóncava, de modo que por Jensen $\\E[\\sqrt{S_n^2}] &lt; \\sqrt{\\E[S_n^2]}$, introduciendo un sesgo negativo finito hacia abajo (aunque es asintóticamente insesgado).'
+  });
+
+  EM.ui.quiz('#quiz-2', {
+    question: '2. Considere una sucesión de estimadores $(\\hat\\theta_n)_{n \\ge 1}$ para el parámetro $\\theta$. Si se demuestra que $\\lim_{n\\to\\infty} \\Var(\\hat\\theta_n) = 0$, ¿garantiza esto necesariamente que $\\hat\\theta_n$ sea consistente para $\\theta$?',
+    options: [
+      'Sí, en cualquier situación matemática, pues la varianza cero implica convergencia puntual.',
+      'No necesariamente: solo garantiza consistencia si el estimador es insesgado (Lema 1) o si su sesgo también se desvanece ($\\lim_{n\\to\\infty} \\mathbb{B}(\\hat\\theta_n) = 0$), asegurando que $\\lim_{n\\to\\infty} \\text{MSE} = 0$.',
+      'No, porque la convergencia en varianza solo implica convergencia en distribución, nunca convergencia en probabilidad.',
+      'Sí, siempre y cuando la población original provenga de una distribución exponencial o normal.'
+    ],
+    answer: 1,
+    explain: 'Por el Teorema 8, la condición suficiente para la consistencia es $\\lim_{n\\to\\infty} \\text{MSE}(\\hat\\theta_n) = 0$. Como $\\text{MSE} = \\Var + \\mathbb{B}^2$, si un estimador tuviera varianza nula en el límite pero un sesgo constante persistente (por ejemplo $\\hat\\theta_n = 5$ para estimar $\\theta = 0$), $\\Var \\to 0$ pero $\\hat\\theta_n \\xrightarrow{P} 5 \\ne \\theta$, no siendo consistente.'
+  });
+
+  EM.ui.quiz('#quiz-3', {
+    question: '3. En una auditoría financiera de $n = 100$ transacciones bancarias, el auditor sospecha que una o dos transacciones fueron digitadas con ceros adicionales por error humano. ¿Qué medida de tendencia central debe reportar y por qué?',
+    options: [
+      'La media aritmética muestral $\\bar X$, porque al ser el UMVUE es el estimador más eficiente y garantiza el menor error absoluto.',
+      'La mediana muestral $\\tilde X$ o una media recortada $\\bar X_\\alpha$, porque poseen un punto de ruptura superior al $1\\%$ y su curva de influencia acotada las hace inmunes al colapso frente a errores de digitación.',
+      'El rango medio $(X_{(1)} + X_{(n)})/2$, porque incluye directamente los valores extremos para no perder información.',
+      'La cuasivarianza muestral $S^2$, porque no depende de la localización de los datos.'
+    ],
+    answer: 1,
+    explain: 'La media muestral tiene punto de ruptura $\\varepsilon^* = 1/n = 1/100 = 1\\%$: una sola transacción corrupta altera drásticamente su valor. La mediana tiene un punto de ruptura cercano al $50\\%$, permitiéndole resistir perfectamente varias contaminaciones aberrantes sin distorsionar el centro auditado.'
+  });
+
+  EM.ui.numcheck('#nc-1', {
+    prompt: 'Sea $Y$ una variable aleatoria con media $\\mu = 10$ y varianza $\\sigma^2 = 4$. Utilizando la Desigualdad de Chebyshev, calcula la cota superior máxima para la probabilidad $\\P(|Y - 10| \\ge 4)$:',
+    answer: 0.25,
+    tol: 0.01,
+    placeholder: 'ej. 0.25',
+    hint: 'Aplica Chebyshev: $\\P(|Y - \\mu| \\ge \\lambda) \\le \\frac{\\Var(Y)}{\\lambda^2}$. Aquí $\\Var(Y) = 4$ y el margen es $\\lambda = 4$. Calcula $\\frac{4}{4^2} = \\frac{4}{16} = 0.25$.'
+  });
+
+  EM.ui.numcheck('#nc-2', {
+    prompt: 'Se extrae una muestra de tamaño $n = 25$ de una población $\\text{Poisson}(\\lambda = 5)$. Calcula el sesgo sistemático $\\mathbb{B}(\\widehat{\\lambda^2}) = \\E[(\\bar X)^2] - \\lambda^2$ del estimador de máxima verosimilitud de $\\lambda^2$:',
+    answer: 0.20,
+    tol: 0.01,
+    placeholder: 'ej. 0.20',
+    hint: 'Como demostramos en el Ejemplo 4, $\\E[(\\bar X)^2] = \\lambda^2 + \\frac{\\lambda}{n}$. Por ende, el sesgo es exactamente $\\frac{\\lambda}{n} = \\frac{5}{25} = 0.20$.'
+  });
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,889 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clase 8 · Métodos de estimación puntual: momentos y máxima verosimilitud</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/theme.js"></script>
+<style>
+  .badge.star { background: var(--plot-c4, #e67e22); color: #fff; font-size: 0.72rem; padding: 2px 7px; border-radius: 4px; vertical-align: middle; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+  .table-wrap { overflow-x: auto; margin: 1.2rem 0; }
+  table.tabla { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+  table.tabla th, table.tabla td { padding: 9px 12px; border: 1px solid var(--border, #e2e8f0); text-align: center; }
+  table.tabla th { background: var(--surface-2, #f8fafc); font-weight: 600; color: var(--ink); }
+  table.tabla td.izq { text-align: left; }
+  .comp-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.82rem; font-weight: 600; font-family: var(--font-mono, monospace); }
+  .tag-win { background: rgba(34, 197, 94, 0.15); color: var(--good, #16a34a); }
+  .tag-loss { background: rgba(239, 68, 68, 0.15); color: var(--bad, #dc2626); }
+  .tag-neu { background: rgba(148, 163, 184, 0.18); color: var(--ink); }
+  .method-card { border: 1px solid var(--border); border-radius: 8px; padding: 1.2rem; margin: 1rem 0; background: var(--surface); }
+  .method-card h3 { margin-top: 0; color: var(--accent); }
+  .math-callout { background: var(--surface-2); border-left: 4px solid var(--accent); padding: 0.8rem 1.2rem; margin: 1rem 0; border-radius: 0 6px 6px 0; }
+</style>
+</head>
+<body data-page="clase-08" data-root="../">
+<main id="contenido">
+
+  <header class="page-head">
+    <p class="kicker">Clase 8 · Unidad 2 — Métodos de estimación puntual</p>
+    <h1>Métodos de estimación puntual: momentos y máxima verosimilitud</h1>
+    <p class="lead">¿Cómo se deducen estimadores cuando la intuición no basta? Dos principios fundamentales: el principio de analogía mediante el <b>Método de los Momentos (MM)</b> y el principio de verosimilitud mediante el <b>Método de Máxima Verosimilitud (MV)</b>.</p>
+  </header>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="introduccion">1. La necesidad de métodos sistemáticos de estimación</h2>
+
+    <div class="box idea"><span class="box-title">De evaluar estimadores a deducirlos formalmente</span>
+      <p>En las Clases 6 y 7 aprendimos a medir la calidad de un estimador dado ($\bar X, S^2, X_{(1)}, X_{(n)}$) calculando su sesgo, varianza, error cuadrático medio ($\text{MSE}$) y eficiencia relativa. Sin embargo, quedó una pregunta abierta crucial:</p>
+      <p style="text-align: center; font-style: italic; font-size: 1.05rem; margin: 0.8rem 0;">
+        Si nos entregan una población con distribución compleja o no estándar $f(x; \theta_1, \dots, \theta_K)$, ¿de dónde sacamos los candidatos a estimadores?
+      </p>
+      <p>No podemos depender de conjeturas o de la suerte. La estadística matemática proporciona dos métodos clásicos de deducción analítica:</p>
+      <ol class="pasos">
+        <li><b>Método de los Momentos (Karl Pearson, 1894):</b> Se basa en el principio de sustitución empírica. Si los momentos poblacionales dependen de los parámetros, igualamos dichos momentos teóricos con los momentos muestrales observados y despejamos.</li>
+        <li><b>Método de Máxima Verosimilitud (Ronald A. Fisher, 1922):</b> Se basa en el principio de plausibilidad. Buscamos el valor de los parámetros que hace que la muestra observada tenga la mayor probabilidad conjunta posible de haber ocurrido.</li>
+      </ol>
+    </div>
+
+    <table class="tabla" style="margin: 1.5rem 0;">
+      <thead>
+        <tr>
+          <th>Criterio comparativo</th>
+          <th>Método de los Momentos (MM)</th>
+          <th>Método de Máxima Verosimilitud (MV)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="izq"><b>Principio rector</b></td>
+          <td class="izq">Sustitución de momentos poblacionales por momentos muestrales.</td>
+          <td class="izq">Maximización de la probabilidad conjunta de los datos observados.</td>
+        </tr>
+        <tr>
+          <td class="izq"><b>Dificultad matemática</b></td>
+          <td class="izq">Generalmente algebraica elemental (resolver sistemas de ecuaciones).</td>
+          <td class="izq">Optimización (cálculo diferencial, log-verosimilitud o análisis de frontera).</td>
+        </tr>
+        <tr>
+          <td class="izq"><b>Uso de la información</b></td>
+          <td class="izq">Solo utiliza los primeros $K$ momentos (ignora la forma completa de la densidad).</td>
+          <td class="izq">Utiliza toda la estructura probabilística de la función de densidad o masa.</td>
+        </tr>
+        <tr>
+          <td class="izq"><b>Propiedades estadísticas</b></td>
+          <td class="izq">Consistentes bajo condiciones suaves, pero frecuentemente ineficientes.</td>
+          <td class="izq">Asintóticamente eficientes, consistentes y gozan de la propiedad de invariancia.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="metodo-momentos">2. Método de los Momentos (MM)</h2>
+
+    <p>El método de los momentos es uno de los procedimientos más antiguos e intuitivos de la inferencia estadística. Su premisa es sencilla: los momentos de la muestra deben aproximarse a los correspondientes momentos de la población.</p>
+
+    <div class="box definicion"><span class="box-title">Definición: Momentos poblacionales y momentos muestrales</span>
+      <p>Sea $X$ una variable aleatoria con función de distribución $F_X(x; \theta_1, \dots, \theta_K)$ que depende de $K$ parámetros desconocidos.</p>
+      <ul>
+        <li>El <b>$k$-ésimo momento poblacional</b> respecto al origen se define como:
+          $$\mu_k = \E[X^k] = \int_{-\infty}^\infty x^k f(x;\theta)\,dx \quad \text{(o bien } \sum_x x^k p(x;\theta)\text{)}.$$
+          En general, cada $\mu_k$ es una función conocida de los parámetros desconocidos: $\mu_k = g_k(\theta_1, \dots, \theta_K)$.</li>
+        <li>Dada una muestra aleatoria $X_1, \dots, X_n \iid F_X$, el <b>$k$-ésimo momento muestral</b> es el promedio de las potencias $k$-ésimas:
+          $$m_k = \frac{1}{n}\sum_{i=1}^n X_i^k.$$
+          En particular, el primer momento muestral es la media muestral: $m_1 = \bar X = \frac{1}{n}\sum X_i$.</li>
+      </ul>
+    </div>
+
+    <div class="box nota"><span class="box-title">Justificación teórica: La Ley Fuerte de los Grandes Números</span>
+      <p>¿Por qué tiene sentido igualar $\mu_k$ con $m_k$? Si las variables aleatorias $X_i$ son independientes e idénticamente distribuidas y el momento $\E[|X|^k] &lt; \infty$ existe, la <b>Ley de los Grandes Números</b> garantiza que:</p>
+      $$m_k = \frac{1}{n}\sum_{i=1}^n X_i^k \xrightarrow{\;\text{c.s.}\;} \E[X^k] = \mu_k \quad \text{cuando } n \to \infty.$$
+      <p>Además, $m_k$ es un estimador insesgado de $\mu_k$: $\E[m_k] = \frac{1}{n}\sum \E[X_i^k] = \mu_k$.</p>
+    </div>
+
+    <div class="box definicion"><span class="box-title">Algoritmo del Método de los Momentos (MM)</span>
+      <p>Para estimar $K$ parámetros desconocidos $\theta = (\theta_1, \dots, \theta_K)$:</p>
+      <ol class="pasos">
+        <li>Calcular teóricamente los primeros $K$ momentos poblacionales en términos de los parámetros:
+          $$\mu_1 = g_1(\theta_1, \dots, \theta_K), \quad \mu_2 = g_2(\theta_1, \dots, \theta_K), \quad \dots, \quad \mu_K = g_K(\theta_1, \dots, \theta_K).$$</li>
+        <li>Calcular los $K$ momentos muestrales a partir de los datos:
+          $$m_1 = \frac{1}{n}\sum_{i=1}^n X_i, \quad m_2 = \frac{1}{n}\sum_{i=1}^n X_i^2, \quad \dots, \quad m_K = \frac{1}{n}\sum_{i=1}^n X_i^K.$$</li>
+        <li>Igualar $\mu_k = m_k$ para $k = 1, 2, \dots, K$ y resolver el sistema de $K$ ecuaciones para despejar los parámetros. Las soluciones resultantes se denominan <b>Estimadores por el Método de los Momentos (EMM)</b> y se denotan con tilde $\tilde\theta_1, \dots, \tilde\theta_K$.</li>
+      </ol>
+    </div>
+
+    <div class="box nota"><span class="box-title">Atajo algebraico con momentos centrales</span>
+      <p>A menudo es mucho más fácil trabajar con la varianza poblacional $\sigma^2 = \mu_2 - \mu_1^2$ y la varianza muestral sesgada:</p>
+      $$S_n^2 = m_2 - m_1^2 = \frac{1}{n}\sum_{i=1}^n X_i^2 - (\bar X)^2 = \frac{1}{n}\sum_{i=1}^n (X_i - \bar X)^2.$$
+      <p>La ecuación $\mu_2 = m_2$ es matemáticamente equivalente a igualar $\sigma^2 = S_n^2$, lo cual evita desarrollar polinomios engorrosos de $\mu_2$.</p>
+    </div>
+
+    <!-- ---------------- Ejemplo 1 ---------------- -->
+    <div class="box ejemplo" id="ej-1">
+      <span class="box-title">Ejemplo 1 · EMM para la distribución Geométrica</span>
+      <p>Sean $X_1, \dots, X_n \iid \text{Geo}(p)$, donde $p \in (0, 1]$ es la probabilidad de éxito en cada ensayo de Bernoulli independiente. Halle el estimador de momentos para $p$.</p>
+
+      <div class="box cuidado"><span class="box-title">¡Atención a la parametrización de la Geométrica!</span>
+        <p>En la literatura y en los exámenes existen dos definiciones estándar para la variable geométrica:</p>
+        <ul>
+          <li><b>Definición A (número de ensayos hasta el primer éxito):</b> Soporte $X \in \{1, 2, 3, \dots\}$. La función de masa es $p(x) = (1-p)^{x-1}p$ y la esperanza poblacional es $\E[X] = \frac{1}{p}$.</li>
+          <li><b>Definición B (número de fracasos antes del primer éxito):</b> Soporte $Y \in \{0, 1, 2, \dots\}$. La función de masa es $p(y) = (1-p)^y p$ y la esperanza es $\E[Y] = \frac{1-p}{p}$.</li>
+        </ul>
+      </div>
+
+      <details class="pista"><summary>Pista para la solución</summary><div>
+        <p>Como hay un solo parámetro desconocido ($K=1$), únicamente necesitamos igualar el primer momento poblacional $\mu_1 = \E[X]$ con el primer momento muestral $m_1 = \bar X$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución paso a paso</summary><div>
+        <ol class="pasos">
+          <li><b>Bajo la Definición A ($X =$ ensayos hasta el éxito):</b>
+            $$\mu_1 = \E[X] = \frac{1}{p}.$$
+            Planteamos la ecuación de momentos $\mu_1 = m_1$:
+            $$\frac{1}{p} = \bar X \implies \tilde p = \frac{1}{\bar X}.$$
+            Como $\bar X \ge 1$ siempre (pues cada $X_i \ge 1$), se garantiza que $\tilde p \in (0, 1]$.</li>
+          <li><b>Bajo la Definición B ($Y =$ fracasos antes del éxito):</b>
+            $$\mu_1 = \E[Y] = \frac{1-p}{p}.$$
+            Planteamos la ecuación $\mu_1 = m_1$:
+            $$\frac{1-p}{p} = \bar Y \implies 1 - p = p\bar Y \implies 1 = p(1 + \bar Y) \implies \tilde p = \frac{1}{1 + \bar Y}.$$
+            Nuevamente, como $\bar Y \ge 0$, el estimador resultante satisface $\tilde p \in (0, 1]$.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- ---------------- Ejemplo 2 ---------------- -->
+    <div class="box ejemplo" id="ej-2">
+      <span class="box-title">Ejemplo 2 · EMM para la distribución Gamma$(\alpha, \beta)$</span>
+      <p>Sean $X_1, \dots, X_n \iid \text{Gamma}(\alpha, \beta)$ con función de densidad (parametrización de escala $\beta$ de ESPOL):</p>
+      $$f(x; \alpha, \beta) = \frac{1}{\Gamma(\alpha)\beta^\alpha} x^{\alpha-1} e^{-x/\beta}, \quad x &gt; 0, \quad \alpha &gt; 0, \;\beta &gt; 0.$$
+      <p>Encuentre los estimadores por el método de los momentos para los parámetros de forma $\alpha$ y de escala $\beta$.</p>
+
+      <details class="pista"><summary>Pista para la solución</summary><div>
+        <p>Recuerde que para una variable Gamma, la media es $\E[X] = \alpha\beta$ y la varianza es $\Var(X) = \alpha\beta^2$. Utilice el sistema $\mu_1 = \bar X$ y $\sigma^2 = S_n^2$ y divida las ecuaciones.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución paso a paso</summary><div>
+        <ol class="pasos">
+          <li>Los momentos teóricos de una distribución $\text{Gamma}(\alpha, \beta)$ son:
+            $$\mu_1 = \E[X] = \alpha\beta, \qquad \sigma^2 = \Var(X) = \E[X^2] - (\E[X])^2 = \alpha\beta^2.$$</li>
+          <li>Igualamos los momentos poblacionales a los muestrales:
+            $$\begin{cases}
+              \mu_1 = m_1 \implies \alpha\beta = \bar X &amp; \text{--- (Ecuación 1)} \\
+              \sigma^2 = S_n^2 \implies \alpha\beta^2 = \frac{1}{n}\sum_{i=1}^n (X_i - \bar X)^2 = S_n^2 &amp; \text{--- (Ecuación 2)}
+            \end{cases}$$</li>
+          <li>Dividimos la Ecuación 2 entre la Ecuación 1 para cancelar $\alpha$:
+            $$\frac{\alpha\beta^2}{\alpha\beta} = \frac{S_n^2}{\bar X} \implies \tilde\beta = \frac{S_n^2}{\bar X}.$$</li>
+          <li>Sustituimos $\tilde\beta$ en la Ecuación 1 para despejar $\alpha$:
+            $$\alpha \left(\frac{S_n^2}{\bar X}\right) = \bar X \implies \tilde\alpha = \frac{\bar X^2}{S_n^2}.$$</li>
+        </ol>
+        <p><b>Conclusión:</b> Los estimadores de momentos son $\tilde\alpha = \frac{\bar X^2}{S_n^2}$ y $\tilde\beta = \frac{S_n^2}{\bar X}$.</p>
+      </div></details>
+    </div>
+
+    <!-- ---------------- Ejemplo 3 ---------------- -->
+    <div class="box ejemplo" id="ej-3">
+      <span class="box-title">Ejemplo 3 · EMM para la distribución Uniforme Continua $\text{Unif}(\alpha, \beta)$</span>
+      <p>Sean $X_1, \dots, X_n \iid \text{Unif}(\alpha, \beta)$ con $-\infty &lt; \alpha &lt; \beta &lt; \infty$. Deduzca los estimadores por el método de los momentos para los extremos $\alpha$ y $\beta$.</p>
+
+      <details class="pista"><summary>Pista para la solución</summary><div>
+        <p>La media uniforme es el punto medio $\frac{\alpha+\beta}{2}$ y la varianza es $\frac{(\beta-\alpha)^2}{12}$. Despeje la semisuma y la semidiferencia en función de $\bar X$ y $S_n$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución paso a paso</summary><div>
+        <ol class="pasos">
+          <li>Los momentos teóricos de la uniforme continua en $(\alpha, \beta)$ son:
+            $$\mu_1 = \E[X] = \frac{\alpha + \beta}{2}, \qquad \sigma^2 = \Var(X) = \frac{(\beta - \alpha)^2}{12}.$$</li>
+          <li>Igualamos la media teórica a la media muestral $\bar X$:
+            $$\frac{\alpha + \beta}{2} = \bar X \implies \alpha + \beta = 2\bar X \quad \text{--- (Ecuación 1)}.$$</li>
+          <li>Igualamos la varianza teórica a la varianza muestral $S_n^2 = \frac{1}{n}\sum_{i=1}^n(X_i - \bar X)^2$:
+            $$\frac{(\beta - \alpha)^2}{12} = S_n^2 \implies (\beta - \alpha)^2 = 12 S_n^2.$$
+            Como por definición $\beta &gt; \alpha$, tomamos la raíz positiva:
+            $$\beta - \alpha = \sqrt{12 S_n^2} = 2\sqrt{3}\,S_n \quad \text{--- (Ecuación 2)}.$$</li>
+          <li>Sumando la Ecuación 1 y la Ecuación 2:
+            $$(\alpha + \beta) + (\beta - \alpha) = 2\bar X + 2\sqrt{3}\,S_n \implies 2\beta = 2(\bar X + \sqrt{3}\,S_n) \implies \tilde\beta = \bar X + \sqrt{3}\,S_n.$$</li>
+          <li>Restando la Ecuación 2 de la Ecuación 1:
+            $$(\alpha + \beta) - (\beta - \alpha) = 2\bar X - 2\sqrt{3}\,S_n \implies 2\alpha = 2(\bar X - \sqrt{3}\,S_n) \implies \tilde\alpha = \bar X - \sqrt{3}\,S_n.$$</li>
+        </ol>
+        <p><b>Discusión crítica:</b> Observe que este estimador de momentos tiene una debilidad conceptual grave: <em>nada garantiza</em> que $[\tilde\alpha, \tilde\beta]$ contenga a todas las observaciones de la muestra. En muestras pequeñas es perfectamente posible que alguna observación $X_i$ resulte menor que $\tilde\alpha$ o mayor que $\tilde\beta$, lo cual contradice la física del problema.</p>
+      </div></details>
+    </div>
+
+    <!-- ---------------- Ejemplo 4 ---------------- -->
+    <div class="box ejemplo" id="ej-4">
+      <span class="box-title">Ejemplo 4 · EMM para la distribución Normal $N(\mu, \sigma^2)$</span>
+      <p>Sean $X_1, \dots, X_n \iid N(\mu, \sigma^2)$ con ambos parámetros desconocidos. Deduzca los estimadores de momentos para $\mu$ y $\sigma^2$.</p>
+
+      <details class="solucion"><summary>Solución paso a paso</summary><div>
+        <ol class="pasos">
+          <li>Para la población normal, $\mu_1 = \E[X] = \mu$ y la varianza es $\sigma^2 = \E[X^2] - (\E[X])^2 = \mu_2 - \mu_1^2$.</li>
+          <li>El sistema de dos ecuaciones es:
+            $$\begin{cases}
+              \mu_1 = m_1 \implies \tilde\mu = \bar X \\
+              \mu_2 - \mu_1^2 = m_2 - m_1^2 \implies \tilde\sigma^2 = \frac{1}{n}\sum_{i=1}^n X_i^2 - (\bar X)^2 = \frac{1}{n}\sum_{i=1}^n (X_i - \bar X)^2 = S_n^2
+            \end{cases}$$</li>
+        </ol>
+        <p>Nótese que el estimador de momentos para la varianza es $\tilde\sigma^2 = S_n^2$ (dividido por $n$), el cual es <b>sesgado</b> para $n$ finito ($\E[S_n^2] = \frac{n-1}{n}\sigma^2$), aunque asintóticamente insesgado cuando $n \to \infty$.</p>
+      </div></details>
+    </div>
+
+    <div class="box cuidado"><span class="box-title">Balance crítico del Método de los Momentos</span>
+      <ul>
+        <li><b>Ventajas:</b> Es muy sencillo de aplicar algebraicamente, casi siempre produce fórmulas explícitas cerradas y no requiere conocer la constante normalizadora de la densidad completa.</li>
+        <li><b>Desventajas principales:</b>
+          <ol>
+            <li><b>Ineficiencia:</b> A menudo su varianza es mucho mayor que la de otros estimadores (desperdicia información de las colas y la geometría de la distribución).</li>
+            <li><b>Inadmisibilidad muestral:</b> Puede producir estimaciones fuera del rango admisible del parámetro o del soporte de los datos (como vimos en el Ejemplo 3 para la Uniforme).</li>
+            <li><b>Inexistencia de momentos:</b> Si la distribución tiene colas pesadas (por ejemplo la distribución de Cauchy o Pareto con $\alpha \le 1$), los momentos teóricos no existen ($\E[X] = \infty$), por lo que el método es totalmente inaplicable.</li>
+          </ol>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="metodo-mv">3. Método de Máxima Verosimilitud (MV)</h2>
+
+    <p>El método de máxima verosimilitud es considerado el estándar de oro de la inferencia paramétrica clásica. Formulado con rigor por Ronald Fisher en la década de 1920, responde a una lógica inductiva contundente:</p>
+
+    <div class="box idea"><span class="box-title">La filosofía de la máxima verosimilitud</span>
+      <p>Supongamos que observamos una muestra concreta $\mathbf{x} = (x_1, \dots, x_n)$. Entre todos los posibles valores que el parámetro $\theta$ podría tomar en el espacio parametral $\Theta$, <em>¿cuál de ellos hace que el hecho de haber observado precisamente esos datos $\mathbf{x}$ sea lo más probable posible?</em></p>
+      <p>Elegimos como estimador $\hat\theta$ aquel valor bajo el cual la muestra observada tiene la mayor probabilidad conjunta.</p>
+    </div>
+
+    <div class="box definicion"><span class="box-title">Definición: Función de Verosimilitud</span>
+      <p>Sean $X_1, \dots, X_n$ variables aleatorias con función de densidad conjunta (si son continuas) o de probabilidad conjunta (si son discretas) $f(x_1, \dots, x_n; \theta)$. Una vez que la muestra se ha recolectado y los valores numéricos $x_1, \dots, x_n$ son conocidos y fijos, la <b>función de verosimilitud</b> $L(\theta)$ es:</p>
+      $$L(\theta) = L(\theta; x_1, \dots, x_n) = f(x_1, \dots, x_n; \theta), \quad \theta \in \Theta.$$
+      <p>Para una muestra aleatoria independiente e idénticamente distribuida ($X_i \iid f(x;\theta)$), la verosimilitud se factoriza como el producto de las densidades marginales:</p>
+      $$L(\theta) = \prod_{i=1}^n f(x_i; \theta) \quad \text{(continuas)} \qquad \text{o} \qquad L(\theta) = \prod_{i=1}^n p(x_i; \theta) \quad \text{(discretas)}.$$
+    </div>
+
+    <div class="box nota"><span class="box-title">Densidad conjunta vs. Verosimilitud: ¿Cuál es la variable?</span>
+      <p>Matemáticamente la fórmula evaluada es idéntica, pero la perspectiva se invierte por completo:</p>
+      <ul>
+        <li>En la densidad conjunta $f(\mathbf{x}; \theta)$, el parámetro $\theta$ está <b>fijo</b> y los datos $\mathbf{x}$ son las variables aleatorias. Como función de $\mathbf{x}$, integra a 1.</li>
+        <li>En la función de verosimilitud $L(\theta; \mathbf{x})$, los datos $\mathbf{x}$ están <b>fijos</b> (ya ocurrieron en el laboratorio o campo) y la variable es el parámetro $\theta$. Como función de $\theta$, <b>no</b> es una densidad de probabilidad y en general su integral respecto a $\theta$ no es 1.</li>
+      </ul>
+    </div>
+
+    <div class="box definicion"><span class="box-title">Definición: Estimador de Máxima Verosimilitud (EMV)</span>
+      <p>Sea $L(\theta)$ la función de verosimilitud para $\theta \in \Theta$. El <b>Estimador de Máxima Verosimilitud (EMV)</b>, denotado por $\hat\theta_{\text{MV}}$ o simplemente $\hat\theta$, es el valor del parámetro que maximiza $L(\theta)$:</p>
+      $$\hat\theta = \arg\max_{\theta \in \Theta} L(\theta; X_1, \dots, X_n).$$
+      <p>Dicho de otro modo, $L(\hat\theta; \mathbf{x}) \ge L(\theta; \mathbf{x})$ para todo $\theta \in \Theta$.</p>
+    </div>
+
+    <div class="box definicion"><span class="box-title">La función de Log-Verosimilitud $\ell(\theta)$</span>
+      <p>Dado que $L(\theta)$ es un producto de probabilidades o densidades pequeñas, maximizarla directamente mediante cálculo diferencial suele ser muy complejo. Por ello, se define la <b>función de log-verosimilitud</b>:</p>
+      $$\ell(\theta) = \ln L(\theta) = \sum_{i=1}^n \ln f(x_i; \theta).$$
+      <div class="math-callout">
+        <b>¿Por qué el logaritmo no altera el máximo?</b><br>
+        La función logaritmo natural $g(u) = \ln(u)$ es una función <b>estrictamente creciente</b> en $(0, \infty)$ (su derivada es $g'(u) = 1/u &gt; 0$). En consecuencia, para cualesquiera $u_1, u_2 &gt; 0$ se cumple que $u_1 &lt; u_2 \iff \ln(u_1) &lt; \ln(u_2)$. Por lo tanto:
+        $$\arg\max_{\theta \in \Theta} L(\theta) = \arg\max_{\theta \in \Theta} \ln L(\theta) = \arg\max_{\theta \in \Theta} \ell(\theta).$$
+      </div>
+      <p>Ventajas analíticas de $\ell(\theta)$:</p>
+      <ol class="pasos">
+        <li>Convierte el producto $\prod$ en una suma $\sum$, haciendo que las derivadas ordinarias y parciales sean triviales de calcular.</li>
+        <li>Evita problemas de desbordamiento numérico inferior (<i>underflow</i>) al trabajar computacionalmente con muestras grandes donde $\prod f(x_i) \approx 10^{-100}$.</li>
+      </ol>
+    </div>
+
+    <div class="box definicion"><span class="box-title">Las Ecuaciones de Verosimilitud (Condición de Primer Orden)</span>
+      <p>Si la función de log-verosimilitud $\ell(\theta)$ es diferenciable en el interior del espacio parametral $\Theta \subseteq \R^K$ y el soporte de la distribución <b>no depende</b> de $\theta$, el punto crítico candidato se obtiene resolviendo el sistema de ecuaciones:</p>
+      $$\frac{\partial \ell(\theta)}{\partial \theta_j} = 0, \quad j = 1, 2, \dots, K.$$
+      <p><b>Condición de segundo orden (Concavidad):</b> Para garantizar que el punto crítico es un máximo local y global (y no un mínimo o punto de silla):</p>
+      <ul>
+        <li>En un parámetro ($K=1$): la segunda derivada debe ser estrictamente negativa en el candidato:
+          $$\left. \frac{d^2 \ell(\theta)}{d\theta^2} \right|_{\theta = \hat\theta} &lt; 0.$$</li>
+        <li>En múltiples parámetros ($K &gt; 1$): la matriz Hessiana de segundas derivadas parciales $\mathbf{H}_{jk} = \frac{\partial^2 \ell}{\partial \theta_j \partial \theta_k}$ debe ser <b>negativa definida</b> evaluada en $\hat\theta$.</li>
+      </ul>
+    </div>
+
+    <!-- ---------------- Ejemplo 5 ---------------- -->
+    <div class="box ejemplo" id="ej-5">
+      <span class="box-title">Ejemplo 5 · Construcción de la verosimilitud en la población Exponencial</span>
+      <p>Sean $X_1, \dots, X_n \iid \text{Exp}(\delta)$ con función de densidad $f(x; \delta) = \frac{1}{\delta}e^{-x/\delta}$ para $x &gt; 0$ y parámetro de escala (media) $\delta &gt; 0$. Determine la función de verosimilitud y log-verosimilitud.</p>
+
+      <details class="solucion"><summary>Deducción analítica</summary><div>
+        <ol class="pasos">
+          <li>Construimos el producto de densidades independientes:
+            $$L(\delta) = \prod_{i=1}^n f(x_i; \delta) = \prod_{i=1}^n \left( \frac{1}{\delta} e^{-x_i/\delta} \right) = \left(\frac{1}{\delta}\right)^n \prod_{i=1}^n e^{-x_i/\delta} = \frac{1}{\delta^n} \exp\left( -\frac{1}{\delta}\sum_{i=1}^n x_i \right).$$</li>
+          <li>Aplicamos el logaritmo natural para obtener $\ell(\delta)$:
+            $$\ell(\delta) = \ln L(\delta) = \ln\left( \delta^{-n} e^{-\frac{1}{\delta}\sum x_i} \right) = -n\ln\delta - \frac{1}{\delta}\sum_{i=1}^n x_i.$$</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- ---------------- Ejemplo 6 ---------------- -->
+    <div class="box ejemplo" id="ej-6">
+      <span class="box-title">Ejemplo 6 · Soporte dependiente del parámetro: $X_i \sim \text{Unif}[0, \theta]$</span>
+      <p>Sean $X_1, \dots, X_n \iid \text{Unif}[0, \theta]$ con $\theta &gt; 0$. Encuentre el estimador de máxima verosimilitud $\hat\theta$.</p>
+
+      <div class="box cuidado"><span class="box-title">¡Peligro! El fallo del cálculo diferencial ordinario</span>
+        <p>Si intentamos derivar a ciegas la densidad $f(x) = \frac{1}{\theta}$ sin considerar el soporte: $\ell(\theta) = -n\ln\theta \implies \ell'(\theta) = -\frac{n}{\theta} = 0$, ¡lo cual no tiene solución para ningún $\theta &gt; 0$! ¿Por qué falla la derivada? Porque el soporte de la variable depende explícitamente de $\theta$. El máximo ocurre en la <b>frontera del dominio</b>.</p>
+      </div>
+
+      <details class="pista"><summary>Pista formal</summary><div>
+        <p>Escriba la densidad de cada observación utilizando la función indicadora $\mathbf{1}_{\{0 \le x \le \theta\}}$. Multiplique las $n$ indicadoras y observe qué condición debe cumplir $\theta$ respecto al máximo muestral $X_{(n)}$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Demostración formal paso a paso</summary><div>
+        <ol class="pasos">
+          <li>La función de densidad de cada observación incluyendo su soporte es:
+            $$f(x_i; \theta) = \frac{1}{\theta}\,\mathbf{1}_{\{0 \le x_i \le \theta\}}, \quad \text{donde } \mathbf{1}_A = \begin{cases} 1 &amp; \text{si se cumple } A, \\ 0 &amp; \text{si no.} \end{cases}$$</li>
+          <li>La función de verosimilitud conjunta es el producto:
+            $$L(\theta) = \prod_{i=1}^n \left( \frac{1}{\theta}\,\mathbf{1}_{\{0 \le x_i \le \theta\}} \right) = \frac{1}{\theta^n} \prod_{i=1}^n \mathbf{1}_{\{0 \le x_i \le \theta\}}.$$</li>
+          <li>Para que el producto de indicadoras sea 1, <em>todas</em> las observaciones deben estar dentro del intervalo $[0, \theta]$:
+            $$\{0 \le x_1 \le \theta, \; 0 \le x_2 \le \theta, \; \dots, \; 0 \le x_n \le \theta\} \iff \{x_{(1)} \ge 0 \quad \text{y} \quad x_{(n)} \le \theta\}.$$
+            Donde $x_{(n)} = \max(x_1, \dots, x_n)$ es el máximo de la muestra. Por lo tanto:
+            $$L(\theta) = \begin{cases} \frac{1}{\theta^n} &amp; \text{si } \theta \ge x_{(n)}, \\ 0 &amp; \text{si } \theta &lt; x_{(n)}. \end{cases}$$</li>
+          <li><b>Análisis de la función $L(\theta)$ en su dominio admisible:</b>
+            <ul>
+              <li>Si $\theta &lt; x_{(n)}$, $L(\theta) = 0$ (es imposible haber observado la muestra bajo ese parámetro, pues algún dato superó a $\theta$).</li>
+              <li>Para $\theta \ge x_{(n)}$, la función $L(\theta) = \theta^{-n}$ es una función <b>estrictamente decreciente</b> de $\theta$ (su derivada es $-n\theta^{-n-1} &lt; 0$).</li>
+            </ul>
+          </li>
+          <li>Dado que $L(\theta)$ decrece continuamente para todo $\theta \ge x_{(n)}$, su valor más alto se alcanza en el punto admisible más pequeño posible, es decir, exactamente en el borde inferior:
+            $$\hat\theta_{\text{MV}} = X_{(n)} = \max(X_1, \dots, X_n).$$</li>
+        </ol>
+        <p><b>Contraste fundamental:</b> Mientras que el estimador de momentos fue $\tilde\theta_{\text{MM}} = 2\bar X$, el EMV es el máximo muestral $\hat\theta_{\text{MV}} = X_{(n)}$. En la Sección 4 comprobaremos mediante simulación interactiva por qué el EMV es drásticamente superior.</p>
+      </div></details>
+    </div>
+
+    <!-- ---------------- Ejemplo 7 ---------------- -->
+    <div class="box ejemplo" id="ej-7">
+      <span class="box-title">Ejemplo 7 · EMV en la distribución Poisson$(\lambda)$</span>
+      <p>Sean $X_1, \dots, X_n \iid \text{Poisson}(\lambda)$ con $\lambda &gt; 0$ y función de masa $p(x; \lambda) = \frac{\lambda^x e^{-\lambda}}{x!}$ para $x \in \{0, 1, 2, \dots\}$. Deduzca el estimador de máxima verosimilitud de $\lambda$.</p>
+
+      <details class="solucion"><summary>Solución paso a paso</summary><div>
+        <ol class="pasos">
+          <li>Escribimos la función de verosimilitud para la muestra discreta:
+            $$L(\lambda) = \prod_{i=1}^n \frac{\lambda^{x_i} e^{-\lambda}}{x_i!} = \frac{\lambda^{\sum_{i=1}^n x_i} e^{-n\lambda}}{\prod_{i=1}^n x_i!}.$$</li>
+          <li>Calculamos la función de log-verosimilitud:
+            $$\ell(\lambda) = \ln L(\lambda) = \left(\sum_{i=1}^n x_i\right) \ln\lambda - n\lambda - \sum_{i=1}^n \ln(x_i!).$$</li>
+          <li>Derivamos respecto a $\lambda$ e igualamos a cero (ecuación de verosimilitud):
+            $$\frac{d\ell(\lambda)}{d\lambda} = \frac{\sum_{i=1}^n x_i}{\lambda} - n = 0.$$
+            Despejando $\lambda$:
+            $$\frac{\sum_{i=1}^n x_i}{\lambda} = n \implies \hat\lambda = \frac{1}{n}\sum_{i=1}^n X_i = \bar X.$$</li>
+          <li>Verificamos la condición de segundo orden para confirmar que es un máximo global:
+            $$\frac{d^2\ell(\lambda)}{d\lambda^2} = -\frac{\sum_{i=1}^n x_i}{\lambda^2}.$$
+            Como $x_i \ge 0$ y al menos una observación es estrictamente positiva en cualquier muestra no nula, $\frac{d^2\ell}{d\lambda^2} &lt; 0$ para todo $\lambda &gt; 0$. Por lo tanto, la función es estrictamente cóncava y $\hat\lambda = \bar X$ es el único máximo global.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- ---------------- Ejemplo 8 ---------------- -->
+    <div class="box ejemplo" id="ej-8">
+      <span class="box-title">Ejemplo 8 · Deducción del EMV en la población Exponencial Exp$(\delta)$</span>
+      <p>A partir de la función de log-verosimilitud obtenida en el Ejemplo 5 para $X_1, \dots, X_n \iid \text{Exp}(\delta)$, demuestre analíticamente que $\hat\delta = \bar X$ y verifique la condición de concavidad.</p>
+
+      <details class="solucion"><summary>Solución paso a paso</summary><div>
+        <ol class="pasos">
+          <li>Partimos de la log-verosimilitud:
+            $$\ell(\delta) = -n\ln\delta - \frac{1}{\delta}\sum_{i=1}^n x_i.$$</li>
+          <li>Calculamos la primera derivada respecto a $\delta$:
+            $$\frac{d\ell(\delta)}{d\delta} = -\frac{n}{\delta} + \frac{\sum_{i=1}^n x_i}{\delta^2}.$$</li>
+          <li>Igualamos a cero para encontrar los puntos críticos:
+            $$-\frac{n}{\delta} + \frac{\sum_{i=1}^n x_i}{\delta^2} = 0 \implies \frac{n}{\delta} = \frac{\sum x_i}{\delta^2} \implies n\delta = \sum_{i=1}^n x_i \implies \hat\delta = \frac{1}{n}\sum_{i=1}^n X_i = \bar X.$$</li>
+          <li>Verificamos la segunda derivada evaluada en $\hat\delta = \bar x$:
+            $$\frac{d^2\ell(\delta)}{d\delta^2} = \frac{n}{\delta^2} - \frac{2\sum_{i=1}^n x_i}{\delta^3}.$$
+            Sustituyendo $\delta = \bar x = \frac{\sum x_i}{n}$:
+            $$\left. \frac{d^2\ell}{d\delta^2} \right|_{\delta = \bar x} = \frac{n}{\bar x^2} - \frac{2(n\bar x)}{\bar x^3} = \frac{n}{\bar x^2} - \frac{2n}{\bar x^2} = -\frac{n}{\bar x^2} &lt; 0.$$
+            Al ser estrictamente negativa para todo $\bar x &gt; 0$, se demuestra que $\hat\delta = \bar X$ es el máximo global de verosimilitud.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- ---------------- Ejemplo 9 ---------------- -->
+    <div class="box ejemplo" id="ej-9">
+      <span class="box-title">Ejemplo 9 · EMVs conjuntos en la población Normal $N(\mu, \sigma^2)$</span>
+      <p>Sean $X_1, \dots, X_n \iid N(\mu, \sigma^2)$ donde tanto la media $\mu \in \R$ como la varianza $\sigma^2 &gt; 0$ son parámetros desconocidos. Deduzca paso a paso los estimadores de máxima verosimilitud conjuntos para $\mu$ y $\sigma^2$.</p>
+
+      <details class="solucion"><summary>Deducción paso a paso completa</summary><div>
+        <ol class="pasos">
+          <li>La función de densidad de la normal es:
+            $$f(x; \mu, \sigma^2) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left( -\frac{(x-\mu)^2}{2\sigma^2} \right) = (2\pi\sigma^2)^{-1/2}\exp\left( -\frac{(x-\mu)^2}{2\sigma^2} \right).$$</li>
+          <li>La función de verosimilitud para la muestra completa es:
+            $$L(\mu, \sigma^2) = \prod_{i=1}^n f(x_i; \mu, \sigma^2) = (2\pi\sigma^2)^{-n/2} \exp\left( -\frac{1}{2\sigma^2}\sum_{i=1}^n (x_i - \mu)^2 \right).$$</li>
+          <li>Tomamos el logaritmo natural para obtener la log-verosimilitud bivariada:
+            $$\ell(\mu, \sigma^2) = -\frac{n}{2}\ln(2\pi) - \frac{n}{2}\ln(\sigma^2) - \frac{1}{2\sigma^2}\sum_{i=1}^n (x_i - \mu)^2.$$</li>
+          <li><b>Derivada parcial respecto a $\mu$ e igualación a cero:</b>
+            $$\frac{\partial \ell}{\partial \mu} = 0 - 0 - \frac{1}{2\sigma^2}\sum_{i=1}^n 2(x_i - \mu)(-1) = \frac{1}{\sigma^2}\sum_{i=1}^n (x_i - \mu) = \frac{n}{\sigma^2}(\bar x - \mu).$$
+            Igualando a cero:
+            $$\frac{n}{\sigma^2}(\bar x - \mu) = 0 \implies \hat\mu_{\text{MV}} = \bar X = \frac{1}{n}\sum_{i=1}^n X_i.$$</li>
+          <li><b>Derivada parcial respecto a $\sigma$ o respecto a $\nu = \sigma^2$:</b><br>
+            Tratando a $\nu = \sigma^2$ como el parámetro de interés (o equivalentemente diferenciando respecto a $\sigma$ como en la clase):
+            $$\frac{\partial \ell}{\partial \sigma^2} = -\frac{n}{2\sigma^2} + \frac{1}{2(\sigma^2)^2}\sum_{i=1}^n (x_i - \mu)^2 = 0.$$
+            Multiplicando toda la ecuación por $2(\sigma^2)^2$:
+            $$-n\sigma^2 + \sum_{i=1}^n (x_i - \mu)^2 = 0 \implies \sigma^2 = \frac{1}{n}\sum_{i=1}^n (x_i - \mu)^2.$$</li>
+          <li>Sustituyendo $\mu$ por su estimador de máxima verosimilitud $\hat\mu = \bar X$, obtenemos el estimador de la varianza:
+            $$\hat\sigma^2_{\text{MV}} = \frac{1}{n}\sum_{i=1}^n (X_i - \bar X)^2 = S_n^2.$$</li>
+        </ol>
+
+        <h4>Análisis crítico de insesgadez del estimador $\hat\sigma^2$</h4>
+        <p>De la Clase 3 sabemos que la distribución de la suma de desvíos cuadrados al dividir por la varianza es una ji-cuadrada con $n-1$ grados de libertad:</p>
+        $$\frac{\sum_{i=1}^n (X_i - \bar X)^2}{\sigma^2} = \frac{n S_n^2}{\sigma^2} \sim \chi^2(n-1).$$
+        <p>Tomando valor esperado en ambos lados:</p>
+        $$\E\left[\frac{n S_n^2}{\sigma^2}\right] = n-1 \implies \E[\hat\sigma^2_{\text{MV}}] = \frac{n-1}{n}\sigma^2 = \sigma^2 - \frac{\sigma^2}{n}.$$
+        <div class="math-callout">
+          <b>Sesgo e insesgadez asintótica:</b><br>
+          El sesgo es $\mathbb{B}(\hat\sigma^2_{\text{MV}}) = -\frac{\sigma^2}{n} \ne 0$, por lo que el estimador es <b>sesgado hacia abajo</b> para muestras finitas.<br>
+          Sin embargo:
+          $$\lim_{n \to \infty} \mathbb{B}(\hat\sigma^2_{\text{MV}}) = \lim_{n \to \infty} \left(-\frac{\sigma^2}{n}\right) = 0.$$
+          Por ende, $\hat\sigma^2_{\text{MV}}$ es <b>asintóticamente insesgado</b> y consistente.
+        </div>
+      </div></details>
+    </div>
+
+    <!-- ---------------- Teorema de Invarianza ---------------- -->
+    <div class="box teorema"><span class="box-title">Teorema: Propiedad de Invarianza de los EMV (Teorema de Zehna)</span>
+      <p>Sea $\hat\theta$ el estimador de máxima verosimilitud de un parámetro $\theta \in \Theta$. Si $g: \Theta \to \Omega$ es cualquier función (no necesariamente inyectiva o biyectiva), entonces el estimador de máxima verosimilitud de la transformación $\tau = g(\theta)$ es exactamente:</p>
+      $$\hat\tau_{\text{MV}} = g(\hat\theta_{\text{MV}}).$$
+      <p><b>Ejemplos inmediatos:</b></p>
+      <ul>
+        <li>En la población Normal, como el EMV de $\sigma^2$ es $S_n^2$, por invarianza el EMV de la desviación estándar $\sigma = \sqrt{\sigma^2}$ es $\hat\sigma = \sqrt{S_n^2} = S_n$.</li>
+        <li>Si queremos estimar la razón señal-ruido $\frac{\mu}{\sigma}$, su EMV es simplemente $\frac{\hat\mu}{\hat\sigma} = \frac{\bar X}{S_n}$.</li>
+        <li>En la distribución de Bernoulli/Binomial, el EMV de la varianza $p(1-p)$ es $\hat p(1 - \hat p) = \bar X(1 - \bar X)$.</li>
+      </ul>
+      <p><i>Nota:</i> El método de los momentos no siempre goza de esta propiedad general de invarianza funcional.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="simulaciones">4. Laboratorio interactivo</h2>
+
+    <p>Experimenta con dos simuladores dinámicos que dan vida a las curvas de log-verosimilitud y revelan empíricamente el comportamiento del estimador de momentos frente al de máxima verosimilitud.</p>
+
+    <!-- Simulador 1 -->
+    <div class="sim" id="sim-verosimilitud">
+      <p class="sim-title">Simulación interactiva 1 · Explorador gráfico de la curva de Log-Verosimilitud $\ell(\theta)$</p>
+      <p class="sim-desc">Selecciona la distribución (Exponencial o Poisson), fija el parámetro verdadero poblacional y el tamaño de muestra $n$. Genera una muestra aleatoria y observa cómo la curva de log-verosimilitud $\ell(\theta)$ alcanza su punto máximo exactamente en la cima donde la tangente se vuelve horizontal ($\ell'(\theta) = 0$).</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+
+    <!-- Simulador 2 -->
+    <div class="sim" id="sim-unif-comp" style="margin-top: 2.5rem;">
+      <p class="sim-title">Simulación interactiva 2 · Batalla en $\text{Unif}[0, \theta]$: Momentos ($2\bar X$) vs. Máxima Verosimilitud ($X_{(n)}$)</p>
+      <p class="sim-desc">Compara empíricamente el estimador del método de los momentos $\tilde\theta = 2\bar X$ contra el estimador de máxima verosimilitud $\hat\theta = X_{(n)}$ generando $2\,000$ réplicas de Monte Carlo. Observa la dispersión, el sesgo, la varianza y la tasa de estimaciones inadmisibles ($\tilde\theta &lt; X_{(n)}$).</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="autoevaluacion">5. Autoevaluación y comprobación rápida</h2>
+
+    <p>Pon a prueba tus conocimientos sobre los conceptos teóricos y cálculos algebraicos de la Clase 8 con estas preguntas interactivas:</p>
+
+    <div id="quiz-1" style="margin-bottom: 1.5rem;"></div>
+    <div id="quiz-2" style="margin-bottom: 1.5rem;"></div>
+    <div id="quiz-3" style="margin-bottom: 1.5rem;"></div>
+    <div id="quiz-4" style="margin-bottom: 1.5rem;"></div>
+
+    <h3>Verificadores de cálculo numérico</h3>
+    <p>Resuelve los ejercicios en papel e ingresa el valor numérico obtenido para verificar tu respuesta:</p>
+
+    <div id="nc-1" style="margin-bottom: 1.2rem;"></div>
+    <div id="nc-2" style="margin-bottom: 1.2rem;"></div>
+    <div id="nc-3" style="margin-bottom: 1.5rem;"></div>
+
+    <div class="box idea"><span class="box-title">Ideas clave para llevar de la Clase 8</span>
+      <ol class="pasos">
+        <li><b>Método de los Momentos (MM):</b> Resuelve el sistema $\mu_k = m_k$. Es intuitivo y de formulación directa, pero no utiliza toda la información de la distribución y puede arrojar estimadores con varianzas subóptimas o fuera del soporte admisible.</li>
+        <li><b>Método de Máxima Verosimilitud (MV):</b> Maximiza $L(\theta) = \prod f(x_i;\theta)$ o equivalentemente su logaritmo $\ell(\theta) = \sum \ln f(x_i;\theta)$. Los EMV gozan de propiedades asintóticas inigualables: consistencia, eficiencia asintótica y normalidad asintótica.</li>
+        <li><b>La log-verosimilitud es una herramienta de cálculo:</b> Como $\ln(\cdot)$ es monótona creciente, preserva el punto exacto donde ocurre el máximo, transformando productos multiplicativos en sumatorias derivables.</li>
+        <li><b>Cuidado con los soportes dependientes del parámetro:</b> Si el dominio de la variable contiene al parámetro $\theta$ (como en $\text{Unif}[0, \theta]$), la derivada ordinaria no se anula; el máximo se halla en la frontera admisible determinada por los estadísticos de orden ($X_{(n)}$ o $X_{(1)}$).</li>
+        <li><b>Propiedad de invariancia:</b> Si $\hat\theta$ es el EMV de $\theta$, entonces para cualquier función $g(\theta)$, el EMV de $g(\theta)$ es automáticamente $g(\hat\theta)$.</li>
+      </ol>
+    </div>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../assets/js/stats.js"></script>
+<script src="../assets/js/plot.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+(function () {
+  'use strict';
+  const { dist, fmt } = EM.stats;
+
+  /* =====================================================================
+     SIMULADOR 1: Explorador de la Log-Verosimilitud
+     ===================================================================== */
+  (function () {
+    const root = document.getElementById('sim-verosimilitud');
+    if (!root) return;
+
+    let modelo = 'exp'; // 'exp' | 'poi'
+    let paramTrue = 3.0;
+    let n = 15;
+    let muestra = [];
+
+    function generarMuestra() {
+      muestra = [];
+      if (modelo === 'exp') {
+        const d = dist.exp(paramTrue);
+        for (let i = 0; i < n; i++) muestra.push(d.rand());
+      } else {
+        const d = dist.poisson(paramTrue);
+        for (let i = 0; i < n; i++) muestra.push(d.rand());
+      }
+    }
+
+    const ctr = root.querySelector('.controls');
+
+    EM.ui.select(ctr, {
+      tex: '\\text{Modelo}',
+      options: [
+        { value: 'exp', label: 'Exponencial (escala δ)' },
+        { value: 'poi', label: 'Poisson (tasa λ)' }
+      ],
+      value: modelo,
+      onChange: v => {
+        modelo = v;
+        paramTrue = (modelo === 'exp') ? 3.0 : 4.0;
+        sliderParam.set(paramTrue);
+        generarMuestra();
+        render();
+      }
+    });
+
+    const sliderParam = EM.ui.slider(ctr, {
+      tex: '\\theta^* \\text{ real}',
+      min: 1.0, max: 8.0, step: 0.5, value: paramTrue,
+      fmt: v => v.toFixed(1),
+      onInput: v => { paramTrue = v; generarMuestra(); render(); }
+    });
+
+    EM.ui.slider(ctr, {
+      tex: 'n',
+      min: 5, max: 60, step: 5, value: n,
+      fmt: v => v.toString(),
+      onInput: v => { n = v; generarMuestra(); render(); }
+    });
+
+    EM.ui.button(ctr, 'Nueva muestra aleatoria', () => {
+      generarMuestra();
+      render();
+    }, { primary: true });
+
+    const p = EM.plot.create(root.querySelector('.plot'), {
+      xmin: 0.5, xmax: 8.0, ymin: -50, ymax: 0,
+      height: 290, xlabel: 'Valor de θ', ylabel: 'Log-verosimilitud ℓ(θ)',
+      legendPos: 'br'
+    });
+    const out = EM.ui.readout(root.querySelector('.out'));
+
+    generarMuestra();
+
+    function render() {
+      const sumX = muestra.reduce((a, b) => a + b, 0);
+      const xbar = sumX / n;
+      const thetaHat = xbar; // Tanto para Exp(delta) como Poisson(lambda), theta_hat = xbar
+
+      let logLik;
+      if (modelo === 'exp') {
+        // ell(delta) = -n * ln(delta) - sumX / delta
+        logLik = d => (d <= 0.05) ? -Infinity : (-n * Math.log(d) - sumX / d);
+      } else {
+        // ell(lambda) = sumX * ln(lambda) - n * lambda - sum(ln(x!))
+        let sumLnFact = 0;
+        for (const x of muestra) {
+          let f = 0;
+          for (let k = 2; k <= Math.round(x); k++) f += Math.log(k);
+          sumLnFact += f;
+        }
+        logLik = lam => (lam <= 0.05) ? -Infinity : (sumX * Math.log(lam) - n * lam - sumLnFact);
+      }
+
+      const maxLik = logLik(thetaHat);
+      const thetaMin = Math.max(0.4, thetaHat * 0.3);
+      const thetaMax = Math.max(paramTrue * 1.6, thetaHat * 1.8, 4.0);
+
+      const valMin = logLik(thetaMin);
+      const valMax = logLik(thetaMax);
+      const lowerY = Math.min(valMin, valMax, maxLik - 15);
+      const yMargin = Math.max(10, Math.abs(maxLik - lowerY) * 0.25);
+
+      p.setRange({
+        xmin: thetaMin,
+        xmax: thetaMax,
+        ymin: lowerY - yMargin,
+        ymax: maxLik + yMargin * 0.5
+      });
+
+      // Segunda derivada evaluada en thetaHat: curvatura
+      const d2ell = (modelo === 'exp') ? (-n / (thetaHat * thetaHat)) : (-n / thetaHat);
+      const observadaInfo = -d2ell; // Información observada de Fisher
+
+      p.draw(g => {
+        // Curva de log-verosimilitud
+        g.curve(logLik, { color: 'c1', width: 2.6, label: 'ℓ(θ)' });
+        // Línea horizontal tangente en el pico
+        g.line(thetaMin, maxLik, thetaMax, maxLik, { color: 'muted', dash: [4, 4], width: 1.2 });
+        // Línea vertical en el EMV (pico)
+        g.vline(thetaHat, { color: 'good', width: 2.0, dash: [5, 3], label: `EMV = ${fmt(thetaHat, 3)}` });
+        // Línea vertical en el parámetro verdadero
+        g.vline(paramTrue, { color: 'accent', width: 1.8, dash: [3, 3], label: `θ* real = ${fmt(paramTrue, 1)}` });
+        // Punto destacado en la cima
+        g.points([thetaHat], [maxLik], { r: 5, color: 'good' });
+      });
+
+      const nombreParam = (modelo === 'exp') ? '\\delta' : '\\lambda';
+      const eqLogLik = (modelo === 'exp')
+        ? `\\ell(\\delta) = -${n}\\ln(\\delta) - \\frac{${fmt(sumX, 2)}}{\\delta}`
+        : `\\ell(\\lambda) = ${fmt(sumX, 1)}\\ln(\\lambda) - ${n}\\lambda - C`;
+
+      out.set(`
+        <b>Distribución:</b> ${modelo === 'exp' ? 'Exponencial $\\text{Exp}(\\delta)$' : 'Poisson $\\text{Poisson}(\\lambda)$'} con verdadero $${nombreParam}^* = ${fmt(paramTrue, 2)}$ &emsp;|&emsp; <b>Muestra:</b> $n = ${n}$<br>
+        • Suma muestral: $\\sum x_i = ${fmt(sumX, 2)}$, media muestral: $\\bar x = ${fmt(xbar, 3)}$<br>
+        • Función de log-verosimilitud analítica: $${eqLogLik}$<br>
+        • <b>Estimador de Máxima Verosimilitud:</b> $\\hat{${nombreParam}}_{\\text{MV}} = \\bar X = $ <b>${fmt(thetaHat, 3)}</b> (máximo en $\\ell = ${fmt(maxLik, 2)}$)<br>
+        • Condición de segundo orden (curvatura en el pico): $\\ell''(\\hat\\theta) = $ <b>${fmt(d2ell, 3)} &lt; 0</b> (estrictamente cóncava)<br>
+        • Información observada de Fisher: $I_n(\\hat\\theta) = -\\ell''(\\hat\\theta) = $ <b>${fmt(observadaInfo, 2)}</b> (mayor curvatura = mayor precisión)
+      `);
+    }
+
+    render();
+  })();
+
+
+  /* =====================================================================
+     SIMULADOR 2: Batalla en Uniforme [0, theta]: MM vs EMV
+     ===================================================================== */
+  (function () {
+    const root = document.getElementById('sim-unif-comp');
+    if (!root) return;
+
+    let thetaTrue = 10.0;
+    let n = 5;
+    const M = 2000; // Número de réplicas de Monte Carlo
+
+    const ctr = root.querySelector('.controls');
+
+    EM.ui.slider(ctr, {
+      tex: '\\theta \\text{ real}',
+      min: 5, max: 25, step: 1, value: thetaTrue,
+      fmt: v => v.toString(),
+      onInput: v => { thetaTrue = v; render(); }
+    });
+
+    EM.ui.slider(ctr, {
+      tex: 'n \\text{ (muestra)}',
+      min: 3, max: 30, step: 1, value: n,
+      fmt: v => v.toString(),
+      onInput: v => { n = v; render(); }
+    });
+
+    EM.ui.button(ctr, 'Simular réplicas Monte Carlo', () => render(), { primary: true });
+
+    const p = EM.plot.create(root.querySelector('.plot'), {
+      xmin: 0, xmax: 18, ymin: 0, ymax: 0.6,
+      height: 300, xlabel: 'Valor del estimador', ylabel: 'Densidad estimada',
+      legendPos: 'tl'
+    });
+    const out = EM.ui.readout(root.querySelector('.out'));
+
+    function render() {
+      const arrMM = new Float64Array(M);
+      const arrMV = new Float64Array(M);
+      let countMMmenorMax = 0;
+
+      let sumMM = 0, sumSqMM = 0;
+      let sumMV = 0, sumSqMV = 0;
+
+      for (let i = 0; i < M; i++) {
+        let maxObs = 0;
+        let sumObs = 0;
+        for (let j = 0; j < n; j++) {
+          const u = Math.random() * thetaTrue;
+          sumObs += u;
+          if (u > maxObs) maxObs = u;
+        }
+        const estMM = 2 * (sumObs / n);
+        const estMV = maxObs;
+
+        arrMM[i] = estMM;
+        arrMV[i] = estMV;
+
+        if (estMM < maxObs) countMMmenorMax++;
+
+        sumMM += estMM;
+        sumSqMM += estMM * estMM;
+        sumMV += estMV;
+        sumSqMV += estMV * estMV;
+      }
+
+      const meanMM = sumMM / M;
+      const varMM = (sumSqMM / M) - (meanMM * meanMM);
+      const mseMM = varMM + Math.pow(meanMM - thetaTrue, 2);
+
+      const meanMV = sumMV / M;
+      const varMV = (sumSqMV / M) - (meanMV * meanMV);
+      const mseMV = varMV + Math.pow(meanMV - thetaTrue, 2);
+
+      // Valores teóricos
+      const teoMeanMM = thetaTrue;
+      const teoVarMM = (thetaTrue * thetaTrue) / (3 * n);
+      const teoMseMM = teoVarMM;
+
+      const teoMeanMV = (n / (n + 1)) * thetaTrue;
+      const teoVarMV = (n * thetaTrue * thetaTrue) / (Math.pow(n + 1, 2) * (n + 2));
+      const teoBiasMV = teoMeanMV - thetaTrue;
+      const teoMseMV = teoVarMV + teoBiasMV * teoBiasMV; // = 2 * theta^2 / ((n+1)(n+2))
+
+      const xMin = Math.max(0, thetaTrue * 0.2);
+      const xMax = thetaTrue * 1.6;
+
+      // Densidad teórica del EMV: f_{X_{(n)}}(y) = n * y^(n-1) / theta^n para 0 <= y <= theta
+      const densTeoMV = y => (y >= 0 && y <= thetaTrue) ? (n * Math.pow(y / thetaTrue, n - 1) / thetaTrue) : 0;
+      const maxPeak = Math.max(0.35, densTeoMV(thetaTrue) * 0.95);
+
+      p.setRange({ xmin: xMin, xmax: xMax, ymin: 0, ymax: Math.min(1.5, maxPeak * 1.25) });
+
+      p.draw(g => {
+        // Histograma de MM: 2 * Xbar
+        g.hist(arrMM, { bins: 32, range: [xMin, xMax], color: 'c3', alpha: 0.35, label: 'MM: 2X̄ (insesgado, alta varianza)' });
+        // Histograma de MV: X_(n)
+        g.hist(arrMV, { bins: 32, range: [xMin, xMax], color: 'c1', alpha: 0.55, label: 'MV: X₍ₙ₎ (sesgado, mínima varianza)' });
+        // Curva teórica del máximo
+        g.curve(densTeoMV, { color: 'ink', width: 2.2, label: 'Densidad teórica de X₍ₙ₎' });
+        // Parámetro objetivo verdadero
+        g.vline(thetaTrue, { color: 'accent', width: 2.2, dash: [4, 3], label: `θ real = ${fmt(thetaTrue, 1)}` });
+      });
+
+      const pctAbsurdo = ((countMMmenorMax / M) * 100).toFixed(1);
+      const ratioMSE = (mseMM / mseMV).toFixed(2);
+
+      out.set(`
+        <b>Población objetivo:</b> $\\text{Unif}[0, \\theta]$ con verdadero $\\theta = ${thetaTrue}$ &emsp;|&emsp; Muestra de tamaño $n = ${n}$ ($M = 2\\,000$ réplicas de Monte Carlo)<br>
+        <table class="tabla" style="margin: 0.8rem 0;">
+          <thead>
+            <tr>
+              <th>Estimador</th>
+              <th>Esperanza teórica $\\E[\\cdot]$</th>
+              <th>Promedio empírico</th>
+              <th>Varianza teórica $\\Var$</th>
+              <th>Error Cuadrático Medio (MSE)</th>
+              <th>Eficiencia</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="izq"><b>Método de los Momentos $\\tilde\\theta = 2\\bar X$</b></td>
+              <td>${fmt(teoMeanMM, 2)} (insesgado)</td>
+              <td>${fmt(meanMM, 3)}</td>
+              <td>${fmt(teoVarMM, 4)}</td>
+              <td><b>${fmt(mseMM, 4)}</b></td>
+              <td><span class="comp-tag tag-loss">Inferior (MSE ${ratioMSE}× mayor)</span></td>
+            </tr>
+            <tr>
+              <td class="izq"><b>Máxima Verosimilitud $\\hat\\theta = X_{(n)}$</b></td>
+              <td>${fmt(teoMeanMV, 2)} (sesgo: ${fmt(teoBiasMV, 2)})</td>
+              <td>${fmt(meanMV, 3)}</td>
+              <td>${fmt(teoVarMV, 4)}</td>
+              <td><b>${fmt(mseMV, 4)}</b></td>
+              <td><span class="comp-tag tag-win">✓ Muy superior en MSE</span></td>
+            </tr>
+          </tbody>
+        </table>
+        • <b>Anomalía inadmisible del Método de los Momentos:</b> En el <b>${pctAbsurdo}%</b> de las muestras simuladas, el estimador de momentos arrojó $\\tilde\\theta &lt; X_{(n)}$, es decir, estimó un límite superior menor que un dato real ya observado en la muestra.<br>
+        • <b>Escalamiento asintótico de varianzas:</b> La varianza del método de los momentos decae a ritmo $\\mathcal{O}(1/n)$, mientras que la del estimador de máxima verosimilitud decae a ritmo superconsistente $\\mathcal{O}(1/n^2)$.
+      `);
+    }
+
+    render();
+  })();
+
+
+  /* =====================================================================
+     AUTOEVALUACIÓN: Quizzes y Numchecks
+     ===================================================================== */
+  EM.ui.quiz('#quiz-1', {
+    question: '1. ¿Por qué es estándar maximizar la función de log-verosimilitud $\\ell(\\theta) = \\ln L(\\theta)$ en lugar de la función de verosimilitud original $L(\\theta)$?',
+    options: [
+      'Porque el logaritmo transforma la muestra aleatoria en una distribución normal por el Teorema del Límite Central.',
+      'Porque la función logaritmo natural es estrictamente monótona creciente, lo que garantiza que ambas funciones alcanzan exactamente el mismo punto de máximo, simplificando sumas de derivadas.',
+      'Porque la función de verosimilitud original siempre diverge a infinito cuando el tamaño de muestra $n$ es grande.',
+      'Porque el estimador resultante de maximizar $L(\\theta)$ directamente sería sesgado, mientras que el obtenido con $\\ell(\\theta)$ siempre es insesgado.'
+    ],
+    answer: 1,
+    explain: 'Como $g(u) = \\ln u$ es estrictamente creciente en $(0, \\infty)$, se cumple que $L(\\theta_1) &lt; L(\\theta_2) \\iff \\ln L(\\theta_1) &lt; \\ln L(\\theta_2)$. Por lo tanto, el argumento que maximiza $\\ell(\\theta)$ coincide idénticamente con el de $L(\\theta)$, con la enorme ventaja algebraica de que convierte productos de densidades en sumas fáciles de derivar.'
+  });
+
+  EM.ui.quiz('#quiz-2', {
+    question: '2. Al buscar el estimador de máxima verosimilitud para una muestra $X_1, \\dots, X_n \\iid \\text{Unif}[0, \\theta]$, ¿por qué la técnica de igualar la derivada a cero ($\\frac{d\\ell}{d\\theta} = 0$) falla completamente?',
+    options: [
+      'Porque la distribución uniforme continua no posee función de densidad de probabilidad.',
+      'Porque el soporte de la variable depende del parámetro $\\theta$, por lo que la función de verosimilitud es monótona decreciente en el interior de su dominio admisible $[X_{(n)}, \\infty)$ y el máximo ocurre en la frontera.',
+      'Porque el estimador de máxima verosimilitud no existe para variables uniformes continuas.',
+      'Porque la segunda derivada de la log-verosimilitud es estrictamente positiva en todo punto.'
+    ],
+    answer: 1,
+    explain: 'En $\\text{Unif}[0, \\theta]$, $L(\\theta) = \\theta^{-n}\\mathbf{1}_{\\{X_{(n)} \\le \\theta\\}}$. Para $\\theta \\ge X_{(n)}$, la verosimilitud es $\\theta^{-n}$, cuya derivada es siempre estrictamente negativa ($-n\\theta^{-n-1} &lt; 0$). La función decrece continuamente para todo $\\theta &gt; X_{(n)}$, alcanzando su valor supremo exactamente en la frontera inferior admisible $\\hat\\theta = X_{(n)}$.'
+  });
+
+  EM.ui.quiz('#quiz-3', {
+    question: '3. Si $X_1, \\dots, X_n \\iid N(\\mu, \\sigma^2)$ con ambos parámetros desconocidos, ¿qué propiedad caracteriza al estimador de máxima verosimilitud de la varianza $\\hat\\sigma^2 = \\frac{1}{n}\\sum_{i=1}^n(X_i - \\bar X)^2$?',
+    options: [
+      'Es un estimador insesgado de $\\sigma^2$ para cualquier tamaño de muestra finito $n$.',
+      'Es sesgado hacia arriba para $n$ finito, y no es asintóticamente insesgado.',
+      'Es sesgado para todo $n$ finito (su esperanza es $\\frac{n-1}{n}\\sigma^2$), pero es asintóticamente insesgado y consistente.',
+      'Su varianza es exactamente cero gracias a la propiedad de máxima verosimilitud.'
+    ],
+    answer: 2,
+    explain: 'Como $\\frac{n\\hat\\sigma^2}{\\sigma^2} \\sim \\chi^2(n-1)$, su esperanza matemática es $\\E[\\hat\\sigma^2] = \\frac{n-1}{n}\\sigma^2$. Su sesgo es $-\\sigma^2/n &lt; 0$ (subestima ligeramente la varianza poblacional en muestras pequeñas), pero al tomar el límite $n \\to \\infty$ el sesgo se desvanece a cero.'
+  });
+
+  EM.ui.quiz('#quiz-4', {
+    question: '4. De acuerdo con el Teorema de Invarianza de Zehna para estimadores de máxima verosimilitud, si $\\hat\\theta$ es el EMV de $\\theta$ y se define $\\tau = g(\\theta)$, ¿cuál es el EMV de $\\tau$?',
+    options: [
+      'El estimador de momentos de $g(\\theta)$.',
+      'Siempre es igual a $g(\\hat\\theta)$, independientemente de si la transformación $g$ es inyectiva o no.',
+      'Solo existe si $g$ es una función lineal de la forma $a\\theta + b$.',
+      'No se puede determinar sin resolver nuevamente las ecuaciones de verosimilitud desde cero para $\\tau$.'
+    ],
+    answer: 1,
+    explain: 'El Teorema de Invarianza de Zehna establece que el EMV de cualquier función $g(\\theta)$ es simplemente la función evaluada en el EMV original: $\\widehat{g(\\theta)} = g(\\hat\\theta)$. Por ejemplo, el EMV de la desviación estándar $\\sigma$ es $\\sqrt{\\hat\\sigma^2} = S_n$.'
+  });
+
+  EM.ui.numcheck('#nc-1', {
+    prompt: 'En una muestra de una población $\\text{Gamma}(\\alpha, \\beta)$ se obtuvo una media muestral $\\bar x = 12$ y una varianza muestral sesgada $S_n^2 = 36$. Calcula el estimador de momentos para la escala $\\tilde\\beta$:',
+    answer: 3.0,
+    tol: 0.05,
+    placeholder: 'ej. 3.0',
+    hint: 'Recuerda que $\\tilde\\beta = \\frac{S_n^2}{\\bar X} = \\frac{36}{12}$.'
+  });
+
+  EM.ui.numcheck('#nc-2', {
+    prompt: 'Se extrae una muestra aleatoria de una población $\\text{Unif}[0, \\theta]$ obteniendo los valores observados: $\\{2.4,\\; 7.8,\\; 5.1,\\; 9.6,\\; 6.3\\}$. ¿Cuál es la estimación de máxima verosimilitud $\\hat\\theta$?',
+    answer: 9.6,
+    tol: 0.05,
+    placeholder: 'ej. 9.6',
+    hint: 'El EMV para $\\text{Unif}[0, \\theta]$ es el estadístico de orden máximo: $\\hat\\theta = X_{(n)} = \\max(X_1, \\dots, X_n)$.'
+  });
+
+  EM.ui.numcheck('#nc-3', {
+    prompt: 'En una muestra de tamaño $n = 20$ de una población Normal $N(\\mu, \\sigma^2)$ se determinó que $\\sum_{i=1}^{20} (x_i - \\bar x)^2 = 180$. ¿Cuál es el valor del estimador de máxima verosimilitud $\\hat\\sigma^2$?',
+    answer: 9.0,
+    tol: 0.05,
+    placeholder: 'ej. 9.0',
+    hint: 'El estimador de máxima verosimilitud para la varianza normal divide para $n$ (no para $n-1$): $\\hat\\sigma^2 = \\frac{1}{n}\\sum (x_i - \\bar x)^2 = \\frac{180}{20}$.'
+  });
+
+})();
+</script>
+</body>
+</html>

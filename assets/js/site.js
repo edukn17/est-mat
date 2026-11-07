@@ -21,6 +21,9 @@ EM.SITE = [
     { id: 'clase-05', title: 'Clase 5 · Teorema del límite central', href: 'temas/clase-05.html', desc: 'TLC, aproximaciones normales, corrección por continuidad.' },
     { id: 'clase-06', title: 'Clase 6 · Estimación puntual: sesgo y MSE', href: 'temas/clase-06.html', desc: 'Estimadores puntuales, insesgadez, sesgo, error cuadrático medio (MSE) y compromiso sesgo–varianza.' },
     { id: 'clase-07', title: 'Clase 7 · Comparación de estimadores y error de estimación', href: 'temas/clase-07.html', desc: 'Eficiencia relativa, insesgadez asintótica, simulación Monte Carlo, cota de error 2σ y tamaño de muestra.' },
+    { id: 'clase-08', title: 'Clase 8 · Métodos de estimación: Momentos y Máxima Verosimilitud', href: 'temas/clase-08.html', desc: 'Método de los momentos (MM), función de verosimilitud L(θ), log-verosimilitud, EMV, soporte dependiente y ejemplos.' },
+    { id: 'clase-09', title: 'Clase 9 · Estimadores eficientes y Cota de Cramér-Rao', href: 'temas/clase-09.html', desc: 'Eficiencia, función Score, Información de Fisher, cota inferior de varianza y Teorema de Cramér-Rao.' },
+    { id: 'clase-10', title: 'Clase 10 · Invarianza, Consistencia y Robustez', href: 'temas/clase-10.html', desc: 'Principio de invarianza de Zehna, normalidad asintótica de EMV, consistencia en probabilidad, desigualdades y robustez.' },
   ]},
   { group: 'Herramientas', items: [
     { id: 'formulario', title: 'Formulario completo (Est. I + Est Mat)', href: 'herramientas/formulario.html', desc: 'Todas las fórmulas esenciales en una página: modelos, FGM, transformaciones, estadísticos de orden, χ², t, F y TLC.' },
@@ -30,5 +33,6 @@ EM.SITE = [
   { group: 'Deberes', items: [
     { id: 'lista-1-1', title: 'Lista 1.1 · Transformaciones y estadísticos de orden', href: 'deberes/lista-1-1.html', desc: 'Pistas graduales, soluciones completas y verificación por simulación.' },
     { id: 'lista-1-2', title: 'Lista 1.2 · Teorema del límite central', href: 'deberes/lista-1-2.html', desc: 'Estimación Monte Carlo de π, procesos multiplicativos, sumas de Poisson y particiones aleatorias con simulaciones.' },
+    { id: 'deber-estimacion-puntual', title: 'Deber · Estimación puntual (Unidad II)', href: 'deberes/deber-estimacion-puntual.html', desc: '5 ejercicios completos: familias afines y MSE, modelo geométrico, densidad de Rayleigh, familia potencia no regular y exponencial desplazada.' },
   ]},
 ];

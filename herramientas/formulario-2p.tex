@@ -9,7 +9,7 @@
 \usepackage[T1]{fontenc}
 \usepackage[spanish,es-noshorthands]{babel}
 \usepackage{amsmath,amssymb,amsfonts}
-\usepackage[a4paper,margin=1.05cm,top=0.9cm,bottom=0.9cm]{geometry}
+\usepackage[a4paper,margin=1.05cm,top=0.9cm,bottom=0.9cm,footskip=12pt]{geometry}
 \usepackage{booktabs}
 \usepackage{enumitem}
 \usepackage{xcolor}
@@ -42,7 +42,7 @@
 \newcommand{\dcs}{\xrightarrow{\mathrm{c.s.}}}
 
 \definecolor{seccolor}{RGB}{24,54,96}
-\newcommand{\fh}[1]{\par\vspace{3pt}{\color{seccolor}\bfseries #1}\par\vspace{0.5pt}\hrule height 0.7pt\relax\vspace{3pt}}
+\newcommand{\fh}[1]{\par\vspace{2.5pt}{\color{seccolor}\bfseries #1}\par\vspace{0.5pt}\hrule height 0.6pt\relax\vspace{2pt}}
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -262,12 +262,51 @@ $\sigma_{\bar Y}=\frac{\sigma}{\sqrt n}$;\ $\sigma_{\hat p}=\sqrt{\frac{p(1-p)}{
 Tamaño de muestra: para $\mu$, $n=\big(\frac{2\sigma}{b}\big)^2$ ($n\propto 1/b^2$); para $p$, $n=\frac{4p(1-p)}{b^2}\le\frac{1}{b^2}$ (conservador en $p=0.5$).
 
 % =====================================================================
-\fh{13. Tablas y valores críticos}
-Las tablas ESPOL dan área a la \textbf{izquierda} $q$: $\Prob(X\le x)=q$. \textbf{Crítico con cola derecha $\alpha$ = tabla en columna $q=1-\alpha$.} El percentil $100p$ es $x_p$; el crítico al $5\%$ es el percentil 95.
+\fh{13. Métodos de estimación: MM y EMV (Clase 8)}
+\textbf{Método de los Momentos (MM):} igualar momentos muestrales $m_k=\frac{1}{n}\sum_{i=1}^n X_i^k$ a los teóricos $\mu_k(\theta)=\E(X^k)$ para $k=1,\dots,p$ y despejar $\hat\theta_{\text{MM}}$. Con 2 parámetros: $\mu=m_1=\bar X$, $\sigma^2=m_2-m_1^2=S_n^2$ (Gamma: $\hat\alpha=\bar X^2/S_n^2$, $\hat\beta=S_n^2/\bar X$).
+
+\textbf{Máxima Verosimilitud (EMV):} $L(\theta)=\prod_{i=1}^n f(x_i;\theta)$, log-verosimilitud $\ell(\theta)=\ln L(\theta)=\sum_{i=1}^n \ln f(x_i;\theta)$.
 \begin{itemize}
-  \item $Z$: $\Phi(z_\alpha)=1-\alpha$, $\Phi(-z)=1-\Phi(z)$.
-  \item $\chi^2_{(\nu),\alpha}$: columna $1-\alpha$.\quad $t_{(\nu),\alpha}$: columna $1-\alpha$;\ $\Prob(|T|\le c)=2\Prob(T\le c)-1$ (simetría).
-  \item $F_{(\nu_1,\nu_2)}$: bloque $\nu_2$ (denominador), $F_{(\nu_1,\nu_2,\alpha)}$ = fila $q=1-\alpha$, columna $\nu_1$ (numerador).
+  \item \textbf{Regular (soporte libre de $\theta$):} resolver $\frac{\partial\ell}{\partial\theta}=0$ (ec.\ verosimilitud) y verificar $\frac{\partial^2\ell}{\partial\theta^2}<0$ (máximo). Si es vectorial: $\nabla\ell=\mathbf{0}$ y Hessiana definida negativa.
+  \item \textbf{Soporte dependiente de $\theta$:} no derivar. P.\ ej.\ $X_i\iid U(0,\theta)\Rightarrow L(\theta)=\theta^{-n}\mathbf{1}_{\{X_{(n)}\le\theta\}}$, decreciente en $\theta\ge X_{(n)}\Rightarrow \hat\theta_{\text{MV}}=X_{(n)}$ (sesgado: $\E X_{(n)}=\frac{n}{n+1}\theta$). Para $U(\theta_1,\theta_2)\Rightarrow \hat\theta_1=X_{(1)},\ \hat\theta_2=X_{(n)}$.
 \end{itemize}
+
+% =====================================================================
+\fh{14. Cramér--Rao y Eficiencia (Clase 9)}
+\textbf{Función Score:} $S(\theta)=\frac{\partial\ln f(X;\theta)}{\partial\theta}$ (1 dato), $\E[S]=0$; muestral $S_n(\theta)=\sum S_i(\theta)=\frac{\partial\ell}{\partial\theta}$.
+
+\textbf{Información de Fisher:} 1 dato $I_F(\theta)=\Var(S)=\E[S^2]=-\E\big[\frac{\partial^2\ln f(X;\theta)}{\partial\theta^2}\big]$. Para muestra i.i.d.: $I_n(\theta)=n I_F(\theta)=-\E\big[\frac{\partial^2\ell}{\partial\theta^2}\big]$.
+
+\textbf{Cota Inferior de Cramér--Rao (CRLB):}
+\begin{itemize}
+  \item Insesgado ($\E\hat\theta=\theta$): $\Var(\hat\theta)\ge \frac{1}{n I_F(\theta)}$. Para función $g(\theta)$: $\Var(\widehat{g(\theta)})\ge \frac{[g'(\theta)]^2}{n I_F(\theta)}$.
+  \item Con sesgo $B(\theta)=\E\hat\theta-\theta$: $\Var(\hat\theta)\ge \frac{[1+B'(\theta)]^2}{n I_F(\theta)}$.
+  \item \textbf{Eficiencia:} $\operatorname{eff}(\hat\theta)=\frac{\text{CRLB}}{\Var(\hat\theta)}\le 1$. Si $\operatorname{eff}(\hat\theta)=1$, $\hat\theta$ es \textbf{eficiente} y es UMVUE (insesgado de varianza mínima uniforme).
+  \item \textbf{Eficiencia relativa:} $\text{RE}(\hat\theta_1,\hat\theta_2)=\Var(\hat\theta_2)/\Var(\hat\theta_1)$; si $>1$, $\hat\theta_1$ es mejor.
+\end{itemize}
+
+% =====================================================================
+\fh{15. Propiedades Asintóticas, Delta y Consistencia (Clase 10)}
+\textbf{Invarianza (Zehna):} si $\hat\theta_{\text{MV}}$ es EMV de $\theta$, el EMV de $g(\theta)$ es $\widehat{g(\theta)}_{\text{MV}}=g(\hat\theta_{\text{MV}})$.
+
+\textbf{Normalidad asintótica del EMV:} regularidad $\Rightarrow\sqrt{n}(\hat\theta_{\text{MV}}-\theta)\dto N\big(0,\frac{1}{I_F(\theta)}\big)$, o $\hat\theta_{\text{MV}}\adist N\big(\theta,\frac{1}{n I_F(\theta)}\big)$. Es asintóticamente insesgado y eficiente.
+
+\textbf{Método Delta 1D:} si $\sqrt{n}(T_n-\theta)\dto N(0,\sigma^2)$ y $g'(\theta)\ne 0$:
+$\sqrt{n}[g(T_n)-g(\theta)]\dto N\big(0,\sigma^2[g'(\theta)]^2\big)\Rightarrow \Var_{\text{asint}}[g(T_n)]=\frac{\sigma^2[g'(\theta)]^2}{n}$.
+Para el EMV: $\sqrt{n}[g(\hat\theta_{\text{MV}})-g(\theta)]\dto N\big(0,\frac{[g'(\theta)]^2}{I_F(\theta)}\big)$.
+
+\textbf{Consistencia en probabilidad:} $\hat\theta_n\pto\theta\iff \lim_{n\to\infty}\Prob(|\hat\theta_n-\theta|\ge\varepsilon)=0$.
+\begin{itemize}
+  \item \textbf{Criterio MSE:} $\lim_{n\to\infty}\text{MSE}(\hat\theta_n)=0\iff (\lim B=0\text{ y }\lim\Var=0)\implies \hat\theta_n\pto\theta$.
+  \item \textbf{Desigualdades:} \textbf{Markov} ($X\ge0$): $\Prob(X\ge a)\le\frac{\E X}{a}$;\ \textbf{Chebyshev:} $\Prob(|X-\mu|\ge\varepsilon)\le\frac{\sigma^2}{\varepsilon^2}$ ($\Rightarrow \Prob(|\hat\theta-\theta|\ge\varepsilon)\le\frac{\text{MSE}}{\varepsilon^2}$);\ \textbf{Jensen:} $g$ convexa $\Rightarrow \E g(X)\ge g(\E X)$ ($g$ cóncava $\Rightarrow \E g(X)\le g(\E X)$).
+  \item \textbf{Slutsky:} si $X_n\dto X$ e $Y_n\pto c\Rightarrow X_n+Y_n\dto X+c$, $X_nY_n\dto cX$, $X_n/Y_n\dto X/c$.
+\end{itemize}
+
+% =====================================================================
+\fh{16. Tablas y valores críticos}
+Tablas ESPOL: área izquierda $q$: $\Prob(X\le x)=q$. \textbf{Crítico cola der.\ $\alpha$ = col.\ $1-\alpha$.} Percentil $100p$ es $x_p$; crítico al $5\%$ = perc.\ 95.\\
+$\bullet$ $Z$: $\Phi(z_\alpha)=1-\alpha$, $\Phi(-z)=1-\Phi(z)$.\quad
+$\bullet$ $\chi^2_{(\nu),\alpha}$ y $t_{(\nu),\alpha}$: col.\ $1-\alpha$; $\Prob(|T|\le c)=2\Prob(T\le c)-1$ (simetría).\\
+$\bullet$ $F_{(\nu_1,\nu_2)}$: bloque $\nu_2$ (denom.), fila $q=1-\alpha$, col.\ $\nu_1$ (num.). Atajos: $F_{(1,\nu,\alpha)}=t_{(\nu),\alpha/2}^2$;\ $F_{(\nu_1,\nu_2,1-\alpha)}=\frac{1}{F_{(\nu_2,\nu_1,\alpha)}}$.
 
 \end{document}

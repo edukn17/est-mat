@@ -822,6 +822,225 @@ Despejando $n$ de la cota empírica $b = 2\sigma_{\hat\theta}$ ($\approx 95\%$):
 \end{thmbox}
 
 % =====================================================================
+\section{Métodos de estimación: Momentos y Máxima Verosimilitud \textmd{(Clase 8)}}
+
+\begin{defbox}[frametitle={Método de los Momentos (MM)}]
+Sea $X_1,\dots,X_n$ una muestra aleatoria $\iid$ con fdp o fmp $f(x;\theta_1,\dots,\theta_K)$.
+\begin{itemize}
+  \item \textbf{Momentos poblacionales (teóricos):} $\mu_k(\theta) = \E[X^k]$, para $k \ge 1$.
+  \item \textbf{Momentos muestrales (empíricos):} $m_k = \frac{1}{n}\sum_{i=1}^n X_i^k$, con $m_1 = \bar X$.
+  \item \textbf{Sistema de ecuaciones MM:} se igualan los primeros $K$ momentos muestrales a los momentos teóricos:
+  \[
+  m_k = \mu_k(\hat\theta_1,\dots,\hat\theta_K), \qquad k=1,\dots,K.
+  \]
+  El estimador MM $(\hat\theta_1^{\text{MM}},\dots,\hat\theta_K^{\text{MM}})$ es la solución algebraica del sistema.
+  \item \textbf{Atajo con momentos centrales y varianza:}
+  \[
+  \mu_1 = \mu, \qquad \sigma^2 = \mu_2 - \mu_1^2 \quad\Longrightarrow\quad \hat\sigma^2_{\text{MM}} = m_2 - m_1^2 = \frac{1}{n}\sum_{i=1}^n (X_i - \bar X)^2 = S_n^2 .
+  \]
+  \item \textbf{Justificación asintótica:} por la LFGN, $m_k \dcs \mu_k$; proporciona estimadores consistentes bajo condiciones de regularidad.
+\end{itemize}
+\end{defbox}
+
+\begin{defbox}[frametitle={Función de Verosimilitud y Log-Verosimilitud}]
+Sea $\mathbf{x} = (x_1,\dots,x_n)$ una muestra observada $\iid$ con función de densidad o masa $f(x;\theta)$, $\theta\in\Theta$.
+\begin{itemize}
+  \item \textbf{Función de Verosimilitud:} evalúa la verosimilitud de los parámetros dados los datos observados fijos:
+  \[
+  L(\theta) = L(\theta;\mathbf{x}) = \prod_{i=1}^n f(x_i;\theta).
+  \]
+  \item \textbf{Función de Log-Verosimilitud:} transforma productos en sumas y preserva el punto donde se alcanza el máximo:
+  \[
+  \ell(\theta) = \ln L(\theta) = \sum_{i=1}^n \ln f(x_i;\theta).
+  \]
+\end{itemize}
+\end{defbox}
+
+\begin{thmbox}[frametitle={Estimador de Máxima Verosimilitud (EMV)}]
+El \textbf{Estimador de Máxima Verosimilitud} (EMV o MLE) $\hat\theta_{\text{MV}}$ es el argumento que maximiza la verosimilitud:
+\[
+\hat\theta_{\text{MV}} = \arg\max_{\theta\in\Theta} L(\theta) = \arg\max_{\theta\in\Theta} \ell(\theta).
+\]
+\textbf{Condiciones de optimización en el interior de $\Theta$ (casos regulares):}
+\begin{enumerate}
+  \item \textbf{Condición de primer orden (Ecuación de verosimilitud):}
+  \[
+  \frac{\partial \ell(\theta)}{\partial \theta} = 0 \qquad \big(\nabla_\theta \ell(\boldsymbol{\theta}) = \mathbf{0} \text{ para } K \text{ parámetros}\big).
+  \]
+  \item \textbf{Condición de segundo orden (Concavidad / Máximo local):}
+  \[
+  \left.\frac{\partial^2 \ell(\theta)}{\partial \theta^2}\right|_{\theta=\hat\theta} < 0 \qquad \big(\mathbf{H}_\ell(\hat{\boldsymbol{\theta}}) \text{ matriz hessiana definida negativa}\big).
+  \]
+\end{enumerate}
+\end{thmbox}
+
+\begin{warnbox}[frametitle={Soporte dependiente del parámetro (Fallo del cálculo diferencial)}]
+Si el soporte de la población depende de $\theta$, la verosimilitud no es derivable en la frontera y \textbf{la derivada $\ell'(\theta)=0$ falla}:
+\begin{itemize}
+  \item \textbf{Ejemplo canónico $X_i \iid U(0,\theta)$:} densidad $f(x;\theta) = \frac{1}{\theta}\,\mathbb{I}_{(0 \le x \le \theta)}$. La verosimilitud conjunta impone que $\theta \ge x_i$ para todo $i$, es decir, $\theta \ge X_{(n)} = \max(X_1,\dots,X_n)$:
+  \[
+  L(\theta) = \frac{1}{\theta^n}\,\mathbb{I}_{(\theta \ge X_{(n)})} \mathbb{I}_{(X_{(1)} \ge 0)}.
+  \]
+  Como $\theta^{-n}$ es estrictamente decreciente para $\theta \ge X_{(n)}$, el valor admisible que maximiza $L(\theta)$ es la cota inferior:
+  \[
+  \hat\theta_{\text{MV}} = X_{(n)}.
+  \]
+  \item Regla práctica: límite superior dependiente de $\theta \implies \hat\theta_{\text{MV}} = X_{(n)}$; límite inferior dependiente de $\theta \implies \hat\theta_{\text{MV}} = X_{(1)}$.
+\end{itemize}
+\end{warnbox}
+
+% =====================================================================
+\section{Estimadores eficientes y Cota de Cramér-Rao \textmd{(Clase 9)}}
+
+\begin{defbox}[frametitle={Función Score de Fisher}]
+Sea $X$ una v.a.\ con fdp o fmp $f(x;\theta)$, $\theta\in\Theta\subseteq\R$.
+\begin{itemize}
+  \item \textbf{Función Score individual:} derivada del logaritmo de la densidad de una observación:
+  \[
+  S(\theta) = S(X;\theta) = \frac{\partial \ln f(X;\theta)}{\partial \theta} .
+  \]
+  \item \textbf{Función Score muestral:} para una muestra $\iid$ $X_1,\dots,X_n$:
+  \[
+  S_n(\theta) = \frac{\partial \ell(\theta)}{\partial \theta} = \sum_{i=1}^n S(X_i;\theta).
+  \]
+  \item \textbf{Esperanza nula de la Score:} bajo condiciones de regularidad (intercambio integral-derivada):
+  \[
+  \E[S(\theta)] = 0 \qquad\text{y}\qquad \E[S_n(\theta)] = 0 .
+  \]
+\end{itemize}
+\end{defbox}
+
+\begin{defbox}[frametitle={Información de Fisher}]
+La \textbf{Información de Fisher} mide la curvatura esperada de la log-verosimilitud (cantidad de información que la muestra aporta sobre $\theta$):
+\begin{itemize}
+  \item \textbf{Información de Fisher de una sola observación:}
+  \[
+  I_F(\theta) = \Var\big(S(\theta)\big) = \E\big[S(\theta)^2\big] = -\E\left[\frac{\partial^2 \ln f(X;\theta)}{\partial \theta^2}\right].
+  \]
+  La forma de la segunda derivada ($I_F(\theta) = -\E[\ell'']$) es la más eficiente para el cálculo analítico.
+  \item \textbf{Información muestral (Aditividad para muestra $\iid$):}
+  \[
+  I_n(\theta) = \Var\big(S_n(\theta)\big) = n\,I_F(\theta).
+  \]
+\end{itemize}
+\end{defbox}
+
+\begin{thmbox}[frametitle={Cota Inferior de Cramér-Rao (CRLB)}]
+Bajo condiciones de regularidad (soporte independiente de $\theta$, existencia de derivadas segundas e intercambio con la integral):
+\begin{enumerate}
+  \item \textbf{Estimador insesgado ($\E[\hat\theta]=\theta$):}
+  \[
+  \Var(\hat\theta) \ge \frac{1}{I_n(\theta)} = \frac{1}{n\,I_F(\theta)} = \text{CRLB}(\theta).
+  \]
+  \item \textbf{Estimador con sesgo $B(\theta) = \E[\hat\theta] - \theta$ (es decir $\E[\hat\theta] = \theta + B(\theta)$):}
+  \[
+  \Var(\hat\theta) \ge \frac{[1 + B'(\theta)]^2}{n\,I_F(\theta)}.
+  \]
+\end{enumerate}
+\end{thmbox}
+
+\begin{thmbox}[frametitle={Eficiencia absoluta y estimador UMVUE}]
+Sea $\hat\theta$ un estimador insesgado de $\theta$:
+\begin{itemize}
+  \item \textbf{Eficiencia absoluta:}
+  \[
+  \text{eff}(\hat\theta) = \frac{\text{CRLB}(\theta)}{\Var(\hat\theta)} = \frac{1/\big(n\,I_F(\theta)\big)}{\Var(\hat\theta)}, \qquad 0 \le \text{eff}(\hat\theta) \le 1.
+  \]
+  \item \textbf{Estimador eficiente y UMVUE:} si $\text{eff}(\hat\theta) = 1$, $\hat\theta$ es \textbf{eficiente} y constituye el Estimador Insesgado de Varianza Mínima Uniforme (\textbf{UMVUE}).
+  \item \textbf{Condición de logro de la cota (Igualdad en Cauchy-Schwarz):} $\Var(\hat\theta) = \text{CRLB}$ si y solo si:
+  \[
+  \frac{\partial \ell(\theta)}{\partial \theta} = k(\theta, n)\,\big[\hat\theta(\mathbf{x}) - \theta\big].
+  \]
+\end{itemize}
+\end{thmbox}
+
+\begin{warnbox}[frametitle={Condiciones de regularidad de Cramér-Rao y excepciones}]
+La Cota de Cramér-Rao exige que el soporte de la distribución \textbf{no dependa} del parámetro $\theta$. En modelos no regulares (como $U(0,\theta)$ con estimador insesgado $\hat\theta = \frac{n+1}{n}X_{(n)}$), la varianza decrece a orden $\mathcal{O}(1/n^2)$, superando el límite $\mathcal{O}(1/n)$ de Cramér-Rao porque no se cumplen las condiciones de regularidad.
+\end{warnbox}
+
+% =====================================================================
+\section{Invarianza, Propiedades Asintóticas del EMV y Consistencia \textmd{(Clase 10)}}
+
+\begin{thmbox}[frametitle={Principio de Invarianza de Zehna (EMV de funciones)}]
+Sea $\hat\theta_{\text{MV}}$ el estimador de máxima verosimilitud de $\theta\in\Theta$. Para cualquier función $g: \Theta \to \Omega$ (inyectiva o no inyectiva), el EMV del parámetro transformado $\tau = g(\theta)$ es:
+\[
+\widehat{g(\theta)}_{\text{MV}} = g\big(\hat\theta_{\text{MV}}\big).
+\]
+\textbf{Advertencia:} la invarianza preserva la verosimilitud, \textbf{no el insesgamiento}. Si $g$ no es lineal, por la desigualdad de Jensen $\E[g(\hat\theta)] \ne g(\theta)$, lo que suele introducir sesgo en muestras finitas (que se desvanece asintóticamente).
+\end{thmbox}
+
+\begin{thmbox}[frametitle={Propiedades Asintóticas del EMV y Normalidad Límite}]
+Bajo condiciones de regularidad, cuando el tamaño de muestra $n \to \infty$, el EMV $\hat\theta_{\text{MV}}$ satisface:
+\begin{enumerate}
+  \item \textbf{Consistencia:} $\hat\theta_n \pto \theta$ (y fuertemente $\hat\theta_n \dcs \theta$).
+  \item \textbf{Normalidad asintótica y eficiencia asintótica ($100\%$):}
+  \[
+  \sqrt{n}\big(\hat\theta_{\text{MV}} - \theta\big) \dto N\left(0, \frac{1}{I_F(\theta)}\right)
+  \qquad\Longleftrightarrow\qquad
+  \hat\theta_{\text{MV}} \adist N\left(\theta, \frac{1}{n\,I_F(\theta)}\right) = N\big(\theta, \text{CRLB}(\theta)\big).
+  \]
+  El EMV alcanza asintóticamente la Cota de Cramér-Rao con eficiencia del $100\%$.
+\end{enumerate}
+\end{thmbox}
+
+\begin{thmbox}[frametitle={Método Delta (Aproximación de transformaciones 1D)}]
+Sea $\{T_n\}$ una sucesión de estimadores con $\sqrt{n}(T_n - \theta) \dto N(0, \sigma^2)$, y sea $g$ derivable con $g'(\theta) \ne 0$. Entonces:
+\[
+\sqrt{n}\big(g(T_n) - g(\theta)\big) \dto N\Big(0,\, \sigma^2 \big[g'(\theta)]^2\Big).
+\]
+Para el estimador de máxima verosimilitud ($\sigma^2 = 1/I_F(\theta)$):
+\[
+\sqrt{n}\Big(g(\hat\theta_{\text{MV}}) - g(\theta)\Big) \dto N\left(0,\, \frac{[g'(\theta)]^2}{I_F(\theta)}\right)
+\qquad\Longleftrightarrow\qquad
+\Var\big(g(\hat\theta_{\text{MV}})\big) \approx \frac{[g'(\theta)]^2}{n\,I_F(\theta)}.
+\]
+\end{thmbox}
+
+\begin{defbox}[frametitle={Consistencia y Convergencia en Probabilidad}]
+Una sucesión de estimadores $\{\hat\theta_n\}$ es \textbf{consistente} para $\theta$ ($\hat\theta_n \pto \theta$) si para todo $\varepsilon > 0$:
+\[
+\lim_{n\to\infty} \Prob\big(|\hat\theta_n - \theta| \ge \varepsilon\big) = 0
+\qquad\Longleftrightarrow\qquad
+\lim_{n\to\infty} \Prob\big(|\hat\theta_n - \theta| < \varepsilon\big) = 1.
+\]
+\textbf{Criterio suficiente del Error Cuadrático Medio (MSE):}
+\[
+\lim_{n\to\infty} \text{MSE}(\hat\theta_n) = 0 \quad\Longleftrightarrow\quad \left(\lim_{n\to\infty}\Var(\hat\theta_n) = 0 \ \text{ y }\ \lim_{n\to\infty} B(\hat\theta_n) = 0\right) \quad\Longrightarrow\quad \hat\theta_n \pto \theta .
+\]
+\end{defbox}
+
+\begin{notebox}[frametitle={Desigualdades clásicas fundamentales}]
+\begin{itemize}
+  \item \textbf{Desigualdad de Markov Generalizada (DMG):} para cualquier v.a.\ $X$, constante $t > 0$ y $\lambda > 0$:
+  \[
+  \Prob(|X| \ge \lambda) \le \frac{\E[|X|^t]}{\lambda^t}.
+  \qquad \text{Markov clásica ($X\ge 0, t=1$): } \Prob(X \ge a) \le \frac{\E[X]}{a}.
+  \]
+  \item \textbf{Desigualdad de Chebyshev:} para variable con media $\mu$ y varianza finita $\sigma^2$ (DMG con $t=2$):
+  \[
+  \Prob(|X - \mu| \ge \varepsilon) \le \frac{\Var(X)}{\varepsilon^2}, \qquad \Prob(|X - \mu| \ge k\sigma) \le \frac{1}{k^2}.
+  \]
+  \item \textbf{Desigualdad de Jensen:} si $g$ es una función convexa ($g''(u) \ge 0$) y $\E[|X|] < \infty$:
+  \[
+  \E[g(X)] \ge g\big(\E[X]\big). \qquad \big(\text{Ejemplo: } \E[X^2] \ge (\E[X])^2 \implies \Var(X) \ge 0\big).
+  \]
+  \item \textbf{Desigualdad de Cauchy-Schwarz:} si $\E[X^2] < \infty$ y $\E[Y^2] < \infty$:
+  \[
+  \big|\E[XY]\big| \le \sqrt{\E[X^2]\,\E[Y^2]}. \qquad \big(\text{Centradas: } |\Cov(X,Y)| \le \sigma_X \sigma_Y \iff |\rho| \le 1\big).
+  \]
+\end{itemize}
+\end{notebox}
+
+\begin{warnbox}[frametitle={Robustez de estimadores y Punto de Ruptura (Breakdown Point)}]
+Un estimador es \textbf{robusto} si es insensible a violaciones de supuestos del modelo y a observaciones atípicas extremas (outliers).
+\begin{itemize}
+  \item \textbf{Punto de ruptura ($\varepsilon^*$):} proporción mínima de datos contaminados arbitrariamente grandes que pueden forzar al estimador al infinito ($\pm\infty$).
+  \item \textbf{Media muestral $\bar X$:} $\varepsilon^* = \frac{1}{n} \xrightarrow{n\to\infty} 0\%$ (\textbf{no robusta}; un solo valor atípico altera la media sin límite).
+  \item \textbf{Mediana muestral $\tilde X$:} $\varepsilon^* \approx 50\%$ (\textbf{máxima robustez}; tolera casi el $50\%$ de datos aberrantes).
+\end{itemize}
+\end{warnbox}
+
+% =====================================================================
 \section{Cómo leer las tablas y los valores críticos}
 
 \begin{notebox}[frametitle={La regla que evita todos los líos de colas}]
@@ -888,7 +1107,20 @@ $F$ & \rr bloque $\nu_2$ (denominador), fila $q$, columna $\nu_1$ (numerador) & 
 \rr Insesgamiento de $S^2$ vs $S_n^2$ & \rr Corrección de Bessel (sección 13) & \rr $S^2 = \frac{n}{n-1}S_n^2$\\
 \rr Margen de error de estimación al 95\% & \rr Cota empírica (sección 14) & \rr $b = 2\sigma_{\hat\theta}$\\
 \rr Tamaño de muestra para estimar $\mu$ & \rr Fórmula de $n$ (sección 14) & \rr $n = (2\sigma/b)^2$\\
-\rr Tamaño de muestra conservador para $p$ & \rr Cota peor caso (sección 14) & \rr $n \le 1/b^2$\\
+\rr Tamaño de muestra conservador para $p$ & \rr Cota peor caso (sección 14) & \rr $n \le 1/b^2$\\[3pt]
+\rr Estimar parámetros por momentos & \rr Sistema MM (sección 15) & \rr $m_k = \mu_k(\theta)$ con $m_k = \frac{1}{n}\sum X_i^k$\\[3pt]
+\rr Estimar por máxima verosimilitud regular & \rr Ecuaciones EMV (sección 15) & \rr $\frac{\partial\ell}{\partial\theta}=0$ con $\frac{\partial^2\ell}{\partial\theta^2}<0$\\[3pt]
+\rr EMV con soporte dependiente de $\theta$ & \rr Frontera del soporte (sección 15) & \rr $U(0,\theta)\implies \hat\theta_{\text{MV}} = X_{(n)}$\\[3pt]
+\rr Curvatura / información de la muestra & \rr Información Fisher (sección 16) & \rr $I_F(\theta) = -\E\left[\frac{\partial^2\ln f}{\partial\theta^2}\right]$; $I_n = n I_F(\theta)$\\[3pt]
+\rr Cota mínima de varianza insesgada & \rr Cota Cramér-Rao (sección 16) & \rr $\Var(\hat\theta) \ge \frac{1}{n I_F(\theta)}$\\[3pt]
+\rr Eficiencia / estimador insesgado óptimo & \rr Eficiencia absoluta (sección 16) & \rr $\text{eff}(\hat\theta) = \frac{\text{CRLB}}{\Var(\hat\theta)} = 1 \implies \text{UMVUE}$\\[3pt]
+\rr Cota de varianza con estimador sesgado & \rr Cramér-Rao sesgada (sección 16) & \rr $\Var(\hat\theta) \ge \frac{[1+B'(\theta)]^2}{n I_F(\theta)}$\\[3pt]
+\rr EMV de función transformada $g(\theta)$ & \rr Invarianza de Zehna (sección 17) & \rr $\widehat{g(\theta)}_{\text{MV}} = g(\hat\theta_{\text{MV}})$\\[3pt]
+\rr Distribución asintótica del EMV & \rr Normalidad asintótica (sección 17) & \rr $\sqrt{n}(\hat\theta_{\text{MV}}-\theta) \dto N(0, 1/I_F(\theta))$\\[3pt]
+\rr Distribución asintótica de $g(T_n)$ & \rr Método Delta 1D (sección 17) & \rr $\sqrt{n}(g(T_n)-g(\theta)) \dto N(0, \sigma^2[g'(\theta)]^2)$\\[3pt]
+\rr Consistencia de un estimador $\hat\theta_n$ & \rr Criterio del MSE (sección 17) & \rr $\lim_{n\to\infty}\Var = 0 \wedge \lim_{n\to\infty}B = 0 \implies \hat\theta_n\pto\theta$\\[3pt]
+\rr Acotar $\Prob(|X-\mu|\ge\varepsilon)$ sin conocer fdp & \rr Desigualdad Chebyshev (sección 17) & \rr $\Prob(|X-\mu|\ge\varepsilon) \le \frac{\Var(X)}{\varepsilon^2}$\\[3pt]
+\rr Resistencia ante valores atípicos & \rr Punto de ruptura (sección 17) & \rr Mediana ($\varepsilon^*\approx 50\%$) vs Media ($\varepsilon^*\to 0\%$)\\
 \bottomrule
 \end{tabular}
 \endgroup

@@ -185,7 +185,7 @@
         </tbody>
       </table>
     </div>
-    <p class="small muted">Para $t_{(\nu)}$ y $F_{(\nu_1,\nu_2)}$: $F_F(x)=I_{\nu_1x/(\nu_1x+\nu_2)}\big(\tfrac{\nu_1}{2},\tfrac{\nu_2}{2}\big)$ y, para $t\ge0$, $F_t(t)=1-\tfrac12 I_{\nu/(\nu+t^2)}\big(\tfrac\nu2,\tfrac12\big)$ (simetría si $t&lt;0$). En la práctica se usan las tablas (§15).</p>
+    <p class="small muted">Para $t_{(\nu)}$ y $F_{(\nu_1,\nu_2)}$: $F_F(x)=I_{\nu_1x/(\nu_1x+\nu_2)}\big(\tfrac{\nu_1}{2},\tfrac{\nu_2}{2}\big)$ y, para $t\ge0$, $F_t(t)=1-\tfrac12 I_{\nu/(\nu+t^2)}\big(\tfrac\nu2,\tfrac12\big)$ (simetría si $t&lt;0$). En la práctica se usan las tablas (§18).</p>
 
     <div class="box teorema"><span class="box-title">Relaciones entre modelos (casi todas por FGM)</span>
       <ul>
@@ -513,7 +513,167 @@
 
   <!-- ================================================================ -->
   <section>
-    <h2 id="tablas">15. Cómo leer las tablas y los valores críticos</h2>
+    <h2 id="metodos-estimacion">15. Métodos de estimación: Momentos y Máxima Verosimilitud <span class="formula-tag">(Clase 8)</span></h2>
+
+    <div class="box definicion"><span class="box-title">Método de los Momentos (MM)</span>
+      <p>Consiste en igualar los <b>momentos muestrales</b> a los <b>momentos poblacionales</b> teóricos correspondientes para formar un sistema de ecuaciones del que se despejan los parámetros desconocidos:</p>
+      <ul>
+        <li><b>Momento poblacional de orden $k$:</b> $\mu_k = \E[X^k] = \mu_k(\theta_1, \dots, \theta_m)$.</li>
+        <li><b>Momento muestral de orden $k$:</b> $m_k = \dfrac{1}{n}\displaystyle\sum_{i=1}^n X_i^k$ &nbsp;(en particular $m_1 = \bar X$).</li>
+        <li><b>Sistema de momentos:</b> se igualan $m_k = \mu_k(\theta_1,\dots,\theta_m)$ para $k = 1, \dots, m$ y se resuelve para $\hat\theta_1,\dots,\hat\theta_m$.</li>
+      </ul>
+      <p><b>Propiedades:</b> son estimadores intuitivos y consistentes bajo condiciones estándar por la Ley de los Grandes Números ($m_k \xrightarrow{p} \mu_k$), pero no necesariamente son insesgados ni alcanzan la mínima varianza posible.</p>
+    </div>
+
+    <div class="box definicion"><span class="box-title">Función de verosimilitud y log-verosimilitud</span>
+      <p>Para una muestra aleatoria i.i.d. $X_1,\dots,X_n$ con función de densidad o de probabilidad $f(x;\theta)$:</p>
+      $$L(\theta) = L(\theta; x_1,\dots,x_n) = \prod_{i=1}^n f(x_i;\theta).$$
+      <p>La <b>función de log-verosimilitud</b> transforma el producto en suma facilitando las derivadas:</p>
+      $$\ell(\theta) = \ln L(\theta) = \sum_{i=1}^n \ln f(x_i;\theta).$$
+      <p>Dado que el logaritmo natural es estrictamente creciente, el valor $\theta$ que maximiza $\ell(\theta)$ coincide exactamente con el que maximiza $L(\theta)$.</p>
+    </div>
+
+    <div class="box teorema"><span class="box-title">Estimador de Máxima Verosimilitud (EMV)</span>
+      <p>El <b>EMV</b> es el valor del espacio paramétrico $\Theta$ que maximiza la plausibilidad de la muestra observada:</p>
+      $$\hat\theta_{\text{MV}} = \arg\max_{\theta \in \Theta} L(\theta) = \arg\max_{\theta \in \Theta} \ell(\theta).$$
+      <ul>
+        <li><b>Condición de primer orden (ecuación de verosimilitud):</b> en puntos interiores donde $\ell(\theta)$ sea diferenciable:
+          $$\frac{\partial \ell(\theta)}{\partial\theta} = 0 \quad\text{o}\quad \nabla_\theta \ell(\boldsymbol\theta) = \mathbf{0}.$$
+        </li>
+        <li><b>Condición de segundo orden (concavidad estricta para máximo local):</b>
+          $$\left.\frac{\partial^2 \ell(\theta)}{\partial\theta^2}\right|_{\theta=\hat\theta_{\text{MV}}} &lt; 0.$$
+          En el caso multidimensional, la matriz hessiana $H(\boldsymbol\theta) = \left(\frac{\partial^2\ell}{\partial\theta_i\partial\theta_j}\right)$ debe ser definida negativa.
+        </li>
+      </ul>
+    </div>
+
+    <div class="box cuidado"><span class="box-title">Soporte dependiente del parámetro (casos no diferenciables)</span>
+      <p>Si el soporte de la variable depende del parámetro $\theta$, <b>no se debe igualar la derivada a cero</b>. Hay que incluir la función indicadora del soporte e inspeccionar si la verosimilitud es monótona:</p>
+      <ul>
+        <li><b>Ejemplo Uniforme $U(0,\theta)$:</b> $f(x_i;\theta) = \frac{1}{\theta}\,\mathbb{I}_{(0 \le x_i \le \theta)}$, por lo que $L(\theta) = \frac{1}{\theta^n}\,\mathbb{I}_{(\theta \ge \max(x_1,\dots,x_n))}$.</li>
+        <li>Como $\frac{1}{\theta^n}$ es decreciente para $\theta &gt; 0$, la verosimilitud alcanza su valor máximo en el menor $\theta$ permitido por la muestra:
+          $$\hat\theta_{\text{MV}} = X_{(n)} = \max(X_1,\dots,X_n).$$
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="cramer-rao">16. Estimadores eficientes y Cota de Cramér-Rao <span class="formula-tag">(Clase 9)</span></h2>
+
+    <div class="box definicion"><span class="box-title">Función Score y esperanza nula</span>
+      <p>La <b>función Score</b> $S(\theta)$ es la derivada logarítmica de la función de densidad o probabilidad de una observación:</p>
+      $$S(\theta) = \frac{\partial \ln f(X;\theta)}{\partial\theta} = \frac{\frac{\partial f(X;\theta)}{\partial\theta}}{f(X;\theta)}.$$
+      <p>Bajo las condiciones de regularidad de Cramér-Rao (el soporte no depende de $\theta$ y se intercambia derivada con integral), la esperanza de la función Score es siempre <b>cero</b>:</p>
+      $$\E[S(\theta)] = \int \frac{\partial \ln f(x;\theta)}{\partial\theta} f(x;\theta)\,dx = \int \frac{\partial f(x;\theta)}{\partial\theta}\,dx = \frac{d}{d\theta}\int f(x;\theta)\,dx = \frac{d}{d\theta}(1) = 0.$$
+    </div>
+
+    <div class="box definicion"><span class="box-title">Información de Fisher</span>
+      <p>La <b>Información de Fisher</b> $I_F(\theta)$ mide la cantidad de información que una variable aleatoria aporta sobre el parámetro desconocido. Es la varianza de la función Score:</p>
+      $$I_F(\theta) = \Var(S(\theta)) = \E\big[S(\theta)^2\big] = \E\left[\left(\frac{\partial \ln f(X;\theta)}{\partial\theta}\right)^2\right].$$
+      <p><b>Fórmula equivalente por la segunda derivada</b> (habitualmente mucho más directa de calcular):</p>
+      $$I_F(\theta) = -\E\left[\frac{\partial^2 \ln f(X;\theta)}{\partial\theta^2}\right].$$
+      <p><b>Información muestral:</b> para una muestra aleatoria i.i.d. de tamaño $n$, la información se suma linealmente:</p>
+      $$I_n(\theta) = n I_F(\theta) = -n\,\E\left[\frac{\partial^2 \ln f(X;\theta)}{\partial\theta^2}\right].$$
+    </div>
+
+    <div class="box teorema"><span class="box-title">Cota de Cramér-Rao (CRLB)</span>
+      <p>Sea $X_1,\dots,X_n$ una muestra aleatoria i.i.d. regular. La varianza de cualquier estimador <b>insesgado</b> $\hat\theta$ de $\theta$ está acotada inferiormente por el recíproco de la información muestral:</p>
+      $$\Var(\hat\theta) \ge \frac{1}{n I_F(\theta)} = \frac{1}{I_n(\theta)}.$$
+      <p><b>Caso general con sesgo $B(\theta) = \E[\hat\theta] - \theta$:</b></p>
+      $$\Var(\hat\theta) \ge \frac{\left[1 + B'(\theta)\right]^2}{n I_F(\theta)}.$$
+      <p>Si el estimador es insesgado para una función paramétrica $g(\theta)$, la cota toma la forma $\Var(\hat\theta) \ge \frac{[g'(\theta)]^2}{n I_F(\theta)}$.</p>
+    </div>
+
+    <div class="box definicion"><span class="box-title">Eficiencia y estimadores UMVUE</span>
+      <p>La <b>eficiencia relativa</b> de un estimador insesgado $\hat\theta$ se define como el cociente entre la cota de Cramér-Rao y su varianza:</p>
+      $$\text{eff}(\hat\theta) = \frac{\text{CRLB}}{\Var(\hat\theta)} = \frac{1/\big(n I_F(\theta)\big)}{\Var(\hat\theta)} \le 1.$$
+      <ul>
+        <li><b>Estimador eficiente:</b> si $\text{eff}(\hat\theta) = 1$ para todo $\theta$, el estimador alcanza la cota mínima de varianza teórica.</li>
+        <li><b>Estimador UMVUE:</b> todo estimador insesgado que alcanza la cota de Cramér-Rao es automáticamente el <i>Estimador Insesgado de Varianza Uniformemente Mínima</i>.</li>
+        <li><b>Condición de alcance:</b> la cota se alcanza con igualdad si y sólo si la derivada de la log-verosimilitud se factoriza en la forma $\sum_{i=1}^n \frac{\partial \ln f(X_i;\theta)}{\partial\theta} = n I_F(\theta)\big[\hat\theta - \theta\big]$.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="propiedades-asintoticas">17. Invarianza, Propiedades Asintóticas del EMV y Consistencia <span class="formula-tag">(Clase 10)</span></h2>
+
+    <div class="box teorema"><span class="box-title">Principio de invarianza de Zehna</span>
+      <p>Si $\hat\theta_{\text{MV}}$ es el estimador de máxima verosimilitud de $\theta$, y $g(\theta)$ es una función continua o medible (no requiere ser inyectiva), entonces el EMV de $g(\theta)$ es:</p>
+      $$\widehat{g(\theta)}_{\text{MV}} = g\big(\hat\theta_{\text{MV}}\big).$$
+      <ul>
+        <li><b>Ejemplo Poisson:</b> como $\hat\lambda_{\text{MV}} = \bar X$, el EMV de la probabilidad de cero $\P(X=0) = e^{-\lambda}$ es $\widehat{\P(X=0)}_{\text{MV}} = e^{-\bar X}$.</li>
+        <li><b>Ejemplo Normal:</b> el EMV de la desviación estándar $\sigma = \sqrt{\sigma^2}$ es $\hat\sigma_{\text{MV}} = \sqrt{S_n^2}$.</li>
+      </ul>
+    </div>
+
+    <div class="box teorema"><span class="box-title">Distribución asintótica del EMV</span>
+      <p>Bajo condiciones de regularidad de Cramér-Rao, cuando el tamaño de muestra $n \to \infty$, el estimador de máxima verosimilitud converge en distribución a una normal, siendo asintóticamente insesgado y eficiente:</p>
+      $$\sqrt{n}\big(\hat\theta_{\text{MV}} - \theta\big) \xrightarrow{d} N\!\left(0, \frac{1}{I_F(\theta)}\right) \iff \hat\theta_{\text{MV}} \overset{a}{\sim} N\!\left(\theta, \frac{1}{n I_F(\theta)}\right).$$
+      <p>El error estándar asintótico para construir intervalos o pruebas es $\operatorname{SE}(\hat\theta_{\text{MV}}) \approx \dfrac{1}{\sqrt{n I_F(\hat\theta_{\text{MV}})}}$.</p>
+    </div>
+
+    <div class="box teorema"><span class="box-title">Método Delta unidimensional</span>
+      <p>Sea $\{T_n\}$ una sucesión de estimadores asintóticamente normales con $\sqrt{n}(T_n - \theta) \xrightarrow{d} N(0, \sigma^2)$, y sea $g$ una función derivable en $\theta$ con $g'(\theta) \ne 0$. Entonces:</p>
+      $$\sqrt{n}\big(g(T_n) - g(\theta)\big) \xrightarrow{d} N\left(0, \sigma^2 \big[g'(\theta)\big]^2\right).$$
+      <p><b>Aproximación práctica:</b> $g(T_n) \overset{a}{\sim} N\left(g(\theta), \dfrac{\sigma^2 [g'(\theta)]^2}{n}\right)$. Proviene de la aproximación lineal de Taylor $g(T_n) \approx g(\theta) + g'(\theta)(T_n - \theta)$.</p>
+    </div>
+
+    <div class="box definicion"><span class="box-title">Consistencia en probabilidad y criterio del MSE</span>
+      <p>Una sucesión de estimadores $\{\hat\theta_n\}$ es <b>consistente</b> para $\theta$ si converge en probabilidad al verdadero parámetro:</p>
+      $$\hat\theta_n \xrightarrow{p} \theta \iff \lim_{n\to\infty} \P\big(|\hat\theta_n - \theta| \ge \varepsilon\big) = 0 \quad \forall\,\varepsilon &gt; 0.$$
+      <p><b>Condición suficiente por error cuadrático medio (Criterio MSE):</b></p>
+      $$\lim_{n\to\infty} \text{MSE}(\hat\theta_n) = 0 \iff \lim_{n\to\infty} \Var(\hat\theta_n) = 0 \quad\text{y}\quad \lim_{n\to\infty} B(\hat\theta_n) = 0 \implies \hat\theta_n \xrightarrow{p} \theta.$$
+      <p>Demostración inmediata por la desigualdad de Chebyshev: $\P(|\hat\theta_n-\theta|\ge\varepsilon) \le \dfrac{\text{MSE}(\hat\theta_n)}{\varepsilon^2} \xrightarrow{n\to\infty} 0$.</p>
+    </div>
+
+    <div class="box teorema"><span class="box-title">Desigualdades clásicas fundamentales</span>
+      <div class="table-wrap">
+        <table class="tabla compact">
+          <thead>
+            <tr><th class="f">Desigualdad</th><th class="f">Hipótesis</th><th class="f">Cota / Relación</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="f"><b>Markov</b></td>
+              <td class="f">$X \ge 0$, $a &gt; 0$</td>
+              <td class="f">$\P(X \ge a) \le \dfrac{\E[X]}{a}$</td>
+            </tr>
+            <tr>
+              <td class="f"><b>Chebyshev</b></td>
+              <td class="f">$\Var(X) = \sigma^2 &lt; \infty$, $\varepsilon &gt; 0$</td>
+              <td class="f">$\P(|X-\mu| \ge \varepsilon) \le \dfrac{\Var(X)}{\varepsilon^2} \iff \P(|X-\mu| \ge k\sigma) \le \dfrac{1}{k^2}$</td>
+            </tr>
+            <tr>
+              <td class="f"><b>Jensen</b></td>
+              <td class="f">$g$ convexa ($g'' \ge 0$)</td>
+              <td class="f">$\E[g(X)] \ge g(\E[X]) \quad (\text{si } g \text{ cóncava, } \E[g(X)] \le g(\E[X]))$</td>
+            </tr>
+            <tr>
+              <td class="f"><b>Cauchy–Schwarz</b></td>
+              <td class="f">$\E[X^2] &lt; \infty$, $\E[Y^2] &lt; \infty$</td>
+              <td class="f">$\big[\Cov(X,Y)\big]^2 \le \Var(X)\Var(Y) \iff |\E[XY]|^2 \le \E[X^2]\E[Y^2]$</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="box idea"><span class="box-title">Robustez y resistencia a valores atípicos</span>
+      <ul>
+        <li><b>Media muestral $\bar X$:</b> óptima bajo normalidad, pero extremadamente sensible a valores atípicos. Un solo dato erróneo ($x \to \infty$) distorsiona la estimación indefinidamente (punto de colapso asintótico $= 0\%$).</li>
+        <li><b>Mediana muestral $\tilde X$:</b> basada en orden; tolera hasta un $50\%$ de observaciones contaminadas o atípicas extremas sin colapsar (punto de colapso $= 50\%$).</li>
+        <li><b>Compromiso:</b> en distribuciones con colas pesadas o contaminación, los estimadores robustos presentan menor MSE práctico que los estimadores basados en momentos.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="tablas">18. Cómo leer las tablas y los valores críticos</h2>
     <div class="box idea"><span class="box-title">La regla que evita todos los líos de colas</span>
       <p>Las tablas ESPOL dan el valor con <b>área a la IZQUIERDA</b> $q$: $\P(X\le x)=q$. En clase se escribe el valor crítico con <b>área $\alpha$ a la DERECHA</b>. Entonces:</p>
       $$\text{valor crítico con cola derecha }\alpha \;=\; \text{valor de la tabla en la columna } q=1-\alpha .$$
@@ -538,7 +698,7 @@
 
   <!-- ================================================================ -->
   <section>
-    <h2 id="mapa">16. Mapa rápido: qué usar en cada caso</h2>
+    <h2 id="mapa">19. Mapa rápido: qué usar en cada caso</h2>
     <div class="table-wrap"><table class="tabla compact text-left">
       <thead><tr><th>Si te piden…</th><th>Usa</th><th>Fórmula clave</th></tr></thead>
       <tbody>
@@ -561,6 +721,16 @@
         <tr><td>Margen de error de estimación al 95%</td><td>Cota empírica (§14)</td><td>$b = 2\sigma_{\hat\theta}$</td></tr>
         <tr><td>Tamaño de muestra para estimar $\mu$</td><td>Fórmula de $n$ (§14)</td><td>$n = (2\sigma/b)^2$</td></tr>
         <tr><td>Tamaño de muestra conservador para $p$</td><td>Cota peor caso (§14)</td><td>$n \le 1/b^2$</td></tr>
+        <tr><td>Estimador de momentos</td><td>MM (§15)</td><td>$m_k = \mu_k(\theta)$</td></tr>
+        <tr><td>Estimador de máxima verosimilitud</td><td>EMV (§15)</td><td>$\partial \ell/\partial\theta = 0$ o frontera</td></tr>
+        <tr><td>Información de Fisher de una muestra</td><td>Información de Fisher (§16)</td><td>$I_n(\theta) = n I_F(\theta) = -n\E[\partial^2\ln f/\partial\theta^2]$</td></tr>
+        <tr><td>Cota mínima de varianza para estimador insesgado</td><td>Cramér-Rao (§16)</td><td>$\Var(\hat\theta) \ge 1/(n I_F(\theta))$</td></tr>
+        <tr><td>Estimador eficiente / UMVUE</td><td>Eficiencia (§16)</td><td>$\text{eff}(\hat\theta) = \frac{\text{CRLB}}{\Var(\hat\theta)} = 1$</td></tr>
+        <tr><td>Estimación de una función $g(\theta)$ vía EMV</td><td>Invarianza de Zehna (§17)</td><td>$\widehat{g(\theta)} = g(\hat\theta_{\text{MV}})$</td></tr>
+        <tr><td>Distribución límite de un EMV</td><td>Normalidad asintótica (§17)</td><td>$\sqrt{n}(\hat\theta - \theta) \xrightarrow{d} N(0, 1/I_F(\theta))$</td></tr>
+        <tr><td>Distribución de función $g(T_n)$ con $T_n$ asintóticamente normal</td><td>Método Delta (§17)</td><td>$\Var_{\text{asint}} = \sigma^2 [g'(\theta)]^2$</td></tr>
+        <tr><td>Demostrar consistencia de un estimador</td><td>Criterio MSE (§17)</td><td>$\Var\to 0$ y $B\to 0 \implies \hat\theta\xrightarrow{p}\theta$</td></tr>
+        <tr><td>Acotar probabilidad de colas sin conocer distribución</td><td>Desigualdad de Chebyshev (§17)</td><td>$\P(|X-\mu|\ge\varepsilon) \le \sigma^2/\varepsilon^2$</td></tr>
       </tbody>
     </table></div>
     <p class="small muted">¿Falta algún resultado? Aparecerá aquí a medida que avancen las clases. Los temas en detalle están en el <a href="distribuciones.html">laboratorio de distribuciones</a>, en <a href="tablas.html">cómo leer las tablas</a> y en el <a href="../temas/repaso.html">repaso de Estadística I</a>.</p>

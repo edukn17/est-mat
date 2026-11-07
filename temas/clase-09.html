@@ -1,0 +1,891 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clase 9 · Estimadores eficientes, función score e Información de Fisher</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/theme.js"></script>
+<style>
+  .badge.star { background: var(--plot-c4, #e67e22); color: #fff; font-size: 0.72rem; padding: 2px 7px; border-radius: 4px; vertical-align: middle; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+  .table-wrap { overflow-x: auto; margin: 1.2rem 0; }
+  table.tabla { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+  table.tabla th, table.tabla td { padding: 9px 12px; border: 1px solid var(--border, #e2e8f0); text-align: center; }
+  table.tabla th { background: var(--surface-2, #f8fafc); font-weight: 600; color: var(--ink); }
+  table.tabla td.izq { text-align: left; }
+  .comp-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.82rem; font-weight: 600; font-family: var(--font-mono); }
+  .tag-win { background: rgba(34, 197, 94, 0.15); color: var(--good, #16a34a); }
+  .tag-loss { background: rgba(239, 68, 68, 0.15); color: var(--bad, #dc2626); }
+  .tag-warn { background: rgba(245, 158, 11, 0.15); color: var(--warn, #d97706); }
+  .formula-highlight { background: var(--accent-soft, #f5f3ff); border-left: 3px solid var(--accent, #7c3aed); padding: 0.75rem 1rem; margin: 1rem 0; border-radius: 0 6px 6px 0; }
+  .rao-portrait { display: flex; align-items: flex-start; gap: 1.2rem; margin: 1rem 0; }
+  .rao-card { background: var(--surface-2, #f8fafc); border: 1px solid var(--border, #e2e8f0); border-radius: 8px; padding: 1rem 1.2rem; flex: 1; }
+</style>
+</head>
+<body data-page="clase-09" data-root="../">
+<main id="contenido">
+
+  <header class="page-head">
+    <p class="kicker">Clase 9 · Unidad 2 — Teoría de la estimación</p>
+    <h1>Estimadores eficientes y la cota inferior de Cramér-Rao</h1>
+    <p class="lead">¿Existe un límite infranqueable a la precisión que puede alcanzar un estimador insesgado? La función score, la Información de Fisher, la desigualdad de la información y la búsqueda del estimador óptimo de mínima varianza.</p>
+  </header>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="eficiencia">1. Estimadores eficientes y el límite inferior de la varianza</h2>
+
+    <div class="box idea"><span class="box-title">La gran interrogante: ¿Hasta dónde podemos reducir la varianza?</span>
+      <p>En las Clases 6 y 7 comprobamos que entre varios estimadores insesgados de un mismo parámetro $\theta$, preferimos aquel con <b>menor varianza</b>, pues su error cuadrático medio coincide con ella ($\text{MSE} = \Var$).</p>
+      <p>Sin embargo, esto suscita una pregunta teórica de máxima envergadura formulada por Sir Ronald Fisher y Harald Cramér:</p>
+      <blockquote>
+        <em>Dado un modelo probabilístico $f(x;\theta)$ y una muestra de tamaño $n$, ¿cuál es la varianza mínima teórica que es físicamente posible alcanzar para cualquier estimador insesgado? ¿Podemos diseñar un estimador con varianza arbitrariamente pequeña, o existe una barrera impuesta por la cantidad de información que los datos contienen sobre $\theta$?</em>
+      </blockquote>
+      <p>La respuesta es afirmativa: existe un <b>límite inferior universal</b>, denominado <b>Cota Inferior de Cramér-Rao</b> o $\text{LI}(\theta)$. Ningún estimador insesgado, sin importar cuán ingeniosa sea su fórmula, puede tener una varianza estrictamente menor que este límite.</p>
+    </div>
+
+    <div class="box definicion"><span class="box-title">Definición: Eficiencia de un estimador insesgado</span>
+      <p>Sea $\hat\theta$ un estimador insesgado del parámetro poblacional $\theta$, y sea $\text{LI}(\theta)$ el límite inferior teórico de la varianza para estimadores insesgados en dicho modelo estadístico. Se define la <b>eficiencia</b> de $\hat\theta$ como el cociente:</p>
+      $$\text{eff}(\hat\theta) = \frac{\text{LI}(\theta)}{\Var(\hat\theta)}.$$
+      <p>Propiedades fundamentales:</p>
+      <ul>
+        <li>Puesto que $\Var(\hat\theta) \ge \text{LI}(\theta)$ para todo estimador insesgado, se cumple siempre:
+          $$0 \le \text{eff}(\hat\theta) \le 1.$$
+        </li>
+        <li>Si $\text{eff}(\hat\theta) = 1$, es decir, cuando $\Var(\hat\theta) = \text{LI}(\theta)$, decimos que $\hat\theta$ es un <b>estimador eficiente</b>. Un estimador eficiente extrae el cien por ciento de la información que la muestra contiene sobre $\theta$.</li>
+        <li>Si $\text{eff}(\hat\theta) &lt; 1$, el estimador es <b>ineficiente</b> o subóptimo: desperdicia una fracción $1 - \text{eff}(\hat\theta)$ de la información muestral disponible.</li>
+      </ul>
+    </div>
+
+    <div class="box nota"><span class="box-title">Eficiencia relativa vs. Eficiencia absoluta</span>
+      <p>En la Clase 7 estudiamos la <b>eficiencia relativa</b> entre dos estimadores candidatos $\hat\theta_1$ y $\hat\theta_2$:</p>
+      $$\text{eff}(\hat\theta_1, \hat\theta_2) = \frac{\Var(\hat\theta_2)}{\Var(\hat\theta_1)}.$$
+      <p>Ese cociente solo nos informaba cuál de los dos era comparativamente superior. La <b>eficiencia absoluta</b> $\text{eff}(\hat\theta) = \frac{\text{LI}(\theta)}{\Var(\hat\theta)}$ es mucho más poderosa: compara a $\hat\theta$ contra <em>todos los estimadores insesgados concebibles en el universo</em>. Si alcanza 1, ya no hace falta buscar más: no existe ningún estimador insesgado mejor.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="score-fisher">2. Función score e Información de Fisher</h2>
+
+    <p>Para determinar cuánto vale exactamente ese límite inferior $\text{LI}(\theta)$, primero debemos cuantificar cuánta información aporta una observación aleatoria $X$ respecto al parámetro desconocido $\theta$. Esta es la magistral contribución de Ronald Fisher.</p>
+
+    <div class="box definicion"><span class="box-title">Definición: Función score de Fisher</span>
+      <p>Sea $X$ una variable aleatoria con función de probabilidad o densidad $f(X;\theta)$, donde $\theta \in \Omega$ es un parámetro escalar diferenciable. Se define la <b>función score</b> (o estadístico de puntuación de Fisher) como la derivada logarítmica de la verosimilitud de una observación:</p>
+      $$S(\theta) = S(X; \theta) = \frac{\partial \ln f(X; \theta)}{\partial \theta}.$$
+      <p>Por la regla de la cadena para la derivada del logaritmo natural:</p>
+      $$S(X;\theta) = \frac{\frac{\partial f(X;\theta)}{\partial \theta}}{f(X;\theta)}.$$
+    </div>
+
+    <div class="box cuidado"><span class="box-title">Condiciones de regularidad de Fisher–Cramér–Rao</span>
+      <p>Para que la teoría de la información de Fisher y la cota de Cramér-Rao sean válidas, la familia $\{f(x;\theta) : \theta \in \Omega\}$ debe satisfacer dos <b>condiciones de regularidad</b>:</p>
+      <ol class="pasos">
+        <li><b>Independencia del soporte:</b> El soporte de la variable, $\mathcal{X} = \{x : f(x;\theta) &gt; 0\}$, <em>no debe depender del parámetro desconocido $\theta$</em>.
+          <br><small class="muted"><b>Contraejemplo clásico:</b> En la distribución $\text{Unif}(0, \theta)$, el soporte es $(0, \theta)$, que depende explícitamente de $\theta$. Por tanto, la uniforme no cumple las condiciones de regularidad y la cota de Cramér-Rao no se puede aplicar a este modelo.</small>
+        </li>
+        <li><b>Intercambio admisible de derivada e integral:</b> La función $\ln f(x;\theta)$ debe ser diferenciable respecto a $\theta$, y el orden de derivación respecto a $\theta$ e integración (o sumatoria) respecto a $x$ se puede alternar:
+          $$\frac{\partial}{\partial \theta} \int_{\mathcal{X}} g(x, \theta) f(x;\theta)\,dx = \int_{\mathcal{X}} \frac{\partial}{\partial \theta}\big[ g(x, \theta) f(x;\theta) \big]\,dx.$$
+        </li>
+      </ol>
+    </div>
+
+    <div class="box teorema"><span class="box-title">Resultado 1: El valor esperado de la función score es idénticamente cero</span>
+      <p>Bajo las condiciones de regularidad, la función score tiene media poblacional nula para cualquier valor del parámetro $\theta$:</p>
+      $$\E_\theta\left[ S(X;\theta) \right] = \E_\theta\left[ \frac{\partial \ln f(X;\theta)}{\partial \theta} \right] = 0.$$
+      
+      <details class="solucion"><summary>Demostración paso a paso</summary><div>
+        <p>Partimos del axioma fundamental de la probabilidad: la integral de cualquier función de densidad sobre todo su soporte es igual a la unidad para todo $\theta$:</p>
+        $$\int_{\mathcal{X}} f(x;\theta)\,dx = 1.$$
+        <p>Derivamos ambos miembros respecto a $\theta$:</p>
+        $$\frac{\partial}{\partial \theta} \int_{\mathcal{X}} f(x;\theta)\,dx = \frac{\partial}{\partial \theta}(1) = 0.$$
+        <p>Aplicando la condición de regularidad, introducimos la derivada dentro de la integral:</p>
+        $$\int_{\mathcal{X}} \frac{\partial f(x;\theta)}{\partial \theta}\,dx = 0.$$
+        <p>Multiplicamos y dividimos dentro del integrando por $f(x;\theta)$ (lo cual es lícito en el soporte pues $f(x;\theta) &gt; 0$):</p>
+        $$\int_{\mathcal{X}} \frac{\frac{\partial f(x;\theta)}{\partial \theta}}{f(x;\theta)} f(x;\theta)\,dx = 0.$$
+        <p>Reconocemos que $\frac{\frac{\partial f}{\partial \theta}}{f} = \frac{\partial \ln f(x;\theta)}{\partial \theta}$ y que la integral representa la definición de valor esperado:</p>
+        $$\int_{\mathcal{X}} \left( \frac{\partial \ln f(x;\theta)}{\partial \theta} \right) f(x;\theta)\,dx = \E_\theta\left[ \frac{\partial \ln f(X;\theta)}{\partial \theta} \right] = 0. \quad \blacksquare$$
+      </div></details>
+    </div>
+
+    <div class="box definicion"><span class="box-title">Definición: Información de Fisher de una sola observación</span>
+      <p>Se define la <b>Información de Fisher</b> contenida en una sola observación $X$, denotada por $I_F(\theta)$, como el segundo momento de la función score:</p>
+      $$I_F(\theta) = \E_\theta\left[ \left( \frac{\partial \ln f(X;\theta)}{\partial \theta} \right)^2 \right].$$
+      <p>Puesto que el Resultado 1 demostró que $\E_\theta[S(\theta)] = 0$, la varianza del score coincide exactamente con su segundo momento:</p>
+      $$I_F(\theta) = \Var_\theta\left( \frac{\partial \ln f(X;\theta)}{\partial \theta} \right).$$
+      <p>Como toda varianza, la Información de Fisher es siempre no negativa: $I_F(\theta) \ge 0$.</p>
+    </div>
+
+    <div class="box teorema"><span class="box-title">Resultado 2: Información de Fisher como la curvatura esperada (Segunda derivada)</span>
+      <p>Si la función $\ln f(x;\theta)$ admite dos derivadas continuas respecto a $\theta$ y se cumple la condición de regularidad para la segunda derivada, la Información de Fisher se puede calcular alternativamente como el negativo del valor esperado de la segunda derivada del logaritmo de la densidad:</p>
+      <div class="formula-highlight">
+        $$I_F(\theta) = -\E_\theta\left[ \frac{\partial^2 \ln f(X;\theta)}{\partial \theta^2} \right].$$
+      </div>
+      <p>Esta fórmula suele ser <b>muchísimo más fácil y directa de calcular</b> en la práctica que elevar el score al cuadrado e integrar.</p>
+
+      <details class="solucion"><summary>Deducción paso a paso de la equivalencia</summary><div>
+        <p>Derivamos la función score respecto a $\theta$ usando la regla del cociente:</p>
+        $$\frac{\partial^2 \ln f(x;\theta)}{\partial \theta^2} = \frac{\partial}{\partial \theta}\left[ \frac{\frac{\partial f(x;\theta)}{\partial \theta}}{f(x;\theta)} \right] = \frac{\frac{\partial^2 f(x;\theta)}{\partial \theta^2} \cdot f(x;\theta) - \left(\frac{\partial f(x;\theta)}{\partial \theta}\right)^2}{\big[f(x;\theta)\big]^2}.$$
+        <p>Separamos en dos fracciones:</p>
+        $$\frac{\partial^2 \ln f(x;\theta)}{\partial \theta^2} = \frac{\frac{\partial^2 f(x;\theta)}{\partial \theta^2}}{f(x;\theta)} - \left( \frac{\frac{\partial f(x;\theta)}{\partial \theta}}{f(x;\theta)} \right)^2 = \frac{\frac{\partial^2 f(x;\theta)}{\partial \theta^2}}{f(x;\theta)} - \left( \frac{\partial \ln f(x;\theta)}{\partial \theta} \right)^2.$$
+        <p>Tomamos el valor esperado en ambos miembros:</p>
+        $$\E_\theta\left[ \frac{\partial^2 \ln f(X;\theta)}{\partial \theta^2} \right] = \int_{\mathcal{X}} \frac{\frac{\partial^2 f(x;\theta)}{\partial \theta^2}}{f(x;\theta)} f(x;\theta)\,dx - \E_\theta\left[ \left( \frac{\partial \ln f(X;\theta)}{\partial \theta} \right)^2 \right].$$
+        <p>Analizamos el primer término: simplificamos $f(x;\theta)$ e intercambiamos la integral con la segunda derivada:</p>
+        $$\int_{\mathcal{X}} \frac{\partial^2 f(x;\theta)}{\partial \theta^2}\,dx = \frac{\partial^2}{\partial \theta^2} \int_{\mathcal{X}} f(x;\theta)\,dx = \frac{\partial^2}{\partial \theta^2}(1) = 0.$$
+        <p>En consecuencia:</p>
+        $$\E_\theta\left[ \frac{\partial^2 \ln f(X;\theta)}{\partial \theta^2} \right] = 0 - I_F(\theta) = -I_F(\theta).$$
+        <p>Multiplicando por $-1$, obtenemos la identidad buscada: $I_F(\theta) = -\E_\theta\left[ \frac{\partial^2 \ln f(X;\theta)}{\partial \theta^2} \right]$. $\blacksquare$</p>
+      </div></details>
+    </div>
+
+    <div class="box idea"><span class="box-title">Intuición geométrica: ¿Por qué la segunda derivada mide información?</span>
+      <p>En cálculo, la segunda derivada mide la <b>concavidad o curvatura</b> de una función:</p>
+      <ul>
+        <li><b>Curvatura pronunciada (pico agudo):</b> Si $-\frac{\partial^2 \ln f}{\partial \theta^2}$ es muy grande, la curva del logaritmo de verosimilitud cae vertiginosamente al alejarse del máximo. Esto significa que valores apenas diferentes de $\theta$ son radicalmente incompatibles con los datos. <em>Hay mucha información $\implies I_F(\theta)$ alta $\implies$ baja incertidumbre</em>.</li>
+        <li><b>Curvatura suave (pico plano):</b> Si la segunda derivada es cercana a cero, la curva es casi horizontal. Muchos valores de $\theta$ son casi igualmente verosímiles. <em>Hay poca información $\implies I_F(\theta)$ baja $\implies$ gran incertidumbre</em>.</li>
+      </ul>
+    </div>
+
+    <div class="box teorema"><span class="box-title">Resultado 3: Aditividad de la Información de Fisher en muestras independientes</span>
+      <p>Sean $X_1, X_2, \dots, X_n$ una muestra aleatoria independiente e idénticamente distribuida ($\iid$) con función de densidad $f(x;\theta)$ e Información de Fisher individual $I_F(\theta)$.</p>
+      <p>La Información de Fisher total contenida en la muestra conjunta de tamaño $n$, denotada por $I_{F,n}(\theta)$, es la suma de las informaciones individuales:</p>
+      <div class="formula-highlight">
+        $$I_{F,n}(\theta) = n I_F(\theta).$$
+      </div>
+
+      <details class="solucion"><summary>Demostración</summary><div>
+        <p>Por independencia, la densidad conjunta de la muestra es el producto de las densidades marginales:</p>
+        $$f_n(x_1, \dots, x_n; \theta) = \prod_{i=1}^n f(x_i; \theta).$$
+        <p>El logaritmo de la verosimilitud conjunta es la suma de los logaritmos:</p>
+        $$\ln f_n(X_1, \dots, X_n; \theta) = \sum_{i=1}^n \ln f(X_i; \theta).$$
+        <p>La función score muestral total es la suma de los scores individuales:</p>
+        $$S_n(\theta) = \frac{\partial \ln f_n}{\partial \theta} = \sum_{i=1}^n \frac{\partial \ln f(X_i;\theta)}{\partial \theta} = \sum_{i=1}^n S(X_i;\theta).$$
+        <p>Como las variables $X_i$ son independientes, sus scores $S(X_i;\theta)$ también son variables aleatorias mutuamente independientes, cada una con varianza $\Var[S(X_i;\theta)] = I_F(\theta)$. Por la aditividad de la varianza en sumas de variables independientes:</p>
+        $$I_{F,n}(\theta) = \Var\big( S_n(\theta) \big) = \Var\left( \sum_{i=1}^n S(X_i;\theta) \right) = \sum_{i=1}^n \Var\big( S(X_i;\theta) \big) = \sum_{i=1}^n I_F(\theta) = n I_F(\theta). \quad \blacksquare$$
+      </div></details>
+    </div>
+
+    <!-- ---------------- Simulación 1 ---------------- -->
+    <div class="sim" id="sim-score-fisher">
+      <p class="sim-title">Simulación interactiva 1 · Curvatura del log-likelihood, función score e Información de Fisher</p>
+      <p class="sim-desc">Explora visualmente cómo la Información de Fisher $I_F(\theta)$ determina la curvatura (segunda derivada) del logaritmo de verosimilitud $\ln L(\theta)$ y la dispersión de la función score $S(\theta)$. Observa cómo un mayor tamaño de muestra $n$ o un modelo con mayor información afila el pico de la verosimilitud, reduciendo la incertidumbre del estimador.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="cramer-rao">3. Desigualdad de la Información y Cota de Cramér-Rao</h2>
+
+    <p>Conocida la cantidad de información que la muestra aporta sobre el parámetro, estamos listos para enunciar uno de los teoremas más bellos y trascendentales de toda la inferencia estadística.</p>
+
+    <div class="box teorema" id="teo-6"><span class="box-title">Teorema 6: Desigualdad de la Información y Cota de Cramér-Rao</span>
+      <p>Sean $X_1, \dots, X_n$ una muestra aleatoria $\iid$ tomada de una población con función de densidad o probabilidad $f(x;\theta)$ que satisface las condiciones de regularidad. Sea $\hat\theta = T(X_1, \dots, X_n)$ cualquier estimador puntual cuya esperanza matemática es:</p>
+      $$\E_\theta[\hat\theta] = g(\theta),$$
+      <p>donde $g(\theta)$ es una función diferenciable respecto a $\theta$. Entonces, la varianza de dicho estimador satisface necesariamente la desigualdad:</p>
+      <div class="formula-highlight">
+        $$\Var_\theta(\hat\theta) \ge \frac{\big[g'(\theta)\big]^2}{n I_F(\theta)}.$$
+      </div>
+
+      <h4>Caso fundamental: Estimadores insesgados</h4>
+      <p>Si $\hat\theta$ es un estimador <b>insesgado</b> de $\theta$, se cumple $g(\theta) = \theta$, de modo que su derivada es $g'(\theta) = \frac{d}{d\theta}[\theta] = 1$. Por lo tanto, la desigualdad se reduce a:</p>
+      <div class="formula-highlight">
+        $$\Var_\theta(\hat\theta) \ge \frac{1}{n I_F(\theta)} \equiv \text{LI}(\theta).$$
+      </div>
+      <p>La cantidad $\text{LI}(\theta) = \frac{1}{n I_F(\theta)}$ es el <b>límite inferior de la varianza de Cramér-Rao</b>.</p>
+
+      <details class="solucion"><summary>Demostración rigurosa mediante la desigualdad de Cauchy-Schwarz</summary><div>
+        <p><b>Paso 1: Recordar la desigualdad de Cauchy-Schwarz para covarianzas.</b></p>
+        <p>Para cualesquiera dos variables aleatorias $Y$ y $Z$ con segundos momentos finitos, el cuadrado de su covarianza no puede superar el producto de sus varianzas:</p>
+        $$\big[\Cov(Y, Z)\big]^2 \le \Var(Y) \cdot \Var(Z) \iff \Var(Y) \ge \frac{\big[\Cov(Y, Z)\big]^2}{\Var(Z)}.$$
+
+        <p><b>Paso 2: Elegir las variables aleatorias adecuadas.</b></p>
+        <p>Tomamos $Y = \hat\theta = T(\mathbf{X})$ como el estimador bajo estudio, y $Z = S_n(\theta) = \sum_{i=1}^n \frac{\partial \ln f(X_i;\theta)}{\partial \theta}$ como la función score muestral total.</p>
+        <p>Por los Resultados 1 y 3, sabemos que:</p>
+        $$\E[Z] = 0, \qquad \Var(Z) = n I_F(\theta).$$
+
+        <p><b>Paso 3: Calcular la covarianza entre el estimador y el score.</b></p>
+        <p>Por definición de covarianza, dado que $\E[Z] = 0$:</p>
+        $$\Cov(\hat\theta, S_n(\theta)) = \E[\hat\theta \cdot S_n(\theta)] - \E[\hat\theta]\E[S_n(\theta)] = \E\big[ T(\mathbf{X}) S_n(\theta) \big].$$
+        <p>Escribimos esta esperanza en forma de integral múltiple en $\R^n$ con la densidad conjunta $f_n(\mathbf{x};\theta)$:</p>
+        $$\E\big[ T(\mathbf{X}) S_n(\theta) \big] = \int_{\mathcal{X}^n} T(\mathbf{x}) \left( \frac{\frac{\partial f_n(\mathbf{x};\theta)}{\partial \theta}}{f_n(\mathbf{x};\theta)} \right) f_n(\mathbf{x};\theta)\,d\mathbf{x} = \int_{\mathcal{X}^n} T(\mathbf{x}) \frac{\partial f_n(\mathbf{x};\theta)}{\partial \theta}\,d\mathbf{x}.$$
+        <p>Aplicando la condición de regularidad, extraemos la derivada fuera de la integral:</p>
+        $$= \frac{\partial}{\partial \theta} \int_{\mathcal{X}^n} T(\mathbf{x}) f_n(\mathbf{x};\theta)\,d\mathbf{x} = \frac{\partial}{\partial \theta} \E_\theta[T(\mathbf{X})] = \frac{\partial}{\partial \theta}\big[ g(\theta) \big] = g'(\theta).$$
+        <p>¡Resultado notable! La covarianza entre cualquier estimador y la función score es exactamente la derivada de la esperanza del estimador: $\Cov(\hat\theta, S_n) = g'(\theta)$.</p>
+
+        <p><b>Paso 4: Sustituir en la desigualdad de Cauchy-Schwarz.</b></p>
+        $$\Var(\hat\theta) \ge \frac{\big[\Cov(\hat\theta, S_n)\big]^2}{\Var(S_n)} = \frac{\big[g'(\theta)\big]^2}{n I_F(\theta)}. \quad \blacksquare$$
+      </div></details>
+    </div>
+
+    <div class="box cuidado"><span class="box-title">Advertencia crucial: La cota de Cramér-Rao NO es un método para construir estimadores</span>
+      <p>Es muy común que los estudiantes confundan el propósito de este teorema:</p>
+      <ul>
+        <li><b>Qué NO es:</b> La cota de Cramér-Rao <em>no es un algoritmo constructivo</em> (como el método de momentos o máxima verosimilitud) que recibe datos y produce la fórmula de un estimador.</li>
+        <li><b>Qué SÍ es:</b> Es un <b>estándar de referencia absoluto (benchmark)</b> para auditar la calidad de un estimador insesgado ya propuesto.
+          <ul>
+            <li>Si calculas la varianza de tu estimador y resulta exactamente igual a $\text{LI}(\theta)$, puedes afirmar con total certeza que es un estimador <b>óptimo y eficiente</b>: ningún otro estimador insesgado en el mundo podrá superarlo.</li>
+            <li>Si su varianza es estrictamente mayor que $\text{LI}(\theta)$, el estimador no alcanza la cota. Puede deberse a dos razones: o bien existe un estimador mejor que aún no has encontrado, o bien el modelo estadístico impone una varianza mínima estrictamente mayor que la cota de Cramér-Rao (la cota puede no ser alcanzable en muestras finitas).</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <div class="box nota"><span class="box-title">¿Cuándo se alcanza la igualdad en la cota de Cramér-Rao?</span>
+      <p>En la demostración por Cauchy-Schwarz, la igualdad $[\Cov(Y, Z)]^2 = \Var(Y)\Var(Z)$ se cumple si y solo si las dos variables aleatorias centradas son linealmente dependientes con probabilidad 1:</p>
+      $$S_n(\theta) = k(\theta) \big[ \hat\theta - g(\theta) \big],$$
+      <p>para alguna función determinista $k(\theta)$. Integrando esta relación con respecto a $\theta$, se demuestra que la igualdad solo puede alcanzarse en distribuciones que pertenecen a la <b>familia exponencial unidimensional</b>, donde el estimador eficiente es una función lineal del estadístico suficiente $\sum_{i=1}^n T(X_i)$.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="ejemplos">4. Ejemplos clásicos resueltos paso a paso</h2>
+
+    <!-- ---------------- Ejemplo 1 ---------------- -->
+    <div class="box ejemplo" id="ejemplo-poisson">
+      <span class="box-title">Ejemplo 1 (Diapositivas de clase) · Muestra aleatoria de una población $\text{Poisson}(\theta)$</span>
+      <p>Sean $X_1, X_2, \dots, X_n \iid \text{Poisson}(\theta)$ con parámetro desconocido $\theta &gt; 0$. Su función de probabilidad puntual es:</p>
+      $$f(x;\theta) = \frac{e^{-\theta} \theta^x}{x!}, \qquad x \in \{0, 1, 2, \dots\}.$$
+      <ol class="pasos">
+        <li>Determine la función score $S(X;\theta)$ y demuestre que su valor esperado es nulo.</li>
+        <li>Calcule la Información de Fisher $I_F(\theta)$ mediante la segunda derivada.</li>
+        <li>Halle el límite inferior de la varianza $\text{LI}(\theta)$.</li>
+        <li>Determine si la media muestral $\bar X$ es un estimador eficiente para $\theta$.</li>
+      </ol>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Tome logaritmo natural de $f(x;\theta)$. Recuerde que para una variable de Poisson, $\E[X] = \theta$ y $\Var(X) = \theta$. Verifique si la segunda derivada $-\frac{\partial^2 \ln f}{\partial \theta^2}$ depende de $x$, y en tal caso aplique la esperanza.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <h4>1. Cálculo del score y verificación de media nula</h4>
+        <p>Tomamos el logaritmo natural de la función de probabilidad:</p>
+        $$\ln f(x;\theta) = \ln\left( \frac{e^{-\theta} \theta^x}{x!} \right) = -\theta + x \ln \theta - \ln(x!).$$
+        <p>Derivamos respecto al parámetro $\theta$:</p>
+        $$S(x;\theta) = \frac{\partial \ln f(x;\theta)}{\partial \theta} = -1 + \frac{x}{\theta} = \frac{x - \theta}{\theta}.$$
+        <p>Verificamos su valor esperado recordando que para $X \sim \text{Poisson}(\theta)$ se tiene $\E[X] = \theta$:</p>
+        $$\E\big[ S(X;\theta) \big] = \E\left[ \frac{X - \theta}{\theta} \right] = \frac{\E[X] - \theta}{\theta} = \frac{\theta - \theta}{\theta} = 0. \quad \checkmark$$
+
+        <h4>2. Cálculo de la Información de Fisher $I_F(\theta)$</h4>
+        <p>Derivamos nuevamente respecto a $\theta$:</p>
+        $$\frac{\partial^2 \ln f(x;\theta)}{\partial \theta^2} = \frac{\partial}{\partial \theta}\left( -1 + \frac{x}{\theta} \right) = -\frac{x}{\theta^2}.$$
+        <p>Aplicamos el Resultado 2 tomando el valor esperado negativo:</p>
+        $$I_F(\theta) = -\E\left[ \frac{\partial^2 \ln f(X;\theta)}{\partial \theta^2} \right] = -\E\left[ -\frac{X}{\theta^2} \right] = \frac{\E[X]}{\theta^2} = \frac{\theta}{\theta^2} = \frac{1}{\theta}.$$
+
+        <h4>3. Límite inferior de la varianza $\text{LI}(\theta)$</h4>
+        <p>Para una muestra de tamaño $n$, la Información de Fisher total es $I_{F,n}(\theta) = n I_F(\theta) = \frac{n}{\theta}$.</p>
+        <p>Por el Teorema de Cramér-Rao, la varianza de cualquier estimador insesgado de $\theta$ debe satisfacer:</p>
+        $$\text{LI}(\theta) = \frac{1}{n I_F(\theta)} = \frac{1}{n / \theta} = \frac{\theta}{n}.$$
+
+        <h4>4. Evaluación de la eficiencia de la media muestral $\bar X$</h4>
+        <p>Evaluamos las propiedades de $\bar X = \frac{1}{n}\sum_{i=1}^n X_i$:</p>
+        <ul>
+          <li><b>Insesgadez:</b> $\E[\bar X] = \frac{1}{n}\sum_{i=1}^n \E[X_i] = \frac{1}{n}(n\theta) = \theta$ (es insesgado).</li>
+          <li><b>Varianza:</b> $\Var(\bar X) = \frac{\Var(X)}{n} = \frac{\theta}{n}$.</li>
+        </ul>
+        <p>Calculamos la eficiencia:</p>
+        $$\text{eff}(\bar X) = \frac{\text{LI}(\theta)}{\Var(\bar X)} = \frac{\theta / n}{\theta / n} = 1.$$
+        <p><b>Conclusión:</b> La media muestral $\bar X$ alcanza con exactitud la cota inferior de Cramér-Rao. Por tanto, $\bar X$ es un <b>estimador eficiente</b> para el parámetro de Poisson $\theta$.</p>
+      </div></details>
+    </div>
+
+    <!-- ---------------- Ejemplo 2 ---------------- -->
+    <div class="box ejemplo" id="ejemplo-normal">
+      <span class="box-title">Ejemplo 2 (Diapositivas de clase) · Muestra de una población Normal $N(\mu, \sigma^2)$ con varianza conocida</span>
+      <p>Sean $X_1, X_2, \dots, X_n \iid N(\mu, \sigma^2)$ donde $\sigma^2 &gt; 0$ es un valor constante conocido y $\mu \in \R$ es el parámetro desconocido a estimar. Su función de densidad es:</p>
+      $$f(x;\mu) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left( -\frac{(x-\mu)^2}{2\sigma^2} \right), \qquad -\infty &lt; x &lt; \infty.$$
+      <ol class="pasos">
+        <li>Demuestre que la función score respecto a $\mu$ es $S(x;\mu) = \frac{x-\mu}{\sigma^2}$.</li>
+        <li>Calcule la Información de Fisher $I_F(\mu)$ tanto por la definición de varianza del score como por la segunda derivada.</li>
+        <li>Halle el límite inferior de Cramér-Rao $\text{LI}(\mu)$ y demuestre que $\bar X$ es eficiente.</li>
+      </ol>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Tome logaritmo de la densidad normal: $\ln f(x;\mu) = -\frac{1}{2}\ln(2\pi\sigma^2) - \frac{(x-\mu)^2}{2\sigma^2}$. Observe qué le sucede al término cuadrático al derivar respecto a $\mu$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <h4>1. Cálculo del score</h4>
+        <p>Escribimos el logaritmo de la densidad:</p>
+        $$\ln f(x;\mu) = -\frac{1}{2}\ln(2\pi) - \frac{1}{2}\ln(\sigma^2) - \frac{(x-\mu)^2}{2\sigma^2}.$$
+        <p>Derivamos con respecto a $\mu$ (recordando que $\frac{d}{d\mu}[-(x-\mu)^2] = -2(x-\mu)(-1) = 2(x-\mu)$):</p>
+        $$S(x;\mu) = \frac{\partial \ln f(x;\mu)}{\partial \mu} = \frac{2(x-\mu)}{2\sigma^2} = \frac{x-\mu}{\sigma^2}.$$
+
+        <h4>2. Cálculo de la Información de Fisher $I_F(\mu)$ por dos vías</h4>
+        <p><b>Vía A (Varianza del score):</b></p>
+        $$I_F(\mu) = \Var\left( \frac{X - \mu}{\sigma^2} \right) = \frac{1}{\sigma^4} \Var(X - \mu) = \frac{1}{\sigma^4} \Var(X) = \frac{\sigma^2}{\sigma^4} = \frac{1}{\sigma^2}.$$
+        <p><b>Vía B (Negativo de la segunda derivada esperada):</b></p>
+        $$\frac{\partial^2 \ln f(x;\mu)}{\partial \mu^2} = \frac{\partial}{\partial \mu}\left( \frac{x-\mu}{\sigma^2} \right) = -\frac{1}{\sigma^2}.$$
+        <p>Dado que esta segunda derivada es una constante (no depende de $x$):</p>
+        $$I_F(\mu) = -\E\left[ -\frac{1}{\sigma^2} \right] = \frac{1}{\sigma^2}.$$
+        <p>Ambas vías coinciden plenamente.</p>
+
+        <h4>3. Cota inferior de Cramér-Rao y eficiencia de $\bar X$</h4>
+        <p>Para una muestra de tamaño $n$, la Información muestral es $n I_F(\mu) = \frac{n}{\sigma^2}$. Por tanto:</p>
+        $$\text{LI}(\mu) = \frac{1}{n I_F(\mu)} = \frac{1}{n / \sigma^2} = \frac{\sigma^2}{n}.$$
+        <p>Como $\bar X \sim N(\mu, \sigma^2/n)$, sabemos que $\E[\bar X] = \mu$ y $\Var(\bar X) = \frac{\sigma^2}{n}$. Entonces:</p>
+        $$\text{eff}(\bar X) = \frac{\text{LI}(\mu)}{\Var(\bar X)} = \frac{\sigma^2/n}{\sigma^2/n} = 1.$$
+        <p><b>Conclusión:</b> La media muestral $\bar X$ es un <b>estimador eficiente</b> para la media de una población normal con varianza conocida.</p>
+      </div></details>
+    </div>
+
+    <!-- ---------------- Ejemplo 3 ---------------- -->
+    <div class="box ejemplo" id="ejemplo-bernoulli">
+      <span class="box-title">Ejemplo 3 · Muestra de una población $\text{Bernoulli}(p)$</span>
+      <p>Sean $X_1, \dots, X_n \iid \text{Ber}(p)$ con $p \in (0, 1)$ desconocido. Su función de probabilidad es $f(x;p) = p^x (1-p)^{1-x}$ para $x \in \{0, 1\}$.</p>
+      <ol class="pasos">
+        <li>Calcule la Información de Fisher $I_F(p)$.</li>
+        <li>Halle el límite inferior de Cramér-Rao para estimar la probabilidad de éxito $p$.</li>
+        <li>Determine la eficiencia de la proporción muestral $\hat p = \bar X = \frac{1}{n}\sum_{i=1}^n X_i$.</li>
+      </ol>
+
+      <details class="solucion"><summary>Solución paso a paso</summary><div>
+        <p>Tomamos logaritmo de la función de masa puntual:</p>
+        $$\ln f(x;p) = x \ln p + (1-x) \ln(1-p).$$
+        <p>Calculamos la primera derivada (score):</p>
+        $$S(x;p) = \frac{x}{p} - \frac{1-x}{1-p} = \frac{x(1-p) - p(1-x)}{p(1-p)} = \frac{x - p}{p(1-p)}.$$
+        <p>Calculamos la segunda derivada respecto a $p$:</p>
+        $$\frac{\partial^2 \ln f(x;p)}{\partial p^2} = -\frac{x}{p^2} - \frac{1-x}{(1-p)^2}.$$
+        <p>Tomamos la esperanza negativa, usando que $\E[X] = p$ y $\E[1-X] = 1-p$:</p>
+        $$I_F(p) = -\E\left[ -\frac{X}{p^2} - \frac{1-X}{(1-p)^2} \right] = \frac{p}{p^2} + \frac{1-p}{(1-p)^2} = \frac{1}{p} + \frac{1}{1-p} = \frac{1}{p(1-p)}.$$
+        <p>El límite inferior de Cramér-Rao para estimadores insesgados de $p$ en una muestra de tamaño $n$ es:</p>
+        $$\text{LI}(p) = \frac{1}{n I_F(p)} = \frac{p(1-p)}{n}.$$
+        <p>Dado que para la proporción muestral $\hat p = \bar X$ se tiene $\E[\hat p] = p$ y $\Var(\hat p) = \frac{p(1-p)}{n}$:</p>
+        $$\text{eff}(\hat p) = \frac{\text{LI}(p)}{\Var(\hat p)} = 1.$$
+        <p>La proporción muestral $\hat p$ alcanza la cota inferior y es, por lo tanto, un <b>estimador eficiente</b> de $p$.</p>
+      </div></details>
+    </div>
+
+    <!-- ---------------- Ejemplo 4 ---------------- -->
+    <div class="box ejemplo" id="ejemplo-exp">
+      <span class="box-title">Ejemplo 4 · Población Exponencial: $\bar X$ vs. el estimador del mínimo $n X_{(1)}$</span>
+      <p>Retomemos el problema de la Clase 7: muestra $X_1, \dots, X_n \iid \text{Exp}(\beta)$ con densidad $f(x;\beta) = \frac{1}{\beta}e^{-x/\beta}$, $x &gt; 0$.</p>
+      <ol class="pasos">
+        <li>Demuestre que la Información de Fisher es $I_F(\beta) = \frac{1}{\beta^2}$ y que $\text{LI}(\beta) = \frac{\beta^2}{n}$.</li>
+        <li>Calcule la eficiencia absoluta del estimador de la media muestral $\hat\beta_1 = \bar X$.</li>
+        <li>Calcule la eficiencia absoluta del estimador basado en el mínimo escalado $\hat\beta_2 = n X_{(1)}$ visto en la Clase 7.</li>
+      </ol>
+
+      <details class="solucion"><summary>Solución paso a paso</summary><div>
+        <p>1. Log-densidad y derivadas:</p>
+        $$\ln f(x;\beta) = -\ln\beta - \frac{x}{\beta}.$$
+        $$S(x;\beta) = -\frac{1}{\beta} + \frac{x}{\beta^2} = \frac{x-\beta}{\beta^2}.$$
+        $$\frac{\partial^2 \ln f(x;\beta)}{\partial \beta^2} = \frac{1}{\beta^2} - \frac{2x}{\beta^3}.$$
+        <p>Tomando esperanza con $\E[X] = \beta$:</p>
+        $$I_F(\beta) = -\E\left[ \frac{1}{\beta^2} - \frac{2X}{\beta^3} \right] = -\left( \frac{1}{\beta^2} - \frac{2\beta}{\beta^3} \right) = -\left(-\frac{1}{\beta^2}\right) = \frac{1}{\beta^2}.$$
+        <p>La cota inferior de Cramér-Rao resulta:</p>
+        $$\text{LI}(\beta) = \frac{1}{n I_F(\beta)} = \frac{\beta^2}{n}.$$
+        <p>2. Eficiencia de $\bar X$: En la Clase 7 demostramos que $\E[\bar X] = \beta$ y $\Var(\bar X) = \frac{\beta^2}{n}$.</p>
+        $$\text{eff}(\bar X) = \frac{\text{LI}(\beta)}{\Var(\bar X)} = \frac{\beta^2/n}{\beta^2/n} = 1 \quad (\bar X \text{ es eficiente}).$$
+        <p>3. Eficiencia de $n X_{(1)}$: En la Clase 7 demostramos que $n X_{(1)}$ es insesgado ($\E[n X_{(1)}] = \beta$), pero su varianza es constante para todo $n$:</p>
+        $$\Var(n X_{(1)}) = \beta^2.$$
+        <p>Por consiguiente, su eficiencia absoluta es:</p>
+        $$\text{eff}\big(n X_{(1)}\big) = \frac{\text{LI}(\beta)}{\Var\big(n X_{(1)}\big)} = \frac{\beta^2/n}{\beta^2} = \frac{1}{n}.$$
+        <p><b>Lección pedagógica:</b> Si la muestra contiene $n = 50$ datos, la eficiencia de $n X_{(1)}$ es apenas $\frac{1}{50} = 2\%$. Desperdicia el $98\%$ de la información muestral disponible. Cuando $n \to \infty$, su eficiencia colapsa a cero ($\lim_{n\to\infty} \text{eff} = 0$).</p>
+      </div></details>
+    </div>
+
+    <!-- ---------------- Ejemplo 5 ---------------- -->
+    <div class="box ejemplo" id="ejemplo-funcion">
+      <span class="box-title">Ejemplo 5 · Cota de Cramér-Rao para una función no lineal del parámetro $g(\theta)$</span>
+      <p>Sea $X_1, \dots, X_n \iid \text{Poisson}(\theta)$. Suponga que no deseamos estimar la media $\theta$, sino la <b>probabilidad de que ocurran exactamente cero eventos</b> en un período dado:</p>
+      $$g(\theta) = \P(X = 0) = e^{-\theta}.$$
+      <p>¿Cuál es la cota inferior de Cramér-Rao para la varianza de cualquier estimador insesgado de $g(\theta)$?</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Aplique la forma general del Teorema 6: $\Var(\hat g) \ge \frac{[g'(\theta)]^2}{n I_F(\theta)}$. Calcule la derivada $g'(\theta) = \frac{d}{d\theta}[e^{-\theta}]$ y recuerde que para Poisson $I_F(\theta) = 1/\theta$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución paso a paso</summary><div>
+        <p>Por la forma general de la desigualdad de la información (Teorema 6):</p>
+        $$\Var(\hat g) \ge \frac{\big[g'(\theta)\big]^2}{n I_F(\theta)}.$$
+        <p>Calculamos la derivada respecto a $\theta$:</p>
+        $$g(\theta) = e^{-\theta} \implies g'(\theta) = -e^{-\theta} \implies \big[g'(\theta)\big]^2 = (-e^{-\theta})^2 = e^{-2\theta}.$$
+        <p>Sustituyendo $I_F(\theta) = \frac{1}{\theta}$ obtenido en el Ejemplo 1:</p>
+        $$\text{LI}\big(g(\theta)\big) = \frac{e^{-2\theta}}{n (1/\theta)} = \frac{\theta e^{-2\theta}}{n}.$$
+        <p><b>Conclusión:</b> Cualquier estimador insesgado de la probabilidad de cero eventos $e^{-\theta}$ tendrá una varianza que jamás podrá descender por debajo de $\frac{\theta e^{-2\theta}}{n}$.</p>
+      </div></details>
+    </div>
+
+    <!-- ---------------- Simulación 2 ---------------- -->
+    <div class="sim" id="sim-cramer-rao-comp">
+      <p class="sim-title">Simulación interactiva 2 · Comparador de eficiencia y cota de Cramér-Rao</p>
+      <p class="sim-desc">Compara la varianza teórica de diversos estimadores insesgados frente a la línea de la cota inferior $\text{LI}(\theta) = \frac{1}{n I_F(\theta)}$ en función del tamaño de muestra $n$. Comprueba cómo el área por debajo de la cota es estrictamente inalcanzable para cualquier estimador insesgado.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="rao-legado">5. Nota biográfica: C. R. Rao y la desigualdad de la información</h2>
+
+    <div class="box nota">
+      <span class="box-title">Calyampudi Radhakrishna Rao (1920–2023) y el artículo prodigio de 1945</span>
+      <div class="rao-portrait">
+        <div class="rao-card">
+          <p>La cota inferior de la varianza suele llamarse <b>Cota de Cramér-Rao</b> (y a veces Fréchet-Darmois-Cramér-Rao). Fue obtenida de manera totalmente independiente por el matemático sueco Harald Cramér (1946) y el prodigio indio <b>C. R. Rao</b> (1945).</p>
+          <p>En 1945, con apenas 24 años de edad, Rao publicó en el <em>Bulletin of the Calcutta Mathematical Society</em> un artículo titulado:</p>
+          <blockquote>
+            <em>"Information and accuracy attainable in the estimation of statistical parameters" (1945).</em>
+          </blockquote>
+          <p>Ese único artículo es considerado uno de los trabajos más influyentes de la historia de la ciencia matemática, pues contenía simultáneamente <b>tres pilares revolucionarios</b>:</p>
+          <ol class="pasos">
+            <li><b>La cota inferior de Cramér-Rao:</b> El límite fundamental de precisión de un estimador insesgado.</li>
+            <li><b>El Teorema de Rao-Blackwell:</b> El método universal para mejorar cualquier estimador condicionándolo respecto a un estadístico suficiente (tema central de la Clase 10).</li>
+            <li><b>La métrica riemanniana de Rao:</b> El uso de la Información de Fisher como tensor métrico para medir distancias geométricas entre distribuciones de probabilidad, disciplina conocida hoy como <em>Geometría de la Información</em> (clave en aprendizaje automático y redes neuronales).</li>
+          </ol>
+          <p>Rao realizó su doctorado en King's College de la Universidad de Cambridge bajo la tutoría directa de Sir Ronald Fisher. A lo largo de su centenaria vida recibió la Medalla Mahalanobis, la Medalla Nacional de Ciencia de los Estados Unidos y, en 2023, a los 102 años de edad, el <b>Premio Internacional de Estadística</b> (equivalente al Premio Nobel en las ciencias estadísticas).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="autoevaluacion">6. Autoevaluación interactiva</h2>
+    <p>Pon a prueba tu dominio conceptual y operativo sobre estimadores eficientes, función score e Información de Fisher:</p>
+
+    <div id="quiz-1"></div>
+    <div id="quiz-2"></div>
+    <div id="quiz-3"></div>
+    <div id="quiz-4"></div>
+
+    <h3>Verificación numérica</h3>
+    <p>Resuelve los siguientes ejercicios de cálculo y comprueba tu resultado numérico:</p>
+
+    <div id="nc-1"></div>
+    <div id="nc-2"></div>
+    <div id="nc-3"></div>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../assets/js/stats.js"></script>
+<script src="../assets/js/plot.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/ui.js"></script>
+
+<script>
+(function () {
+  'use strict';
+  const fmt = (v, d = 3) => Number(v).toFixed(d);
+
+  /* ============================================================
+     SIMULACIÓN 1: Curvatura del log-likelihood e Información de Fisher
+     ============================================================ */
+  (function () {
+    const root = document.getElementById('sim-score-fisher');
+    if (!root) return;
+    const ctr = root.querySelector('.controls');
+    const out = EM.ui.readout(root.querySelector('.out'));
+
+    let model = 'poisson'; // 'poisson', 'normal', 'exp'
+    let theta_true = 3.0;
+    let n = 8;
+    let sampleMode = 'mean'; // 'mean' o 'random'
+    let currentSample = [];
+
+    function generateSample() {
+      currentSample = [];
+      if (sampleMode === 'mean') {
+        for (let i = 0; i < n; i++) currentSample.push(theta_true);
+      } else {
+        if (model === 'poisson') {
+          for (let i = 0; i < n; i++) currentSample.push(EM.stats.dist.poisson ? EM.stats.dist.poisson(theta_true).rand() : Math.round(theta_true));
+        } else if (model === 'normal') {
+          const norm = EM.stats.dist.normal(theta_true, 1.0);
+          for (let i = 0; i < n; i++) currentSample.push(norm.rand());
+        } else if (model === 'exp') {
+          const expD = EM.stats.dist.exp(theta_true);
+          for (let i = 0; i < n; i++) currentSample.push(expD.rand());
+        }
+      }
+    }
+
+    EM.ui.select(ctr, {
+      label: 'Modelo poblacional',
+      value: model,
+      options: [
+        { value: 'poisson', label: 'Poisson(θ) — Discreta' },
+        { value: 'normal', label: 'Normal(μ, σ²=1) — Continua' },
+        { value: 'exp', label: 'Exponencial(β) — Escala' }
+      ],
+      onChange: v => {
+        model = v;
+        if (model === 'normal' && theta_true > 4) theta_true = 0.0;
+        if (model === 'poisson' && theta_true < 1) theta_true = 3.0;
+        if (model === 'exp' && theta_true < 0.5) theta_true = 2.0;
+        generateSample();
+        render();
+      }
+    });
+
+    const sTheta = EM.ui.slider(ctr, {
+      tex: '\\theta_0', min: 0.5, max: 6.0, step: 0.25, value: theta_true,
+      fmt: v => v.toFixed(2),
+      onInput: v => { theta_true = v; generateSample(); render(); }
+    });
+
+    EM.ui.slider(ctr, {
+      tex: 'n', min: 1, max: 25, step: 1, value: n,
+      fmt: v => v.toString(),
+      onInput: v => { n = v; generateSample(); render(); }
+    });
+
+    EM.ui.button(ctr, 'Muestra aleatoria simulada', () => {
+      sampleMode = 'random';
+      generateSample();
+      render();
+    });
+
+    EM.ui.button(ctr, 'Fijar en media teórica', () => {
+      sampleMode = 'mean';
+      generateSample();
+      render();
+    });
+
+    const plot = EM.plot.create(root.querySelector('.plot'), {
+      height: 280, xlabel: 'Parámetro evaluado θ', ylabel: 'Δ ln L(θ) = ln L(θ) − ln L(θ̂)',
+      legendPos: 'br'
+    });
+
+    generateSample();
+
+    function render() {
+      const sumX = currentSample.reduce((a, b) => a + b, 0);
+      const xbar = sumX / n;
+      const thetahat = Math.max(0.01, xbar);
+
+      // Información de Fisher teórica por observación
+      let If_val = 0;
+      let paramLabel = '\\theta';
+      if (model === 'poisson') {
+        If_val = 1 / thetahat;
+        paramLabel = '\\theta';
+      } else if (model === 'normal') {
+        If_val = 1.0; // sigma^2 = 1
+        paramLabel = '\\mu';
+      } else if (model === 'exp') {
+        If_val = 1 / (thetahat * thetahat);
+        paramLabel = '\\beta';
+      }
+
+      const totalInfo = n * If_val;
+      const li = 1 / totalInfo;
+
+      // Funciones de log-likelihood relativo: delta_logL(th) = logL(th) - logL(thetahat)
+      function logL_diff(th) {
+        if (th <= 0.001 && model !== 'normal') return -100;
+        if (model === 'poisson') {
+          // n * xbar * ln(th) - n * th - [ n * xbar * ln(thetahat) - n * thetahat ]
+          return n * xbar * Math.log(th / thetahat) - n * (th - thetahat);
+        } else if (model === 'normal') {
+          // -0.5 * n * (xbar - th)^2
+          return -0.5 * n * Math.pow(xbar - th, 2);
+        } else if (model === 'exp') {
+          // -n * ln(th) - n*xbar/th - [ -n * ln(thetahat) - n ]
+          return -n * Math.log(th / thetahat) - n * xbar * (1 / th - 1 / thetahat);
+        }
+        return 0;
+      }
+
+      // Parábola de aproximación de Taylor de 2do orden: -0.5 * totalInfo * (th - thetahat)^2
+      function taylor_approx(th) {
+        return -0.5 * totalInfo * Math.pow(th - thetahat, 2);
+      }
+
+      // Rango del plot adaptado
+      const halfW = Math.max(1.5, 3.2 / Math.sqrt(Math.max(0.1, totalInfo)));
+      const xmin = (model === 'normal') ? (thetahat - halfW) : Math.max(0.1, thetahat - halfW);
+      const xmax = thetahat + halfW;
+      const ymin = -12;
+      const ymax = 1;
+
+      plot.setRange({ xmin, xmax, ymin, ymax });
+
+      plot.draw(g => {
+        // Área de alta certidumbre alrededor del MLE (dentro de 2 errores estándar)
+        const se = Math.sqrt(li);
+        const aFrom = Math.max(xmin, thetahat - 1.96 * se);
+        const aTo = Math.min(xmax, thetahat + 1.96 * se);
+        g.area(logL_diff, aFrom, aTo, { color: 'accent', alpha: 0.25, label: 'Región de alta verosimilitud (±1.96 EE)' });
+
+        // Parábola cuadrática de aproximación por Información de Fisher
+        g.curve(taylor_approx, { from: xmin, to: xmax, color: 'c4', width: 2, dash: [4, 4], label: 'Aprox. cuadrática de curvatura −n I_F(θ̂)' });
+
+        // Curva exacta de log-likelihood relativo
+        g.curve(logL_diff, { from: xmin, to: xmax, color: 'c1', width: 2.6, label: 'Log-verosimilitud relativa Δ ln L(θ)' });
+
+        // Línea vertical en el estimador eficiente theta_hat
+        g.vline(thetahat, { color: 'good', width: 1.8, label: `θ̂ = ${fmt(thetahat, 2)} (Score = 0)` });
+
+        // Si la muestra es aleatoria, mostrar dónde estaba el verdadero theta_0
+        if (sampleMode === 'random') {
+          g.vline(theta_true, { color: 'bad', dash: [3, 3], label: `θ verdadero = ${fmt(theta_true, 2)}` });
+        }
+      });
+
+      out.set(`
+        <b>Modelo seleccionado:</b> ${model === 'poisson' ? 'Poisson($\\theta$)' : model === 'normal' ? 'Normal($\\mu, \\sigma^2=1$)' : 'Exponencial($\\beta$)'} | Tamaño muestral: $n = ${n}$<br>
+        • Parámetro verdadero fijado: $${paramLabel}_0 = ${fmt(theta_true, 2)}$ | Estimación puntual (MLE): $\\hat{${paramLabel}} = \\bar x = $ <b>${fmt(thetahat, 3)}</b><br>
+        • Información de Fisher individual: $I_F(\\hat{${paramLabel}}) = $ <b>${fmt(If_val, 4)}</b><br>
+        • <b>Información de Fisher total de la muestra:</b> $I_{F,n}(\\hat{${paramLabel}}) = n I_F = $ <b>${fmt(totalInfo, 3)}</b> (determina la concavidad de la parábola)<br>
+        • <b>Cota inferior de Cramér-Rao:</b> $\\text{LI}(${paramLabel}) = \\frac{1}{n I_F} = $ <b>${fmt(li, 4)}</b> $\\implies$ Desvío estándar mínimo: $\\text{EE} = \\sqrt{\\text{LI}} = $ <b>${fmt(Math.sqrt(li), 4)}</b><br>
+        <small class="muted"><b>Interpretación:</b> Observa cómo al incrementar $n$, la curvatura $-n I_F$ se hace más empinada, el pico se vuelve sumamente afilado y la región de verosimilitud se estrecha, reflejando que la muestra provee cada vez mayor certeza sobre el verdadero parámetro.</small>
+      `);
+    }
+
+    render();
+  })();
+
+  /* ============================================================
+     SIMULACIÓN 2: Comparador de eficiencia y cota de Cramér-Rao
+     ============================================================ */
+  (function () {
+    const root = document.getElementById('sim-cramer-rao-comp');
+    if (!root) return;
+    const ctr = root.querySelector('.controls');
+    const out = EM.ui.readout(root.querySelector('.out'));
+
+    let model = 'normal'; // 'normal' o 'exp'
+    let paramVal = 2.0;   // sigma en normal, beta en exp
+    let nSelected = 15;
+
+    EM.ui.select(ctr, {
+      label: 'Familia de distribuciones',
+      value: model,
+      options: [
+        { value: 'normal', label: 'Normal(μ, σ²) — Estimando la media μ' },
+        { value: 'exp', label: 'Exponencial(β) — Estimando la escala β' }
+      ],
+      onChange: v => { model = v; render(); }
+    });
+
+    EM.ui.slider(ctr, {
+      tex: '\\text{Parámetro (}\\sigma \\text{ o } \\beta\\text{)}',
+      min: 0.5, max: 4.0, step: 0.25, value: paramVal,
+      fmt: v => v.toFixed(2),
+      onInput: v => { paramVal = v; render(); }
+    });
+
+    EM.ui.slider(ctr, {
+      tex: 'n \\text{ evaluado}',
+      min: 2, max: 40, step: 1, value: nSelected,
+      fmt: v => v.toString(),
+      onInput: v => { nSelected = v; render(); }
+    });
+
+    const plot = EM.plot.create(root.querySelector('.plot'), {
+      height: 290, xlabel: 'Tamaño de muestra n', ylabel: 'Varianza Var(θ̂)',
+      legendPos: 'tr'
+    });
+
+    function render() {
+      const p2 = paramVal * paramVal;
+
+      // Fórmulas de varianzas en función de n
+      // Normal:
+      // LI = p2 / n
+      // Media = p2 / n (eff = 1.0)
+      // Mediana = (pi / 2) * p2 / n (eff = 2 / pi = 0.6366)
+      // Submuestra (n/2 datos) = p2 / floor(n/2)
+      // Media extremos (X1 + Xn)/2 = p2 / 2 (constante)
+
+      // Exponencial:
+      // LI = p2 / n
+      // Media = p2 / n (eff = 1.0)
+      // Submuestra = 2 * p2 / n (eff = 0.5)
+      // Minimo escalado n*X(1) = p2 (constante, eff = 1/n)
+
+      function var_li(n_val) { return p2 / n_val; }
+      function var_est1(n_val) { return p2 / n_val; } // Media muestral X_bar
+      function var_est2(n_val) {
+        if (model === 'normal') {
+          return (Math.PI / 2) * (p2 / n_val); // Mediana muestral
+        } else {
+          return (2 * p2) / Math.max(1, n_val); // Sub-muestra
+        }
+      }
+      function var_est3(n_val) {
+        if (model === 'normal') {
+          return p2 / 2; // Extremos (X1 + Xn) / 2
+        } else {
+          return p2; // Minimo escalado n X_(1)
+        }
+      }
+
+      const yMaxVal = Math.max(var_est3(2) * 1.15, var_est2(2) * 1.1);
+      plot.setRange({ xmin: 2, xmax: 40, ymin: 0, ymax: yMaxVal });
+
+      plot.draw(g => {
+        // Región inalcanzable sombreada por debajo de la cota de Cramér-Rao
+        g.area(var_li, 2, 40, { color: 'bad', alpha: 0.15, label: 'Región prohibida (Var < LI)' });
+
+        // Cota de Cramér-Rao
+        g.curve(var_li, { from: 2, to: 40, color: 'bad', width: 2.2, dash: [4, 3], label: 'Cota de Cramér-Rao LI(θ)' });
+
+        // Estimador 1: Media muestral (alcanza la cota)
+        g.curve(var_est1, { from: 2, to: 40, color: 'good', width: 2.6, label: 'X̄ (Eficiente: eff = 100 %)' });
+
+        // Estimador 2
+        const lbl2 = (model === 'normal') ? 'Mediana muestral X̃ (eff = 63.7 %)' : 'Media sub-muestra X̄_(n/2) (eff = 50 %)';
+        g.curve(var_est2, { from: 2, to: 40, color: 'c2', width: 2.2, label: lbl2 });
+
+        // Estimador 3
+        const lbl3 = (model === 'normal') ? 'Media de extremos (X₁ + Xₙ)/2' : 'Mínimo escalado n X₍₁₎ (eff = 1/n)';
+        g.curve(var_est3, { from: 2, to: 40, color: 'c4', width: 2.2, dash: [2, 2], label: lbl3 });
+
+        // Línea vertical en n seleccionado
+        g.vline(nSelected, { color: 'ink', dash: [3, 3], label: `n = ${nSelected}` });
+      });
+
+      // Valores numéricos para nSelected
+      const v_li = var_li(nSelected);
+      const v_e1 = var_est1(nSelected);
+      const v_e2 = var_est2(nSelected);
+      const v_e3 = var_est3(nSelected);
+
+      const eff_e1 = (v_li / v_e1) * 100;
+      const eff_e2 = (v_li / v_e2) * 100;
+      const eff_e3 = (v_li / v_e3) * 100;
+
+      const nomEst2 = (model === 'normal') ? 'Mediana muestral $\\tilde X$' : 'Sub-media $\\bar X_{n/2}$';
+      const nomEst3 = (model === 'normal') ? 'Extremos $\\frac{X_1 + X_n}{2}$' : 'Mínimo escalado $n X_{(1)}$';
+
+      out.set(`
+        <b>Auditoría de eficiencia para $n = ${nSelected}$ observaciones:</b><br>
+        <div class="table-wrap">
+          <table class="tabla">
+            <thead>
+              <tr>
+                <th>Estimador insesgado</th>
+                <th>Varianza teórica $\\Var(\\hat\\theta)$</th>
+                <th>Varianza para $n = ${nSelected}$</th>
+                <th>Eficiencia $\\text{eff}(\\hat\\theta) = \\frac{\\text{LI}}{\\Var}$</th>
+                <th>Veredicto</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="background: rgba(34, 197, 94, 0.08);">
+                <td class="izq"><b>Límite inferior de Cramér-Rao $\\text{LI}(\\theta)$</b></td>
+                <td>$\\frac{${paramVal}^2}{n} = \\frac{${fmt(p2, 2)}}{n}$</td>
+                <td><b>${fmt(v_li, 4)}</b></td>
+                <td><b>$100\\%$</b></td>
+                <td><span class="comp-tag tag-win">Cota teórica</span></td>
+              </tr>
+              <tr>
+                <td class="izq"><b>Media muestral $\\bar X$</b></td>
+                <td>$\\frac{\\sigma^2}{n}$</td>
+                <td><b>${fmt(v_e1, 4)}</b></td>
+                <td><b>${fmt(eff_e1, 1)} %</b></td>
+                <td><span class="comp-tag tag-win">✓ Eficiente</span></td>
+              </tr>
+              <tr>
+                <td class="izq"><b>${nomEst2}</b></td>
+                <td>${model === 'normal' ? '$\\frac{\\pi\\sigma^2}{2n} \\approx 1.57\\frac{\\sigma^2}{n}$' : '$\\frac{2\\beta^2}{n}$'}</td>
+                <td>${fmt(v_e2, 4)}</td>
+                <td><b>${fmt(eff_e2, 1)} %</b></td>
+                <td><span class="comp-tag tag-warn">Subóptimo</span></td>
+              </tr>
+              <tr>
+                <td class="izq"><b>${nomEst3}</b></td>
+                <td>${model === 'normal' ? '$\\frac{\\sigma^2}{2}$ (constante)' : '$\\beta^2$ (constante)'}</td>
+                <td>${fmt(v_e3, 4)}</td>
+                <td><b>${fmt(eff_e3, 1)} %</b></td>
+                <td><span class="comp-tag tag-loss">✗ Ineficiente</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      `);
+    }
+
+    render();
+  })();
+
+  /* ============================================================
+     AUTOEVALUACIÓN: Quizzes y Comprobadores numéricos
+     ============================================================ */
+  EM.ui.quiz('#quiz-1', {
+    question: '1. ¿Por qué razón formal la cota de Cramér-Rao <b>no</b> se puede aplicar para acotar la varianza de estimadores en una distribución $\\text{Unif}(0, \\theta)$?',
+    options: [
+      'Porque la distribución uniforme continua no posee varianza matemática finita.',
+      'Porque el soporte de la distribución $[0, \\theta]$ depende directamente del parámetro desconocido $\\theta$, violando la primera condición de regularidad requerida para intercambiar derivada e integral.',
+      'Porque el estimador del máximo muestral $X_{(n)}$ es sesgado, y la cota solo existe si todos los estimadores conocidos son insesgados.',
+      'Porque la densidad de la uniforme es constante, de modo que su función score es idénticamente cero en todo su dominio.'
+    ],
+    answer: 1,
+    explain: 'En la distribución $\\text{Unif}(0, \\theta)$, la densidad es $f(x;\\theta) = \\frac{1}{\\theta}\\mathbf{1}_{(0,\\theta)}(x)$. Al depender el límite superior de integración de $\\theta$, la regla de Leibniz para derivar bajo el signo integral produce un término adicional en la frontera $x=\\theta$, impidiendo alternar directamente $\\frac{\\partial}{\\partial \\theta}$ con $\\int$.'
+  });
+
+  EM.ui.quiz('#quiz-2', {
+    question: '2. En una población $N(\\mu, \\sigma^2)$, se sabe que la mediana muestral $\\tilde X$ es un estimador insesgado con varianza asintótica $\\Var(\\tilde X) \\approx \\frac{\\pi\\sigma^2}{2n}$. ¿Qué significa conceptualmente que su eficiencia asintótica sea $\\text{eff}(\\tilde X) = \\frac{2}{\\pi} \\approx 0.637$ ($63.7\\%$)?',
+    options: [
+      'Que la mediana comete en promedio un $63.7\\%$ de estimaciones con signo erróneo.',
+      'Que estimar la media poblacional $\\mu$ mediante la mediana en una muestra de 100 observaciones produce la misma precisión que estimar con la media muestral $\\bar X$ empleando únicamente 64 observaciones (un desperdicio del $36.3\\%$ de los datos).',
+      'Que la cota de Cramér-Rao está equivocada para poblaciones normales continuas.',
+      'Que la mediana muestral tiene menor varianza que la media muestral en el $63.7\\%$ de las muestras.'
+    ],
+    answer: 1,
+    explain: 'La eficiencia $\\text{eff} = \\frac{\\text{LI}}{\\Var} = \\frac{n_{\\text{necesario}}}{n_{\\text{usado}}}$ indica la proporción de información aprovechada. Una eficiencia del $63.7\\%$ significa que con la media muestral $\\bar X$ bastarían aproximadamente $100 \\times 0.637 \\approx 64$ datos para lograr la misma varianza que la mediana alcanza usando 100 datos.'
+  });
+
+  EM.ui.quiz('#quiz-3', {
+    question: '3. Sea $\\text{LI}(\\theta) = \\frac{1}{n I_F(\\theta)}$ la cota de Cramér-Rao para estimadores insesgados. ¿Es matemáticamente posible que un estimador $\\hat\\theta^*$ tenga una varianza estrictamente menor que $\\text{LI}(\\theta)$?',
+    options: [
+      'No, bajo ninguna circunstancia: es una imposibilidad matemática absoluta para cualquier estimador concebible.',
+      'Sí, siempre y cuando $\\hat\\theta^*$ sea un estimador sesgado, ya que la cota con numerador $1$ exige insesgadez ($g\'(\\theta)=1$). Para estimadores sesgados rige la cota general $\\frac{[g\'(\\theta)]^2}{n I_F(\\theta)}$, y un estimador constante como $\\hat\\theta=5$ tiene varianza $0$.',
+      'Solo si el tamaño muestral es pequeño ($n &lt; 5$).',
+      'Sí, cualquier estimador basado en el método de momentos siempre tiene menor varianza que la cota de Cramér-Rao.'
+    ],
+    answer: 1,
+    explain: 'La cota $\\Var \\ge \\frac{1}{n I_F}$ es exclusiva para estimadores insesgados. Para estimadores sesgados con $\\E[\\hat\\theta] = g(\\theta)$, la cota es $\\Var \\ge \\frac{[g\'(\\theta)]^2}{n I_F}$. Si $g\'(\\theta) &lt; 1$, la cota se reduce. Por ejemplo, el estimador trivial $\\hat\\theta = 0$ tiene varianza exactamente cero (aunque su sesgo es $-\\theta$).'
+  });
+
+  EM.ui.quiz('#quiz-4', {
+    question: '4. ¿Cuál es la razón matemática exacta por la que el valor esperado de la función score siempre es nulo, $\\E_\\theta[S(X;\\theta)] = 0$, bajo las condiciones de regularidad?',
+    options: [
+      'Porque toda función de densidad es simétrica respecto al parámetro $\\theta$.',
+      'Porque la derivada respecto a $\\theta$ de la probabilidad total $\\int_{\\mathcal{X}} f(x;\\theta)\\,dx = 1$ es idénticamente cero, y por regularidad se puede intercambiar la derivada con la integral.',
+      'Porque la Información de Fisher no puede tomar valores negativos.',
+      'Porque el logaritmo natural solo está definido para valores estrictamente positivos.'
+    ],
+    answer: 1,
+    explain: 'Como la probabilidad total sobre el soporte es constante e igual a 1 para todo $\\theta$ ($\\int f\\,dx = 1$), su derivada es $\\frac{d}{d\\theta}(1) = 0$. Al intercambiar la derivada con la integral gracias a la condición de regularidad, se obtiene $\\int \\frac{\\partial f/\\partial\\theta}{f} f\\,dx = \\E[S(\\theta)] = 0$.'
+  });
+
+  EM.ui.numcheck('#nc-1', {
+    prompt: 'Sea $X_1, \\dots, X_n \\iid \\text{Poisson}(\\theta = 4)$. Calcula el valor exacto de la Información de Fisher individual $I_F(\\theta)$:',
+    answer: 0.25,
+    tol: 0.01,
+    placeholder: 'ej. 0.25',
+    hint: 'En el Ejemplo 1 se demostró que para el modelo de Poisson se cumple $I_F(\\theta) = \\frac{1}{\\theta}$. Por tanto, $I_F(4) = \\frac{1}{4} = 0.25$.'
+  });
+
+  EM.ui.numcheck('#nc-2', {
+    prompt: 'Para una muestra de tamaño $n = 20$ de una población $\\text{Exp}(\\beta = 6)$, calcula el límite inferior de Cramér-Rao $\\text{LI}(\\beta)$ para estimadores insesgados:',
+    answer: 1.8,
+    tol: 0.05,
+    placeholder: 'ej. 1.8',
+    hint: 'Para la distribución exponencial con parámetro de media $\\beta$, la cota es $\\text{LI}(\\beta) = \\frac{\\beta^2}{n} = \\frac{6^2}{20} = \\frac{36}{20} = 1.80$.'
+  });
+
+  EM.ui.numcheck('#nc-3', {
+    prompt: 'En una población $N(\\mu, \\sigma^2 = 18)$, se toma una muestra de tamaño $n = 30$. Si un estimador insesgado $\\hat\\mu^*$ tiene varianza $\\Var(\\hat\\mu^*) = 0.75$, ¿cuál es su eficiencia $\\text{eff}(\\hat\\mu^*)$?',
+    answer: 0.80,
+    tol: 0.02,
+    placeholder: 'ej. 0.80',
+    hint: 'Calcula primero la cota $\\text{LI}(\\mu) = \\frac{\\sigma^2}{n} = \\frac{18}{30} = 0.60$. Luego la eficiencia es $\\text{eff} = \\frac{\\text{LI}}{\\Var(\\hat\\mu^*)} = \\frac{0.60}{0.75} = 0.80$.'
+  });
+
+})();
+</script>
+</body>
+</html>
