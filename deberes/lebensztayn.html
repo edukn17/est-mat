@@ -1,0 +1,1520 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Libro de Lebensztayn · Ejercicios resueltos (Cap. 5)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/theme.js"></script>
+<style>
+  /* Estilos locales de esta guía (complementan ../assets/css/style.css) */
+  .tecnica { font-family: var(--font-ui); font-size: 14px; color: var(--muted); margin: 10px 0 4px; }
+  .tecnica a { font-weight: 600; }
+  .resultado { border: 2px solid var(--good); border-radius: var(--radius); padding: 10px 16px; margin: 12px 0; background: var(--surface); }
+  .indice-partes { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; margin: 14px 0; }
+  .indice-partes > div { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 16px; }
+  .indice-partes h3 { margin: 2px 0 8px; font-size: 15px; }
+  .indice-partes ul { margin: 0; padding-left: 1.3em; font-size: 14.5px; }
+  .chk { border: 1px dashed var(--line); border-radius: var(--radius); padding: 8px 14px; margin: 12px 0; background: var(--surface); }
+  .chk-title { font: 600 13px var(--font-ui); color: var(--muted); margin: 4px 0 6px; }
+  .sol-inciso { font-family: var(--font-ui); font-size: 16.5px; font-weight: 600; margin: 20px 0 8px; padding-top: 8px; border-top: 1px dashed var(--line); color: var(--ink); }
+  .ctl-n { display: inline-flex; align-items: center; flex: 1 1 220px; }
+  .sim-badge { font: 600 13px var(--font-ui); padding: 5px 11px; border-radius: var(--radius-pill); background: var(--accent-soft); color: var(--accent); display: none; }
+</style>
+</head>
+<body data-page="lebensztayn" data-root="../">
+<main id="contenido">
+
+  <header class="page-head">
+    <p class="kicker">Libro de referencia · Élcio Lebensztayn</p>
+    <h1>Ejercicios del libro de Lebensztayn</h1>
+    <p class="lead">Esta sección reúne, traduce y resuelve paso a paso los ejercicios del libro <em>Exercícios de Probabilidade</em> (Élcio Lebensztayn) asignados en el curso, comenzando por los 28 problemas del Capítulo 5 (Modos de Convergencia y Teoremas Límites) y dejando la estructura lista para ampliar con otros capítulos.</p>
+    <p><span class="badge">FCNM · ESPOL</span> <span class="badge">Capítulo 5 · 28 ejercicios resueltos</span></p>
+  </header>
+
+  <!-- ================================================================
+       SECCIÓN 1: MAPA DEL LIBRO
+       ================================================================ -->
+  <section>
+    <h2 id="mapa-libro">Mapa del libro y avance por capítulos</h2>
+    <p>El texto de referencia de Élcio Lebensztayn está organizado en cinco capítulos con resumen teórico, colección de problemas y respuestas finales. A continuación se muestra cómo se conecta cada capítulo con los módulos de esta guía y qué bloques del Capítulo 5 ya están completamente desarrollados abajo.</p>
+
+    <div class="table-wrap">
+      <table class="tabla text-left">
+        <thead>
+          <tr>
+            <th>Capítulo</th>
+            <th>Contenido principal</th>
+            <th>Estado y conexión en la guía</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>Cap. 1</b></td>
+            <td>Análisis Combinatorio</td>
+            <td><span class="badge">En preparación</span> Próxima incorporación de ejercicios resueltos.</td>
+          </tr>
+          <tr>
+            <td><b>Cap. 2</b></td>
+            <td>Probabilidad y Lema de Borel–Cantelli</td>
+            <td><span class="badge">En preparación</span> El criterio de Borel–Cantelli se aplica también en el <a href="#ej-5-18">Ej. 5.18</a>.</td>
+          </tr>
+          <tr>
+            <td><b>Cap. 3</b></td>
+            <td>Variables Aleatorias, Transformaciones y Estadísticos de Orden</td>
+            <td>Temas en <a href="../temas/clase-01.html">Clase 1</a>, <a href="../temas/clase-02.html">Clase 2</a>, <a href="../temas/clase-03.html">Clase 3</a> y <a href="../temas/clase-04.html">Clase 4</a>; por agregar ejercicios del libro.</td>
+          </tr>
+          <tr>
+            <td><b>Cap. 4</b></td>
+            <td>Esperanza, FGM y Desigualdades</td>
+            <td>Temas en <a href="../temas/clase-02.html">Clase 2</a> y <a href="../temas/clase-10.html">Clase 10</a>; por agregar ejercicios del libro.</td>
+          </tr>
+          <tr>
+            <td class="hl"><b>Cap. 5</b></td>
+            <td class="hl">Modos de Convergencia y Teoremas Límites</td>
+            <td class="hl"><b>28 ejercicios asignados en Clases 5, 11, 12, 13 y 14 resueltos por completo abajo</b> (base teórica en <a href="../temas/clase-05.html">Clase 5</a> y <a href="../temas/clase-10.html">Clase 10</a>).</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="nota box">
+      <span class="box-title">Convención de parámetros y notación</span>
+      En el libro original, $\text{Exp}(\lambda)$ y $\text{Gama}(\alpha, \lambda)$ utilizan el parámetro de <b>tasa</b> $\lambda$ (densidad proporcional a $x^{\alpha-1}e^{-\lambda x}$ y media $\alpha/\lambda$). En el <a href="../herramientas/formulario.html">Formulario completo (FCNM · ESPOL)</a> se usa el parámetro de <b>escala</b> $\beta = 1/\lambda$ (media $\alpha\beta$). Cuando aparezcan distribuciones Gamma o Exponencial (por ejemplo, en el <a href="#ej-5-32">Ej. 5.32</a> o el <a href="#ej-5-68">Ej. 5.68</a>), se especifica explícitamente la correspondencia para evitar confusiones. Asimismo, recuerda que $\log$ denota el logaritmo natural $\ln$.
+    </div>
+
+    <h3>Índice rápido del Capítulo 5 (5 bloques · 28 ejercicios)</h3>
+    <div class="indice-partes">
+      <div>
+        <h3><a href="#cap5-modos">Bloque I · Modos de Convergencia</a></h3>
+        <p class="small muted" style="margin:0 0 6px">Clase 11 · 6 ejercicios</p>
+        <ul>
+          <li><a href="#ej-5-12">Ej. 5.12</a> · Potencia $n x^{n-1}/\theta^n \dto \theta$</li>
+          <li><a href="#ej-5-14">Ej. 5.14</a> · Máximo exponencial $\to$ Gumbel</li>
+          <li><a href="#ej-5-15">Ej. 5.15</a> · Máximo con cola pesada $\to$ Fréchet</li>
+          <li><a href="#ej-5-17">Ej. 5.17</a> · $\text{Bin}(n, 1/n^2)$ y Chebyshev</li>
+          <li><a href="#ej-5-18">Ej. 5.18</a> · Saltos $n$ con prob. $1/n^2$</li>
+          <li><a href="#ej-5-19">Ej. 5.19</a> · Mínimo y máximo en $U[0,1]$</li>
+        </ul>
+      </div>
+      <div>
+        <h3><a href="#cap5-delta">Bloque II · Continuidad, Slutsky y Delta</a></h3>
+        <p class="small muted" style="margin:0 0 6px">Clase 12 · 5 ejercicios</p>
+        <ul>
+          <li><a href="#ej-5-26">Ej. 5.26</a> · $N(\mu_n,\sigma_n^2) \dto N(\mu,\sigma^2)$</li>
+          <li><a href="#ej-5-28">Ej. 5.28</a> · Geométrica$(1/n)$ reescalada</li>
+          <li><a href="#ej-5-29">Ej. 5.29</a> · $\text{Poisson}(\lambda)$: $S_n/n \dto \lambda$</li>
+          <li><a href="#ej-5-32">Ej. 5.32</a> · $t_{(n)} = Z_n/\sqrt{V_n/n} \dto N(0,1)$</li>
+          <li><a href="#ej-5-75">Ej. 5.75</a> · $\sqrt{S_n} - \sqrt{n} \dto N(0, \sigma^2/4)$</li>
+        </ul>
+      </div>
+      <div>
+        <h3><a href="#cap5-lgn">Bloque III · Leyes de Grandes Números</a></h3>
+        <p class="small muted" style="margin:0 0 6px">Clase 13 · 5 ejercicios</p>
+        <ul>
+          <li><a href="#ej-5-37">Ej. 5.37</a> · Media de productos $X_i X_j \pto \mu^2$</li>
+          <li><a href="#ej-5-40">Ej. 5.40</a> · Varilla quebrada sucesivamente</li>
+          <li><a href="#ej-5-42">Ej. 5.42</a> · Cociente cuadrático en $N(0,1)$</li>
+          <li><a href="#ej-5-43">Ej. 5.43</a> · Estadístico en $\text{Poisson}(\lambda)$</li>
+          <li><a href="#ej-5-45">Ej. 5.45</a> · LFGN para independientes no i.d.</li>
+        </ul>
+      </div>
+      <div>
+        <h3><a href="#cap5-tlc">Bloque IV · Aplicaciones del TLC</a></h3>
+        <p class="small muted" style="margin:0 0 6px">Clase 5 · 4 ejercicios</p>
+        <ul>
+          <li><a href="#ej-5-58">Ej. 5.58</a> · Ruleta en casino (80 y 400 mil)</li>
+          <li><a href="#ej-5-60">Ej. 5.60</a> · Lanzamientos de un dado honesto</li>
+          <li><a href="#ej-5-62">Ej. 5.62</a> · Repartidor de periódicos</li>
+          <li><a href="#ej-5-63">Ej. 5.63</a> · Producto de anotaciones de dado</li>
+        </ul>
+      </div>
+      <div>
+        <h3><a href="#cap5-misc">Bloque V · Miscelánea de Teoremas Límites</a></h3>
+        <p class="small muted" style="margin:0 0 6px">Clase 14 · 8 ejercicios</p>
+        <ul>
+          <li><a href="#ej-5-67">Ej. 5.67</a> · $U(-1,1)$: c.s. y Slutsky</li>
+          <li><a href="#ej-5-68">Ej. 5.68</a> · $\text{Gamma}(n, 1)$ estandarizada</li>
+          <li><a href="#ej-5-69">Ej. 5.69</a> · Laplace estándar $\dto N(0, 1/2)$</li>
+          <li><a href="#ej-5-70">Ej. 5.70</a> · $S_n / (\sqrt{n}\,\max X_i)$ en $U(-\theta,\theta)$</li>
+          <li><a href="#ej-5-71">Ej. 5.71</a> · Estadístico $T_n = \sum g(X_i) + R_n$</li>
+          <li><a href="#ej-5-73">Ej. 5.73</a> · Media armónica con $f(x)=3x^2$</li>
+          <li><a href="#ej-5-76">Ej. 5.76</a> · Método Delta: $\bar X_n^2$ y $\log\bar X_n$</li>
+          <li><a href="#ej-5-77">Ej. 5.77</a> · $\star$ Reto: $S_n/\sqrt{\log n} \dto N(0,1)$</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       SECCIÓN 2: BLOQUE I — MODOS DE CONVERGENCIA
+       ================================================================ -->
+  <section>
+    <h2 id="cap5-modos">Bloque I · Modos de Convergencia (Clase 11: Ej. 12, 14, 15, 17, 18 y 19)</h2>
+    <p>Este bloque trabaja directamente con las definiciones de convergencia en distribución ($X_n \dto X$), convergencia en probabilidad ($X_n \pto X$) y convergencia casi segura ($X_n \xrightarrow{\text{c.s.}} X$), el cálculo de funciones de distribución de máximos y mínimos, y las desigualdades clásicas (Chebyshev y Borel–Cantelli). Puedes repasar la jerarquía de modos de convergencia en la <a href="../temas/clase-10.html">Clase 10</a>.</p>
+
+    <!-- Ej. 5.12 -->
+    <div class="box ejercicio" id="ej-5-12">
+      <span class="box-title">Ejercicio 5.12 (Clase 11)</span>
+      <p>Sea $(X_n)_{n\ge 1}$ una sucesión de variables aleatorias cuya densidad viene dada por
+      $$f_{X_n}(x) = \frac{n x^{n-1}}{\theta^n}, \qquad 0 &lt; x &lt; \theta,$$
+      donde $\theta &gt; 0$ es una constante fija (y $f_{X_n}(x) = 0$ fuera de ese intervalo). Prueba que $X_n \dto \theta$.</p>
+      <p class="tecnica">Técnica: definición de convergencia en distribución mediante límites puntuales de la función de distribución acumulada $F_{X_n}(x)$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Calcula explícitamente $F_{X_n}(x) = \int_{-\infty}^x f_{X_n}(t)\,dt$ distinguiendo los tres tramos $x \le 0$, $0 &lt; x &lt; \theta$ y $x \ge \theta$. Después toma $\lim_{n\to\infty} F_{X_n}(x)$ en cada punto $x \ne \theta$ y compáralo con la función de distribución de la constante $\theta$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Función de distribución acumulada de $X_n$.</b>
+            Integrando la densidad $f_{X_n}(t) = \frac{n t^{n-1}}{\theta^n}\1_{(0,\theta)}(t)$ se obtiene, para todo $x \in \R$:
+            $$F_{X_n}(x) = \begin{cases}
+              0, &amp; \text{si } x \le 0, \\[4pt]
+              \displaystyle\int_0^x \frac{n t^{n-1}}{\theta^n}\,dt = \left[\frac{t^n}{\theta^n}\right]_0^x = \left(\frac{x}{\theta}\right)^n, &amp; \text{si } 0 &lt; x &lt; \theta, \\[10pt]
+              1, &amp; \text{si } x \ge \theta.
+            \end{cases}$$</li>
+          <li><b>Límite puntual cuando $n \to \infty$.</b>
+            Evaluamos $\lim_{n\to\infty} F_{X_n}(x)$ según el valor de $x \in \R$:
+            <ul>
+              <li>Si $x \le 0$: $F_{X_n}(x) = 0$ para todo $n$, luego $\lim_{n\to\infty} F_{X_n}(x) = 0$.</li>
+              <li>Si $0 &lt; x &lt; \theta$: como $0 &lt; \frac{x}{\theta} &lt; 1$, se cumple $\lim_{n\to\infty}\left(\frac{x}{\theta}\right)^n = 0$.</li>
+              <li>Si $x \ge \theta$: $F_{X_n}(x) = 1$ para todo $n$, luego $\lim_{n\to\infty} F_{X_n}(x) = 1$.</li>
+            </ul></li>
+          <li><b>Identificación de la distribución límite.</b>
+            Sea $X \equiv \theta$ la variable aleatoria degenerada que toma el valor $\theta$ con probabilidad $1$. Su función de distribución acumulada es
+            $$F_\theta(x) = \P(\theta \le x) = \begin{cases} 0, &amp; \text{si } x &lt; \theta, \\ 1, &amp; \text{si } x \ge \theta, \end{cases}$$
+            cuyo conjunto de puntos de continuidad es $\R \setminus \{\theta\}$. Como $\lim_{n\to\infty} F_{X_n}(x) = F_\theta(x)$ para todo $x \ne \theta$ (de hecho, para todo $x \in \R$), concluimos que:
+            <div class="resultado">$$X_n \dto \theta \quad (\text{y como el límite es constante, también } X_n \pto \theta).$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.14 -->
+    <div class="box ejercicio" id="ej-5-14">
+      <span class="box-title">Ejercicio 5.14 (Clase 11)</span>
+      <p>Sean $X_1, X_2, \dots$ variables aleatorias i.i.d. con distribución exponencial de parámetro $\lambda = 1$ (densidad $f(x) = e^{-x}$ para $x &gt; 0$). Para $n \ge 1$, definimos
+      $$Y_n = \max\{X_1, \dots, X_n\} - \log n.$$
+      Muestra que la sucesión $(Y_n)_{n\ge 1}$ converge en distribución y determina la distribución límite.</p>
+      <p class="tecnica">Técnica: distribución del máximo de variables i.i.d. (<a href="../temas/clase-02.html">Clase 2</a>) + límite notable $(1 + a/n)^n \to e^a$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Escribe $M_n = \max\{X_1,\dots,X_n\}$. Para $y \in \R$, expresa $F_{Y_n}(y) = \P(M_n \le y + \log n) = [F_X(y + \log n)]^n$, cuidando el signo de $y + \log n$. Luego aplica el límite clásico $(1 - c/n)^n \to e^{-c}$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Distribución común y distribución del máximo $M_n$.</b>
+            Para $X_i \sim \text{Exp}(1)$ (con tasa $\lambda = 1$), la función de distribución acumulada es $F_X(x) = (1 - e^{-x})\1_{\{x &gt; 0\}}$.
+            Sea $M_n = \max\{X_1, \dots, X_n\}$. Como las variables son i.i.d., el máximo no supera $m$ si y solo si todas las observaciones son $\le m$:
+            $$F_{M_n}(m) = \P(M_n \le m) = \prod_{i=1}^n \P(X_i \le m) = \big[F_X(m)\big]^n = \begin{cases} (1 - e^{-m})^n, &amp; \text{si } m &gt; 0, \\ 0, &amp; \text{si } m \le 0. \end{cases}$$</li>
+          <li><b>Función de distribución de $Y_n = M_n - \log n$.</b>
+            Para cualquier $y \in \R$,
+            $$F_{Y_n}(y) = \P(M_n - \log n \le y) = \P(M_n \le y + \log n) = F_{M_n}(y + \log n).$$
+            La condición $y + \log n &gt; 0$ equivale a $y &gt; -\log n$. Cuando se cumple, $e^{-(y+\log n)} = e^{-y} e^{-\log n} = \frac{e^{-y}}{n}$. Por tanto:
+            $$F_{Y_n}(y) = \begin{cases}
+              \left(1 - \dfrac{e^{-y}}{n}\right)^n, &amp; \text{si } y &gt; -\log n, \\[8pt]
+              0, &amp; \text{si } y \le -\log n.
+            \end{cases}$$</li>
+          <li><b>Paso al límite cuando $n \to \infty$.</b>
+            Fija cualquier $y \in \R$. Como $-\log n \to -\infty$, existe un entero $N_y$ tal que para todo $n \ge N_y$ se cumple $y &gt; -\log n$. En ese régimen, aplicando el límite notable $\lim_{n\to\infty}\left(1 + \frac{a}{n}\right)^n = e^a$ con $a = -e^{-y}$:
+            $$\lim_{n\to\infty} F_{Y_n}(y) = \lim_{n\to\infty}\left(1 - \frac{e^{-y}}{n}\right)^n = \exp\big(-e^{-y}\big), \qquad \forall y \in \R.$$</li>
+          <li><b>Identificación de la distribución límite.</b>
+            La función $F_Y(y) = \exp(-e^{-y})$ es continua y estrictamente creciente en $\R$, con $\lim_{y\to-\infty} F_Y(y) = e^{-\infty} = 0$ y $\lim_{y\to+\infty} F_Y(y) = e^0 = 1$, por lo que es una función de distribución válida (corresponde a la <b>distribución de Gumbel estándar</b>, con densidad $f_Y(y) = e^{-y - e^{-y}}$ en $\R$).
+            <div class="resultado">$$F_{Y_n}(y) = \left(1 - \frac{e^{-y}}{n}\right)^n \1_{\{y &gt; -\log n\}}, \qquad Y_n \dto Y \sim \text{Gumbel}(0,1) \text{ con } F_Y(y) = \exp(-e^{-y}),\ y\in\R.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.15 -->
+    <div class="box ejercicio" id="ej-5-15">
+      <span class="box-title">Ejercicio 5.15 (Clase 11)</span>
+      <p>Sean $X_1, X_2, \dots$ variables aleatorias i.i.d. con densidad común
+      $$f(x) = \frac{1}{(1 + x)^2}, \qquad x &gt; 0$$
+      (y $0$ si $x \le 0$). Define $W_n = n^{-1}\max\{X_1, \dots, X_n\}$ para $n \ge 1$. Demuestra que $(W_n)_{n\ge 1}$ converge en distribución e identifica la distribución límite.</p>
+      <p class="tecnica">Técnica: CDF del máximo reescalado $W_n = M_n / n$ + paso al límite vía logaritmos.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Integra $f(x)$ para obtener $F_X(x) = 1 - \frac{1}{1+x}$ en $x &gt; 0$. Para $w &gt; 0$, escribe $F_{W_n}(w) = \left(1 - \frac{1}{1+nw}\right)^n$ y toma logaritmos o sustituye $nw = \frac{1}{u}$ para calcular el límite.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Función de distribución de $X_1$.</b>
+            Para $x \le 0$, $F_X(x) = 0$. Para $x &gt; 0$,
+            $$F_X(x) = \int_0^x \frac{1}{(1+t)^2}\,dt = \left[-\frac{1}{1+t}\right]_0^x = 1 - \frac{1}{1+x}.$$</li>
+          <li><b>Función de distribución de $W_n = n^{-1}\max\{X_1, \dots, X_n\}$.</b>
+            Por independencia e idéntica distribución:
+            $$F_{W_n}(w) = \P\left(\frac{\max\{X_1, \dots, X_n\}}{n} \le w\right) = \P\big(\max\{X_1, \dots, X_n\} \le nw\big) = \big[F_X(nw)\big]^n.$$
+            Por tramos:
+            $$F_{W_n}(w) = \begin{cases}
+              0, &amp; \text{si } w \le 0, \\[6pt]
+              \left(1 - \dfrac{1}{1 + nw}\right)^n, &amp; \text{si } w &gt; 0.
+            \end{cases}$$</li>
+          <li><b>Cálculo del límite cuando $n \to \infty$.</b>
+            <ul>
+              <li>Si $w \le 0$: $F_{W_n}(w) = 0 \to 0$.</li>
+              <li>Si $w &gt; 0$: sea $u_n = \frac{1}{1+nw} \to 0^+$. Tomando logaritmo natural y usando que $\lim_{u\to 0}\frac{\ln(1 - u)}{-u} = 1$:
+                $$\ln F_{W_n}(w) = n \ln\left(1 - \frac{1}{1+nw}\right) = -\frac{n}{1+nw}\cdot\frac{\ln(1 - u_n)}{-u_n} \xrightarrow[n\to\infty]{} -\frac{1}{w}\cdot 1 = -\frac{1}{w}.$$
+                Por continuidad de la exponencial, $\lim_{n\to\infty} F_{W_n}(w) = e^{-1/w}$.</li>
+            </ul></li>
+          <li><b>Conclusión (distribución de Fréchet).</b>
+            La función límite $F_W(w) = e^{-1/w}\1_{\{w &gt; 0\}}$ es continua en todo $\R$ (pues $\lim_{w\to 0^+} e^{-1/w} = 0$), no decreciente y satisface $\lim_{w\to\infty} F_W(w) = 1$. Corresponde a la <b>distribución de Fréchet estándar</b> (valores extremos tipo II con parámetro $1$), cuya densidad es $f_W(w) = w^{-2}e^{-1/w}$ para $w &gt; 0$.
+            <div class="resultado">$$F_{W_n}(w) = \left(1 - \frac{1}{1+nw}\right)^n \1_{\{w &gt; 0\}} \xrightarrow[n\to\infty]{} F_W(w) = \begin{cases} e^{-1/w}, &amp; w &gt; 0, \\ 0, &amp; w \le 0. \end{cases}$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.17 -->
+    <div class="box ejercicio" id="ej-5-17">
+      <span class="box-title">Ejercicio 5.17 (Clase 11)</span>
+      <p>Sea $(X_n)_{n\ge 1}$ una sucesión de variables aleatorias tal que $X_n \sim \text{Bin}(n, 1/n^2)$. Demuestra que
+      $$X_n - \frac{1}{n} \pto 0.$$ </p>
+      <p class="tecnica">Técnica: Desigualdad de Chebyshev (<a href="../temas/clase-10.html">Clase 10</a>).</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Calcula la media $\E[X_n] = np_n$ y la varianza $\Var(X_n) = np_n(1 - p_n)$ para $p_n = 1/n^2$. Aplica después la Desigualdad de Chebyshev a $\P(|X_n - \E[X_n]| \ge \varepsilon)$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Momentos de $X_n \sim \text{Bin}(n, 1/n^2)$.</b>
+            Con parámetro de éxito $p_n = \frac{1}{n^2}$:
+            $$\E[X_n] = n \cdot \frac{1}{n^2} = \frac{1}{n}, \qquad \Var(X_n) = n \cdot \frac{1}{n^2}\left(1 - \frac{1}{n^2}\right) = \frac{1}{n}\left(1 - \frac{1}{n^2}\right).$$</li>
+          <li><b>Aplicación de la Desigualdad de Chebyshev.</b>
+            Para cualquier $\varepsilon &gt; 0$, la Desigualdad de Chebyshev establece que $\P(|X_n - \E[X_n]| \ge \varepsilon) \le \frac{\Var(X_n)}{\varepsilon^2}$. Sustituyendo $\E[X_n] = 1/n$:
+            $$\P\left(\left|X_n - \frac{1}{n}\right| \ge \varepsilon\right) \le \frac{1}{n\varepsilon^2}\left(1 - \frac{1}{n^2}\right) \le \frac{1}{n\varepsilon^2} \xrightarrow[n\to\infty]{} 0.$$</li>
+          <li><b>Conclusión.</b>
+            Como la probabilidad del evento $\{|X_n - 1/n| \ge \varepsilon\}$ tiende a $0$ para todo $\varepsilon &gt; 0$:
+            <div class="resultado">$$X_n - \frac{1}{n} \pto 0 \qquad (\text{y dado que } \frac{1}{n} \to 0,\text{ también } X_n \pto 0).$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.18 -->
+    <div class="box ejercicio" id="ej-5-18">
+      <span class="box-title">Ejercicio 5.18 (Clase 11)</span>
+      <p>Sea $(X_n)_{n\ge 1}$ una sucesión de variables aleatorias tales que
+      $$\P(X_n = n) = 1 - \P(X_n = 1/n) = \frac{1}{n^2}, \qquad n \ge 1.$$
+      Muestra que $X_n \pto 0$ (y comprueba que también $X_n \xrightarrow{\text{c.s.}} 0$ mediante el Lema de Borel–Cantelli).</p>
+      <p class="tecnica">Técnica: evaluación directa de $\P(|X_n| \ge \varepsilon)$ (aquí la convergencia en $L^2$ falla) + primer Lema de Borel–Cantelli.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Fíjate en que $\E[X_n^2] = n^2(1/n^2) + \frac{1}{n^2}(1 - 1/n^2) \to 1 \ne 0$, por lo que Chebyshev con la varianza no sirve aquí. En su lugar, dado $\varepsilon &gt; 0$, escoge $n &gt; 1/\varepsilon$ para identificar exactamente qué valores de $X_n$ caen en $\{|X_n| \ge \varepsilon\}$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Por qué no se usa convergencia cuadrática ($L^2$).</b>
+            Aunque $\E[X_n] = n\cdot\frac{1}{n^2} + \frac{1}{n}\left(1 - \frac{1}{n^2}\right) = \frac{2}{n} - \frac{1}{n^3} \to 0$, el segundo momento cumple
+            $$\E[X_n^2] = n^2 \cdot \frac{1}{n^2} + \frac{1}{n^2}\left(1 - \frac{1}{n^2}\right) = 1 + \frac{1}{n^2} - \frac{1}{n^4} \xrightarrow[n\to\infty]{} 1 \ne 0.$$
+            Por tanto $X_n$ no converge en media cuadrática a $0$ y debemos evaluar $\P(|X_n - 0| \ge \varepsilon)$ directamente (o mediante Markov usando $\E[|X_n|]$).</li>
+          <li><b>Prueba directa de $X_n \pto 0$.</b>
+            Sea $\varepsilon &gt; 0$ arbitrario. Tomamos $n$ suficientemente grande de modo que $\frac{1}{n} &lt; \varepsilon$ y $n \ge \varepsilon$ (basta $n &gt; \max\{1/\varepsilon, \varepsilon\}$). Para todo $n$ en ese rango, el único valor del soporte $\{1/n, n\}$ cuyo módulo es $\ge \varepsilon$ es $X_n = n$. Por consiguiente:
+            $$\P(|X_n - 0| \ge \varepsilon) = \P(X_n = n) = \frac{1}{n^2} \xrightarrow[n\to\infty]{} 0.$$
+            Esto demuestra que $X_n \pto 0$.</li>
+          <li><b>Refuerzo a convergencia casi segura vía Borel–Cantelli.</b>
+            Para cualquier $\varepsilon &gt; 0$, tomando $N_0 = \lceil \max\{1/\varepsilon, \varepsilon\} \rceil$, la serie de probabilidades cola converge:
+            $$\sum_{n=1}^\infty \P(|X_n| \ge \varepsilon) \le N_0 + \sum_{n=N_0 + 1}^\infty \frac{1}{n^2} &lt; \infty.$$
+            Por el Primer Lema de Borel–Cantelli, $\P(|X_n| \ge \varepsilon \text{ infinitas veces}) = 0$ para todo $\varepsilon &gt; 0$, lo cual equivale a $X_n \xrightarrow{\text{c.s.}} 0$.
+            <div class="resultado">$$X_n \pto 0 \quad \text{y de hecho} \quad X_n \xrightarrow{\text{c.s.}} 0 \quad (\text{a pesar de que } \E[X_n^2] \to 1).$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.19 -->
+    <div class="box ejercicio" id="ej-5-19">
+      <span class="box-title">Ejercicio 5.19 (Clase 11)</span>
+      <p>Sean $X_1, X_2, \dots$ variables aleatorias i.i.d. con distribución uniforme en $[0, 1]$. Definimos
+      $$Y_n = \min\{X_1, \dots, X_n\}, \quad Z_n = \max\{X_1, \dots, X_n\}, \quad U_n = n Y_n \quad \text{y} \quad V_n = n(1 - Z_n), \qquad n \ge 1.$$
+      Demuestra que:</p>
+      <ol type="a">
+        <li>$Y_n \pto 0$ y $Z_n \pto 1$.</li>
+        <li>$U_n \dto W$ y $V_n \dto W$, donde $W \sim \text{Exp}(1)$ (tasa $1$ / media $1$).</li>
+      </ol>
+      <p class="tecnica">Técnica: probabilidades de cola exactas del mínimo y máximo en $U[0,1]$ + reescalamiento asintótico.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Para (a), usa $\{Y_n \ge \varepsilon\} = \bigcap_{i=1}^n \{X_i \ge \varepsilon\}$ y $\{Z_n \le 1 - \varepsilon\} = \bigcap_{i=1}^n \{X_i \le 1 - \varepsilon\}$. Para (b), calcula $F_{U_n}(u) = 1 - \P(Y_n &gt; u/n)$ y $F_{V_n}(v) = 1 - \P(Z_n &lt; 1 - v/n)$ cuando $u, v \in (0, n)$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <p class="sol-inciso">(a) Convergencia en probabilidad de $Y_n$ y $Z_n$</p>
+        <ol class="pasos">
+          <li><b>Convergencia del mínimo $Y_n \pto 0$.</b>
+            Como $Y_n \in [0, 1]$ casi seguramente, si $\varepsilon &gt; 1$ entonces $\P(|Y_n| \ge \varepsilon) = 0$. Para $\varepsilon \in (0, 1]$:
+            $$\P(|Y_n - 0| \ge \varepsilon) = \P(Y_n \ge \varepsilon) = \P(X_1 \ge \varepsilon, \dots, X_n \ge \varepsilon) = \prod_{i=1}^n \P(X_i \ge \varepsilon) = (1 - \varepsilon)^n \xrightarrow[n\to\infty]{} 0,$$
+            ya que $0 \le 1 - \varepsilon &lt; 1$. Por tanto, $Y_n \pto 0$.</li>
+          <li><b>Convergencia del máximo $Z_n \pto 1$.</b>
+            Análogamente, si $\varepsilon &gt; 1$ la probabilidad es $0$; para $\varepsilon \in (0, 1]$:
+            $$\P(|Z_n - 1| \ge \varepsilon) = \P(Z_n \le 1 - \varepsilon) = \prod_{i=1}^n \P(X_i \le 1 - \varepsilon) = (1 - \varepsilon)^n \xrightarrow[n\to\infty]{} 0.$$
+            Por consiguiente, $Z_n \pto 1$.</li>
+        </ol>
+
+        <p class="sol-inciso">(b) Convergencia en distribución de $U_n = nY_n$ y $V_n = n(1 - Z_n)$</p>
+        <ol class="pasos">
+          <li><b>Distribución límite de $U_n = n Y_n$.</b>
+            Si $u \le 0$, $F_{U_n}(u) = \P(Y_n \le u/n) = 0$ (para $u = 0$, $\P(Y_n = 0) = 0$). Si $u &gt; 0$, para todo $n &gt; u$ se tiene $0 &lt; u/n &lt; 1$, luego:
+            $$F_{U_n}(u) = \P\left(Y_n \le \frac{u}{n}\right) = 1 - \P\left(Y_n &gt; \frac{u}{n}\right) = 1 - \left(1 - \frac{u}{n}\right)^n \xrightarrow[n\to\infty]{} 1 - e^{-u}.$$</li>
+          <li><b>Distribución límite de $V_n = n(1 - Z_n)$.</b>
+            Si $v \le 0$, $F_{V_n}(v) = \P(Z_n \ge 1 - v/n) = 0$. Si $v &gt; 0$, para todo $n &gt; v$ se cumple $0 &lt; 1 - v/n &lt; 1$, de modo que:
+            $$F_{V_n}(v) = \P\big(n(1 - Z_n) \le v\big) = \P\left(Z_n \ge 1 - \frac{v}{n}\right) = 1 - \P\left(Z_n &lt; 1 - \frac{v}{n}\right) = 1 - \left(1 - \frac{v}{n}\right)^n \xrightarrow[n\to\infty]{} 1 - e^{-v}.$$
+            Ambos límites coinciden en todo $x \in \R$ con la función de distribución $F_W(x) = (1 - e^{-x})\1_{\{x &gt; 0\}}$ de $W \sim \text{Exp}(1)$.
+            <div class="resultado">$$Y_n \pto 0, \quad Z_n \pto 1, \qquad U_n \dto \text{Exp}(1), \quad V_n \dto \text{Exp}(1).$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       SECCIÓN 3: BLOQUE II — CONTINUIDAD, SLUTSKY Y MÉTODO DELTA
+       ================================================================ -->
+  <section>
+    <h2 id="cap5-delta">Bloque II · Teorema de la Continuidad, Slutsky y Método Delta (Clase 12: Ej. 26, 28, 29, 32 y 75)</h2>
+    <p>Este bloque reúne las tres herramientas centrales para deducir límites en distribución sin integrar densidades complicadas: el <b>Teorema de la Continuidad</b> para funciones generadoras de momentos (FGM), el <b>Teorema de Slutsky</b> al combinar convergencia en distribución con convergencia en probabilidad a constantes, y el <b>Método Delta</b> para transformaciones diferenciables de promedios asintóticamente normales.</p>
+
+    <!-- Ej. 5.26 -->
+    <div class="box ejercicio" id="ej-5-26">
+      <span class="box-title">Ejercicio 5.26 (Clase 12)</span>
+      <p>Supón que $X_n \sim N(\mu_n, \sigma_n^2)$ para $n \ge 1$, con $\mu_n \to \mu \in \R$ y $\sigma_n \to \sigma &gt; 0$ cuando $n \to \infty$. Usando el Teorema de la Continuidad, demuestra que $X_n \dto N(\mu, \sigma^2)$.</p>
+      <p class="tecnica">Técnica: Teorema de la Continuidad para funciones generadoras de momentos (<a href="../temas/clase-02.html">Clase 2 · FGM</a>).</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Escribe la FGM de $X_n \sim N(\mu_n, \sigma_n^2)$, que existe para todo $t \in \R$, y toma el límite puntual cuando $n \to \infty$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>FGM de la sucesión $(X_n)_{n\ge 1}$.</b>
+            Para cada $n \ge 1$, la función generadora de momentos de $X_n \sim N(\mu_n, \sigma_n^2)$ existe para todo $t \in \R$ y es:
+            $$M_{X_n}(t) = \E[e^{t X_n}] = \exp\left(\mu_n t + \frac{1}{2}\sigma_n^2 t^2\right), \qquad t \in \R.$$</li>
+          <li><b>Límite puntual cuando $n \to \infty$.</b>
+            Como la función exponencial es continua y por hipótesis $\mu_n \to \mu$ y $\sigma_n \to \sigma$, para cualquier $t \in \R$ (en particular en cualquier intervalo abierto $(-b, b)$ alrededor de $0$):
+            $$\lim_{n\to\infty} M_{X_n}(t) = \lim_{n\to\infty} \exp\left(\mu_n t + \frac{1}{2}\sigma_n^2 t^2\right) = \exp\left(\mu t + \frac{1}{2}\sigma^2 t^2\right) = M_X(t).$$</li>
+          <li><b>Conclusión por el Teorema de la Continuidad.</b>
+            La función límite $M_X(t) = \exp\big(\mu t + \frac{1}{2}\sigma^2 t^2\big)$ es finita en todo $\R$ y coincide con la FGM de $X \sim N(\mu, \sigma^2)$. Por el Teorema de la Continuidad para FGM:
+            <div class="resultado">$$X_n \dto N(\mu, \sigma^2).$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.28 -->
+    <div class="box ejercicio" id="ej-5-28">
+      <span class="box-title">Ejercicio 5.28 (Clase 12)</span>
+      <p>Para $n \ge 2$, sea $X_n \sim \text{Geométrica}(1/n)$ con soporte $\{1, 2, \dots\}$ (número de ensayos hasta el primer éxito, cuya FGM es $M_{X_n}(t) = \frac{(1/n)e^t}{1 - (1 - 1/n)e^t}$ para $t &lt; -\ln(1 - 1/n)$). Sea $Y_n = \frac{X_n}{n} - 1$ (o la versión sin desplazamiento $Z_n = \frac{X_n}{n}$). Estudia el límite mediante el Teorema de la Continuidad para establecer la convergencia hacia $\text{Exp}(1)$.</p>
+      <p class="tecnica">Técnica: Teorema de la Continuidad para FGM + límite exponencial $\lim_{n\to\infty} n(e^{t/n} - 1) = t$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Calcula $M_{X_n/n}(t) = M_{X_n}(t/n)$ multiplicando numerador y denominador por $n$, y escribe $n - (n - 1)e^{t/n} = e^{t/n} - n(e^{t/n} - 1)$. Verifica también qué ocurre con el factor $e^{-t}$ si se resta $1$ en $Y_n = X_n/n - 1$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>FGM del reescalamiento $Z_n = X_n / n$ y dominio común.</b>
+            Para $X_n \sim \text{Geométrica}(1/n)$ en $\{1, 2, \dots\}$, se tiene
+            $$M_{X_n}(s) = \sum_{k=1}^\infty e^{sk} \frac{1}{n}\left(1 - \frac{1}{n}\right)^{k-1} = \frac{(1/n)e^s}{1 - (1 - 1/n)e^s}, \qquad s &lt; -\ln\left(1 - \frac{1}{n}\right).$$
+            Evaluando en $s = t/n$, la FGM de $Z_n = X_n/n$ es:
+            $$M_{Z_n}(t) = M_{X_n}\left(\frac{t}{n}\right) = \frac{\frac{1}{n} e^{t/n}}{1 - \left(1 - \frac{1}{n}\right)e^{t/n}}, \qquad t &lt; -n\ln\left(1 - \frac{1}{n}\right).$$
+            Como $\ln(1 - u) &lt; -u$ para todo $u \in (0, 1)$, se cumple $-n\ln(1 - 1/n) &gt; 1$ para todo $n \ge 2$. Por tanto, para cualquier $t &lt; 1$ (en particular en un entorno abierto $(-1, 1)$ de $0$), $M_{Z_n}(t)$ existe y es finita para todo $n \ge 2$.</li>
+          <li><b>Cálculo del límite cuando $n \to \infty$.</b>
+            Multiplicando numerador y denominador por $n$:
+            $$M_{Z_n}(t) = \frac{e^{t/n}}{n - (n - 1)e^{t/n}} = \frac{e^{t/n}}{e^{t/n} - n(e^{t/n} - 1)}.$$
+            Cuando $n \to \infty$, tenemos $e^{t/n} \to 1$ y $n(e^{t/n} - 1) = t \cdot \frac{e^{t/n} - 1}{t/n} \to t$ (usando $\lim_{x\to 0}\frac{e^x - 1}{x} = 1$; para $t = 0$ es directamente $0$). En consecuencia, para todo $t &lt; 1$:
+            $$\lim_{n\to\infty} M_{Z_n}(t) = \frac{1}{1 - t}.$$
+            Esta es exactamente la FGM de $W \sim \text{Exp}(1)$ (tasa $1$ / media $1$). Por el Teorema de la Continuidad, $Z_n = \frac{X_n}{n} \dto W \sim \text{Exp}(1)$ (y también $\frac{X_n - 1}{n} = \frac{X_n}{n} - \frac{1}{n} \dto \text{Exp}(1)$).</li>
+          <li><b>Nota sobre la expresión desplazada $Y_n = X_n/n - 1$.</b>
+            Si se mantiene la resta literal de $1$ en $Y_n = \frac{X_n}{n} - 1$, la propiedad de traslación de la FGM introduce el factor $e^{-t}$:
+            $$M_{Y_n}(t) = e^{-t} M_{X_n}\left(\frac{t}{n}\right) = e^{-t}\,\frac{\frac{1}{n} e^{t/n}}{1 - \left(1 - \frac{1}{n}\right)e^{t/n}} \xrightarrow[n\to\infty]{} \frac{e^{-t}}{1 - t}, \qquad t &lt; 1,$$
+            que corresponde al límite $Y_n \dto W - 1$ con $W \sim \text{Exp}(1)$ (soporte $(-1, \infty)$ y media $0$). Cuando el propósito es recuperar $\text{Exp}(1)$ estándar en $(0, \infty)$ con FGM $\frac{1}{1 - t}$, el cociente corresponde a $X_n / n$ (o bien a $(X_n - 1)/n$, donde el desplazamiento $1/n \to 0$ desaparece en el límite).
+            <div class="resultado">$$\frac{X_n}{n} \dto \text{Exp}(1) \quad \left(\text{FGM límite } \frac{1}{1-t},\ t &lt; 1\right); \qquad Y_n = \frac{X_n}{n} - 1 \dto W - 1 \quad \left(\text{FGM límite } \frac{e^{-t}}{1-t}\right).$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.29 -->
+    <div class="box ejercicio" id="ej-5-29">
+      <span class="box-title">Ejercicio 5.29 (Clase 12)</span>
+      <p>Sean $X_1, X_2, \dots$ variables aleatorias i.i.d. con distribución $\text{Poisson}(\lambda)$, y define $S_n = \sum_{i=1}^n X_i$. Usando el Teorema de la Continuidad, demuestra que $\frac{S_n}{n} \dto \lambda$.<br>
+      <em>Sugerencia del libro:</em> prueba y utiliza que $\lim_{x\to 0}\frac{e^x - 1}{x} = 1$.</p>
+      <p class="tecnica">Técnica: FGM de una suma de independientes + Teorema de la Continuidad.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Recuerda que la FGM de $\text{Poisson}(\lambda)$ es $M_{X_1}(t) = \exp(\lambda(e^t - 1))$. Calcula $M_{S_n/n}(t) = [M_{X_1}(t/n)]^n$ y evalúa su límite puntual usando $\frac{e^{t/n}-1}{t/n} \to 1$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Demostración de la sugerencia.</b>
+            Por definición de derivada de la función $h(x) = e^x$ en $x = 0$:
+            $$\lim_{x\to 0}\frac{e^x - 1}{x} = \lim_{x\to 0}\frac{e^x - e^0}{x - 0} = h'(0) = e^0 = 1.$$</li>
+          <li><b>FGM de la media muestral $S_n / n$.</b>
+            La FGM de $X_i \sim \text{Poisson}(\lambda)$ es $M_{X_i}(s) = \exp\big(\lambda(e^s - 1)\big)$ para todo $s \in \R$. Por independencia:
+            $$M_{S_n/n}(t) = \E\left[\exp\left(\frac{t}{n}\sum_{i=1}^n X_i\right)\right] = \prod_{i=1}^n M_{X_i}\left(\frac{t}{n}\right) = \Big[\exp\big(\lambda(e^{t/n} - 1)\big)\Big]^n = \exp\big(n\lambda(e^{t/n} - 1)\big), \qquad \forall t \in \R.$$</li>
+          <li><b>Límite puntual y conclusión.</b>
+            Para $t = 0$, $M_{S_n/n}(0) = 1 = e^{\lambda \cdot 0}$. Para cualquier $t \ne 0$, reescribimos el exponente multiplicando y dividiendo por $t/n$:
+            $$n\lambda(e^{t/n} - 1) = \lambda t \cdot \frac{e^{t/n} - 1}{t/n} \xrightarrow[n\to\infty]{} \lambda t \cdot 1 = \lambda t.$$
+            Por continuidad de la función exponencial, para todo $t \in \R$:
+            $$\lim_{n\to\infty} M_{S_n/n}(t) = e^{\lambda t},$$
+            que es la FGM de la variable constante $X \equiv \lambda$. Por el Teorema de la Continuidad:
+            <div class="resultado">$$\frac{S_n}{n} \dto \lambda \qquad (\text{y por ser límite constante, también } \frac{S_n}{n} \pto \lambda).$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.32 -->
+    <div class="box ejercicio" id="ej-5-32">
+      <span class="box-title">Ejercicio 5.32 (Clase 12)</span>
+      <p>Supón que $Z_n \sim N(0, 1)$ y $V_n \sim \chi^2_{(n)}$ son variables aleatorias independientes. Demuestra que
+      $$T_n = \frac{Z_n}{\sqrt{V_n / n}} \dto N(0, 1).$$
+      <em>Nota sobre la convención:</em> recuerda que $\chi^2_{(n)}$ coincide con $\text{Gamma}(\alpha = n/2, \beta = 2)$ en la convención de escala del Formulario (equivalente a tasa $\lambda = 1/2$).</p>
+      <p class="tecnica">Técnica: Desigualdad de Chebyshev para $V_n/n \pto 1$ + preservación por función continua + Teorema de Slutsky.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Halla $\E[V_n] = n$ y $\Var(V_n) = 2n$. Muestra que $\Var(V_n/n) = 2/n \to 0$ para concluir por Chebyshev que $V_n/n \pto 1$. Luego aplica Slutsky a $T_n = Z_n / \sqrt{V_n/n}$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Media y varianza de $V_n \sim \chi^2_{(n)}$.</b>
+            Con la parametrización de escala ($\beta = 2$, $\alpha = n/2$), se tiene:
+            $$\E[V_n] = \alpha\beta = \frac{n}{2}\cdot 2 = n, \qquad \Var(V_n) = \alpha\beta^2 = \frac{n}{2}\cdot 4 = 2n.$$
+            Para el cociente $V_n / n$, esto implica:
+            $$\E\left[\frac{V_n}{n}\right] = 1, \qquad \Var\left(\frac{V_n}{n}\right) = \frac{\Var(V_n)}{n^2} = \frac{2n}{n^2} = \frac{2}{n}.$$</li>
+          <li><b>Convergencia en probabilidad del denominador.</b>
+            Aplicando la Desigualdad de Chebyshev a $V_n/n$, para todo $\varepsilon &gt; 0$:
+            $$\P\left(\left|\frac{V_n}{n} - 1\right| \ge \varepsilon\right) \le \frac{\Var(V_n/n)}{\varepsilon^2} = \frac{2}{n\varepsilon^2} \xrightarrow[n\to\infty]{} 0.$$
+            Por tanto $\frac{V_n}{n} \pto 1$. Como la función $g(x) = \sqrt{x}$ es continua en $x = 1$, por preservación de la convergencia en probabilidad:
+            $$\sqrt{\frac{V_n}{n}} \pto \sqrt{1} = 1.$$</li>
+          <li><b>Conclusión mediante el Teorema de Slutsky.</b>
+            Para cada $n$, $Z_n \sim N(0, 1)$, luego $Z_n \dto Z \sim N(0, 1)$. Como además $\sqrt{V_n/n} \pto 1 \ne 0$ (y por tanto también converge en distribución a $1$), el Teorema de Slutsky para cocientes garantiza que:
+            $$T_n = \frac{Z_n}{\sqrt{V_n/n}} \dto \frac{Z}{1} \sim N(0, 1).$$
+            <em>(Observa que como $Z_n$ y $V_n$ son independientes, $T_n \sim t_{(n)}$; este argumento demuestra además que la distribución $t$ de Student converge a la normal estándar cuando $n \to \infty$.)</em>
+            <div class="resultado">$$T_n = \frac{Z_n}{\sqrt{V_n/n}} \dto N(0, 1).$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.75 -->
+    <div class="box ejercicio" id="ej-5-75">
+      <span class="box-title">Ejercicio 5.75 (Clase 12)</span>
+      <p>Sea $(X_n)_{n\ge 1}$ una sucesión de variables aleatorias i.i.d. con media $\mu = 1$ y varianza $\sigma^2 \in (0, \infty)$. Considera $S_n = \sum_{i=1}^n X_i$. Prueba que
+      $$\sqrt{S_n} - \sqrt{n} \dto N(0, a^2),$$
+      y determina la constante $a^2$.</p>
+      <p class="tecnica">Técnica: factorización $\sqrt{S_n} - \sqrt{n} = \sqrt{n}(\sqrt{\bar X_n} - 1)$ + TLC + Método Delta con $g(u) = \sqrt{u}$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Saca factor común $\sqrt{n}$ para escribir $\sqrt{S_n} - \sqrt{n} = \sqrt{n}\big(\sqrt{\bar X_n} - \sqrt{1}\big)$. Aplica el Método Delta a $\bar X_n$ con la función $g(u) = \sqrt{u}$ evaluada en $\mu = 1$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Reescritura en términos de la media muestral $\bar X_n$.</b>
+            Como $S_n = n \bar X_n$ (y por la Ley de los Grandes Números $\bar X_n \pto \mu = 1 &gt; 0$, de modo que $\P(\bar X_n &gt; 0) \to 1$), podemos factorizar $\sqrt{n}$:
+            $$\sqrt{S_n} - \sqrt{n} = \sqrt{n\bar X_n} - \sqrt{n} = \sqrt{n}\big(\sqrt{\bar X_n} - 1\big).$$</li>
+          <li><b>Normalidad asintótica de $\bar X_n$ por el TLC.</b>
+            Puesto que $X_1, X_2, \dots$ son i.i.d. con $\mu = 1$ y varianza finita $\sigma^2 &gt; 0$, el Teorema del Límite Central indica que:
+            $$\sqrt{n}(\bar X_n - 1) \dto N(0, \sigma^2).$$</li>
+          <li><b>Aplicación del Método Delta.</b>
+            Considera $g(u) = \sqrt{u}$ (definida en $(0, \infty)$), que es diferenciable en $\mu = 1$ con derivada:
+            $$g'(u) = \frac{1}{2\sqrt{u}} \implies g'(1) = \frac{1}{2} \ne 0.$$
+            Por el Método Delta de primer orden:
+            $$\sqrt{n}\big(g(\bar X_n) - g(1)\big) \dto N\big(0,\, [g'(1)]^2 \sigma^2\big) = N\left(0, \left(\frac{1}{2}\right)^2 \sigma^2\right) = N\left(0, \frac{\sigma^2}{4}\right).$$
+            <div class="resultado">$$\sqrt{S_n} - \sqrt{n} \dto N\left(0, \frac{\sigma^2}{4}\right), \qquad a^2 = \frac{\sigma^2}{4}.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       SECCIÓN 4: BLOQUE III — LEYES DE LOS GRANDES NÚMEROS
+       ================================================================ -->
+  <section>
+    <h2 id="cap5-lgn">Bloque III · Leyes de los Grandes Números (Clase 13: Ej. 37, 40, 42, 43 y 45)</h2>
+    <p>En este bloque combinamos manipulaciones algebraicas de promedios, la Ley Débil de los Grandes Números (LDGN de Khintchine), la Ley Fuerte de los Grandes Números de Kolmogorov (LFGN) —tanto para variables i.i.d. integrables como para independientes con varianza controlada $\sum \Var(X_n)/n^2 &lt; \infty$— y la preservación por funciones continuas.</p>
+
+    <!-- Ej. 5.37 -->
+    <div class="box ejercicio" id="ej-5-37">
+      <span class="box-title">Ejercicio 5.37 (Clase 13)</span>
+      <p>Sean $X_1, X_2, \dots$ variables aleatorias i.i.d. con media común $\mu$ y varianza finita $\sigma^2 &lt; \infty$. Prueba que
+      $$\binom{n}{2}^{-1} \sum_{1 \le i &lt; j \le n} X_i X_j \pto \mu^2.$$ </p>
+      <p class="tecnica">Técnica: identidad cuadrática $\big(\sum X_i\big)^2 = \sum X_i^2 + 2\sum_{i &lt; j} X_i X_j$ + Ley de los Grandes Números.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Desarrolla $(\sum_{i=1}^n X_i)^2$ para expresar la suma doble en función de $\bar X_n^2$ y $\frac{1}{n}\sum_{i=1}^n X_i^2$. Como $\Var(X_1) &lt; \infty$, también existe $\E[X_1^2] &lt; \infty$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Descomposición algebraica del estadístico.</b>
+            Expandiendo el cuadrado de la suma $S_n = \sum_{i=1}^n X_i$:
+            $$\left(\sum_{i=1}^n X_i\right)^2 = \sum_{i=1}^n X_i^2 + 2\sum_{1 \le i &lt; j \le n} X_i X_j.$$
+            Despejando la suma de productos cruzados y dividiendo entre $\binom{n}{2} = \frac{n(n-1)}{2}$:
+            $$U_n = \binom{n}{2}^{-1} \sum_{1 \le i &lt; j \le n} X_i X_j = \frac{1}{n(n-1)}\left[n^2\bar X_n^2 - \sum_{i=1}^n X_i^2\right] = \frac{n}{n-1}\bar X_n^2 - \frac{1}{n-1}\left(\frac{1}{n}\sum_{i=1}^n X_i^2\right).$$</li>
+          <li><b>Existencia de momentos y Ley de los Grandes Números.</b>
+            Como $\E[X_1] = \mu$ y $\Var(X_1) = \sigma^2 &lt; \infty$, también es finito el segundo momento: $\E[X_1^2] = \sigma^2 + \mu^2 &lt; \infty$.
+            Por la LDGN de Khintchine (o la LFGN de Kolmogorov):
+            <ul>
+              <li>$\bar X_n \pto \mu$, luego por continuidad de $t \mapsto t^2$ se cumple $\bar X_n^2 \pto \mu^2$, y como $\frac{n}{n-1} \to 1$, resulta $\frac{n}{n-1}\bar X_n^2 \pto \mu^2$.</li>
+              <li>$\frac{1}{n}\sum_{i=1}^n X_i^2 \pto \E[X_1^2] = \sigma^2 + \mu^2$, y como $\frac{1}{n-1} \to 0$, el segundo término satisface $\frac{1}{n-1}\left(\frac{1}{n}\sum_{i=1}^n X_i^2\right) \pto 0$.</li>
+            </ul></li>
+          <li><b>Conclusión.</b>
+            Sumando ambas convergencias en probabilidad (de hecho también valen casi seguramente):
+            <div class="resultado">$$\binom{n}{2}^{-1} \sum_{1 \le i &lt; j \le n} X_i X_j \pto \mu^2.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.40 -->
+    <div class="box ejercicio" id="ej-5-40">
+      <span class="box-title">Ejercicio 5.40 (Clase 13)</span>
+      <p>Una varilla de longitud $1$ se parte sucesivamente de manera aleatoria: en cada corte, la proporción restante tiene distribución uniforme en $(0, 1)$, de forma independiente en cada paso.</p>
+      <ol type="a">
+        <li>Sea $X_n$ la longitud de la parte que sobra después de partir la varilla $n$ veces. Describe $X_n$ como un producto.</li>
+        <li>Muestra que la sucesión $\left\{\dfrac{\log X_n}{n}\right\}_{n\ge 1}$ converge casi seguramente e indica cuál es el límite.</li>
+        <li>Obtén una aproximación para la probabilidad de que $X_{36} \le e^{-24}$.</li>
+      </ol>
+      <p class="tecnica">Técnica: linealización por logaritmo + LFGN de Kolmogorov + transformación $-\log U_i \sim \text{Exp}(1)$ y TLC.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Representa cada proporción conservada por $U_i \iid U(0,1)$. Para (b), calcula $\E[\log U_1] = \int_0^1 \ln u\,du = -1$. Para (c), toma $Z_i = -\log U_i \iid \text{Exp}(1)$ y aplica el TLC con $n = 36$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <p class="sol-inciso">(a) Descripción multiplicativa de $X_n$</p>
+        <ol class="pasos">
+          <li><b>Modelo por cortes independientes.</b>
+            Sean $U_1, U_2, \dots \iid U(0, 1)$ las fracciones de longitud conservadas en cada corte sucesivo. Tras el primer corte queda $X_1 = U_1$; tras el segundo queda la fracción $U_2$ de $X_1$, es decir $X_2 = U_1 U_2$; por inducción, tras $n$ cortes:
+            <div class="resultado">$$X_n = \prod_{i=1}^n U_i.$$</div>
+          </li>
+        </ol>
+
+        <p class="sol-inciso">(b) Convergencia casi segura de $\frac{\log X_n}{n}$</p>
+        <ol class="pasos">
+          <li><b>Conversión a promedio y esperanza de $\log U_i$.</b>
+            Como $U_i \in (0, 1)$ c.s., aplicamos logaritmo natural:
+            $$\frac{\log X_n}{n} = \frac{1}{n}\sum_{i=1}^n \log U_i.$$
+            Las variables $Y_i = \log U_i$ son i.i.d. y su esperanza (integrando por partes) es finita:
+            $$\E[\log U_1] = \int_0^1 \ln u\,du = \lim_{\varepsilon \to 0^+} \big[u\ln u - u\big]_\varepsilon^1 = -1 - 0 = -1.$$
+            (Además $\E[|\log U_1|] = 1 &lt; \infty$.) Por la LFGN de Kolmogorov:
+            <div class="resultado">$$\frac{\log X_n}{n} \xrightarrow{\text{c.s.}} -1.$$</div>
+          </li>
+        </ol>
+
+        <p class="sol-inciso">(c) Aproximación normal de $\P(X_{36} \le e^{-24})$</p>
+        <ol class="pasos">
+          <li><b>Transformación a variables exponenciales.</b>
+            Define $Z_i = -\log U_i$. Para $z &gt; 0$, $\P(Z_i \le z) = \P(U_i \ge e^{-z}) = 1 - e^{-z}$, luego $Z_1, \dots, Z_{36} \iid \text{Exp}(1)$ (con media $\mu = 1$ y varianza $\sigma^2 = 1$).
+            El evento pedido equivale a:
+            $$X_{36} \le e^{-24} \iff \log X_{36} \le -24 \iff S_{36} = \sum_{i=1}^{36} Z_i \ge 24.$$</li>
+          <li><b>Aplicación del TLC.</b>
+            La suma $S_{36}$ tiene $\E[S_{36}] = 36(1) = 36$ y $\text{DE}(S_{36}) = \sqrt{36\cdot 1} = 6$. Por el Teorema del Límite Central:
+            $$\P(S_{36} \ge 24) = \P\left(\frac{S_{36} - 36}{6} \ge \frac{24 - 36}{6}\right) \approx \P(Z \ge -2) = \Phi(2) \approx 0.9772.$$
+            <div class="resultado">$$\P(X_{36} \le e^{-24}) \approx \Phi(2) \approx 0.9772.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.42 -->
+    <div class="box ejercicio" id="ej-5-42">
+      <span class="box-title">Ejercicio 5.42 (Clase 13)</span>
+      <p>Sea $(X_n)_{n\ge 1}$ una sucesión de variables aleatorias i.i.d. con distribución $N(0, 1)$. Definimos
+      $$Y_n = \frac{X_1^2 + \cdots + X_n^2}{(X_1 - 1)^2 + \cdots + (X_n - 1)^2}.$$
+      Prueba que $Y_n \xrightarrow{\text{c.s.}} \frac{1}{2}$.</p>
+      <p class="tecnica">Técnica: dividir numerador y denominador por $n$ + LFGN de Kolmogorov aplicada dos veces + preservación continua.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Reescribe $Y_n$ como el cociente entre $\frac{1}{n}\sum_{i=1}^n X_i^2$ y $\frac{1}{n}\sum_{i=1}^n (X_i - 1)^2$. Calcula $\E[X_1^2]$ y $\E[(X_1 - 1)^2]$ usando $\E[X_1] = 0$ y $\Var(X_1) = 1$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Expresión en función de promedios muestrales.</b>
+            Dividiendo numerador y denominador por $n$:
+            $$Y_n = \frac{\frac{1}{n}\sum_{i=1}^n X_i^2}{\frac{1}{n}\sum_{i=1}^n (X_i - 1)^2}.$$</li>
+          <li><b>Cálculo de esperanzas y aplicación doble de la LFGN.</b>
+            Para $X_i \sim N(0, 1)$ se tiene $\E[X_i] = 0$ y $\E[X_i^2] = \Var(X_i) = 1 &lt; \infty$.
+            Además, $(X_i - 1)^2 = X_i^2 - 2X_i + 1$ cumple:
+            $$\E\big[(X_1 - 1)^2\big] = \E[X_1^2] - 2\E[X_1] + 1 = 1 - 0 + 1 = 2 &lt; \infty.$$
+            Como $\{X_i^2\}_{i\ge 1}$ y $\{(X_i - 1)^2\}_{i\ge 1}$ son sucesiones i.i.d. integrables, la LFGN de Kolmogorov aplicada dos veces garantiza:
+            $$\frac{1}{n}\sum_{i=1}^n X_i^2 \xrightarrow{\text{c.s.}} 1 \qquad \text{y} \qquad \frac{1}{n}\sum_{i=1}^n (X_i - 1)^2 \xrightarrow{\text{c.s.}} 2.$$</li>
+          <li><b>Cociente casi seguro.</b>
+            Como el denominador converge c.s. a $2 \ne 0$ y la función $g(u, v) = u/v$ es continua en $(1, 2)$, por preservación casi segura:
+            <div class="resultado">$$Y_n \xrightarrow{\text{c.s.}} \frac{1}{2}.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.43 -->
+    <div class="box ejercicio" id="ej-5-43">
+      <span class="box-title">Ejercicio 5.43 (Clase 13)</span>
+      <p>Sea $(X_n)_{n\ge 1}$ una sucesión de variables aleatorias i.i.d. con distribución $\text{Poisson}(\lambda)$ ($\lambda &gt; 0$). Definimos
+      $$Y_n = \frac{X_1 + \cdots + X_n}{\sqrt{n\big(X_1^2 + \cdots + X_n^2\big)}}.$$
+      Demuestra que $(Y_n)_{n\ge 1}$ converge casi seguramente a una constante y halla el valor de esa constante.</p>
+      <p class="tecnica">Técnica: dividir numerador y denominador por $n$ + LFGN de Kolmogorov para $\bar X_n$ y $\frac{1}{n}\sum X_i^2$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Introduce $n$ dentro de la raíz como $n^2$ al dividir numerador y denominador por $n$: $Y_n = \frac{\bar X_n}{\sqrt{\frac{1}{n}\sum_{i=1}^n X_i^2}}$. Recuerda que para $\text{Poisson}(\lambda)$, $\E[X_1^2] = \Var(X_1) + (\E[X_1])^2 = \lambda + \lambda^2$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Reescritura mediante promedios.</b>
+            Dividiendo numerador y denominador por $n$ (notando que $\frac{1}{n}\sqrt{n\sum_{i=1}^n X_i^2} = \sqrt{\frac{1}{n}\sum_{i=1}^n X_i^2}$):
+            $$Y_n = \frac{\bar X_n}{\sqrt{\frac{1}{n}\sum_{i=1}^n X_i^2}}.$$</li>
+          <li><b>Momentos de $\text{Poisson}(\lambda)$ y LFGN de Kolmogorov.</b>
+            Para $X_1 \sim \text{Poisson}(\lambda)$ tenemos $\E[X_1] = \lambda &lt; \infty$ y $\Var(X_1) = \lambda$, por lo que
+            $$\E[X_1^2] = \Var(X_1) + (\E[X_1])^2 = \lambda + \lambda^2 &lt; \infty.$$
+            Aplicando la LFGN de Kolmogorov a $\{X_i\}_{i\ge 1}$ y $\{X_i^2\}_{i\ge 1}$:
+            $$\bar X_n \xrightarrow{\text{c.s.}} \lambda \qquad \text{y} \qquad \frac{1}{n}\sum_{i=1}^n X_i^2 \xrightarrow{\text{c.s.}} \lambda + \lambda^2.$$</li>
+          <li><b>Preservación por función continua.</b>
+            Como $\lambda + \lambda^2 &gt; 0$ y $(u, v) \mapsto u/\sqrt{v}$ es continua en $v &gt; 0$:
+            $$Y_n \xrightarrow{\text{c.s.}} \frac{\lambda}{\sqrt{\lambda + \lambda^2}} = \sqrt{\frac{\lambda^2}{\lambda(1 + \lambda)}} = \sqrt{\frac{\lambda}{1 + \lambda}}.$$
+            <div class="resultado">$$Y_n \xrightarrow{\text{c.s.}} \sqrt{\frac{\lambda}{1 + \lambda}}.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.45 -->
+    <div class="box ejercicio" id="ej-5-45">
+      <span class="box-title">Ejercicio 5.45 (Clase 13)</span>
+      <p>Sea $(X_n)_{n\ge 1}$ una sucesión de variables aleatorias independientes (no idénticamente distribuidas) tal que
+      $$\P(X_n = n^\alpha) = \P(X_n = -n^\alpha) = \frac{1}{2}$$
+      para algún $\alpha \in (0, 1/2)$. Demuestra que $n^{-1}\sum_{i=1}^n X_i \xrightarrow{\text{c.s.}} 0$.</p>
+      <p class="tecnica">Técnica: Ley Fuerte de los Grandes Números de Kolmogorov para variables independientes no i.d. (criterio $\sum \Var(X_n)/n^2 &lt; \infty$).</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Calcula $\E[X_n] = 0$ y $\Var(X_n) = n^{2\alpha}$. Verifica que $\sum_{n=1}^\infty \frac{\Var(X_n)}{n^2} = \sum_{n=1}^\infty \frac{1}{n^{2-2\alpha}}$ converge porque $2 - 2\alpha &gt; 1$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Cálculo de media y varianza de $X_n$.</b>
+            Por simetría alrededor de $0$:
+            $$\E[X_n] = n^\alpha \cdot \frac{1}{2} + (-n^\alpha)\cdot \frac{1}{2} = 0, \qquad \Var(X_n) = \E[X_n^2] = (n^\alpha)^2 \cdot \frac{1}{2} + (-n^\alpha)^2 \cdot \frac{1}{2} = n^{2\alpha}.$$</li>
+          <li><b>Verificación del criterio de Kolmogorov.</b>
+            La Ley Fuerte de Kolmogorov para variables independientes con segundo momento finito establece que si $\sum_{n=1}^\infty \frac{\Var(X_n)}{n^2} &lt; \infty$, entonces $\frac{1}{n}\sum_{i=1}^n (X_i - \E[X_i]) \xrightarrow{\text{c.s.}} 0$.
+            Sustituyendo $\Var(X_n) = n^{2\alpha}$:
+            $$\sum_{n=1}^\infty \frac{\Var(X_n)}{n^2} = \sum_{n=1}^\infty \frac{n^{2\alpha}}{n^2} = \sum_{n=1}^\infty \frac{1}{n^{2 - 2\alpha}}.$$
+            Como $\alpha \in (0, 1/2)$, se cumple $2\alpha &lt; 1$, de modo que el exponente satisface $p = 2 - 2\alpha &gt; 1$. Por el criterio de la $p$-serie, la serie converge.</li>
+          <li><b>Conclusión.</b>
+            Al ser $\E[X_i] = 0$ para todo $i \ge 1$ y cumplirse la condición de Kolmogorov:
+            <div class="resultado">$$\frac{1}{n}\sum_{i=1}^n X_i \xrightarrow{\text{c.s.}} 0.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       SECCIÓN 5: BLOQUE IV — APLICACIONES DEL TLC
+       ================================================================ -->
+  <section>
+    <h2 id="cap5-tlc">Bloque IV · Aplicaciones del Teorema del Límite Central (Clase 5: Ej. 58, 60, 62 y 63)</h2>
+    <p>Este bloque recoge cuatro aplicaciones clásicas del Teorema del Límite Central vistas en la <a href="../temas/clase-05.html">Clase 5</a>: aproximación normal con y sin corrección por continuidad, probabilidades límite y transformación logarítmica de productos aleatorios. Puedes consultar valores normales en <a href="../herramientas/tablas.html">Tablas</a>.</p>
+
+    <!-- Ej. 5.58 -->
+    <div class="box ejercicio" id="ej-5-58">
+      <span class="box-title">Ejercicio 5.58 · Ruleta en casino (Clase 5)</span>
+      <p>Supón que, al jugar a la ruleta en un casino, el apostador gana o pierde un euro con probabilidades respectivas $9/19$ y $10/19$. Así, las apuestas sucesivas son variables aleatorias independientes $X_1, X_2, \dots$ con $\P(X_i = 1) = 9/19 = 1 - \P(X_i = -1)$ para $i \ge 1$, y $S_n = \sum_{i=1}^n X_i$ es el capital neto acumulado por el apostador tras $n$ jugadas.</p>
+      <ol type="a">
+        <li>Estima la probabilidad de que en $80$ jugadas el apostador haya perdido dinero.</li>
+        <li>Aproxima la probabilidad de que en $400\,000$ apuestas el casino obtenga un lucro entre $20\,000$ y $22\,000$ euros.</li>
+      </ol>
+      <p class="tecnica">Técnica: TLC para sumas de variables binarias $\{+1, -1\}$ + corrección por continuidad en pasos de $2$ (o conteo binomial).</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Calcula $\mu = \E[X_i] = -1/19$ y $\Var(X_i) = 1 - 1/19^2 = 360/361$. En (a), perder dinero ($S_{80} &lt; 0$) equivale a $S_{80} \le -2$ (o $K \le 39$ victorias en $\text{Bin}(80, 9/19)$), cuya corrección por continuidad es $S_{80} \le -1$ ($K \le 39.5$). En (b), el lucro del casino es $L = -S_{400\,000}$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Momentos de cada apuesta $X_i$.</b>
+            $$\mu = \E[X_i] = 1\cdot\frac{9}{19} + (-1)\cdot\frac{10}{19} = -\frac{1}{19} \approx -0.05263,$$
+            $$\E[X_i^2] = 1^2\cdot\frac{9}{19} + (-1)^2\cdot\frac{10}{19} = 1 \implies \sigma^2 = \Var(X_i) = 1 - \left(-\frac{1}{19}\right)^2 = \frac{360}{361}.$$</li>
+        </ol>
+
+        <p class="sol-inciso">(a) Probabilidad de perder dinero en $n = 80$ jugadas</p>
+        <ol class="pasos">
+          <li><b>Equivalencia de eventos y corrección por continuidad.</b>
+            Para $n = 80$, $\E[S_{80}] = -\frac{80}{19} \approx -4.2105$ y $\sigma_{80} = \sqrt{80\cdot\frac{360}{361}} = \frac{120\sqrt{2}}{19} \approx 8.9319$.
+            Si $K \sim \text{Bin}(80, 9/19)$ es el número de victorias, $S_{80} = 2K - 80$ solo toma valores pares. Por ello, que el apostador pierda dinero ($S_{80} &lt; 0$) equivale a $S_{80} \le -2$ (es decir, $K \le 39$).
+            La corrección por continuidad para una variable con saltos de longitud $2$ añade la mitad del paso ($+1$), resultando $S_{80} \le -1$ (equivalente a $K \le 39.5$):
+            $$z = \frac{-1 - (-80/19)}{\sqrt{80\cdot 360/361}} = \frac{-19 + 80}{120\sqrt{2}} = \frac{61}{120\sqrt{2}} \approx 0.3594 \approx 0.36.$$
+            Evaluando en la normal estándar:
+            $$\P(S_{80} &lt; 0) \approx \Phi(0.36) \approx 0.6406.$$
+            <em>(La probabilidad binomial exacta $\P(K \le 39)$ es $0.6409$, confirmando la precisión de la corrección por continuidad.)</em></li>
+        </ol>
+
+        <p class="sol-inciso">(b) Lucro del casino en $n = 400\,000$ apuestas</p>
+        <ol class="pasos">
+          <li><b>Media, desviación estándar y estandarización.</b>
+            El lucro neto del casino es $L = -S_{400\,000}$, con:
+            $$\E[L] = \frac{400\,000}{19} \approx 21\,052.63, \qquad \sigma_L = \sqrt{400\,000 \cdot \frac{360}{361}} = \sqrt{\frac{144\,000\,000}{361}} = \frac{12\,000}{19} \approx 631.579.$$
+            Estandarizando el intervalo $[20\,000,\ 22\,000]$:
+            $$z_1 = \frac{20\,000 - 400\,000/19}{12\,000/19} = -\frac{20\,000}{12\,000} = -\frac{5}{3} \approx -1.6667, \qquad z_2 = \frac{22\,000 - 400\,000/19}{12\,000/19} = \frac{18\,000}{12\,000} = 1.50.$$
+            Por el TLC:
+            $$\P(20\,000 \le L \le 22\,000) \approx \Phi(1.50) - \Phi(-5/3) \approx 0.93319 - 0.04779 = 0.8854.$$
+            <em>(Si se redondea $z_1 \approx -1.67$ al usar la tabla estándar de dos decimales: $\Phi(1.50) - \Phi(-1.67) = 0.9332 - 0.0475 = 0.8857$.)</em>
+            <div class="resultado">$$\text{(a) } \P(S_{80} &lt; 0) \approx 0.6406; \qquad \text{(b) } \P(20\,000 \le L \le 22\,000) \approx 0.8854 \quad (0.8857 \text{ con } z_1 \approx -1.67).$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.60 -->
+    <div class="box ejercicio" id="ej-5-60">
+      <span class="box-title">Ejercicio 5.60 · Dado honesto (Clase 5)</span>
+      <p>Se lanza un dado honesto infinitas veces de forma independiente. Sea $X_i$ el resultado del $i$-ésimo lanzamiento y define $S_n = X_1 + \cdots + X_n$. Calcula:</p>
+      <ol type="a">
+        <li>$\lim_{n\to\infty} \P(S_n &gt; 3n)$.</li>
+        <li>$\lim_{n\to\infty} \P(S_n &gt; 3.5n)$.</li>
+        <li>Un valor aproximado para $\P(S_{100} &gt; 320)$.</li>
+      </ol>
+      <p class="tecnica">Técnica: momentos de la uniforme discreta $\{1,\dots,6\}$ + TLC en límites asintóticos y en $n = 100$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Para un dado honesto, $\mu = 3.5$ y $\sigma^2 = 35/12$. Estandariza $Z_n = \frac{S_n - 3.5n}{\sigma\sqrt{n}} \dto Z \sim N(0,1)$ en los tres apartados.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Media y varianza de cada lanzamiento.</b>
+            Para $X_i \sim \text{Uniforme Discreta}(\{1,2,3,4,5,6\})$:
+            $$\mu = \E[X_i] = \frac{1+2+3+4+5+6}{6} = \frac{7}{2} = 3.5,$$
+            $$\E[X_i^2] = \frac{1^2+2^2+3^2+4^2+5^2+6^2}{6} = \frac{91}{6} \implies \sigma^2 = \Var(X_i) = \frac{91}{6} - \left(\frac{7}{2}\right)^2 = \frac{35}{12}.$$
+            Sea $Z_n = \frac{S_n - 3.5n}{\sigma\sqrt{n}}$. Por el TLC, $Z_n \dto Z \sim N(0, 1)$.</li>
+          <li><b>Apartado (a): $\lim_{n\to\infty} \P(S_n &gt; 3n)$.</b>
+            Estandarizando:
+            $$\P(S_n &gt; 3n) = \P\left(\frac{S_n - 3.5n}{\sigma\sqrt{n}} &gt; -\frac{0.5\sqrt{n}}{\sigma}\right) = \P\left(Z_n &gt; -\frac{0.5\sqrt{n}}{\sigma}\right).$$
+            Dado cualquier umbral $M &gt; 0$, para todo $n$ suficientemente grande se cumple $-\frac{0.5\sqrt{n}}{\sigma} &lt; -M$, luego $\P(S_n &gt; 3n) \ge \P(Z_n &gt; -M) \xrightarrow[n\to\infty]{} \P(Z &gt; -M) = \Phi(M)$. Como $M$ es arbitrariamente grande y $\Phi(M) \to 1$, resulta:
+            $$\lim_{n\to\infty} \P(S_n &gt; 3n) = 1.$$
+            <em>(Intuición: la media muestral $\bar X_n \pto 3.5 &gt; 3$, luego la probabilidad de superar $3$ tiende a $1$.)</em></li>
+          <li><b>Apartado (b): $\lim_{n\to\infty} \P(S_n &gt; 3.5n)$.</b>
+            $$\lim_{n\to\infty} \P(S_n &gt; 3.5n) = \lim_{n\to\infty} \P(Z_n &gt; 0) = 1 - \Phi(0) = \frac{1}{2}.$$</li>
+          <li><b>Apartado (c): Aproximación de $\P(S_{100} &gt; 320)$.</b>
+            Para $n = 100$: $\E[S_{100}] = 350$ y $\sigma_{100} = \sqrt{100 \cdot \frac{35}{12}} = \sqrt{\frac{875}{3}} \approx 17.0783$.
+            Aplicando el TLC directamente (criterio del libro):
+            $$z = \frac{320 - 350}{17.0783} \approx -1.7566 \approx -1.76 \implies \P(S_{100} &gt; 320) \approx 1 - \Phi(-1.76) = \Phi(1.76) \approx 0.9608.$$
+            <em>(Nota: aplicando corrección por continuidad a la suma entera $S_{100} &gt; 320 \iff S_{100} \ge 321 \to S_{100} \ge 320.5$, se obtiene $z = -29.5/17.0783 \approx -1.7273$, que da $0.9580$.)</em>
+            <div class="resultado">$$\text{(a) } 1, \qquad \text{(b) } \frac{1}{2}, \qquad \text{(c) } \P(S_{100} &gt; 320) \approx 0.9608 \quad (\text{con c.c.: } 0.9580).$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.62 -->
+    <div class="box ejercicio" id="ej-5-62">
+      <span class="box-title">Ejercicio 5.62 · Repartidor de periódicos (Clase 5)</span>
+      <p>Una persona reparte periódicos a los transeúntes en la esquina de una metrópoli. Supón que cada persona que pasa junto al repartidor toma un ejemplar con probabilidad $p = 1/3$, independientemente de las demás. Sea $N$ el número de transeúntes que pasan hasta el momento en que entrega sus primeras $600$ copias. Estima la probabilidad de que $N &gt; 1740$.</p>
+      <p class="tecnica">Técnica: doble enfoque equivalente — suma de $600$ geométricas (Binomial Negativa) vs. conteo binomial en $1740$ ensayos.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p><b>Enfoque 1:</b> escribe $N = \sum_{i=1}^{600} T_i$ con $T_i \iid \text{Geométrica}(1/3)$ ($\mu = 3, \sigma^2 = 6$). <b>Enfoque 2:</b> nota que $\{N &gt; 1740\} \iff \{\text{menos de } 600 \text{ copias entregadas en los primeros } 1740 \text{ transeúntes}\}$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Enfoque 1: Suma de variables geométricas.</b>
+            Cada nueva copia entregada requiere esperar $T_i \iid \text{Geométrica}(p = 1/3)$ transeúntes (con soporte $\{1, 2, \dots\}$), por la propiedad de falta de memoria e independencia entre personas:
+            $$N = \sum_{i=1}^{600} T_i.$$
+            Para $T_i \sim \text{Geométrica}(1/3)$:
+            $$\E[T_i] = \frac{1}{p} = 3, \qquad \Var(T_i) = \frac{1 - p}{p^2} = \frac{2/3}{1/9} = 6.$$
+            Luego $\E[N] = 600 \cdot 3 = 1800$ y $\sigma_N = \sqrt{600 \cdot 6} = \sqrt{3600} = 60$. Por el TLC:
+            $$\P(N &gt; 1740) = \P\left(\frac{N - 1800}{60} &gt; \frac{1740 - 1800}{60}\right) \approx \P(Z &gt; -1) = \Phi(1) \approx 0.8413.$$</li>
+          <li><b>Enfoque 2: Equivalencia con la distribución Binomial.</b>
+            Imagina una sucesión infinita de transeúntes con indicadores $I_j \iid \text{Bernoulli}(1/3)$. Requerir más de $1740$ transeúntes para alcanzar $600$ copias significa exactamente que en los primeros $1740$ transeúntes hubo menos de $600$ entregas:
+            $$\{N &gt; 1740\} \iff \left\{B = \sum_{j=1}^{1740} I_j &lt; 600\right\}, \qquad B \sim \text{Bin}\left(1740, \frac{1}{3}\right).$$
+            Aquí $\E[B] = 1740 \cdot \frac{1}{3} = 580$ y $\sigma_B = \sqrt{1740 \cdot \frac{1}{3} \cdot \frac{2}{3}} = \sqrt{\frac{1160}{3}} \approx 19.6638$.
+            Con corrección por continuidad ($B \le 599 \to B \le 599.5$), se obtiene $z = \frac{599.5 - 580}{19.6638} \approx 0.9917 \implies \Phi(0.9917) \approx 0.8393$ (y sin corrección $z = 1.0171 \implies 0.8454$).
+            <div class="resultado">$$\P(N &gt; 1740) \approx \Phi(1) \approx 0.8413 \quad (\approx 0.84).$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.63 -->
+    <div class="box ejercicio" id="ej-5-63">
+      <span class="box-title">Ejercicio 5.63 · Producto de anotaciones de un dado (Clase 5)</span>
+      <p>Se realizan lanzamientos independientes y sucesivos de un dado honesto. Si el resultado es $1, 2$ o $3$, anotamos $1$; si sale $4$, anotamos $2$; y si sale $5$ o $6$, anotamos $3$. Sea $N$ el número de lanzamientos necesarios para que el producto de los números anotados supere $100\,000$. Estima $\P(N \ge 25)$.</p>
+      <p class="tecnica">Técnica: equivalencia $\{N \ge 25\} \iff \{M_{24} \le 100\,000\}$ + transformación $X_i = \ln Y_i$ + TLC (comparado con el <a href="lista-1-2.html#ej-3">Ejercicio 3 de la Lista 1.2</a>).</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Como cada factor anotado $Y_i \ge 1$, el producto acumulado $M_n = \prod_{i=1}^n Y_i$ es no decreciente. Por ello, necesitar al menos $25$ lanzamientos para superar $100\,000$ equivale a que tras $n = 24$ lanzamientos todavía no se haya superado ese umbral: $\{N \ge 25\} \iff \{M_{24} \le 100\,000\}$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Distribución de cada anotación $Y_i$ y equivalencia de eventos.</b>
+            En cada lanzamiento $i$, la anotación $Y_i$ sigue la ley:
+            $$\P(Y_i = 1) = \frac{3}{6} = \frac{1}{2}, \qquad \P(Y_i = 2) = \frac{1}{6}, \qquad \P(Y_i = 3) = \frac{2}{6} = \frac{1}{3}.$$
+            Sea $M_n = \prod_{i=1}^n Y_i$. Como $Y_i \ge 1$, la sucesión $M_n$ es monótona no decreciente. Que el primer instante $N$ donde $M_N &gt; 100\,000$ satisfaga $N \ge 25$ significa que en los primeros $24$ lanzamientos el producto no ha superado $100\,000$:
+            $$\{N \ge 25\} \iff \{M_{24} \le 100\,000\} \iff \left\{S_{24} = \sum_{i=1}^{24} X_i \le \ln(100\,000)\right\},$$
+            donde $X_i = \ln Y_i$ y $\ln(100\,000) \approx 11.5129$.</li>
+          <li><b>Momentos de $X_i = \ln Y_i$ y de la suma $S_{24}$.</b>
+            $$\mu = \E[X_i] = \frac{1}{2}\ln 1 + \frac{1}{6}\ln 2 + \frac{1}{3}\ln 3 = \frac{\ln 2 + 2\ln 3}{6} \approx 0.48173,$$
+            $$\E[X_i^2] = \frac{1}{6}(\ln 2)^2 + \frac{1}{3}(\ln 3)^2 \approx 0.48239 \implies \sigma^2 = \Var(X_i) \approx 0.48239 - (0.48173)^2 \approx 0.25033.$$
+            Para $n = 24$ lanzamientos:
+            $$\E[S_{24}] = 24\mu \approx 11.5615, \qquad \text{DE}(S_{24}) = \sqrt{24\sigma^2} \approx 2.4511.$$</li>
+          <li><b>Estandarización y comparación con la Lista 1.2.</b>
+            $$z = \frac{\ln(100\,000) - 11.5615}{2.4511} = \frac{11.5129 - 11.5615}{2.4511} \approx -0.0198 \implies \P(N \ge 25) \approx \Phi(-0.0198) \approx 0.4921.$$
+            <em>(Con valores redondeados de tabla empleados en la respuesta del libro se obtiene $\approx 0.494$.)</em>
+            <div class="box nota" style="margin:12px 0 6px">
+              <span class="box-title">Diferencia frente a $\P(N \le 25)$ en Lista 1.2</span>
+              En el <a href="lista-1-2.html#ej-3">Ejercicio 3 de la Lista 1.2</a> se pide $\P(N \le 25) = \P(M_{25} &gt; 100\,000) \approx 0.5839$, que evalúa la cola derecha en $n = 25$. Aquí se pide $\P(N \ge 25) = \P(M_{24} \le 100\,000) \approx 0.4921$, que evalúa la cola izquierda en $n = 24$ (pues $N = 25$ pertenece al evento $\{N \ge 25\}$). Observa que $\P(N \ge 25) = 1 - \P(N \le 24) &gt; 1 - \P(N \le 25)$ precisamente por la masa $\P(N = 25)$.
+            </div>
+            <div class="resultado">$$\P(N \ge 25) \approx \Phi(-0.0198) \approx 0.4921 \quad (\approx 0.494 \text{ redondeando a tabla}).$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       SECCIÓN 6: BLOQUE V — MISCELÁNEA DE TEOREMAS LÍMITES
+       ================================================================ -->
+  <section>
+    <h2 id="cap5-misc">Bloque V · Miscelánea de Teoremas Límites (Clase 14: Ej. 67–71, 73, 76 y 77)</h2>
+    <p>Este bloque integra todas las herramientas del capítulo en problemas de examen y demostraciones: combinación de LFGN, TLC y Slutsky, Método Delta sobre medias y medias armónicas, y el Teorema del Límite Central para variables independientes acotadas no idénticamente distribuidas.</p>
+
+    <!-- Ej. 5.67 -->
+    <div class="box ejercicio" id="ej-5-67">
+      <span class="box-title">Ejercicio 5.67 (Clase 14)</span>
+      <p>Sea $(X_n)_{n\ge 1}$ una sucesión de variables aleatorias i.i.d. con distribución uniforme en $(-1, 1)$. Definimos
+      $$Y_n = \frac{\sum_{i=1}^n X_i}{\sum_{i=1}^n X_i^2 + \sum_{i=1}^n X_i^3}.$$ </p>
+      <ol type="a">
+        <li>Prueba que $Y_n \xrightarrow{\text{c.s.}} 0$.</li>
+        <li>Demuestra que $\sqrt{n}\,Y_n \dto N(0, 3)$.</li>
+      </ol>
+      <p class="tecnica">Técnica: división por $n$ + LFGN triple + TLC + Teorema de Slutsky.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Divide numerador y denominador por $n$. Para $X_1 \sim U(-1,1)$, usa la simetría para obtener $\E[X_1] = \E[X_1^3] = 0$ y calcula $\E[X_1^2] = 1/3$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Momentos de $X_1 \sim U(-1, 1)$.</b>
+            La densidad es $f(x) = \frac{1}{2}$ en $(-1, 1)$. Por simetría respecto a $0$, las potencias impares tienen esperanza nula: $\E[X_1] = 0$ y $\E[X_1^3] = 0$. El segundo momento vale:
+            $$\E[X_1^2] = \int_{-1}^1 \frac{x^2}{2}\,dx = \left[\frac{x^3}{6}\right]_{-1}^1 = \frac{1}{3}, \qquad \Var(X_1) = \frac{1}{3}.$$</li>
+          <li><b>Apartado (a): $Y_n \xrightarrow{\text{c.s.}} 0$.</b>
+            Dividiendo numerador y denominador por $n$:
+            $$Y_n = \frac{\bar X_n}{\overline{X^2}_n + \overline{X^3}_n}, \qquad \text{donde } \overline{X^k}_n = \frac{1}{n}\sum_{i=1}^n X_i^k.$$
+            Aplicando tres veces la LFGN de Kolmogorov (todas las esperanzas son finitas por ser $|X_i| \le 1$):
+            $$\bar X_n \xrightarrow{\text{c.s.}} 0, \qquad \overline{X^2}_n \xrightarrow{\text{c.s.}} \frac{1}{3}, \qquad \overline{X^3}_n \xrightarrow{\text{c.s.}} 0.$$
+            Como $\overline{X^2}_n + \overline{X^3}_n \xrightarrow{\text{c.s.}} \frac{1}{3} \ne 0$, resulta $Y_n \xrightarrow{\text{c.s.}} \frac{0}{1/3 + 0} = 0$.</li>
+          <li><b>Apartado (b): $\sqrt{n}\,Y_n \dto N(0, 3)$.</b>
+            Multiplicando por $\sqrt{n}$:
+            $$\sqrt{n}\,Y_n = \frac{\sqrt{n}\,\bar X_n}{\overline{X^2}_n + \overline{X^3}_n}.$$
+            Por el TLC aplicado a $\{X_i\}$, el numerador cumple $\sqrt{n}\,\bar X_n \dto W \sim N(0, 1/3)$. El denominador cumple $D_n = \overline{X^2}_n + \overline{X^3}_n \xrightarrow{\text{c.s.}} 1/3$, luego $D_n \pto 1/3$. Por el Teorema de Slutsky:
+            $$\sqrt{n}\,Y_n \dto \frac{W}{1/3} = 3W \sim N\left(0, 9\cdot\frac{1}{3}\right) = N(0, 3).$$
+            <div class="resultado">$$Y_n \xrightarrow{\text{c.s.}} 0, \qquad \sqrt{n}\,Y_n \dto N(0, 3).$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.68 -->
+    <div class="box ejercicio" id="ej-5-68">
+      <span class="box-title">Ejercicio 5.68 (Clase 14)</span>
+      <p>Sea $X_n \sim \text{Gamma}(n, 1)$ para $n \ge 1$ (parámetro de forma $\alpha = n$ y tasa $1$ / escala $1$, con densidad $f(x) = \frac{x^{n-1}e^{-x}}{\Gamma(n)}$ para $x &gt; 0$). Prueba que
+      $$\frac{X_n - n}{\sqrt{X_n}} \dto N(0, 1).$$ </p>
+      <p class="tecnica">Técnica: representación $X_n \stackrel{d}{=} \sum_{i=1}^n E_i$ con exponenciales i.i.d. + TLC + LGN + Teorema de Slutsky.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Escribe $\frac{X_n - n}{\sqrt{X_n}} = \frac{X_n - n}{\sqrt{n}} \cdot \frac{1}{\sqrt{X_n/n}}$. Usa que una $\text{Gamma}(n,1)$ tiene la misma distribución que la suma de $n$ variables i.i.d. $\text{Exp}(1)$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Representación como suma de exponenciales i.i.d.</b>
+            Sean $E_1, E_2, \dots \iid \text{Exp}(1)$ (con $\mu = \E[E_1] = 1$ y $\sigma^2 = \Var(E_1) = 1$). Por la propiedad aditiva de la Gamma (ver <a href="../temas/clase-02.html">Clase 2</a>), $S_n = \sum_{i=1}^n E_i \sim \text{Gamma}(n, 1)$, es decir, $X_n \stackrel{d}{=} S_n$ para todo $n \ge 1$.</li>
+          <li><b>Factorización y aplicación de TLC, LGN y Slutsky.</b>
+            Reescribimos el estadístico como:
+            $$\frac{X_n - n}{\sqrt{X_n}} \stackrel{d}{=} \frac{S_n - n}{\sqrt{n}} \cdot \frac{1}{\sqrt{S_n / n}}.$$
+            <ul>
+              <li>Por el TLC, $W_n = \frac{S_n - n}{\sqrt{n}} \dto Z \sim N(0, 1)$.</li>
+              <li>Por la LGN, $\frac{S_n}{n} \pto 1$, y por continuidad de la raíz cuadrada en $1$, $R_n = \sqrt{\frac{S_n}{n}} \pto 1$.</li>
+            </ul>
+            Por el Teorema de Slutsky para cocientes ($W_n / R_n \dto Z / 1$), y como la convergencia en distribución depende solo de las funciones de distribución acumulada:
+            <div class="resultado">$$\frac{X_n - n}{\sqrt{X_n}} \dto N(0, 1).$$</div>
+            <em>(Este mecanismo es el mismo del resultado general estudiado en la Clase 12 donde se sustituye la desviación estándar teórica en el denominador por un estimador consistente.)</em>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.69 -->
+    <div class="box ejercicio" id="ej-5-69">
+      <span class="box-title">Ejercicio 5.69 (Clase 14)</span>
+      <p>Sean $X_1, X_2, \dots$ variables aleatorias i.i.d. con distribución de Laplace estándar (doble exponencial), es decir, densidad
+      $$f_{X_1}(x) = \frac{1}{2}e^{-|x|}, \qquad x \in \R.$$
+      Muestra que
+      $$\sqrt{n}\,\frac{\sum_{i=1}^n X_i}{\sum_{i=1}^n X_i^2} \dto N\left(0, \frac{1}{2}\right).$$ </p>
+      <p class="tecnica">Técnica: momentos de la densidad de Laplace + TLC + LFGN + Teorema de Slutsky.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Divide numerador y denominador por $n$ para escribir el estadístico como $\frac{\sqrt{n}\bar X_n}{\frac{1}{n}\sum X_i^2}$. Calcula con cuidado $\E[X_1^2] = 2\int_0^\infty \frac{1}{2}x^2 e^{-x}\,dx = 2$ (es decir, parámetro de escala $b=1$, pero varianza $\sigma^2 = 2$).</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Momentos de la distribución de Laplace estándar.</b>
+            Dado que $f_{X_1}$ es par y $\E[|X_1|] = \int_0^\infty x e^{-x}\,dx = 1 &lt; \infty$, su media es $\mu = \E[X_1] = 0$. El segundo momento (que coincide con la varianza) es:
+            $$\sigma^2 = \Var(X_1) = \E[X_1^2] = \int_{-\infty}^\infty x^2 \frac{1}{2}e^{-|x|}\,dx = \int_0^\infty x^2 e^{-x}\,dx = \Gamma(3) = 2! = 2.$$</li>
+          <li><b>Reescritura y límites de numerador y denominador.</b>
+            Dividiendo numerador y denominador por $n$:
+            $$\sqrt{n}\,\frac{\sum_{i=1}^n X_i}{\sum_{i=1}^n X_i^2} = \frac{\sqrt{n}\,\bar X_n}{\frac{1}{n}\sum_{i=1}^n X_i^2}.$$
+            <ul>
+              <li>Por el TLC aplicado a $\{X_i\}$, el numerador cumple $\sqrt{n}\,\bar X_n \dto W \sim N(0, \sigma^2) = N(0, 2)$.</li>
+              <li>Por la LFGN de Kolmogorov aplicada a $\{X_i^2\}$, el denominador cumple $\frac{1}{n}\sum_{i=1}^n X_i^2 \xrightarrow{\text{c.s.}} \E[X_1^2] = 2$ (y por tanto $\pto 2$).</li>
+            </ul></li>
+          <li><b>Conclusión por el Teorema de Slutsky.</b>
+            Dividiendo en el límite por la constante $2$:
+            $$\sqrt{n}\,\frac{\sum_{i=1}^n X_i}{\sum_{i=1}^n X_i^2} \dto \frac{W}{2} \sim N\left(0, \frac{\Var(W)}{2^2}\right) = N\left(0, \frac{2}{4}\right) = N\left(0, \frac{1}{2}\right).$$
+            <div class="resultado">$$\sqrt{n}\,\frac{\sum_{i=1}^n X_i}{\sum_{i=1}^n X_i^2} \dto N\left(0, \frac{1}{2}\right).$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.70 -->
+    <div class="box ejercicio" id="ej-5-70">
+      <span class="box-title">Ejercicio 5.70 (Clase 14)</span>
+      <p>Sean $X_1, X_2, \dots$ variables aleatorias i.i.d. con distribución uniforme en $(-\theta, \theta)$, con $\theta &gt; 0$. Para $n \ge 1$, definimos $S_n = \sum_{i=1}^n X_i$ y $Y_n = \max\{X_1, \dots, X_n\}$. Demuestra que
+      $$\frac{S_n}{\sqrt{n}\,Y_n} \dto N\left(0, \frac{1}{3}\right).$$ </p>
+      <p class="tecnica">Técnica: TLC para $S_n/\sqrt{n}$ + consistencia del máximo $Y_n \pto \theta$ + Teorema de Slutsky.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Separa el cociente en $\frac{S_n/\sqrt{n}}{Y_n}$. Para $X_1 \sim U(-\theta,\theta)$, calcula $\mu = 0$ y $\sigma^2 = \theta^2/3$, luego prueba $Y_n \pto \theta$ usando $\P(Y_n \le \theta - \varepsilon) = (1 - \frac{\varepsilon}{2\theta})^n$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>TLC para el numerador $S_n / \sqrt{n}$.</b>
+            Para $X_i \sim U(-\theta, \theta)$ tenemos $\mu = \E[X_1] = 0$ y $\sigma^2 = \Var(X_1) = \frac{(\theta - (-\theta))^2}{12} = \frac{\theta^2}{3}$. Por el TLC:
+            $$\frac{S_n}{\sqrt{n}} \dto W \sim N\left(0, \frac{\theta^2}{3}\right).$$</li>
+          <li><b>Convergencia en probabilidad del máximo $Y_n \pto \theta$.</b>
+            Como $Y_n \le \theta$ casi seguramente, para cualquier $\varepsilon \in (0, 2\theta)$:
+            $$\P(|Y_n - \theta| \ge \varepsilon) = \P(Y_n \le \theta - \varepsilon) = \prod_{i=1}^n \P(X_i \le \theta - \varepsilon) = \left(\frac{(\theta - \varepsilon) - (-\theta)}{2\theta}\right)^n = \left(1 - \frac{\varepsilon}{2\theta}\right)^n \xrightarrow[n\to\infty]{} 0$$
+            (y si $\varepsilon \ge 2\theta$, dicha probabilidad es $0$). Por tanto, $Y_n \pto \theta &gt; 0$.</li>
+          <li><b>Aplicación del Teorema de Slutsky.</b>
+            Combinando ambos resultados mediante el Teorema de Slutsky para cocientes:
+            $$\frac{S_n}{\sqrt{n}\,Y_n} = \frac{S_n/\sqrt{n}}{Y_n} \dto \frac{W}{\theta} \sim N\left(0, \frac{\theta^2/3}{\theta^2}\right) = N\left(0, \frac{1}{3}\right).$$
+            <div class="resultado">$$\frac{S_n}{\sqrt{n}\,Y_n} \dto N\left(0, \frac{1}{3}\right).$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.71 -->
+    <div class="box ejercicio" id="ej-5-71">
+      <span class="box-title">Ejercicio 5.71 (Clase 14)</span>
+      <p>Sean $(X_n)_{n\ge 1}$ una sucesión de variables aleatorias i.i.d. y $g : \R \to \R$ una función tal que $\E[g(X_1)] = \xi$ y $\Var(g(X_1)) = \nu^2$, con $0 &lt; \nu^2 &lt; \infty$. Supón además que $T_n = T_n(X_1, \dots, X_n)$ es un estadístico que satisface
+      $$T_n = \sum_{i=1}^n g(X_i) + R_n,$$
+      donde $\frac{R_n}{\sqrt{n}} \pto 0$. Prueba que
+      $$\frac{T_n - n\xi}{\sqrt{n}\,\nu} \dto N(0, 1).$$ </p>
+      <p class="tecnica">Técnica: TLC aplicado a la sucesión transformada $\{g(X_i)\}_{i\ge 1}$ + Teorema de Slutsky para el residuo $R_n/(\sqrt{n}\nu)$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Sustituye $T_n = \sum_{i=1}^n g(X_i) + R_n$ en el numerador y separa la fracción en dos sumandos. El primero sigue el TLC y el segundo tiende en probabilidad a $0$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Separación en parte principal y residuo estandarizado.</b>
+            Sustituyendo la descomposición de $T_n$:
+            $$\frac{T_n - n\xi}{\sqrt{n}\,\nu} = \frac{\sum_{i=1}^n g(X_i) - n\xi}{\sqrt{n}\,\nu} + \frac{R_n}{\sqrt{n}\,\nu}.$$</li>
+          <li><b>Límite de cada término y aplicación de Slutsky.</b>
+            <ul>
+              <li>Sean $U_i = g(X_i)$. Al ser las $X_i$ i.i.d., las $U_i$ son también i.i.d. con media $\xi$ y varianza finita positiva $\nu^2$. Por el TLC:
+                $$W_n = \frac{\sum_{i=1}^n g(X_i) - n\xi}{\sqrt{n}\,\nu} \dto Z \sim N(0, 1).$$</li>
+              <li>Por hipótesis $\frac{R_n}{\sqrt{n}} \pto 0$, y al ser $\nu &gt; 0$ una constante fija, $\frac{R_n}{\sqrt{n}\,\nu} \pto 0$.</li>
+            </ul>
+            Por el Teorema de Slutsky para sumas ($W_n + o_P(1) \dto Z + 0$):
+            <div class="resultado">$$\frac{T_n - n\xi}{\sqrt{n}\,\nu} \dto N(0, 1).$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.73 -->
+    <div class="box ejercicio" id="ej-5-73">
+      <span class="box-title">Ejercicio 5.73 (Clase 14)</span>
+      <p>Sean $X_1, X_2, \dots$ variables aleatorias i.i.d. con densidad común
+      $$f(x) = 3x^2, \qquad 0 &lt; x &lt; 1$$
+      (y $0$ fuera de $(0, 1)$). Definimos la media armónica de $X_1, \dots, X_n$ por
+      $$H_n = \frac{n}{\sum_{i=1}^n X_i^{-1}}.$$ </p>
+      <ol type="a">
+        <li>Muestra que la sucesión $(H_n)_{n\ge 1}$ converge casi seguramente a una constante $c$ y halla el valor de $c$.</li>
+        <li>Prueba que $\sqrt{n}(H_n - c)$ converge en distribución e indica cuál es la distribución límite.</li>
+      </ol>
+      <p class="tecnica">Técnica: expresar $H_n = 1 / \bar U_n$ con $U_i = X_i^{-1}$ + LFGN de Kolmogorov + Método Delta con $g(u) = 1/u$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Define $U_i = 1/X_i$ y calcula $\E[U_1] = \int_0^1 \frac{1}{x}\cdot 3x^2\,dx = 3/2$ y $\E[U_1^2] = \int_0^1 \frac{1}{x^2}\cdot 3x^2\,dx = 3$. Luego aplica LFGN y Método Delta con $g(u) = 1/u$ a $\bar U_n$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Momentos de los recíprocos $U_i = X_i^{-1}$.</b>
+            Definimos $U_i = \frac{1}{X_i}$ y $\bar U_n = \frac{1}{n}\sum_{i=1}^n U_i$, de modo que $H_n = \frac{1}{\bar U_n}$.
+            Calculamos los dos primeros momentos de $U_1$:
+            $$\mu_U = \E\left[\frac{1}{X_1}\right] = \int_0^1 \frac{1}{x}\cdot 3x^2\,dx = \int_0^1 3x\,dx = \frac{3}{2} &lt; \infty,$$
+            $$\E\left[\frac{1}{X_1^2}\right] = \int_0^1 \frac{1}{x^2}\cdot 3x^2\,dx = \int_0^1 3\,dx = 3 &lt; \infty.$$
+            Por tanto, la varianza de $U_1$ es:
+            $$\sigma_U^2 = \Var(U_1) = 3 - \left(\frac{3}{2}\right)^2 = 3 - \frac{9}{4} = \frac{3}{4} \in (0, \infty).$$</li>
+          <li><b>Apartado (a): convergencia casi segura.</b>
+            Por la LFGN de Kolmogorov aplicada a $\{U_i\}_{i\ge 1}$:
+            $$\bar U_n \xrightarrow{\text{c.s.}} \frac{3}{2}.$$
+            Como $g(u) = \frac{1}{u}$ es continua en $u = \frac{3}{2} \ne 0$:
+            $$H_n = g(\bar U_n) \xrightarrow{\text{c.s.}} \frac{1}{3/2} = \frac{2}{3} = c.$$</li>
+          <li><b>Apartado (b): normalidad asintótica vía Método Delta.</b>
+            Por el TLC aplicado a $\{U_i\}_{i\ge 1}$:
+            $$\sqrt{n}\left(\bar U_n - \frac{3}{2}\right) \dto N\left(0, \frac{3}{4}\right).$$
+            Derivando $g(u) = u^{-1}$, obtenemos $g'(u) = -u^{-2}$, luego en $\mu_U = 3/2$:
+            $$g'\left(\frac{3}{2}\right) = -\frac{1}{(3/2)^2} = -\frac{4}{9} \ne 0.$$
+            Por el Método Delta:
+            $$\sqrt{n}\left(H_n - \frac{2}{3}\right) = \sqrt{n}\left(g(\bar U_n) - g\left(\frac{3}{2}\right)\right) \dto N\left(0,\ \left(-\frac{4}{9}\right)^2 \cdot \frac{3}{4}\right) = N\left(0, \frac{16}{81}\cdot\frac{3}{4}\right) = N\left(0, \frac{4}{27}\right).$$
+            <div class="resultado">$$\text{(a) } H_n \xrightarrow{\text{c.s.}} \frac{2}{3}; \qquad \text{(b) } \sqrt{n}\left(H_n - \frac{2}{3}\right) \dto N\left(0, \frac{4}{27}\right) \quad \left(\frac{4}{27} \approx 0.1481\right).$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.76 -->
+    <div class="box ejercicio" id="ej-5-76">
+      <span class="box-title">Ejercicio 5.76 (Clase 14)</span>
+      <p>Sean $X_1, X_2, \dots$ variables aleatorias i.i.d. con media $\mu$ y varianza finita positiva $\sigma^2 \in (0, \infty)$. Definimos $\bar X_n = n^{-1}\sum_{i=1}^n X_i$. Demuestra que:</p>
+      <ol type="a">
+        <li>$\sqrt{n}\big(\bar X_n^2 - \mu^2\big) \dto N(0, 4\mu^2\sigma^2)$.</li>
+        <li>Si $\mu &gt; 0$, entonces $\sqrt{n}\big(\log \bar X_n - \log \mu\big) \dto N(0, \sigma^2/\mu^2)$.</li>
+      </ol>
+      <p class="tecnica">Técnica: TLC para $\bar X_n$ + Método Delta de primer orden.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Parte de $\sqrt{n}(\bar X_n - \mu) \dto N(0, \sigma^2)$. Para (a) aplica el Método Delta con $g_1(u) = u^2$, y para (b) con $g_2(u) = \log u$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Punto de partida por el TLC.</b>
+            Como las $X_i$ son i.i.d. con media $\mu$ y varianza $\sigma^2 \in (0, \infty)$:
+            $$\sqrt{n}(\bar X_n - \mu) \dto N(0, \sigma^2).$$</li>
+          <li><b>Apartado (a): $g_1(u) = u^2$.</b>
+            La derivada es $g_1'(u) = 2u$, luego $g_1'(\mu) = 2\mu$.
+            <ul>
+              <li>Si $\mu \ne 0$, entonces $g_1'(\mu) \ne 0$ y el Método Delta da directamente:
+                $$\sqrt{n}\big(\bar X_n^2 - \mu^2\big) \dto N\big(0, (2\mu)^2 \sigma^2\big) = N(0, 4\mu^2\sigma^2).$$</li>
+              <li><em>Caso $\mu = 0$:</em> $\sqrt{n}\,\bar X_n^2 = \frac{1}{\sqrt{n}}\big(\sqrt{n}\,\bar X_n\big)^2 \pto 0$, que corresponde a la masa puntual en $0$ (convención $N(0,0)$).</li>
+            </ul></li>
+          <li><b>Apartado (b): $g_2(u) = \log u$ para $\mu &gt; 0$.</b>
+            Como $\bar X_n \pto \mu &gt; 0$, $\P(\bar X_n &gt; 0) \to 1$. Tomando $g_2(u) = \log u$ en $(0, \infty)$, su derivada en $\mu$ es $g_2'(\mu) = \frac{1}{\mu} \ne 0$. Por el Método Delta:
+            $$\sqrt{n}\big(\log \bar X_n - \log \mu\big) \dto N\left(0, \left(\frac{1}{\mu}\right)^2\sigma^2\right) = N\left(0, \frac{\sigma^2}{\mu^2}\right).$$
+            <div class="resultado">$$\text{(a) } \sqrt{n}(\bar X_n^2 - \mu^2) \dto N(0, 4\mu^2\sigma^2); \qquad \text{(b) } \sqrt{n}(\log \bar X_n - \log \mu) \dto N\left(0, \frac{\sigma^2}{\mu^2}\right).$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.77 (Reto) -->
+    <div class="box ejercicio" id="ej-5-77">
+      <span class="box-title">Ejercicio 5.77 (Clase 14) <span class="badge star">★ reto</span></span>
+      <p>Sea $(X_n)_{n\ge 1}$ una sucesión de variables aleatorias independientes (no idénticamente distribuidas) tal que
+      $$\P(X_n = 1) = \P(X_n = -1) = \frac{1}{2n}, \qquad \P(X_n = 0) = 1 - \frac{1}{n}, \qquad n \ge 1.$$
+      Considera $S_n = \sum_{i=1}^n X_i$ y demuestra que:</p>
+      <ol type="a">
+        <li>$\dfrac{S_n}{n} \xrightarrow{\text{c.s.}} 0$,</li>
+        <li>$\dfrac{S_n}{\sqrt{\log n}} \dto N(0, 1)$.</li>
+      </ol>
+      <p class="tecnica">Técnica: LFGN de Kolmogorov para independientes + TLC para independientes acotadas + equivalente asintótico $H_n \sim \log n$ + Teorema de Slutsky.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Calcula $\E[X_n] = 0$ y $\Var(X_n) = 1/n$. Para (a), verifica $\sum_{n=1}^\infty \Var(X_n)/n^2 = \sum 1/n^3 &lt; \infty$. Para (b), comprueba que $|X_n| \le 1$ y $s_n^2 = \sum_{i=1}^n \frac{1}{i} \sim \log n \to \infty$, aplica el TLC para variables independientes acotadas a $S_n / s_n$ y remata con Slutsky.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Media y varianza de cada término $X_k$.</b>
+            $$\E[X_k] = 1\cdot\frac{1}{2k} + (-1)\cdot\frac{1}{2k} + 0\cdot\left(1 - \frac{1}{k}\right) = 0,$$
+            $$\Var(X_k) = \E[X_k^2] = 1^2\cdot\frac{1}{2k} + (-1)^2\cdot\frac{1}{2k} = \frac{1}{k}.$$</li>
+          <li><b>Apartado (a): Ley Fuerte para independientes no i.d.</b>
+            Evaluamos la serie del criterio de Kolmogorov para variables independientes:
+            $$\sum_{n=1}^\infty \frac{\Var(X_n)}{n^2} = \sum_{n=1}^\infty \frac{1/n}{n^2} = \sum_{n=1}^\infty \frac{1}{n^3} &lt; \infty \qquad (p\text{-serie con } p = 3 &gt; 1).$$
+            Como $\E[X_n] = 0$ para todo $n$, la LFGN de Kolmogorov sin idéntica distribución asegura inmediatamente que $\frac{S_n}{n} \xrightarrow{\text{c.s.}} 0$.</li>
+          <li><b>Apartado (b): TLC para variables acotadas y equivalencia armónica.</b>
+            Sea $m_n = \sum_{i=1}^n \E[X_i] = 0$ y sea la varianza acumulada
+            $$s_n^2 = \sum_{i=1}^n \Var(X_i) = \sum_{i=1}^n \frac{1}{i} = H_n.$$
+            Observamos dos condiciones:
+            <ul>
+              <li><em>Acotación uniforme:</em> $\P(|X_i| \le 1) = 1$ para todo $i \ge 1$ ($M = 1$).</li>
+              <li><em>Divergencia de la varianza acumulada:</em> como la serie armónica diverge, $s_n^2 = \sum_{i=1}^n \frac{1}{i} \to \infty$ cuando $n \to \infty$.</li>
+            </ul>
+            Por el TLC sin suponer distribuciones idénticas (consecuencia del Teorema de Lindeberg para sucesiones uniformemente acotadas):
+            $$\frac{S_n}{s_n} = \frac{S_n - m_n}{s_n} \dto N(0, 1).$$</li>
+          <li><b>Sustitución de $s_n$ por $\sqrt{\log n}$ mediante Slutsky.</b>
+            Por comparación con la integral de $1/x$ en $[1, n]$ y $[1, n+1]$:
+            $$\log(n + 1) = \int_1^{n+1}\frac{dx}{x} \le \sum_{i=1}^n \frac{1}{i} \le 1 + \int_1^n \frac{dx}{x} = 1 + \log n.$$
+            Dividiendo por $\log n$ (para $n \ge 2$) y aplicando el teorema del emparedado:
+            $$\frac{\log(n + 1)}{\log n} \le \frac{s_n^2}{\log n} \le \frac{1}{\log n} + 1 \implies \lim_{n\to\infty} \frac{s_n^2}{\log n} = 1 \implies \lim_{n\to\infty} \frac{s_n}{\sqrt{\log n}} = 1.$$
+            Finalmente, por el Teorema de Slutsky:
+            $$\frac{S_n}{\sqrt{\log n}} = \frac{S_n}{s_n} \cdot \frac{s_n}{\sqrt{\log n}} \dto Z \cdot 1 \sim N(0, 1).$$
+            <div class="resultado">$$\frac{S_n}{n} \xrightarrow{\text{c.s.}} 0 \qquad \text{y} \qquad \frac{S_n}{\sqrt{\log n}} \dto N(0, 1).$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       SECCIÓN 7: SIMULADOR INTERACTIVO
+       ================================================================ -->
+  <section>
+    <h2 id="sim-libro">Verificación interactiva de ejercicios seleccionados</h2>
+    <p>Selecciona uno de los cuatro problemas clásicos del Capítulo 5 para simular $2000$ réplicas independientes, ajustar el tamaño muestral $n$ cuando corresponda y comparar la distribución empírica frente a su límite teórico.</p>
+
+    <div class="sim" id="sim-leb">
+      <p class="sim-title">Laboratorio Monte Carlo · Capítulo 5 de Lebensztayn</p>
+      <p class="sim-desc" id="sim-leb-desc">Compara la distribución simulada con la densidad límite teórica.</p>
+      <div class="controls">
+        <span class="ctl-sel"></span>
+        <span class="ctl-n"></span>
+        <span class="sim-badge" id="sim-fixed-n">n = 36 fijo (inciso c)</span>
+        <span class="ctl-btn"></span>
+      </div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       SECCIÓN 8: AUTOEVALUACIÓN — COMPROBADORES NUMÉRICOS
+       ================================================================ -->
+  <section>
+    <h2 id="autoevaluacion">Autoevaluación · Comprobadores numéricos</h2>
+    <p>Comprueba tus resultados numéricos antes de abrir las soluciones completas (usa punto o coma decimal).</p>
+
+    <div class="chk" id="nc-1">
+      <p class="chk-title">Ejercicio 5.40(c) · Varilla quebrada sucesivamente</p>
+    </div>
+
+    <div class="chk" id="nc-2">
+      <p class="chk-title">Ejercicio 5.58(b) · Lucro del casino en 400 000 apuestas</p>
+    </div>
+
+    <div class="chk" id="nc-3">
+      <p class="chk-title">Ejercicio 5.62 · Repartidor de periódicos</p>
+    </div>
+
+    <div class="chk" id="nc-4">
+      <p class="chk-title">Ejercicio 5.73(b) · Varianza asintótica de la media armónica</p>
+    </div>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../assets/js/stats.js"></script>
+<script src="../assets/js/plot.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+(function () {
+  'use strict';
+  const S = EM.stats;
+  const D = S.dist;
+  const fmt = S.fmt;
+  const ui = EM.ui;
+
+  /* ==================== SIMULADOR INTERACTIVO #sim-leb ==================== */
+  const simRoot = document.getElementById('sim-leb');
+  const ctlSel = simRoot.querySelector('.ctl-sel');
+  const ctlN = simRoot.querySelector('.ctl-n');
+  const ctlBtn = simRoot.querySelector('.ctl-btn');
+  const fixedBadge = document.getElementById('sim-fixed-n');
+  const descEl = document.getElementById('sim-leb-desc');
+  const out = ui.readout(simRoot.querySelector('.out'));
+  const plot = EM.plot.create(simRoot.querySelector('.plot'), {
+    xmin: 0, xmax: 6, ymin: 0, ymax: 0.65, height: 290, xlabel: 'w'
+  });
+
+  const cfg = {
+    '5.15': {
+      n: 40, min: 5, max: 200, step: 5, fixed: false,
+      desc: '<b>Ej. 5.15 (Fréchet):</b> simulamos $W_n = n^{-1}\\max\\{X_1,\\dots,X_n\\}$ con $f(x)=(1+x)^{-2}$ ($x &gt; 0$) y lo comparamos con la densidad límite $f_W(w) = w^{-2}e^{-1/w}$.'
+    },
+    '5.40': {
+      n: 36, min: 36, max: 36, step: 1, fixed: true,
+      desc: '<b>Ej. 5.40(c) (Varilla quebrada):</b> simulamos $S_{36} = -\\log X_{36} = \\sum_{i=1}^{36}(-\\log U_i)$ frente a la aproximación normal $N(36, 36)$ y el umbral $24$.'
+    },
+    '5.67': {
+      n: 40, min: 10, max: 150, step: 5, fixed: false,
+      desc: '<b>Ej. 5.67:</b> simulamos $\\sqrt{n}\\,Y_n = \\sqrt{n}\\,\\frac{\\sum X_i}{\\sum X_i^2 + \\sum X_i^3}$ con $X_i \\iid U(-1,1)$ frente a la normal límite $N(0, 3)$.'
+    },
+    '5.77': {
+      n: 150, min: 20, max: 400, step: 10, fixed: false,
+      desc: '<b>Ej. 5.77 (★ reto):</b> simulamos $S_n / \\sqrt{\\log n}$ con $\\P(X_k = \\pm 1) = 1/(2k)$ y $\\P(X_k=0) = 1 - 1/k$ frente a $N(0, 1)$.'
+    }
+  };
+
+  let mode = '5.15';
+  let nVal = cfg[mode].n;
+
+  const sliderN = ui.slider(ctlN, {
+    tex: 'n',
+    min: cfg[mode].min,
+    max: cfg[mode].max,
+    step: cfg[mode].step,
+    value: nVal,
+    fmt: v => String(Math.round(v)),
+    onInput: v => {
+      if (cfg[mode].fixed) return;
+      nVal = Math.max(2, Math.round(v));
+      cfg[mode].n = nVal;
+      runSim();
+    }
+  });
+
+  function syncControls() {
+    const c = cfg[mode];
+    descEl.innerHTML = c.desc;
+    ui.math(descEl);
+    if (c.fixed) {
+      ctlN.style.display = 'none';
+      fixedBadge.style.display = 'inline-block';
+      nVal = c.n;
+    } else {
+      ctlN.style.display = 'inline-flex';
+      fixedBadge.style.display = 'none';
+      sliderN.input.min = c.min;
+      sliderN.input.max = c.max;
+      sliderN.input.step = c.step;
+      sliderN.set(c.n);
+      nVal = c.n;
+    }
+  }
+
+  ui.select(ctlSel, {
+    label: 'Ejercicio',
+    value: mode,
+    options: [
+      { value: '5.15', label: '5.15 · Máximo reescalado (Fréchet)' },
+      { value: '5.40', label: '5.40 · Varilla quebrada (n = 36)' },
+      { value: '5.67', label: '5.67 · √n Y_n con U(-1,1)' },
+      { value: '5.77', label: '5.77 · S_n / √(log n)' }
+    ],
+    onChange: val => {
+      mode = val;
+      syncControls();
+      runSim();
+    }
+  });
+
+  function runSim() {
+    const M = 2000;
+    const vals = new Float64Array(M);
+
+    if (mode === '5.15') {
+      const n = nVal;
+      let le2 = 0;
+      let overMax = 0;
+      const frechetPdf = w => (w <= 1e-3 ? 0 : Math.exp(-1 / w) / (w * w));
+      // F_X(x) = 1 - 1/(1+x) => X = 1/(1-U) - 1; max(U_1,...,U_n) tiene la misma ley que U^(1/n)
+      for (let m = 0; m < M; m++) {
+        let u = Math.random();
+        if (u === 0) u = 1e-12;
+        if (u > 1 - 1e-12) u = 1 - 1e-12;
+        const uMax = Math.pow(u, 1 / n);
+        const w = ((1 / (1 - uMax)) - 1) / n;
+        vals[m] = w;
+        if (w <= 2) le2++;
+        if (w > 6) overMax++;
+      }
+      const medEmp = S.quantile(Array.from(vals), 0.5);
+      const medTeo = 1 / Math.LN2;
+      const pTeo2 = Math.exp(-0.5);
+
+      plot.setRange({ xmin: 0, xmax: 6, ymin: 0, ymax: 0.65, xlabel: 'w' });
+      plot.draw(g => {
+        g.hist(vals, { bins: 36, range: [0, 6], color: 'c2', alpha: 0.55, label: 'Muestras W_n' });
+        g.curve(frechetPdf, { color: 'c1', width: 2.3, from: 0.01, to: 6, label: 'Fréchet: w⁻² exp(-1/w)' });
+        g.vline(medTeo, { color: 'accent', dash: [4, 3], width: 1.5, label: 'Mediana = 1/ln 2' });
+      });
+
+      out.set(
+        `<b>Ej. 5.15</b> ($M = ${M}$ réplicas, $n = ${n}$):<br>` +
+        `• $\\P(W_n \\le 2)$ simulada: <b>${fmt(le2 / M, 4)}</b> · límite Fréchet $e^{-1/2} \\approx$ <b>${fmt(pTeo2, 4)}</b><br>` +
+        `• Mediana muestral: <b>${fmt(medEmp, 4)}</b> · mediana límite $1/\\ln 2 \\approx$ <b>${fmt(medTeo, 4)}</b><br>` +
+        `• Réplicas fuera de $[0, 6]$ (cola pesada, $\\E[W] = \\infty$): <b>${fmt(100 * overMax / M, 1)} %</b>`
+      );
+      return;
+    }
+
+    if (mode === '5.40') {
+      const n = 36;
+      let ge24 = 0;
+      let sumMean = 0;
+      for (let m = 0; m < M; m++) {
+        let s = 0;
+        for (let i = 0; i < n; i++) {
+          let u = Math.random();
+          if (u === 0) u = 1e-12;
+          s += -Math.log(u);
+        }
+        vals[m] = s;
+        sumMean += s;
+        if (s >= 24) ge24++;
+      }
+      const norm = D.normal(36, 6);
+      const gamma = D.gamma(36, 1);
+      const meanEmp = sumMean / M;
+      const sdEmp = S.sd(vals);
+      const pTlc = norm.sf(24);
+      const pExact = gamma.sf(24);
+
+      plot.setRange({ xmin: 14, xmax: 58, ymin: 0, ymax: 0.085, xlabel: '-log X_36' });
+      plot.draw(g => {
+        g.area(norm.pdf, 24, 58, { color: 'accent', alpha: 0.28, label: 'Cola TLC ≥ 24' });
+        g.hist(vals, { bins: 34, range: [14, 58], color: 'c2', alpha: 0.55, label: 'Muestras -log X_36' });
+        g.curve(norm.pdf, { color: 'c1', width: 2.3, label: 'Normal N(36, 36)' });
+        g.curve(gamma.pdf, { color: 'c3', width: 1.8, dash: [4, 3], label: 'Gamma(36, 1) exacta' });
+        g.vline(24, { color: 'accent', dash: [4, 3], width: 1.6, label: 'Umbral 24' });
+      });
+
+      out.set(
+        `<b>Ej. 5.40</b> ($M = ${M}$ réplicas, $n = 36$ cortes):<br>` +
+        `• $\\P(X_{36} \\le e^{-24}) = \\P(-\\log X_{36} \\ge 24)$ simulada: <b>${fmt(ge24 / M, 4)}</b> · TLC $\\Phi(2) \\approx$ <b>${fmt(pTlc, 4)}</b> · Gamma exacta: <b>${fmt(pExact, 4)}</b><br>` +
+        `• Media de $-\\log X_{36}$: <b>${fmt(meanEmp, 3)}</b> (teórica $36$) · DE muestral: <b>${fmt(sdEmp, 3)}</b> (teórica $6$)<br>` +
+        `• Razón media $(\\log X_{36})/36$: <b>${fmt(-meanEmp / 36, 4)}</b> (límite LFGN: $-1$)`
+      );
+      return;
+    }
+
+    if (mode === '5.67') {
+      const n = nVal;
+      const sqN = Math.sqrt(n);
+      let sumYn = 0;
+      for (let m = 0; m < M; m++) {
+        let s1 = 0, s2 = 0, s3 = 0;
+        for (let i = 0; i < n; i++) {
+          const x = 2 * Math.random() - 1;
+          const x2 = x * x;
+          s1 += x;
+          s2 += x2;
+          s3 += x2 * x;
+        }
+        const yn = s1 / (s2 + s3);
+        vals[m] = sqN * yn;
+        sumYn += yn;
+      }
+      const norm = D.normal(0, Math.sqrt(3));
+      const meanEmp = S.mean(vals);
+      const varEmp = S.var(vals);
+
+      plot.setRange({ xmin: -6, xmax: 6, ymin: 0, ymax: 0.29, xlabel: '√n · Y_n' });
+      plot.draw(g => {
+        g.hist(vals, { bins: 34, range: [-6, 6], color: 'c2', alpha: 0.55, label: 'Muestras √n Y_n' });
+        g.curve(norm.pdf, { color: 'c1', width: 2.3, label: 'Límite N(0, 3)' });
+        g.vline(0, { color: 'accent', dash: [4, 3], width: 1.4 });
+      });
+
+      out.set(
+        `<b>Ej. 5.67</b> ($M = ${M}$ réplicas, $n = ${n}$):<br>` +
+        `• Media muestral de $\\sqrt{n}\\,Y_n$: <b>${fmt(meanEmp, 4)}</b> (límite $0$) · Varianza muestral: <b>${fmt(varEmp, 4)}</b> (límite $3$)<br>` +
+        `• Promedio de $Y_n$ sin escalar: <b>${fmt(sumYn / M, 4)}</b> (parte a: $Y_n \\xrightarrow{\\text{c.s.}} 0$)`
+      );
+      return;
+    }
+
+    // mode === '5.77'
+    const n = nVal;
+    const denom = Math.sqrt(Math.log(n));
+    let hn = 0;
+    for (let k = 1; k <= n; k++) hn += 1 / k;
+    let absSmall = 0;
+    for (let m = 0; m < M; m++) {
+      let s = 0;
+      for (let k = 1; k <= n; k++) {
+        const r = Math.random();
+        if (r < 1 / k) {
+          s += (r < 0.5 / k ? 1 : -1);
+        }
+      }
+      vals[m] = s / denom;
+      if (Math.abs(s / n) <= 0.1) absSmall++;
+    }
+    const norm = D.normal(0, 1);
+    const meanEmp = S.mean(vals);
+    const varEmp = S.var(vals);
+    const varExactN = hn / Math.log(n);
+
+    plot.setRange({ xmin: -4.2, xmax: 4.2, ymin: 0, ymax: 0.48, xlabel: 'S_n / √(log n)' });
+    plot.draw(g => {
+      g.hist(vals, { bins: 28, range: [-4.2, 4.2], color: 'c2', alpha: 0.55, label: 'Muestras S_n / √(log n)' });
+      g.curve(norm.pdf, { color: 'c1', width: 2.3, label: 'Límite N(0, 1)' });
+      g.vline(0, { color: 'accent', dash: [4, 3], width: 1.4 });
+    });
+
+    out.set(
+      `<b>Ej. 5.77</b> ($M = ${M}$ réplicas, $n = ${n}$):<br>` +
+      `• Media muestral: <b>${fmt(meanEmp, 4)}</b> (teórica $0$) · Varianza muestral: <b>${fmt(varEmp, 4)}</b> (finita $H_n/\\ln n = ${fmt(varExactN, 4)} \\to 1$)<br>` +
+      `• Proporción con $|S_n/n| \\le 0.1$: <b>${fmt(100 * absSmall / M, 1)} %</b> (parte a: $S_n/n \\xrightarrow{\\text{c.s.}} 0$)`
+    );
+  }
+
+  ui.button(ctlBtn, 'Simular (2000 réplicas)', runSim, { primary: true });
+  syncControls();
+  runSim();
+
+  /* ==================== COMPROBADORES NUMÉRICOS #nc-1 .. #nc-4 ==================== */
+  ui.numcheck('#nc-1', {
+    prompt: 'Aproximación normal para $\\P(X_{36} \\le e^{-24}) \\approx$',
+    answer: 0.9772,
+    tol: 0.005,
+    placeholder: 'ej. 0.9772',
+    hint: 'Con $Z_i = -\\log U_i \\iid \\text{Exp}(1)$, $\\P(S_{36} \\ge 24) \\approx \\P(Z \\ge \\frac{24 - 36}{6}) = \\Phi(2) \\approx 0.9772$.'
+  });
+
+  ui.numcheck('#nc-2', {
+    prompt: 'Probabilidad de lucro entre $20\\,000$ y $22\\,000$ euros: $\\P(20\\,000 \\le L \\le 22\\,000) \\approx$',
+    answer: 0.8854,
+    tol: 0.005,
+    placeholder: 'ej. 0.8854',
+    hint: 'Con $\\E[L] = 400\\,000/19$ y $\\sigma_L = 12\\,000/19$, evalúa $\\Phi(1.50) - \\Phi(-5/3) \\approx 0.8854$ (o $0.8857$ con $z_1 \\approx -1.67$).'
+  });
+
+  ui.numcheck('#nc-3', {
+    prompt: 'Estimación de $\\P(N &gt; 1740)$ para entregar $600$ periódicos:',
+    answer: 0.8413,
+    tol: 0.005,
+    placeholder: 'ej. 0.8413',
+    hint: 'Como suma de $600$ geométricas($1/3$), $\\E[N]=1800$ y $\\sigma_N=60$, luego $\\P(N &gt; 1740) \\approx \\Phi(1) \\approx 0.8413$.'
+  });
+
+  ui.numcheck('#nc-4', {
+    prompt: 'Varianza asintótica $\\tau^2$ en $\\sqrt{n}(H_n - 2/3) \\dto N(0, \\tau^2)$:',
+    answer: 4 / 27,
+    tol: 0.002,
+    placeholder: 'ej. 0.1481',
+    hint: 'Por el Método Delta con $g(u)=1/u$ en $\\mu_U = 3/2$ y $\\sigma_U^2 = 3/4$: $[g\'(3/2)]^2 \\sigma_U^2 = (-4/9)^2 (3/4) = 4/27 \\approx 0.1481$.'
+  });
+})();
+</script>
+</body>
+</html>

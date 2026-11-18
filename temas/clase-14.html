@@ -1,0 +1,655 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clase 14 · Teoremas límites II: TLC generalizado y Valor Extremo</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/theme.js"></script>
+<style>
+  .badge.exam {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border: 1px solid var(--accent-border);
+    font-family: var(--font-ui);
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-left: 8px;
+    vertical-align: middle;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body data-page="clase-14" data-root="../">
+<main id="contenido">
+
+  <header class="page-head">
+    <p class="kicker">Clase 14 · Unidad 3 — Teoremas Límites</p>
+    <h1>Teoremas límites II: Teorema del Límite Central y Teoría del Valor Extremo</h1>
+    <p class="lead">De las sumas promedio a los valores extremos: los teoremas centrales del límite (De Moivre–Laplace, Liapunov–Lindeberg y suma de variables independientes no idénticamente distribuidas), la construcción de pivotes asintóticos mediante LGN, Slutsky y Método Delta encadenado, y la distribución generalizada del valor extremo (GEV / Gumbel) para máximos muestrales.</p>
+  </header>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="tlc">1. Teoremas del Límite Central</h2>
+    <p>En la clase anterior vimos cómo las Leyes de los Grandes Números garantizan que el promedio muestral $\bar X_n$ converge al valor esperado poblacional $\mu$. Sin embargo, saber <em>hacia dónde</em> apunta un promedio es solo la mitad de la historia: en inferencia estadística necesitas conocer también <em>cómo se distribuyen las fluctuaciones</em> alrededor de ese límite y a qué velocidad se estrechan.</p>
+    <p>Los <strong>Teoremas del Límite Central (TLC)</strong> responden exactamente a esa pregunta. Al centrar una suma $S_n = \sum_{i=1}^n X_i$ y dividir por su desviación estándar, la distribución del estadístico resultante converge hacia la normal estándar $N(0,1)$ sin importar la forma de la distribución original, desde ensayos binarios hasta variables heterogéneas.</p>
+
+    <div class="box teorema" id="thm-demoivre-laplace">
+      <span class="box-title">Teorema · TLC de De Moivre (1733) – Laplace (1812)</span>
+      <p>Sea $S_n$ el número de éxitos en $n$ ensayos de Bernoulli independientes, con la misma probabilidad $p$ de éxito en cada ensayo, donde $0 &lt; p &lt; 1$ (es decir, $S_n \sim \text{Bin}(n, p)$). Entonces:</p>
+      $$\frac{S_n - np}{\sqrt{np(1-p)}} \dto N(0, 1).$$
+    </div>
+
+    <p>Históricamente, este fue el primer teorema central del límite. Cada ensayo puede representarse mediante $X_i \iid \text{Bernoulli}(p)$ con $\E[X_i] = p$ y $\Var(X_i) = p(1-p) &gt; 0$, de modo que $\E[S_n] = np$ y $\Var(S_n) = np(1-p)$. Un siglo y medio más tarde, Liapunov y Lindeberg generalizaron este comportamiento a cualquier población con varianza finita.</p>
+
+    <div class="box teorema" id="thm-liapunov-lindeberg">
+      <span class="box-title">Teorema · TLC de Liapunov (1901) – Lindeberg (1922)</span>
+      <p>Sea $X_1, X_2, \dots \iid$ una sucesión de variables aleatorias con media $\mu$ y varianza finita y positiva $\sigma^2 \in (0, \infty)$, y sea $S_n = X_1 + X_2 + \dots + X_n$. Entonces:</p>
+      $$\frac{S_n - n\mu}{\sigma\sqrt{n}} \dto N(0, 1) \iff \lim_{n\to\infty}\P\left(\frac{S_n - n\mu}{\sigma\sqrt{n}} \le a\right) = \frac{1}{\sqrt{2\pi}}\int_{-\infty}^a e^{-x^2/2}\,dx, \quad \forall a \in \R.$$
+    </div>
+
+    <p>Dividiendo numerador y denominador entre $n$, obtienes la forma equivalente para la media muestral $\bar X_n = S_n/n$:</p>
+    $$\frac{\sqrt{n}(\bar X_n - \mu)}{\sigma} \dto N(0, 1), \qquad \text{o bien} \qquad \sqrt{n}(\bar X_n - \mu) \dto N(0, \sigma^2).$$
+    <p>Mientras la Ley de los Grandes Números afirma que $\bar X_n - \mu \to 0$, el TLC precisa que esa diferencia decae a velocidad $1/\sqrt{n}$ con fluctuaciones gaussianas.</p>
+
+    <div class="box idea" id="caja-asintotica">
+      <span class="box-title">Caja de herramientas asintótica · LGN, Slutsky y Método Delta</span>
+      <p>En la práctica, rara vez aparece un estadístico ya estandarizado con $\sigma$ conocida. Para resolver problemas de convergencia combinados (como los de exámenes de FCNM · ESPOL), cuentas con tres piezas que encajan entre sí:</p>
+      <ul>
+        <li><strong>Leyes de los Grandes Números y continuidad:</strong> Si $X_1, X_2, \dots \iid$ con $\E[|X_1|] &lt; \infty$, entonces $\bar X_n \xrightarrow{\text{c.s.}} \mu$ (Kolmogorov), lo que implica $\bar X_n \pto \mu$ (Khintchine). Si además $g$ es continua en $\mu$, entonces $g(\bar X_n) \xrightarrow{\text{c.s.}} g(\mu)$.</li>
+        <li><strong>Teorema de Slutsky (1925):</strong> Si $U_n \dto U$ y $V_n \pto c$ (equivalentemente $V_n \dto c$) donde $c$ es constante, entonces $U_n \pm V_n \dto U \pm c$, $U_n V_n \dto cU$, y $U_n/V_n \dto U/c$ siempre que $c \ne 0$. La estrategia habitual consiste en <em>multiplicar y dividir por la escala verdadera</em> para separar el factor del TLC de un cociente que converge a una constante, obteniendo así <strong>pivotes asintóticos</strong> libres de parámetros desconocidos.</li>
+        <li><strong>Método Delta y encadenamiento:</strong> Si $\sqrt{n}(Y_n - \mu) \dto N(0, \sigma^2)$ y $g$ es derivable en $\mu$ con $g'(\mu) \ne 0$, entonces:
+          $$\sqrt{n}\big(g(Y_n) - g(\mu)\big) \dto N\big(0, [g'(\mu)]^2\sigma^2\big).$$
+          Además, el Método Delta se puede <em>encadenar</em>: la convergencia normal asintótica obtenida tras aplicar $g$ vuelve a tener la forma $\sqrt{n}(W_n - w_0) \dto N(0, \tau^2)$, por lo que sirve de punto de partida para una segunda función derivable $h$ con $h'(w_0) \ne 0$.</li>
+      </ul>
+    </div>
+
+    <h3>¿Y si las variables no tienen la misma distribución?</h3>
+    <p>En muchos experimentos reales (mediciones con distinta precisión, ensayos heterogéneos o variables truncadas), las observaciones siguen siendo independientes pero no comparten la misma distribución. El siguiente teorema extiende el TLC al caso no idénticamente distribuido.</p>
+
+    <div class="box teorema" id="thm-tlc-no-id">
+      <span class="box-title">Teorema · TLC sin suponer distribuciones idénticas</span>
+      <p>Sea $X_1, X_2, \dots$ una sucesión de variables aleatorias <strong>independientes</strong>, y sea $S_n = \sum_{i=1}^n X_i$. Para cada $i \ge 1$, definimos $\mu_i = \E[X_i]$ y $\sigma_i^2 = \Var(X_i)$, y denotamos por</p>
+      $$m_n = \sum_{i=1}^n \mu_i \qquad \text{y} \qquad s_n^2 = \sum_{i=1}^n \sigma_i^2$$
+      <p>a la media y varianza de $S_n$, respectivamente. Supongamos que se cumplen:</p>
+      <ol>
+        <li>$s_n^2 \to \infty$ cuando $n \to \infty$, y</li>
+        <li>existe una constante $M &gt; 0$ tal que $\P(|X_i| \le M) = 1$ para todo $i$.</li>
+      </ol>
+      <p>Entonces:</p>
+      $$\frac{S_n - m_n}{s_n} \dto N(0, 1),$$
+      <p>esto es, para cualquier $a \in \R$:</p>
+      $$\lim_{n\to\infty}\P\left(\frac{S_n - m_n}{s_n} \le a\right) = \frac{1}{\sqrt{2\pi}}\int_{-\infty}^a e^{-x^2/2}\,dx.$$
+    </div>
+
+    <div class="box nota">
+      <span class="box-title">Observación · Condición general de Lindeberg (1922)</span>
+      <p>Este resultado se sigue de un Teorema Central del Límite más general demostrado por <strong>J. W. Lindeberg (1922)</strong>. Intuitivamente, la condición (b) asegura que ninguna variable individual tenga saltos arbitrariamente grandes que dominen la suma, mientras que la condición (a) garantiza que la varianza total $s_n^2$ crezca lo suficiente para que el aporte relativo de cada término $\sigma_i^2 / s_n^2$ se desvanezca en el límite.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="tve">2. Teoría del Valor Extremo (TVE)</h2>
+    <p>El TLC gobierna el comportamiento de sumas y promedios, es decir, el centro de los datos. Pero en hidrología, finanzas, ingeniería estructural o confiabilidad de sistemas, el riesgo no depende del promedio sino del <strong>máximo</strong> (la crecida histórica de un río, la mayor pérdida diaria o el pico de carga de una red).</p>
+    <p>Sea $X_1, X_2, \dots, X_n$ una sucesión de variables aleatorias i.i.d. con función de distribución acumulada $F_X$, y sea $M_n = \max\{X_1, \dots, X_n\} = X_{(n)}$ el máximo de la muestra. Su distribución exacta se obtiene de inmediato porque $M_n \le z$ ocurre si y solo si cada observación es menor o igual que $z$:</p>
+    $$F_{M_n}(z) = \P(M_n \le z) = \P(X_1 \le z, \dots, X_n \le z) = \P(X_1 \le z)\cdots\P(X_n \le z) = [F_X(z)]^n.$$
+    <p>En la práctica, rara vez conocemos la distribución exacta $F_X$, y además $[F_X(z)]^n$ tiende a degenerar cuando $n \to \infty$ (concentrándose en el extremo superior del soporte o escapando hacia $+\infty$). Igual que en el TLC centramos y escalamos la suma, necesitamos constantes normalizadoras $a_n &gt; 0$ y $b_n \in \R$ para estabilizar el máximo $\frac{M_n - b_n}{a_n}$.</p>
+
+    <div class="box teorema" id="thm-tve">
+      <span class="box-title">Teorema del Valor Extremo (TVE, 1927–1943)</span>
+      <p>Si existen sucesiones de constantes $a_n &gt; 0$ y $b_n \in \R$ tales que</p>
+      $$\P\left(\frac{M_n - b_n}{a_n} \le z\right) \xrightarrow{n\to\infty} G(z),$$
+      <p>donde $G(z)$ es una función de distribución <strong>no degenerada</strong>, entonces $G(z)$ pertenece a la <strong>distribución del valor extremo generalizada (GEV)</strong>:</p>
+      $$G(z) \propto \exp\big[-(1 + \xi z)^{-1/\xi}\big],$$
+      <p>donde el parámetro de forma $\xi \in \R$ depende del comportamiento de la cola de la distribución original $F_X$. De acuerdo con la cola del máximo, $G(z)$ toma una de <strong>3 posibles familias límites</strong>:</p>
+      <ul>
+        <li><strong>Tipo 1 · Distribución de Gumbel ($\xi = 0$ en el límite):</strong> corresponde a distribuciones con <em>cola exponencial</em> (decaimiento ligero sin cota superior finita, como Exponencial, Normal o Gamma). Tiene acumulada:
+          $$G_1(z) = \exp\left\{-\exp\left[-\left(\frac{z-a}{b}\right)\right]\right\}\1\{z \in \R\},$$
+          donde $a \in \R$ y $b &gt; 0$ son parámetros de localización y escala, respectivamente. Notación: $Z \sim \text{Gumb}(a, b)$.</li>
+        <li><strong>Tipo 2 · Distribución de Fréchet ($\xi &gt; 0$):</strong> corresponde a distribuciones de <em>cola pesada</em> (decaimiento polinomial o de ley de potencias, como Pareto, Cauchy o $t$ de Student).</li>
+        <li><strong>Tipo 3 · Distribución de Weibull ($\xi &lt; 0$):</strong> corresponde a distribuciones de <em>cola ligera con límite superior finito</em> (soporte acotado por arriba, como Uniforme o Beta).</li>
+      </ul>
+    </div>
+
+    <div class="table-wrap">
+      <table class="tabla text-left">
+        <thead>
+          <tr>
+            <th>Familia límite</th>
+            <th>Parámetro $\xi$</th>
+            <th>Comportamiento de la cola derecha de $F_X$</th>
+            <th>Ejemplos típicos de población</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Tipo 1 · Gumbel</strong></td>
+            <td>$\xi = 0$ (límite)</td>
+            <td>Cola exponencial (sin cota superior, decaimiento rápido)</td>
+            <td>Exponencial, Normal, Gamma, Lognormal</td>
+          </tr>
+          <tr>
+            <td><strong>Tipo 2 · Fréchet</strong></td>
+            <td>$\xi &gt; 0$</td>
+            <td>Cola pesada (decaimiento polinomial; momentos altos infinitos)</td>
+            <td>Pareto, Cauchy, $t$ de Student</td>
+          </tr>
+          <tr>
+            <td><strong>Tipo 3 · Weibull</strong></td>
+            <td>$\xi &lt; 0$</td>
+            <td>Cola ligera con extremo superior finito ($x_F &lt; \infty$)</td>
+            <td>Uniforme $U(a, b)$, Beta</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="box nota" id="obs-tve">
+      <span class="box-title">Observaciones comparativas · TLC frente a TVE</span>
+      <ol>
+        <li><strong>Obs. 1 (Papel paralelo):</strong> El rol del TVE es análogo al del TLC, pues ambos describen leyes límite mediante convergencias en distribución tras una transformación afín.</li>
+        <li><strong>Obs. 2 (Promedios vs. máximos):</strong> El TLC establece la convergencia del promedio (o suma) de la muestra, mientras que el TVE establece que, <em>si</em> la distribución de un máximo normalizado converge a una ley no degenerada, entonces el límite debe pertenecer necesariamente a una de estas tres familias (GEV).</li>
+        <li><strong>Obs. 3 (Carácter condicional):</strong> A diferencia del TLC bajo varianza finita, el TVE <strong>no garantiza</strong> que la distribución del máximo normalizado converja siempre. Existen distribuciones (por ejemplo, muchas discretas como la Poisson o la Geométrica) para las cuales no existen constantes $a_n &gt; 0$ y $b_n \in \R$ que den un límite no degenerado.</li>
+        <li><strong>Obs. 4 (La distribución de Gumbel estándar):</strong> El caso más común en aplicaciones es el Tipo 1, $Z \sim \text{Gumb}(a, b)$, con acumulada $G_1(z) = \exp\big\{-\exp\big[-\big(\frac{z-a}{b}\big)\big]\big\}\1\{z \in \R\}$. En particular, cuando $a = 0$ y $b = 1$, decimos que $Z \sim \text{Gumb}(0, 1)$, con acumulada $G_1(z) = \exp(-e^{-z})$ y densidad:
+          $$f_Z(z) = G_1'(z) = e^{-z} e^{-e^{-z}} = \exp(-z - e^{-z}), \qquad z \in \R,$$
+          cuya media es la constante de Euler–Mascheroni $\E[Z] = \gamma \approx 0.5772$ y su varianza es $\Var(Z) = \pi^2/6 \approx 1.6449$.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="ejemplos">3. Ejemplos y ejercicios resueltos paso a paso</h2>
+    <p>A continuación reunimos los ejemplos y ejercicios clave de la clase junto con sus variantes y extensiones de examen sobre pivotes asintóticos, Método Delta encadenado, estadísticos con residuo y convergencia de máximos.</p>
+
+    <!-- EJERCICIO 1 -->
+    <div class="box ejercicio" id="ej-1">
+      <span class="box-title">Ejemplo 1 (Clase 14) + Ejercicio 1 (Sesión 3) · Logaritmo en $U[0, 2\theta]$ y Delta encadenado <span class="badge exam">Exámenes 2022–2024</span></span>
+      <p>Sean $X_1, X_2, \dots \iid U[0, 2\theta]$, donde $\theta &gt; 0$, y sea $\bar X_n = \frac{S_n}{n} = \frac{1}{n}\sum_{i=1}^n X_i$.</p>
+      <ol>
+        <li>Demuestra que:
+          $$\sqrt{n}\big[\log \bar X_n - \log \theta\big] \dto N\left(0, \frac{1}{3}\right).$$</li>
+        <li>Encadenando un segundo Método Delta, demuestra que para $\theta \ne 1$:
+          $$\sqrt{n}\left[1 - \frac{\log \theta}{\log \bar X_n}\right] \dto N\left(0, \frac{1}{3(\log\theta)^2}\right).$$</li>
+      </ol>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En la parte (a), calcula $\mu = \E[X_1]$ y $\sigma^2 = \Var(X_1)$ para $U[0, 2\theta]$, aplica el TLC junto con Slutsky para obtener $\sqrt{n}(\bar X_n - \theta) \dto N(0, \theta^2/3)$ y luego utiliza el Método Delta con $g(x) = \log x$. En la parte (b), toma el resultado de (a) sobre $W_n = \log \bar X_n$ como nueva entrada y aplica el Método Delta una segunda vez con $h(w) = 1 - \frac{\log\theta}{w}$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <h4>Parte (a): Estabilización de la varianza mediante logaritmo</h4>
+        <ol class="pasos">
+          <li><strong>Momentos de la población:</strong> Como $X_1 \sim U[0, 2\theta]$, su esperanza y varianza son:
+            $$\mu = \E[X_1] = \frac{0 + 2\theta}{2} = \theta, \qquad \sigma^2 = \Var(X_1) = \frac{(2\theta - 0)^2}{12} = \frac{4\theta^2}{12} = \frac{\theta^2}{3} \in (0, \infty).$$</li>
+          <li><strong>TLC y Teorema de Slutsky:</strong> Por el Teorema del Límite Central de Liapunov–Lindeberg:
+            $$\frac{\sqrt{n}(\bar X_n - \theta)}{\theta/\sqrt{3}} \dto N(0, 1).$$
+            Multiplicando ambos lados por la constante $\theta/\sqrt{3}$ (por el Teorema de Slutsky):
+            $$\sqrt{n}(\bar X_n - \theta) \dto N\left(0, \frac{\theta^2}{3}\right).$$</li>
+          <li><strong>Aplicación del Método Delta:</strong> Definimos $g(x) = \log x$ para $x &gt; 0$. Su derivada es $g'(x) = \frac{1}{x}$, que evaluada en $\mu = \theta &gt; 0$ da $g'(\theta) = \frac{1}{\theta} \ne 0$. Aplicando el Método Delta:
+            $$\sqrt{n}\big[\log \bar X_n - \log \theta\big] = \sqrt{n}\big(g(\bar X_n) - g(\theta)\big) \dto N\left(0, [g'(\theta)]^2 \cdot \frac{\theta^2}{3}\right) = N\left(0, \frac{1}{\theta^2}\cdot\frac{\theta^2}{3}\right) = N\left(0, \frac{1}{3}\right).$$
+            <em>Observación clave:</em> La transformación logarítmica <strong>estabiliza la varianza</strong> porque cancela por completo el parámetro desconocido $\theta$, dejando una distribución límite universal $N(0, 1/3)$.</li>
+        </ol>
+
+        <h4>Parte (b): Encadenamiento de un segundo Método Delta</h4>
+        <ol class="pasos">
+          <li><strong>Nuevo punto de partida:</strong> Sea $W_n = \log \bar X_n$. Por la parte (a), ya sabemos que:
+            $$\sqrt{n}(W_n - \log\theta) \dto N\left(0, \frac{1}{3}\right).$$</li>
+          <li><strong>Segunda función transformadora:</strong> Consideramos la función $h(w) = 1 - \frac{\log\theta}{w}$ (definida para $w \ne 0$). Al evaluarla en $w_0 = \log\theta$ (donde $\log\theta \ne 0$ pues $\theta \ne 1$), resulta $h(\log\theta) = 1 - \frac{\log\theta}{\log\theta} = 0$, de manera que:
+            $$\sqrt{n}\left[1 - \frac{\log\theta}{\log\bar X_n}\right] = \sqrt{n}\big(h(W_n) - h(\log\theta)\big).$$</li>
+          <li><strong>Derivada y conclusión:</strong> Calculamos la derivada respecto a $w$:
+            $$h'(w) = \frac{\log\theta}{w^2} \implies h'(\log\theta) = \frac{\log\theta}{(\log\theta)^2} = \frac{1}{\log\theta} \ne 0.$$
+            Por el Método Delta aplicado por segunda vez:
+            $$\sqrt{n}\left[1 - \frac{\log\theta}{\log\bar X_n}\right] \dto N\left(0, [h'(\log\theta)]^2 \cdot \frac{1}{3}\right) = N\left(0, \frac{1}{3(\log\theta)^2}\right).$$</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJERCICIO 2 -->
+    <div class="box ejercicio" id="ej-2">
+      <span class="box-title">Ejercicio 1 (Clase 14) + Ejercicio 4 (Sesión 2) · Pivote asintótico en $U(-\theta, \theta)$ <span class="badge exam">Examen 2022 II PAO</span></span>
+      <p>Sean $X_1, X_2, \dots \iid U(-\theta, \theta)$ con $\theta &gt; 0$. Para $n \ge 1$, definimos $S_n = \sum_{i=1}^n X_i$ y $Y_n = \max\{X_1, \dots, X_n\}$. Demuestra que:</p>
+      $$\frac{S_n}{\sqrt{n}\,Y_n} \dto N\left(0, \frac{1}{3}\right).$$
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Separa el estadístico como $\frac{S_n/\sqrt{n}}{Y_n}$. Halla el límite en distribución del numerador mediante el TLC y demuestra la consistencia del denominador $Y_n \pto \theta$ calculando $\P(|Y_n - \theta| &gt; \varepsilon)$ con la acumulada de $Y_n$. Finalmente, combina ambos resultados usando el Teorema de Slutsky para cocientes.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><strong>Momentos de $U(-\theta, \theta)$:</strong> Por simetría alrededor del cero, $\mu = \E[X_1] = 0$, y la varianza poblacional es:
+            $$\sigma^2 = \Var(X_1) = \frac{\big(\theta - (-\theta)\big)^2}{12} = \frac{4\theta^2}{12} = \frac{\theta^2}{3}.$$</li>
+          <li><strong>Límite en distribución del numerador (TLC + Slutsky):</strong> Aplicando el TLC de Liapunov–Lindeberg a $S_n$:
+            $$\frac{S_n - n\cdot 0}{(\theta/\sqrt{3})\sqrt{n}} = \frac{S_n}{\sqrt{n}\,(\theta/\sqrt{3})} \dto N(0, 1).$$
+            Multiplicando por la constante $\theta/\sqrt{3}$ mediante el Teorema de Slutsky:
+            $$\frac{S_n}{\sqrt{n}} \dto N\left(0, \frac{\theta^2}{3}\right).$$</li>
+          <li><strong>Consistencia del denominador $Y_n$:</strong> Observa que $Y_n = \max\{X_1, \dots, X_n\} \le \theta$ con probabilidad $1$. La acumulada de cada $X_i$ en $(-\theta, \theta)$ es $F_X(t) = \frac{t + \theta}{2\theta}$, por lo que $F_{Y_n}(t) = \left(\frac{t + \theta}{2\theta}\right)^n$. Para todo $\varepsilon \in (0, 2\theta)$:
+            $$\P(|Y_n - \theta| &gt; \varepsilon) = \P(Y_n &lt; \theta - \varepsilon) = F_{Y_n}(\theta - \varepsilon) = \left(\frac{(\theta - \varepsilon) + \theta}{2\theta}\right)^n = \left(\frac{2\theta - \varepsilon}{2\theta}\right)^n = \left(1 - \frac{\varepsilon}{2\theta}\right)^n \xrightarrow{n\to\infty} 0,$$
+            ya que $0 &lt; 1 - \frac{\varepsilon}{2\theta} &lt; 1$ (y para $\varepsilon \ge 2\theta$ la probabilidad es directamente $0$). En consecuencia:
+            $$Y_n \pto \theta \ne 0.$$</li>
+          <li><strong>Cociente por el Teorema de Slutsky:</strong> Reescribimos el estadístico como el cociente de las dos sucesiones analizadas:
+            $$\frac{S_n}{\sqrt{n}\,Y_n} = \frac{S_n / \sqrt{n}}{Y_n}.$$
+            Como el numerador converge en distribución a $W \sim N(0, \theta^2/3)$ y el denominador converge en probabilidad a la constante no nula $\theta$, el Teorema de Slutsky para cocientes garantiza:
+            $$\frac{S_n}{\sqrt{n}\,Y_n} \dto \frac{W}{\theta} \sim N\left(0, \frac{1}{\theta^2}\cdot\frac{\theta^2}{3}\right) = N\left(0, \frac{1}{3}\right).$$</li>
+        </ol>
+        <div class="box idea">
+          <span class="box-title">Moraleja · La idea de pivote asintótico</span>
+          <p>Fíjate en que la distribución límite $N(0, 1/3)$ <strong>no depende de $\theta$</strong>. Aunque $Y_n$ no es el estimador de máxima verosimilitud de $\theta$ (que sería $\max_i |X_i|$), sigue siendo consistente porque usa la información del extremo derecho. Dividir el numerador asintóticamente normal por un estimador consistente de la escala elimina el parámetro desconocido $\theta$ y transforma el estadístico en un <strong>pivote asintótico</strong> útil para construir intervalos de confianza en muestras grandes.</p>
+        </div>
+      </div></details>
+    </div>
+
+    <!-- EJERCICIO 3 -->
+    <div class="box ejercicio" id="ej-3">
+      <span class="box-title">Ejercicio 2 (Clase 14) + Ejercicio 7 (Sesión 3) · Estadístico con residuo $R_n$ <span class="badge exam">Examen 2023 I PAO</span></span>
+      <p>Sea $\{X_n\}_{n\ge 1}$ una sucesión de variables aleatorias i.i.d. y sea $g: \R \to \R$ una función tal que $\E[g(X_1)] = \xi$ y $\Var[g(X_1)] = \nu^2$, con $0 &lt; \nu^2 &lt; \infty$. Además, supón que $T_n = T_n(X_1, \dots, X_n)$ es un estadístico que satisface</p>
+      $$T_n = \sum_{i=1}^n g(X_i) + R_n, \qquad \text{donde} \quad \frac{R_n}{\sqrt{n}} \pto 0.$$
+      <ol>
+        <li>Prueba que $\frac{T_n - n\xi}{\sqrt{n}\,\nu} \dto N(0, 1)$.</li>
+        <li>Suponiendo $\xi \ne 0$, demuestra mediante el Método Delta que:
+          $$\sqrt{n}\left(\frac{T_n^2}{n^2} - \xi^2\right) \dto N(0, 4\xi^2\nu^2).$$</li>
+      </ol>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En (a), sustituye la expresión de $T_n$ en $\frac{T_n - n\xi}{\sqrt{n}\nu}$ y sepáralo en dos términos: uno estandarizado al que aplica el TLC sobre $Y_i = g(X_i)$, y el término residual $\frac{1}{\nu}\frac{R_n}{\sqrt{n}}$ que converge en probabilidad a $0$. En (b), deduce primero $\sqrt{n}(T_n/n - \xi) \dto N(0, \nu^2)$ y aplica el Método Delta con $h(u) = u^2$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <h4>Parte (a): TLC + Slutsky para la suma</h4>
+        <ol class="pasos">
+          <li><strong>Variables transformadas i.i.d.:</strong> Definimos $Y_i = g(X_i)$ para $i = 1, \dots, n$. Como las $X_i$ son i.i.d., las $Y_i$ también son i.i.d. con media $\xi$ y varianza $\nu^2 \in (0, \infty)$.</li>
+          <li><strong>Separación del término principal y del residuo:</strong> Reemplazamos $T_n = \sum_{i=1}^n g(X_i) + R_n$ y descomponemos:
+            $$\frac{T_n - n\xi}{\sqrt{n}\,\nu} = \frac{\sum_{i=1}^n g(X_i) - n\xi}{\sqrt{n}\,\nu} + \frac{1}{\nu}\cdot\frac{R_n}{\sqrt{n}}.$$</li>
+          <li><strong>Límite de cada sumando y Slutsky:</strong>
+            <ul>
+              <li>Por el TLC de Liapunov–Lindeberg aplicado a $\{g(X_i)\}$:
+                $$\frac{\sum_{i=1}^n g(X_i) - n\xi}{\sqrt{n}\,\nu} \dto N(0, 1).$$</li>
+              <li>Por hipótesis $R_n / \sqrt{n} \pto 0$, de modo que al multiplicar por la constante $1/\nu$ resulta $\frac{1}{\nu}\cdot\frac{R_n}{\sqrt{n}} \pto 0$.</li>
+            </ul>
+            Aplicando el Teorema de Slutsky para la suma:
+            $$\frac{T_n - n\xi}{\sqrt{n}\,\nu} \dto N(0, 1) + 0 = N(0, 1).$$</li>
+        </ol>
+
+        <h4>Parte (b): Transformación cuadrática por el Método Delta</h4>
+        <ol class="pasos">
+          <li><strong>Forma centrada para $T_n/n$:</strong> Multiplicando el resultado de la parte (a) por la constante $\nu &gt; 0$ (por Slutsky):
+            $$\sqrt{n}\left(\frac{T_n}{n} - \xi\right) \dto N(0, \nu^2).$$</li>
+          <li><strong>Aplicación del Método Delta:</strong> Tomamos $W_n = T_n/n$ y la función $h(u) = u^2$, cuya derivada es $h'(u) = 2u$. Como $\xi \ne 0$, se cumple $h'(\xi) = 2\xi \ne 0$. Entonces:
+            $$\sqrt{n}\left(\frac{T_n^2}{n^2} - \xi^2\right) = \sqrt{n}\big(h(W_n) - h(\xi)\big) \dto N\big(0, [h'(\xi)]^2 \nu^2\big) = N(0, 4\xi^2\nu^2).$$</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJERCICIO 4 -->
+    <div class="box ejercicio" id="ej-4">
+      <span class="box-title">Ejercicio 3 (Clase 14) + Sesión 2 · Consistencia universal de la varianza muestral $S^2$</span>
+      <p>Sea $X_1, X_2, \dots, X_n$ una muestra aleatoria de una población con segundo momento finito ($\E[X_1^2] &lt; \infty$), media $\mu = \E[X_1]$ y varianza $\sigma^2 = \Var(X_1)$.</p>
+      <ol>
+        <li>Demuestra primero la observación fundamental: basta que el segundo momento sea finito para que el primero también lo sea ($\E[X_1^2] &lt; \infty \implies \E[|X_1|] &lt; \infty$).</li>
+        <li>Demuestra que la varianza muestral $S^2 = \frac{1}{n-1}\sum_{i=1}^n (X_i - \bar X_n)^2$ es consistente: $S^2 \pto \sigma^2$ (y de hecho $S^2 \xrightarrow{\text{c.s.}} \sigma^2$).</li>
+      </ol>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Para el inciso 1, aplica la desigualdad de Jensen a $|X_1|$ con la función convexa $\phi(u) = u^2$ (o Cauchy–Schwarz con la variable constante $1$). Para el inciso 2, expande el cuadrado para escribir $S^2 = \frac{n}{n-1}\left(\frac{1}{n}\sum_{i=1}^n X_i^2 - \bar X_n^2\right)$ y aplica la Ley de los Grandes Números a ambos promedios junto con la preservación por funciones continuas y sumas.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><strong>Finitud del primer momento (Jensen / Cauchy–Schwarz):</strong> La función $\phi(u) = u^2$ es convexa en $\R$ ($\phi''(u) = 2 &gt; 0$). Aplicando la desigualdad de Jensen a la variable no negativa $|X_1|$:
+            $$\big(\E[|X_1|]\big)^2 = \phi\big(\E[|X_1|]\big) \le \E\big[\phi(|X_1|)\big] = \E[X_1^2] &lt; \infty.$$
+            (De manera equivalente, por la desigualdad de Cauchy–Schwarz: $\E[|X_1|\cdot 1] \le \sqrt{\E[X_1^2]\,\E[1^2]} = \sqrt{\E[X_1^2]} &lt; \infty$.) Extrayendo raíz cuadrada concluimos $\E[|X_1|] &lt; \infty$, de modo que $\mu = \E[X_1]$ existe y es finita, al igual que $\sigma^2 = \E[X_1^2] - \mu^2$.</li>
+          <li><strong>Identidad algebraica para $S^2$:</strong> Para $n \ge 2$, desarrollamos la suma de cuadrados alrededor de la media muestral:
+            $$\sum_{i=1}^n (X_i - \bar X_n)^2 = \sum_{i=1}^n \big(X_i^2 - 2\bar X_n X_i + \bar X_n^2\big) = \sum_{i=1}^n X_i^2 - 2\bar X_n(n\bar X_n) + n\bar X_n^2 = \sum_{i=1}^n X_i^2 - n\bar X_n^2.$$
+            Dividiendo ambos miembros entre $n - 1$:
+            $$S^2 = \frac{n}{n-1}\left(\frac{1}{n}\sum_{i=1}^n X_i^2 - \bar X_n^2\right).$$</li>
+          <li><strong>Límites por Ley de los Grandes Números y continuidad:</strong>
+            <ul>
+              <li>Como $X_1, X_2, \dots$ son i.i.d. con $\E[|X_1|] &lt; \infty$, por la Ley Fuerte de los Grandes Números (Kolmogorov) se cumple $\bar X_n \xrightarrow{\text{c.s.}} \mu$. Al ser $h(u) = u^2$ continua en $\R$, tenemos $\bar X_n^2 \xrightarrow{\text{c.s.}} \mu^2$.</li>
+              <li>Análogamente, las variables $Z_i = X_i^2$ son i.i.d. con media finita $\E[Z_1] = \E[X_1^2] = \sigma^2 + \mu^2 &lt; \infty$. Por la LGN:
+                $$\frac{1}{n}\sum_{i=1}^n X_i^2 \xrightarrow{\text{c.s.}} \sigma^2 + \mu^2.$$</li>
+            </ul></li>
+          <li><strong>Conclusión por suma y producto de límites:</strong> Combinando ambos límites y recordando que $\frac{n}{n-1} \to 1$:
+            $$S^2 = \frac{n}{n-1}\left(\frac{1}{n}\sum_{i=1}^n X_i^2 - \bar X_n^2\right) \xrightarrow{\text{c.s.}} 1 \cdot \big[(\sigma^2 + \mu^2) - \mu^2\big] = \sigma^2.$$
+            Puesto que la convergencia casi segura implica convergencia en probabilidad, concluimos que $S^2 \pto \sigma^2$. <em>Nota:</em> Esta demostración mediante la LGN es más potente que usar la desigualdad de Chebyshev sobre $\Var(S^2)$, ya que no requiere suponer la existencia del cuarto momento $\E[X_1^4] &lt; \infty$.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJERCICIO 5 -->
+    <div class="box ejercicio" id="ej-5">
+      <span class="box-title">Ejercicio 3 de TVE (Clase 14) · Máximo de exponenciales hacia la distribución de Gumbel</span>
+      <p>Supón que $X_1, X_2, \dots \iid \text{Exp}(1)$ (con media $1$). Demuestra que para las constantes $a_n = 1$ y $b_n = \log n$, se cumple que:</p>
+      $$\frac{M_n - b_n}{a_n} = X_{(n)} - \log n \dto \text{Gumb}(0, 1),$$
+      <p>es decir, para todo $z \in \R$, $\lim_{n\to\infty}\P(M_n - \log n \le z) = \exp(-e^{-z})$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Usa la acumulada exacta del máximo $F_{M_n}(x) = [F_X(x)]^n$ con $F_X(x) = (1 - e^{-x})\1\{x &gt; 0\}$, evalúa en $x = z + \log n$ para $n$ suficientemente grande ($z + \log n &gt; 0$), simplifica $e^{-\log n} = 1/n$ y aplica el límite clásico $(1 + c/n)^n \to e^c$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><strong>Acumulada de la población exponencial:</strong> Si $X_i \sim \text{Exp}(1)$ con media $1$, su función de distribución acumulada es:
+            $$F_X(x) = \begin{cases} 1 - e^{-x}, &amp; x &gt; 0, \\ 0, &amp; x \le 0. \end{cases}$$</li>
+          <li><strong>Acumulada exacta del máximo normalizado:</strong> Fija un valor cualquiera $z \in \R$. Con $a_n = 1$ y $b_n = \log n$, tenemos:
+            $$\P\left(\frac{M_n - b_n}{a_n} \le z\right) = \P(M_n - \log n \le z) = \P(M_n \le z + \log n) = \big[F_X(z + \log n)\big]^n.$$</li>
+          <li><strong>Evaluación para $n$ suficientemente grande:</strong> Dado que $\log n \to \infty$, para todo $n &gt; e^{-z}$ se verifica $z + \log n &gt; 0$. En ese rango:
+            $$F_X(z + \log n) = 1 - e^{-(z + \log n)} = 1 - e^{-z}\cdot e^{-\log n} = 1 - \frac{e^{-z}}{n}.$$</li>
+          <li><strong>Paso al límite cuando $n \to \infty$:</strong> Elevando a la potencia $n$ y usando $\lim_{n\to\infty}\left(1 + \frac{c}{n}\right)^n = e^c$ con $c = -e^{-z}$:
+            $$\lim_{n\to\infty}\P(M_n - \log n \le z) = \lim_{n\to\infty}\left(1 - \frac{e^{-z}}{n}\right)^n = \exp(-e^{-z}), \qquad \forall z \in \R.$$</li>
+          <li><strong>Identificación de la familia límite:</strong> La función $G_1(z) = \exp(-e^{-z})\1\{z \in \R\}$ corresponde exactamente a la distribución de Gumbel estándar con parámetros $a = 0$ y $b = 1$. Por tanto, $X_{(n)} - \log n \dto W$, donde $W \sim \text{Gumb}(0, 1)$.</li>
+        </ol>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="lebensztayn">4. Miscelánea de Lebensztayn</h2>
+    <div class="box nota">
+      <span class="box-title">Práctica recomendada · Capítulo 5 del folleto de Lebensztayn</span>
+      <p>Para consolidar el dominio de teoremas límites combinando Leyes de los Grandes Números, Teorema del Límite Central, Teorema de Slutsky, Método Delta y máximos asintóticos, resuelve los ejercicios <strong>67–71, 73, 76 y 77 del Capítulo 5</strong> en nuestra página dedicada:</p>
+      <p><a href="../deberes/lebensztayn.html#cap5-misc">Ejercicios de Lebensztayn · Bloque V: Miscelánea de teoremas límites</a></p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="simulaciones">5. Laboratorios interactivos</h2>
+    <p>Experimenta directamente con la convergencia asintótica tanto de un máximo normalizado hacia la ley de Gumbel como de un pivote asintótico frente a cambios de escala.</p>
+
+    <div class="sim" id="sim-gumbel">
+      <p class="sim-title">Laboratorio 1 · Convergencia del máximo de exponenciales hacia $\text{Gumb}(0, 1)$</p>
+      <p class="sim-desc">Genera $M = 2500$ réplicas de $W_n = M_n - \log n$ donde $M_n = \max\{X_1, \dots, X_n\}$ con $X_i \iid \text{Exp}(1)$. Compara el histograma empírico de $W_n$ frente a la densidad límite $f(z) = \exp(-z - e^{-z})$ en $[-3, 7]$.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+
+    <div class="sim" id="sim-pivote">
+      <p class="sim-title">Laboratorio 2 · Pivote asintótico $\frac{S_n}{\sqrt{n}\,Y_n}$ en $U(-\theta, \theta)$: invarianza respecto a $\theta$</p>
+      <p class="sim-desc">Simula $M = 2000$ muestras de $X_1, \dots, X_n \iid U(-\theta, \theta)$ y grafica el histograma de $\frac{S_n}{\sqrt{n}\,Y_n}$ frente a la densidad límite $N(0, 1/3)$ (varianza $1/3$, desviación estándar $1/\sqrt{3} \approx 0.5774$). Cambia $\theta$ desde $0.5$ hasta $10$ y comprueba que la campana límite permanece intacta.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="autoevaluacion">6. Autoevaluación</h2>
+    <div id="quiz-1"></div>
+    <div id="quiz-2"></div>
+    <div id="quiz-3"></div>
+
+    <h3>Comprueba tus cálculos numéricos</h3>
+    <div id="nc-1"></div>
+    <div id="nc-2"></div>
+
+    <details class="solucion"><summary>Desarrollo de los dos cálculos numéricos</summary><div>
+      <ol class="pasos">
+        <li>Por el Ejercicio 1(b) (Método Delta encadenado sobre $U[0, 2\theta]$), la varianza asintótica es $\xi^2 = \frac{1}{3(\log\theta)^2}$. Al evaluar en $\theta = e^2$, tenemos $\log(e^2) = 2$, luego $\xi^2 = \frac{1}{3 \cdot 2^2} = \frac{1}{12} \approx 0.0833$.</li>
+        <li>Por el Ejercicio 5, $W_n = M_n - \log n \dto \text{Gumb}(0, 1)$, cuya acumulada límite es $G_1(z) = \exp(-e^{-z})$. Evaluando en $z = 1$: $\lim_{n\to\infty}\P(M_n - \log n \le 1) = \exp(-e^{-1}) \approx \exp(-0.36788) \approx 0.6922$.</li>
+      </ol>
+    </div></details>
+
+    <div class="box nota">
+      <span class="box-title">Resumen esencial de la Clase 14</span>
+      <ul>
+        <li><strong>TLC clásico y generalizado:</strong> Tanto en el caso Bernoulli (De Moivre–Laplace), i.i.d. con varianza finita $\sigma^2$ (Liapunov–Lindeberg), como independientes no idénticas acotadas con $s_n^2 \to \infty$ (consecuencia de Lindeberg 1922), la suma estandarizada converge en distribución a $N(0, 1)$.</li>
+        <li><strong>Pivotes y Delta encadenado:</strong> Multiplicar/dividir por la escala verdadera + Slutsky permite sustituir parámetros desconocidos por estimadores consistentes; además, la salida asintóticamente normal de un Método Delta puede encadenarse como entrada de otro.</li>
+        <li><strong>Teoría del Valor Extremo:</strong> Si el máximo normalizado $(M_n - b_n)/a_n$ converge a una distribución no degenerada, el límite pertenece necesariamente a la familia GEV: <strong>Gumbel</strong> ($\xi = 0$, colas exponenciales), <strong>Fréchet</strong> ($\xi &gt; 0$, colas pesadas) o <strong>Weibull</strong> ($\xi &lt; 0$, soporte acotado arriba).</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../assets/js/stats.js"></script>
+<script src="../assets/js/plot.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+(function () {
+  'use strict';
+  const S = EM.stats, D = S.dist, fmt = S.fmt, ui = EM.ui;
+
+  function histMaxDensity(data, lo, hi, bins) {
+    const w = (hi - lo) / bins;
+    const counts = new Float64Array(bins);
+    for (let i = 0; i < data.length; i++) {
+      const x = data[i];
+      const k = Math.floor((x - lo) / w);
+      if (k >= 0 && k < bins) counts[k]++;
+      else if (x === hi) counts[bins - 1]++;
+    }
+    let m = 0;
+    for (let k = 0; k < bins; k++) if (counts[k] > m) m = counts[k];
+    return m / (data.length * w);
+  }
+
+  /* ============================================================
+     SIMULACIÓN 1: Máximo de Exp(1) hacia Gumbel estándar
+     ============================================================ */
+  (function () {
+    const root = document.getElementById('sim-gumbel');
+    if (!root) return;
+
+    const M = 2500;
+    const XMIN = -3, XMAX = 7, BINS = 40;
+    const GAMMA = 0.5772156649;
+    const PI2_6 = Math.PI * Math.PI / 6;
+    const gumbPdf = z => Math.exp(-z - Math.exp(-z));
+
+    let n = 40;
+    let seed = 202614;
+    let ws = new Float64Array(M);
+
+    const ctr = root.querySelector('.controls');
+    ui.slider(ctr, {
+      tex: 'n', min: 5, max: 200, step: 1, value: n,
+      onInput: v => { n = v; simulate(); }
+    });
+    ui.button(ctr, 'Simular', () => { seed = (seed + 7919) >>> 0; simulate(); }, { primary: true });
+
+    const plot = EM.plot.create(root.querySelector('.plot'), {
+      xmin: XMIN, xmax: XMAX, ymin: 0, ymax: 0.45,
+      height: 300, xlabel: 'z', ylabel: 'densidad', legendPos: 'tr'
+    });
+    const out = ui.readout(root.querySelector('.out'));
+
+    function simulate() {
+      const rng = S.mulberry32(seed + n * 131);
+      const logN = Math.log(n);
+      for (let r = 0; r < M; r++) {
+        // Exacto: F_{M_n}(x) = (1 - e^{-x})^n  =>  M_n = -ln(1 - U^{1/n})
+        let u = rng();
+        if (u <= 1e-12) u = 1e-12;
+        if (u >= 1 - 1e-12) u = 1 - 1e-12;
+        const mn = -Math.log(-Math.expm1(Math.log(u) / n));
+        ws[r] = mn - logN;
+      }
+      render();
+    }
+
+    function render() {
+      const arr = Array.from(ws);
+      const meanEmp = S.mean(arr);
+      const varEmp = S.var(arr);
+      const pLe0 = S.prop(arr, x => x <= 0);
+      const hMax = histMaxDensity(arr, XMIN, XMAX, BINS);
+      const ymax = Math.max(0.38, hMax) * 1.18;
+
+      plot.setRange({ xmin: XMIN, xmax: XMAX, ymin: 0, ymax });
+      plot.draw(g => {
+        g.hist(arr, { bins: BINS, range: [XMIN, XMAX], density: true, color: 'c2', alpha: 0.55, label: `W_n = M_n − log n (M = ${M})` });
+        g.curve(gumbPdf, { color: 'c1', width: 2.5, label: 'Gumb(0, 1): f(z) = exp(−z − e⁻ᶻ)' });
+        g.vline(GAMMA, { color: 'c3', dash: [4, 4], label: 'γ ≈ 0.5772' });
+      });
+
+      out.set(`
+        <b>Muestra simulada:</b> $n = ${n}$, $M = ${M}$ réplicas de $W_n = M_n - \\log n$ ($X_i \\iid \\text{Exp}(1)$).<br>
+        • <b>Media empírica:</b> <b>${fmt(meanEmp, 4)}</b> &nbsp;vs.&nbsp; media límite $\\gamma \\approx$ <b>0.5772</b> (diferencia: ${fmt(meanEmp - GAMMA, 4)})<br>
+        • <b>Varianza empírica:</b> <b>${fmt(varEmp, 4)}</b> &nbsp;vs.&nbsp; varianza límite $\\pi^2/6 \\approx$ <b>${fmt(PI2_6, 4)}</b> (diferencia: ${fmt(varEmp - PI2_6, 4)})<br>
+        • <b>Proporción $W_n \\le 0$:</b> <b>${fmt(pLe0, 4)}</b> &nbsp;vs.&nbsp; $\\exp(-1) \\approx$ <b>0.3679</b>
+      `);
+    }
+
+    simulate();
+  })();
+
+  /* ============================================================
+     SIMULACIÓN 2: Pivote asintótico S_n / (sqrt(n) * Y_n) en U(-theta, theta)
+     ============================================================ */
+  (function () {
+    const root = document.getElementById('sim-pivote');
+    if (!root) return;
+
+    const M = 2000;
+    const XMIN = -2.5, XMAX = 2.5, BINS = 40;
+    const SIGMA_LIM = 1 / Math.sqrt(3);
+    const limNorm = D.normal(0, SIGMA_LIM);
+
+    let theta = 3.0;
+    let n = 50;
+    let seed = 918273;
+    let pivots = new Float64Array(M);
+    let numVarEmp = 0;
+
+    const ctr = root.querySelector('.controls');
+    ui.slider(ctr, {
+      tex: '\\theta', min: 0.5, max: 10, step: 0.5, value: theta,
+      fmt: v => v.toFixed(1),
+      onInput: v => { theta = v; simulate(); }
+    });
+    ui.slider(ctr, {
+      tex: 'n', min: 10, max: 200, step: 1, value: n,
+      onInput: v => { n = v; simulate(); }
+    });
+    ui.button(ctr, 'Simular', () => { seed = (seed + 104729) >>> 0; simulate(); }, { primary: true });
+
+    const plot = EM.plot.create(root.querySelector('.plot'), {
+      xmin: XMIN, xmax: XMAX, ymin: 0, ymax: 0.85,
+      height: 300, xlabel: 'S_n / (√n Y_n)', ylabel: 'densidad', legendPos: 'tr'
+    });
+    const out = ui.readout(root.querySelector('.out'));
+
+    function simulate() {
+      const rng = S.mulberry32((seed + Math.round(theta * 100) * 37 + n * 97) >>> 0);
+      const sqN = Math.sqrt(n);
+      const nums = new Float64Array(M);
+      for (let r = 0; r < M; r++) {
+        let s = 0;
+        let ymax = -Infinity;
+        for (let i = 0; i < n; i++) {
+          const x = theta * (2 * rng() - 1);
+          s += x;
+          if (x > ymax) ymax = x;
+        }
+        const num = s / sqN;
+        nums[r] = num;
+        const denom = Math.abs(ymax) < 1e-9 ? (ymax >= 0 ? 1e-9 : -1e-9) : ymax;
+        pivots[r] = num / denom;
+      }
+      numVarEmp = S.var(Array.from(nums));
+      render();
+    }
+
+    function render() {
+      const arr = Array.from(pivots);
+      const inBox = arr.filter(x => x >= XMIN && x <= XMAX);
+      const outFrac = 1 - inBox.length / M;
+      const meanEmp = S.mean(arr);
+      const varEmp = S.var(arr);
+      const sdEmp = Math.sqrt(varEmp);
+      const hMax = histMaxDensity(arr, XMIN, XMAX, BINS);
+      const ymax = Math.max(0.72, hMax) * 1.18;
+
+      plot.setRange({ xmin: XMIN, xmax: XMAX, ymin: 0, ymax });
+      plot.draw(g => {
+        g.hist(arr, { bins: BINS, range: [XMIN, XMAX], density: true, color: 'c2', alpha: 0.55, label: `Pivote (θ=${theta.toFixed(1)}, n=${n})` });
+        g.curve(limNorm.pdf, { color: 'c1', width: 2.5, label: 'N(0, 1/3)' });
+        g.vline(0, { color: 'muted', dash: [3, 3] });
+      });
+
+      const varNumTeor = (theta * theta) / 3;
+      const notaCola = outFrac > 0.005
+        ? `<br><small style="color:var(--muted)">Nota: con $n=${n}$ pequeño, $Y_n$ ocasionalmente cae cerca de $0$ (${fmt(outFrac * 100, 2)} % fuera de $[-2.5, 2.5]$), inflando la varianza muestral finita; aumenta $n$ para ver el régimen asintótico estabilizado.</small>`
+        : '';
+
+      out.set(`
+        <b>Población:</b> $U(-${theta.toFixed(1)},\\, ${theta.toFixed(1)})$, $n = ${n}$, $M = ${M}$ réplicas.<br>
+        • <b>Numerador $S_n / \\sqrt{n}$:</b> varianza empírica <b>${fmt(numVarEmp, 4)}</b> &nbsp;vs.&nbsp; teórica $\\theta^2/3 =$ <b>${fmt(varNumTeor, 4)}</b> (depende de $\\theta$)<br>
+        • <b>Pivote $\\frac{S_n}{\\sqrt{n}\\,Y_n}$:</b> media empírica <b>${fmt(meanEmp, 4)}</b> (límite $0$), varianza empírica <b>${fmt(varEmp, 4)}</b> (límite $1/3 \\approx$ <b>0.3333</b>), desv. estándar empírica <b>${fmt(sdEmp, 4)}</b> (límite $1/\\sqrt{3} \\approx$ <b>0.5774</b>) — <em>invariante frente a $\\theta$</em>.${notaCola}
+      `);
+    }
+
+    simulate();
+  })();
+
+  /* ============================================================
+     AUTOEVALUACIÓN: 3 Quizzes y 2 Comprobadores Numéricos
+     ============================================================ */
+  ui.quiz('#quiz-1', {
+    question: '1. En el TLC para variables independientes no idénticamente distribuidas ($s_n^2 = \\sum_{i=1}^n \\sigma_i^2 \\to \\infty$ y $\\P(|X_i| \\le M) = 1\\ \\forall i$), ¿qué garantizan conjuntamente estas dos hipótesis?',
+    options: [
+      'Aseguran que ningún sumando individual domine la dispersión total $s_n^2$ y que la varianza acumulada crezca lo suficiente para que la suma estandarizada converja a $N(0, 1)$ (caso particular de la condición de Lindeberg).',
+      'Obligan a que todas las variables $X_i$ tengan la misma media $\\mu_i = \\mu$ y la misma función de densidad.',
+      'Garantizan que $S_n$ converja casi seguramente a una constante igual a $m_n$.',
+      'Hacen que el máximo normalizado de la muestra converja también a una normal estándar $N(0, 1)$.'
+    ],
+    answer: 0,
+    explain: 'Estas dos condiciones implican la condición general de Lindeberg (1922): la cota uniforme $|X_i| \\le M$ impide saltos extremos individuales y $s_n^2 \\to \\infty$ garantiza que el peso relativo de cada término $\\sigma_i^2 / s_n^2$ sea despreciable en el límite.'
+  });
+
+  ui.quiz('#quiz-2', {
+    question: '2. ¿Cuál de las siguientes afirmaciones describe correctamente el alcance del Teorema del Valor Extremo (TVE)?',
+    options: [
+      'Para cualquier distribución $F_X$ con varianza finita, el máximo normalizado $(M_n - b_n)/a_n$ converge siempre a una distribución de Gumbel.',
+      'El TVE es un teorema condicional: si existen constantes $a_n &gt; 0$ y $b_n \\in \\R$ tales que $(M_n - b_n)/a_n \\dto G$ con $G$ no degenerada, entonces $G$ pertenece necesariamente a una de las tres familias GEV (Gumbel, Fréchet o Weibull).',
+      'Si la población tiene cola exponencial (como la Exponencial o la Normal), el límite del máximo normalizado es una distribución de Weibull con soporte acotado superiormente.',
+      'El TVE afirma que $M_n$ converge en probabilidad a la media poblacional $\\mu$.'
+    ],
+    answer: 1,
+    explain: 'Como señalan las Observaciones 2 y 3 del TVE, el teorema no garantiza por sí solo que el máximo normalizado siempre converja; establece que, cuando lo hace hacia una ley no degenerada, el límite pertenece a la familia GEV (Gumbel para colas exponenciales, Fréchet para colas pesadas, Weibull para colas acotadas superiormente).'
+  });
+
+  ui.quiz('#quiz-3', {
+    question: '3. Para $X_1, \\dots, X_n \\iid U(-\\theta, \\theta)$ con $\\theta &gt; 0$, ¿por qué $\\frac{S_n}{\\sqrt{n}\\,Y_n}$ (con $Y_n = \\max_i X_i$) constituye un pivote asintótico mientras que $\\frac{S_n}{\\sqrt{n}}$ no lo es?',
+    options: [
+      'Porque $Y_n$ converge en probabilidad a $0$ a velocidad $1/\\sqrt{n}$, anulando la varianza de $S_n$.',
+      'Porque $Y_n$ es un estimador insesgado exacto de $\\theta$ para cualquier tamaño de muestra $n$.',
+      'Porque $S_n/\\sqrt{n} \\dto N(0, \\theta^2/3)$ depende de $\\theta$, pero como $Y_n \\pto \\theta \\ne 0$, el Teorema de Slutsky para cocientes cancela $\\theta^2$ y arroja el límite universal $N(0, 1/3)$ libre de parámetros desconocidos.',
+      'Porque el Método Delta aplicado al máximo muestral siempre produce varianza límite $1/3$.'
+    ],
+    answer: 2,
+    explain: 'Un pivote asintótico es un estadístico cuya distribución límite no contiene parámetros desconocidos. Al dividir $S_n/\\sqrt{n} \\dto N(0, \\theta^2/3)$ entre $Y_n \\pto \\theta$, Slutsky multiplica la varianza límite por $1/\\theta^2$, obteniendo $N(0, 1/3)$.'
+  });
+
+  ui.numcheck('#nc-1', {
+    prompt: '1) Sea $X_1, \\dots, X_n \\iid U[0, 2\\theta]$ con $\\theta = e^2$. Según el Método Delta encadenado (Ejemplo 1b), $\\sqrt{n}\\left[1 - \\frac{\\log\\theta}{\\log\\bar X_n}\\right] \\dto N(0, \\xi^2)$. Calcula la varianza límite $\\xi^2$:',
+    answer: 1 / 12,
+    tol: 0.002,
+    placeholder: 'ej. 0.0833',
+    hint: 'Del Ejemplo 1(b), $\\xi^2 = \\frac{1}{3(\\log\\theta)^2}$. Como $\\theta = e^2$, $\\log\\theta = 2$, así que $\\xi^2 = \\frac{1}{3 \\cdot 4} = \\frac{1}{12} \\approx 0.0833$.'
+  });
+
+  ui.numcheck('#nc-2', {
+    prompt: '2) Sea $X_1, \\dots, X_n \\iid \\text{Exp}(1)$ y $M_n = \\max\\{X_1, \\dots, X_n\\}$. Calcula el límite $\\lim_{n\\to\\infty} \\P(M_n - \\log n \\le 1)$ usando la distribución límite $\\text{Gumb}(0, 1)$:',
+    answer: Math.exp(-Math.exp(-1)),
+    tol: 0.003,
+    placeholder: 'ej. 0.6922',
+    hint: 'Para $W \\sim \\text{Gumb}(0, 1)$, la acumulada es $G_1(z) = \\exp(-e^{-z})$. Evalúa en $z = 1$: $\\exp(-e^{-1}) \\approx 0.6922$.'
+  });
+
+})();
+</script>
+</body>
+</html>

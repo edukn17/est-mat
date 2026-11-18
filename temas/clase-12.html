@@ -1,0 +1,938 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clase 12 · Convergencia en distribución, Slutsky y Método Delta</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/theme.js"></script>
+<style>
+  .table-wrap { overflow-x: auto; margin: 1.2rem 0; }
+  table.tabla { width: 100%; border-collapse: collapse; font-size: 0.94rem; }
+  table.tabla th, table.tabla td { padding: 9px 12px; border: 1px solid var(--line); text-align: center; white-space: normal; }
+  table.tabla th { background: var(--surface-2); font-weight: 600; color: var(--ink); }
+  table.tabla td.izq, table.tabla th.izq { text-align: left; }
+</style>
+</head>
+<body data-page="clase-12" data-root="../">
+<main id="contenido">
+
+  <header class="page-head">
+    <p class="kicker">Clase 12 · Unidad 3 — Convergencia Estocástica</p>
+    <h1>Convergencia en distribución, Teorema de Slutsky y Método Delta</h1>
+    <p class="lead">Criterios prácticos para demostrar convergencia en distribución mediante funciones generadoras de momentos (Teorema de la Continuidad) y densidades (Teorema de Scheffé), la estrategia de multiplicar y dividir con el Teorema de Slutsky para reemplazar escalas desconocidas, y el Método Delta de primer orden, segundo orden y multivariado para obtener la distribución asintótica de estimadores y transformaciones.</p>
+  </header>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="continuidad">1. Teorema de la Continuidad, Scheffé y límite de Poisson</h2>
+    <p>Recordemos que una sucesión de variables aleatorias $\{X_n\}_{n\ge 1}$ converge en distribución a $X$ ($X_n \dto X$) si $\lim_{n\to\infty} F_n(x) = F(x)$ en todo punto $x \in \R$ donde $F$ es continua. En la práctica, calcular $F_n(x)$ explícitamente suele ser difícil; los siguientes teoremas permiten demostrar $X_n \dto X$ trabajando directamente con la función generadora de momentos (FGM), con probabilidades puntuales o con densidades.</p>
+
+    <div class="box teorema" id="thm-continuidad">
+      <span class="box-title">Teorema de la Continuidad (por FGM)</span>
+      <p>Sea $\{X_n\}_{n\ge 1}$ una sucesión de variables aleatorias con funciones generadoras de momentos correspondientes $\{M_n(t)\}_{n\ge 1}$ que existen para $|t| &lt; b$ (con $b &gt; 0$). Supongamos que</p>
+      $$\lim_{n\to\infty} M_n(t) = M(t) \quad \text{para } |t| \le a &lt; b,$$
+      <p>donde $M(t)$ es la función generadora de momentos de una variable aleatoria $X$. Entonces,</p>
+      $$X_n \dto X.$$
+    </div>
+
+    <div class="box nota" id="lem-exponencial">
+      <span class="box-title">Observación y lema exponencial útil</span>
+      <p>Recuerda la <b>propiedad de unicidad de la FGM</b>: si dos variables aleatorias poseen exactamente la misma FGM en un entorno abierto de $t = 0$, entonces tienen la misma distribución.</p>
+      <p>Además, el siguiente límite elemental aparece constantemente al evaluar límites de FGM:</p>
+      <p>Si $\{c_n\}_{n\ge 1}$ y $c$ son números reales tales que $\lim_{n\to\infty} c_n = c$, entonces</p>
+      $$\lim_{n\to\infty} \left(1 + \frac{c_n}{n}\right)^n = e^c.$$
+      <p><small><i>Idea rápida:</i> para $n$ grande, $n\ln\left(1 + \frac{c_n}{n}\right) = n\left(\frac{c_n}{n} + O\left(\frac{1}{n^2}\right)\right) = c_n + O\left(\frac{1}{n}\right) \to c$, y por continuidad de la exponencial resulta $e^c$.</small></p>
+    </div>
+
+    <h3>Otras condiciones suficientes para la convergencia en distribución</h3>
+    <p>Cuando las FGM no existen o resultan engorrosas, contamos con criterios directos según la naturaleza discreta o continua de las variables.</p>
+
+    <div class="box teorema" id="thm-discretas">
+      <span class="box-title">(a) Variables aleatorias discretas</span>
+      <p>Sean $X_1, X_2, \dots$ y $X$ variables aleatorias enteras y no negativas (con soporte en $\mathbb{N} = \{0, 1, 2, \dots\}$). Entonces,</p>
+      $$X_n \dto X \iff \lim_{n\to\infty} \P(X_n = k) = \P(X = k) \quad \forall k \in \mathbb{N}.$$
+      <p>En el caso general de variables aleatorias discretas que toman valores en un conjunto numerable fijo $\{x_0, x_1, x_2, \dots\}$, es válida la implicación suficiente ($\Leftarrow$): si $\lim_{n\to\infty} \P(X_n = x_k) = \P(X = x_k)$ para todo $k$, entonces $X_n \dto X$.</p>
+    </div>
+
+    <div class="box teorema" id="thm-scheffe">
+      <span class="box-title">(b) Teorema de Scheffé</span>
+      <p>Sean $X_1, X_2, \dots$ y $X$ variables aleatorias continuas con funciones de densidad respectivas $f_1, f_2, \dots$ y $f$. Si</p>
+      $$\lim_{n\to\infty} f_n(x) = f(x) \quad \text{para casi todo } x \in \R$$
+      <p>(es decir, el conjunto de excepción $\{x \in \R : f_n(x) \not\to f(x)\}$ tiene medida de Lebesgue nula), entonces</p>
+      $$X_n \dto X.$$
+    </div>
+
+    <div class="box cuidado">
+      <span class="box-title">¡Cuidado! El recíproco del Teorema de Scheffé es falso</span>
+      <p>Que $X_n \dto X$ <b>no implica</b> que las densidades $f_n(x)$ converjan puntualmente a $f(x)$. Existen dos razones frecuentes:</p>
+      <ul>
+        <li>Variables discretas pueden converger en distribución a una variable continua (por ejemplo, por el TLC, un promedio estandarizado de Bernoulli converge a $N(0,1)$ sin tener siquiera densidad).</li>
+        <li>Incluso si todas las $X_n$ y $X$ son continuas con densidades suaves, $f_n(x)$ puede oscilar cada vez más rápido alrededor de $f(x)$ mientras las oscilaciones se promedian al integrar (como ocurre en el <a href="#ej-3">Ejemplo 3</a> más abajo).</li>
+      </ul>
+    </div>
+
+    <div class="box teorema" id="thm-poisson">
+      <span class="box-title">Límite Binomial para la Poisson (Teorema de Poisson, 1832)</span>
+      <p>Si $X_n \sim \text{Bin}(n, p_n)$ para $n \ge 1$ y $\lim_{n\to\infty} n p_n = \lambda &gt; 0$, entonces</p>
+      $$X_n \dto \text{Poisson}(\lambda).$$
+      <p>Por el criterio para variables enteras no negativas, esto equivale exactamente a demostrar que</p>
+      $$\lim_{n\to\infty} \P(X_n = k) = \frac{e^{-\lambda}\lambda^k}{k!}, \quad \forall k \in \mathbb{N}.$$
+
+      <details class="prueba" open><summary>Demostración algebraica completa (y verificación vía FGM)</summary><div>
+        <ol class="pasos">
+          <li>Fijamos un entero no negativo $k \in \mathbb{N}$ y escribimos $\lambda_n = n p_n$, de modo que $p_n = \lambda_n / n$ y $\lim_{n\to\infty} \lambda_n = \lambda &gt; 0$. Para $n \ge k$, la función de masa de probabilidad de $X_n$ es:
+            $$\P(X_n = k) = \binom{n}{k} p_n^k (1 - p_n)^{n-k} = \frac{n(n-1)\cdots(n-k+1)}{k!} \left(\frac{\lambda_n}{n}\right)^k \left(1 - \frac{\lambda_n}{n}\right)^{n-k}.$$</li>
+          <li>Agrupamos cada uno de los $k$ factores del numerador con un factor $n$ proveniente de $n^k$, y separamos el último factor en exponentes $n$ y $-k$:
+            $$\P(X_n = k) = \frac{\lambda_n^k}{k!} \left[1 \cdot \left(1 - \frac{1}{n}\right)\cdots\left(1 - \frac{k-1}{n}\right)\right] \left(1 - \frac{\lambda_n}{n}\right)^n \left(1 - \frac{\lambda_n}{n}\right)^{-k}.$$</li>
+          <li>Evaluamos el límite de cada bloque cuando $n \to \infty$ (manteniendo $k$ fijo):
+            <ul>
+              <li>$\lim_{n\to\infty} \frac{\lambda_n^k}{k!} = \frac{\lambda^k}{k!}$, ya que $\lambda_n \to \lambda$.</li>
+              <li>Para cada $j \in \{0, 1, \dots, k-1\}$, $\lim_{n\to\infty}\left(1 - \frac{j}{n}\right) = 1$, por lo que el producto de los $k$ términos tiende a $1$.</li>
+              <li>Aplicando el lema exponencial con $c_n = -\lambda_n \to -\lambda$: $\lim_{n\to\infty}\left(1 - \frac{\lambda_n}{n}\right)^n = e^{-\lambda}$.</li>
+              <li>Como $\lambda_n/n \to 0$, $\lim_{n\to\infty}\left(1 - \frac{\lambda_n}{n}\right)^{-k} = (1 - 0)^{-k} = 1$.</li>
+            </ul>
+          </li>
+          <li>Combinando todos los límites por álgebra elemental:
+            $$\lim_{n\to\infty} \P(X_n = k) = \frac{\lambda^k}{k!} \cdot 1 \cdot e^{-\lambda} \cdot 1 = \frac{e^{-\lambda}\lambda^k}{k!}, \quad \forall k \in \mathbb{N}.$$
+            Por el criterio de convergencia para variables enteras no negativas, concluimos que $X_n \dto \text{Poisson}(\lambda)$.</li>
+        </ol>
+        <p><i>Verificación alternativa con FGM:</i> $M_{X_n}(t) = (1 - p_n + p_n e^t)^n = \left(1 + \frac{n p_n (e^t - 1)}{n}\right)^n \xrightarrow{n\to\infty} \exp\big(\lambda(e^t - 1)\big)$, que es la FGM de $\text{Poisson}(\lambda)$ para todo $t \in \R$. El Teorema de la Continuidad da la misma conclusión de inmediato.</p>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="slutsky">2. Teorema de Slutsky y la estrategia de multiplicar y dividir</h2>
+    <p>El Teorema del Límite Central (Lindeberg–Lévy) garantiza que si $X_1, X_2, \dots \iid$ tienen media $\mu$ y varianza $\sigma^2 \in (0, \infty)$ (con $S_n = \sum_{i=1}^n X_i$), entonces</p>
+    $$\frac{S_n - n\mu}{\sigma\sqrt{n}} = \frac{\bar X_n - \mu}{\sigma/\sqrt{n}} \dto N(0, 1), \qquad \text{equivalentemente} \quad \sqrt{n}(\bar X_n - \mu) \dto N(0, \sigma^2).$$
+    <p>Mientras la Ley de los Grandes Números (LFGN de Kolmogorov) indica que $\bar X_n \xrightarrow{\text{c.s.}} \mu$, el TLC precisa la <b>velocidad</b> ($1/\sqrt{n}$) y la <b>forma límite normal</b> de las fluctuaciones $\bar X_n - \mu$, sin importar la distribución poblacional de las $X_i$. El gran inconveniente práctico es que $\sigma$ suele ser desconocida. ¿Podemos sustituir $\sigma$ por un estimador consistente sin destruir el límite normal?</p>
+
+    <div class="box teorema" id="thm-slutsky">
+      <span class="box-title">Teorema de Slutsky (1925)</span>
+      <p>Sean $\{X_n\}_{n\ge 1}$ y $\{Y_n\}_{n\ge 1}$ sucesiones de variables aleatorias tales que $X_n \dto X$ y $Y_n \dto c$ (equivalentemente $Y_n \pto c$), donde $c \in \R$ es una <b>constante</b>. Entonces:</p>
+      <ol class="pasos">
+        <li><b>(a) Suma o resta:</b> $X_n \pm Y_n \dto X \pm c$.</li>
+        <li><b>(b) Producto:</b> $X_n Y_n \dto c X$.</li>
+        <li><b>(c) Cociente:</b> $\dfrac{X_n}{Y_n} \dto \dfrac{X}{c}$, siempre que $c \ne 0$.</li>
+      </ol>
+    </div>
+
+    <div class="box cuidado">
+      <span class="box-title">¿Por qué es indispensable que $Y_n$ converja a una constante?</span>
+      <p>La convergencia en distribución por separado no determina la distribución conjunta: si $X_n \dto X$ y $Y_n \dto Y$ con $Y$ aleatoria no degenerada, en general $X_n + Y_n$ <b>no</b> converge a $X + Y$ (salvo independencia u otra estructura conjunta). Cuando el límite de $Y_n$ es una constante $c$, la masa de $Y_n$ se concentra en un único punto y Slutsky permite operar como si $Y_n$ fuese la constante $c$.</p>
+    </div>
+
+    <div class="box idea" id="idea-slutsky">
+      <span class="box-title">Estrategia práctica: multiplicar y dividir por la escala verdadera</span>
+      <p>Cuando un estadístico reemplaza la desviación verdadera $\sigma/\sqrt{n}$ (o $\sigma\sqrt{n}$) por una escala aleatoria estimada, descompón el estadístico multiplicando y dividiendo por la escala que conoce el TLC:</p>
+      $$\text{Estadístico} = \underbrace{\frac{\text{lo que el TLC conoce}}{\text{escala verdadera}}}_{\dto N(0,1)} \times \underbrace{\frac{\text{escala verdadera}}{\text{escala estimada}}}_{\pto \text{ constante } c}.$$
+      <p>El primer factor converge en distribución a $N(0,1)$ por el TLC; el segundo factor converge en probabilidad (o casi seguramente, vía LFGN y preservación por funciones continuas) a una constante $c$. Por Slutsky (b), el producto completo converge en distribución a $c \cdot N(0, 1) \stackrel{d}{=} N(0, c^2)$.</p>
+    </div>
+
+    <p>De manera complementaria, cuando un estadístico tiene la forma $T_n = A_n + R_n$ con $A_n \dto N(0,1)$ y residuo $R_n \pto 0$, se aplica Slutsky (a); y cuando aparece un cociente $N_n / D_n$ con $N_n \dto X$ y $D_n \pto c \ne 0$, se aplica directamente Slutsky (c).</p>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="delta">3. Método Delta (1er orden, 2do orden y multivariado)</h2>
+    <p>Ya sabemos por la LFGN y la continuidad que si $\bar X_n \xrightarrow{\text{c.s.}} \mu$ y $g$ es continua, entonces $g(\bar X_n) \xrightarrow{\text{c.s.}} g(\mu)$. La pregunta clave ahora es: <b>¿cómo se distribuyen las fluctuaciones reescaladas $\sqrt{n}\big(g(Y_n) - g(\mu)\big)$?</b> El Método Delta responde combinando una expansión de Taylor con el Teorema de Slutsky.</p>
+
+    <div class="box teorema" id="thm-delta-1">
+      <span class="box-title">Método Delta (1er orden)</span>
+      <p>Sean $Y_1, Y_2, \dots$ variables aleatorias tales que</p>
+      $$\sqrt{n}(Y_n - \mu) \dto N(0, \sigma^2),$$
+      <p>donde $\mu \in \R$ y $\sigma^2 &gt; 0$ son constantes. Si $g: \R \to \R$ es derivable en $\mu$ con $g'(\mu) \ne 0$, entonces</p>
+      $$\sqrt{n}\big(g(Y_n) - g(\mu)\big) \dto N\big(0,\, [g'(\mu)]^2\sigma^2\big).$$
+    </div>
+
+    <div class="box nota" id="dem-delta-1">
+      <span class="box-title">Deducción mediante Taylor de primer orden y Slutsky</span>
+      <p>Aproximando $g(Y_n)$ alrededor de $\mu$ mediante un desarrollo de Taylor de primer orden se obtiene:</p>
+      $$g(Y_n) = g(\mu) + g'(\mu)(Y_n - \mu) + r_n,$$
+      <p>donde el resto satisface $\frac{r_n}{Y_n - \mu} \to 0$ cuando $Y_n \to \mu$. Multiplicando ambos miembros por $\sqrt{n}$:</p>
+      $$\sqrt{n}\big(g(Y_n) - g(\mu)\big) = g'(\mu)\,\underbrace{\sqrt{n}(Y_n - \mu)}_{\dto N(0,\sigma^2)} + \underbrace{\frac{r_n}{Y_n - \mu}}_{\pto 0}\,\underbrace{\sqrt{n}(Y_n - \mu)}_{\dto N(0,\sigma^2)}.$$
+      <p>Como $\sqrt{n}(Y_n - \mu) \dto N(0, \sigma^2)$, se tiene $Y_n - \mu = \frac{1}{\sqrt{n}}\big[\sqrt{n}(Y_n - \mu)\big] \pto 0$ (por Slutsky con $1/\sqrt{n} \to 0$), de modo que $Y_n \pto \mu$ y por derivabilidad de $g$ en $\mu$, el cociente $\frac{r_n}{Y_n - \mu} \pto 0$. Aplicando Slutsky (b) y (a), el segundo sumando converge en probabilidad a $0$ y el término principal converge a $g'(\mu)\, N(0, \sigma^2) \stackrel{d}{=} N\big(0, [g'(\mu)]^2\sigma^2\big)$.</p>
+    </div>
+
+    <div class="box idea" id="receta-delta">
+      <span class="box-title">Receta de 5 pasos y lectura práctica</span>
+      <ol class="pasos">
+        <li><b>Identificar el estimador base $Y_n$:</b> usualmente $\bar X_n$ o un promedio $\frac{1}{n}\sum_{i=1}^n h(X_i)$.</li>
+        <li><b>Calcular momentos y escribir el TLC:</b> hallar $\mu = \E[\cdot]$ y $\sigma^2 = \Var(\cdot)$, y plantear $\sqrt{n}(Y_n - \mu) \dto N(0, \sigma^2)$.</li>
+        <li><b>Identificar la transformación $g$:</b> escribir el estadístico de interés como $g(Y_n)$.</li>
+        <li><b>Derivar y verificar:</b> calcular $g'(u)$, evaluar en $\mu$ y comprobar que $g'(\mu) \ne 0$.</li>
+        <li><b>Concluir:</b> la varianza asintótica es $[g'(\mu)]^2\sigma^2$, independientemente del signo de $g'(\mu)$ pues entra al cuadrado.</li>
+      </ol>
+      <p><b>Lectura práctica para muestras grandes ($n \gg 1$):</b></p>
+      $$g(Y_n) \overset{\text{aprox}}{\sim} N\left(g(\mu),\, \frac{[g'(\mu)]^2\sigma^2}{n}\right).$$
+      <p><small><i>Observación:</i> el Método Delta también se puede <b>encadenar</b>: el resultado asintótico de un primer Delta sobre $W_n = g(Y_n)$ sirve como entrada directa para un segundo Delta sobre $h(W_n)$.</small></p>
+    </div>
+
+    <div class="box teorema" id="thm-delta-emv">
+      <span class="box-title">Conexión con EMV, Invarianza e Información de Fisher</span>
+      <p>Bajo condiciones estándar de regularidad (soporte independiente de $\theta$, diferenciabilidad de $\ln f(x;\theta)$ e información finita $I_1(\theta) &gt; 0$), el estimador de máxima verosimilitud $\hat\theta_{\text{MV}}$ es asintóticamente normal y alcanza la cota inferior de Cramér–Rao:</p>
+      $$\sqrt{n}(\hat\theta_{\text{MV}} - \theta) \dto N\left(0,\, \frac{1}{I_1(\theta)}\right),$$
+      <p>donde $I_1(\theta) = \E\left[\left(\frac{\partial}{\partial\theta}\ln f(X;\theta)\right)^2\right] = -\E\left[\frac{\partial^2}{\partial\theta^2}\ln f(X;\theta)\right]$ es la Información de Fisher de una observación ($I_n(\theta) = n I_1(\theta)$).</p>
+      <p>Para estimar cualquier parámetro transformado $\tau = g(\theta)$ con $g'(\theta) \ne 0$, el <b>Principio de Invarianza</b> establece que su EMV es $\widehat{g(\theta)}_{\text{MV}} = g(\hat\theta_{\text{MV}})$, y el <b>Método Delta</b> entrega inmediatamente su distribución asintótica:</p>
+      $$\sqrt{n}\big(g(\hat\theta_{\text{MV}}) - g(\theta)\big) \dto N\left(0,\, \frac{[g'(\theta)]^2}{I_1(\theta)}\right) \qquad \Longleftrightarrow \qquad g(\hat\theta_{\text{MV}}) \overset{\text{aprox}}{\sim} N\left(g(\theta),\, \frac{[g'(\theta)]^2}{n I_1(\theta)}\right).$$
+    </div>
+
+    <div class="box teorema" id="thm-delta-2">
+      <span class="box-title">Caso degenerado ($g'(\mu) = 0$): Método Delta de segundo orden</span>
+      <p>Supongamos que $\sqrt{n}(Y_n - \mu) \dto N(0, \sigma^2)$ con $\sigma^2 &gt; 0$, pero $g'(\mu) = 0$. El Método Delta de primer orden arroja $N(0, 0)$ (masa puntual en $0$), lo que solo indica que $\sqrt{n}\big(g(Y_n) - g(\mu)\big) \pto 0$: la diferencia decrece más rápido que $1/\sqrt{n}$.</p>
+      <p>Si $g$ es dos veces derivable en $\mu$ con $g'(\mu) = 0$ y $g''(\mu) \ne 0$, el desarrollo de Taylor de segundo orden alrededor de $\mu$ da:</p>
+      $$g(Y_n) - g(\mu) = \underbrace{g'(\mu)}_{=0}(Y_n - \mu) + \frac{1}{2}g''(\mu)(Y_n - \mu)^2 + r_n \approx \frac{1}{2}g''(\mu)(Y_n - \mu)^2.$$
+      <p>Multiplicando ambos lados por $n$ (en lugar de $\sqrt{n}$):</p>
+      $$n\big(g(Y_n) - g(\mu)\big) \approx \frac{1}{2}g''(\mu)\sigma^2 \left(\frac{\sqrt{n}(Y_n - \mu)}{\sigma}\right)^2.$$
+      <p>Como $\frac{\sqrt{n}(Y_n - \mu)}{\sigma} \dto Z \sim N(0, 1)$, por preservación continua su cuadrado converge en distribución a $Z^2 \sim \chi^2_{(1)}$. Aplicando el Teorema de Slutsky (multiplicación por constante y resto $n r_n \pto 0$), se concluye:</p>
+      $$n\big(g(Y_n) - g(\mu)\big) \dto \frac{1}{2}g''(\mu)\sigma^2\,\chi^2_{(1)}.$$
+    </div>
+
+    <div class="box teorema" id="thm-delta-multi">
+      <span class="box-title">Método Delta Multivariado</span>
+      <p>Sea $\mathbf{Y}_n = (Y_{n1}, Y_{n2}, \dots, Y_{np})^\top$ una sucesión de vectores aleatorios en $\R^p$ tales que</p>
+      $$\sqrt{n}(\mathbf{Y}_n - \boldsymbol{\mu}) \dto N_p(\mathbf{0}, \boldsymbol{\Sigma}),$$
+      <p>donde $\boldsymbol{\mu} \in \R^p$ y $\boldsymbol{\Sigma}$ es la matriz de covarianzas asintótica $p \times p$. Sea $g: \R^p \to \R$ una función diferenciable en $\boldsymbol{\mu}$ con vector gradiente</p>
+      $$\nabla g(\mathbf{y}) = \begin{bmatrix} \dfrac{\partial g}{\partial y_1} \\ \vdots \\ \dfrac{\partial g}{\partial y_p} \end{bmatrix}, \qquad \nabla_{\boldsymbol{\mu}} = \nabla g(\boldsymbol{\mu}) \ne \mathbf{0}.$$
+      <p>Si $\nabla_{\boldsymbol{\mu}}^\top \boldsymbol{\Sigma} \nabla_{\boldsymbol{\mu}} &gt; 0$ (asumiendo componentes de $\nabla_{\boldsymbol{\mu}}$ no simultáneamente nulas), la aproximación lineal multivariada $g(\mathbf{Y}_n) - g(\boldsymbol{\mu}) \approx \nabla_{\boldsymbol{\mu}}^\top (\mathbf{Y}_n - \boldsymbol{\mu})$ y Slutsky garantizan:</p>
+      $$\sqrt{n}\big(g(\mathbf{Y}_n) - g(\boldsymbol{\mu})\big) \dto N\big(0,\, \nabla_{\boldsymbol{\mu}}^\top \boldsymbol{\Sigma} \nabla_{\boldsymbol{\mu}}\big).$$
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="ejemplos">4. Ejemplos y ejercicios resueltos paso a paso</h2>
+    <p>A continuación reunimos los ejemplos clásicos de clase y los ejercicios integradores de evaluaciones recientes, combinando FGM, Scheffé, LFGN, TLC, Slutsky, invarianza de EMV y Método Delta.</p>
+
+    <!-- EJERCICIO 1 -->
+    <div class="box ejercicio" id="ej-1">
+      <span class="box-title">Ejemplo 1 · Normales con media y desviación convergentes (Clase 12)</span>
+      <p>Suponga que $X_n \sim N(\mu_n, \sigma_n^2)$ para $n \ge 1$, donde $\mu_n \to \mu \in \R$ y $\sigma_n \to \sigma &gt; 0$ cuando $n \to \infty$. Demuestre mediante el Teorema de la Continuidad que</p>
+      $$X_n \dto N(\mu, \sigma^2).$$
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Escriba la FGM de una normal $N(\mu_n, \sigma_n^2)$: $M_n(t) = \exp\big(\mu_n t + \frac{1}{2}\sigma_n^2 t^2\big)$, válida para todo $t \in \R$. Tome el límite cuando $n \to \infty$ fijando $t$.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li>Para cada $n \ge 1$, la FGM de $X_n \sim N(\mu_n, \sigma_n^2)$ existe para todo $t \in \R$ y vale:
+            $$M_n(t) = \exp\left(\mu_n t + \frac{1}{2}\sigma_n^2 t^2\right).$$</li>
+          <li>Fijado cualquier $t \in \R$, como $\mu_n \to \mu$ y $\sigma_n \to \sigma$, se cumple $\mu_n t + \frac{1}{2}\sigma_n^2 t^2 \to \mu t + \frac{1}{2}\sigma^2 t^2$. Por continuidad de la función exponencial:
+            $$\lim_{n\to\infty} M_n(t) = \exp\left(\mu t + \frac{1}{2}\sigma^2 t^2\right) = M_X(t), \quad \forall t \in \R.$$</li>
+          <li>Reconocemos a $M_X(t)$ como la FGM de una variable aleatoria $X \sim N(\mu, \sigma^2)$. Como la convergencia puntual se cumple en cualquier intervalo $|t| \le a &lt; b$ (para todo $b &gt; 0$), el Teorema de la Continuidad concluye inmediatamente que $X_n \dto N(\mu, \sigma^2)$.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJERCICIO 2 -->
+    <div class="box ejercicio" id="ej-2">
+      <span class="box-title">Ejemplo 2 · TLC con varianza muestral $S^2$ y $t$ de Student asintótica (Clase 12 + Examen 2023 II PAO)</span>
+      <p>Resuelve ambos apartados aplicando el Teorema de Slutsky:</p>
+      <ol class="pasos">
+        <li><b>(a) TLC estudentizado:</b> Asuma las condiciones del TLC ($X_1, \dots, X_n \iid$ con media $\mu$ y varianza $\sigma^2 \in (0, \infty)$) y sea $S^2 = \frac{1}{n-1}\sum_{i=1}^n (X_i - \bar X_n)^2$. Demuestre que
+          $$T_n = \frac{\bar X_n - \mu}{S/\sqrt{n}} \dto N(0, 1).$$</li>
+        <li><b>(b) $t$ de Student asintótica (Examen 2023 II PAO, 3ra Eval.):</b> Sean $Y_1, \dots, Y_n, Y_{n+1} \iid N(0, 1)$ y $S^2 = \frac{1}{n-1}\sum_{i=1}^n (Y_i - \bar Y_n)^2$. Halle la distribución <b>exacta</b> y la distribución <b>asintótica</b> de
+          $$T_n = \frac{\sqrt{n-1}\, Y_{n+1}}{\sqrt{\sum_{i=1}^n (Y_i - \bar Y_n)^2}} = \frac{Y_{n+1}}{S}.$$</li>
+      </ol>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En (a), reescribe $T_n = Z_n W_n$ con $Z_n = \frac{\bar X_n - \mu}{\sigma/\sqrt{n}}$ y $W_n = \frac{\sigma}{S}$, usando consistencia de $S^2$. En (b), observa que $Y_{n+1} \sim N(0,1)$ es independiente de $(n-1)S^2 \sim \chi^2_{(n-1)}$.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <h4>Apartado (a): TLC con $S^2$</h4>
+        <ol class="pasos">
+          <li>Multiplicamos y dividimos por la escala verdadera $\sigma/\sqrt{n}$:
+            $$T_n = \frac{\bar X_n - \mu}{S/\sqrt{n}} = \underbrace{\frac{\bar X_n - \mu}{\sigma/\sqrt{n}}}_{Z_n} \cdot \underbrace{\frac{\sigma}{S}}_{W_n}.$$</li>
+          <li>Por el TLC de Lindeberg–Lévy, $Z_n \dto N(0, 1)$.</li>
+          <li>Como $\E[X_1^2] &lt; \infty$, podemos escribir $S^2 = \frac{n}{n-1}\left(\frac{1}{n}\sum_{i=1}^n X_i^2 - \bar X_n^2\right)$. Por la LDGN de Khintchine (y LFGN de Kolmogorov), $\frac{1}{n}\sum X_i^2 \pto \E[X_1^2]$ y $\bar X_n \pto \mu$, luego $S^2 \pto \E[X_1^2] - \mu^2 = \sigma^2$. Por continuidad de $u \mapsto \sigma/\sqrt{u}$ en $\sigma^2 &gt; 0$, resulta $W_n = \sigma/S \pto 1$.</li>
+          <li>Por el Teorema de Slutsky (b), $T_n = Z_n W_n \dto 1 \cdot N(0, 1) = N(0, 1)$.</li>
+        </ol>
+
+        <h4>Apartado (b): Distribución exacta y asintótica de $Y_{n+1}/S$</h4>
+        <ol class="pasos">
+          <li><b>Distribución exacta:</b> Como $Y_1, \dots, Y_n \iid N(0, 1)$, sabemos por distribuciones muestrales que $(n-1)S^2 = \sum_{i=1}^n (Y_i - \bar Y_n)^2 \sim \chi^2_{(n-1)}$. Además, $Y_{n+1} \sim N(0, 1)$ es independiente de $(Y_1, \dots, Y_n)$ y por ende independiente de $S^2$. Entonces:
+            $$T_n = \frac{Y_{n+1}}{\sqrt{\big[(n-1)S^2\big]/(n-1)}} \sim t_{(n-1)}.$$</li>
+          <li><b>Distribución asintótica:</b> Para todo $n \ge 2$, $Y_{n+1} \sim N(0, 1)$ (en particular $Y_{n+1} \dto N(0, 1)$). Al mismo tiempo, $S^2 \pto \Var(Y_1) = 1$, luego por continuidad $S \pto 1$. Aplicando Slutsky (c, cociente):
+            $$T_n = \frac{Y_{n+1}}{S} \dto \frac{N(0, 1)}{1} = N(0, 1).$$
+            Esto también muestra directamente que $t_{(n-1)} \dto N(0, 1)$ cuando $n \to \infty$.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJERCICIO 3 -->
+    <div class="box ejercicio" id="ej-3">
+      <span class="box-title">Ejemplo 3 · Contraejemplo al recíproco del Teorema de Scheffé (Clase 12)</span>
+      <p>Sea $\{X_n\}_{n\ge 1}$ una sucesión de variables aleatorias cuya función de distribución en $[0, 1]$ está dada por</p>
+      $$F_n(x) = x - \frac{\sin(2n\pi x)}{2n\pi}, \quad 0 \le x \le 1,$$
+      <p>con $F_n(x) = 0$ si $x &lt; 0$ y $F_n(x) = 1$ si $x &gt; 1$.</p>
+      <ol class="pasos">
+        <li><b>(a)</b> Muestre que $X_n$ tiene función de densidad $f_n(x)$ y concluya que $F_n$ es efectivamente una función de distribución válida.</li>
+        <li><b>(b)</b> Pruebe que $X_n \dto X$ con $X \sim U(0, 1)$, pero la densidad $f_n(x)$ no converge a la densidad $f(x) = 1$ en el intervalo $(0, 1)$.</li>
+      </ol>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Deriva $F_n(x)$ en $(0,1)$ para hallar $f_n(x)$, comprueba que $f_n(x) \ge 0$ y que $\int_0^1 f_n(x)\,dx = 1$. Luego acota $|F_n(x) - x| \le \frac{1}{2n\pi}$ y evalúa $f_n(1/4)$ para distintos valores de $n$.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Validez como densidad y FDA:</b> En $(0, 1)$, $F_n$ es derivable y su derivada es:
+            $$f_n(x) = F_n'(x) = 1 - \frac{2n\pi\cos(2n\pi x)}{2n\pi} = 1 - \cos(2n\pi x), \quad 0 &lt; x &lt; 1,$$
+            y $f_n(x) = 0$ fuera de $[0, 1]$. Como $-1 \le \cos(2n\pi x) \le 1$, se cumple $f_n(x) \ge 0$ en todo $\R$. Además:
+            $$\int_{-\infty}^{\infty} f_n(x)\,dx = \int_0^1 \big(1 - \cos(2n\pi x)\big)\,dx = \left[x - \frac{\sin(2n\pi x)}{2n\pi}\right]_0^1 = 1 - 0 = 1.$$
+            También $F_n(0) = 0$, $F_n(1) = 1$, $F_n$ es continua en todo $\R$ y no decreciente (pues $F_n'(x) \ge 0$). Por lo tanto, $f_n$ es una densidad legítima y $F_n(x) = \int_{-\infty}^x f_n(t)\,dt$ es una función de distribución válida.</li>
+          <li><b>Convergencia en distribución:</b> Para $x \in [0, 1]$, como $|\sin(2n\pi x)| \le 1$:
+            $$\left|F_n(x) - x\right| = \frac{|\sin(2n\pi x)|}{2n\pi} \le \frac{1}{2n\pi} \xrightarrow{n\to\infty} 0.$$
+            Para $x &lt; 0$ se tiene $F_n(x) = 0 = F_X(x)$, y para $x &gt; 1$ se tiene $F_n(x) = 1 = F_X(x)$, donde $F_X$ es la FDA de $X \sim U(0, 1)$. Así, $\lim_{n\to\infty} F_n(x) = F_X(x)$ en todo $x \in \R$, es decir, $X_n \dto U(0, 1)$.</li>
+          <li><b>Falla de la convergencia de densidades:</b> La densidad límite de $U(0, 1)$ es $f(x) = 1$ en $(0, 1)$. Sin embargo, $f_n(x) = 1 - \cos(2n\pi x)$ no converge a $1$: por ejemplo, en $x = 1/4$ vale
+            $$f_n(1/4) = 1 - \cos\left(\frac{n\pi}{2}\right) = \begin{cases} 1 &amp; \text{si } n = 1, 3, 5, \dots \\ 2 &amp; \text{si } n = 2, 6, 10, \dots \\ 0 &amp; \text{si } n = 4, 8, 12, \dots \end{cases}$$
+            La sucesión oscila indefinidamente entre $0$, $1$ y $2$ sin límite. De hecho, las oscilaciones de amplitud $1$ tienen frecuencia $n \to \infty$, de modo que sus áreas positivas y negativas se cancelan al integrar, permitiendo que $F_n \to F_X$ aun cuando $f_n \not\to f$.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJERCICIO 4 -->
+    <div class="box ejercicio" id="ej-4">
+      <span class="box-title">Ejemplo 4 · Gamma y Poisson con escala estimada (Exámenes 2022–2024)</span>
+      <p>Sea $Y_n \sim \text{Gamma}(n, \beta)$, usando la parametrización de escala $\beta &gt; 0$ (donde $\E[Y_n] = n\beta$ y $\Var(Y_n) = n\beta^2$).</p>
+      <ol class="pasos">
+        <li><b>(a)</b> Demuestre mediante la FGM que $Y_n \stackrel{d}{=} \sum_{i=1}^n X_i$, donde $X_1, \dots, X_n \iid \text{Exp}(\beta)$ (con media $\beta$).</li>
+        <li><b>(b)</b> Multiplicando y dividiendo por $\beta\sqrt{n}$ (Exámenes 2023 II PAO, 2024 I PAO), pruebe que
+          $$\frac{Y_n - n\beta}{\sqrt{Y_n}} \dto N(0, \beta),$$
+          y concluya el caso particular $\beta = 1$: $\dfrac{Y_n - n}{\sqrt{Y_n}} \dto N(0, 1)$.</li>
+        <li><b>(c)</b> <i>(Variante Poisson · Examen 2022 I PAO)</i> Sea $X_1, \dots, X_n \iid \text{Pois}(\lambda)$ con $\lambda &gt; 0$. Pruebe que
+          $$W_n = \frac{\bar X_n - \lambda}{\sqrt{\bar X_n / n}} \dto N(0, 1).$$</li>
+      </ol>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En (a), recuerda que $M_X(t) = (1 - \beta t)^{-1}$ para $t &lt; 1/\beta$. En (b), sustituye $Y_n \stackrel{d}{=} \sum_{i=1}^n X_i$, aplica el TLC al cociente $\frac{\sum X_i - n\beta}{\beta\sqrt{n}}$ y la LFGN a $\frac{1}{n}\sum X_i$. En (c), multiplica y divide por $\sqrt{\lambda/n}$.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Apartado (a) — FGM:</b> Si $X \sim \text{Exp}(\beta)$ con densidad $f(x) = \frac{1}{\beta}e^{-x/\beta}$ para $x &gt; 0$, su FGM para $t &lt; 1/\beta$ es:
+            $$M_X(t) = \int_0^\infty e^{tx}\,\frac{1}{\beta}e^{-x/\beta}\,dx = \frac{1}{\beta}\int_0^\infty e^{-(1/\beta - t)x}\,dx = \frac{1}{1 - \beta t} = (1 - \beta t)^{-1}.$$
+            Por independencia de $X_1, \dots, X_n$:
+            $$M_{\sum_{i=1}^n X_i}(t) = \prod_{i=1}^n M_{X_i}(t) = (1 - \beta t)^{-n}, \quad t &lt; \frac{1}{\beta},$$
+            que coincide exactamente con la FGM de $\text{Gamma}(n, \beta)$. Por unicidad de la FGM, $Y_n \stackrel{d}{=} \sum_{i=1}^n X_i$.</li>
+          <li><b>Apartado (b) — Multiplicar y dividir:</b> Con $Y_n \stackrel{d}{=} \sum_{i=1}^n X_i$, donde $\mu = \E[X_1] = \beta$ y $\sigma^2 = \Var(X_1) = \beta^2$, multiplicamos y dividimos por $\beta\sqrt{n}$:
+            $$\frac{Y_n - n\beta}{\sqrt{Y_n}} \stackrel{d}{=} \underbrace{\frac{\sum_{i=1}^n X_i - n\beta}{\beta\sqrt{n}}}_{Z_n} \cdot \underbrace{\frac{\beta\sqrt{n}}{\sqrt{\sum_{i=1}^n X_i}}}_{V_n}.$$
+            Por el TLC, $Z_n \dto N(0, 1)$. Por la LFGN de Kolmogorov, $\frac{1}{n}\sum_{i=1}^n X_i = \bar X_n \xrightarrow{\text{c.s.}} \beta &gt; 0$, de modo que por continuidad:
+            $$V_n = \frac{\beta}{\sqrt{\bar X_n}} \xrightarrow{\text{c.s.}} \frac{\beta}{\sqrt{\beta}} = \sqrt{\beta} \implies V_n \pto \sqrt{\beta}.$$
+            Aplicando el Teorema de Slutsky (b):
+            $$\frac{Y_n - n\beta}{\sqrt{Y_n}} \dto \sqrt{\beta}\,N(0, 1) \stackrel{d}{=} N(0, \beta).$$
+            Haciendo $\beta = 1$, se obtiene inmediatamente $\frac{Y_n - n}{\sqrt{Y_n}} \dto N(0, 1)$.
+            <br><small><i>Interpretación:</i> para $n$ grande, $Y_n \approx n\beta$, luego $\sqrt{Y_n} \approx \sqrt{n\beta}$, mientras que la desviación verdadera es $\beta\sqrt{n}$; su cociente $\frac{\beta\sqrt{n}}{\sqrt{n\beta}} = \sqrt{\beta}$ transforma la varianza límite de $1$ a $\beta$.</small></li>
+          <li><b>Apartado (c) — Variante Poisson:</b> Para $X_i \iid \text{Pois}(\lambda)$, se tiene $\E[X_1] = \lambda$ y $\Var(X_1) = \lambda$. Multiplicamos y dividimos por la escala verdadera $\sqrt{\lambda/n}$:
+            $$W_n = \frac{\bar X_n - \lambda}{\sqrt{\bar X_n/n}} = \underbrace{\frac{\bar X_n - \lambda}{\sqrt{\lambda/n}}}_{\dto N(0, 1)} \cdot \underbrace{\sqrt{\frac{\lambda}{\bar X_n}}}_{\xrightarrow{\text{c.s.}} \sqrt{\lambda/\lambda} = 1}.$$
+            Como $\bar X_n \xrightarrow{\text{c.s.}} \lambda &gt; 0$ por la LFGN, el segundo factor converge casi seguramente (y en probabilidad) a $1$. Por Slutsky (b), $W_n \dto N(0, 1)$. Aquí la varianza límite sí es $1$ porque en Poisson $\Var(X) = \E[X] = \lambda$: la media muestral estima exactamente la varianza.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJERCICIO 5 -->
+    <div class="box ejercicio" id="ej-5">
+      <span class="box-title">Ejemplo 5 · Varianza Bernoulli y Método Delta de segundo orden (Clase 12)</span>
+      <p>Sean $X_1, X_2, \dots \iid \text{Bernoulli}(p)$ con $p \in (0, 1)$, y sea $\bar X_n = \frac{1}{n}\sum_{i=1}^n X_i$.</p>
+      <ol class="pasos">
+        <li><b>(a)</b> Para $p \ne 1/2$, demuestre mediante el Método Delta que
+          $$\sqrt{n}\big[\bar X_n(1 - \bar X_n) - p(1 - p)\big] \dto N\big(0,\, p(1 - p)(1 - 2p)^2\big).$$</li>
+        <li><b>(b)</b> Analice qué sucede cuando $p = 1/2$ bajo el factor $\sqrt{n}$, y utilice el <b>Método Delta de segundo orden</b> para demostrar que
+          $$n\left[\bar X_n(1 - \bar X_n) - \frac{1}{4}\right] \dto -\frac{1}{4}\chi^2_{(1)}.$$</li>
+      </ol>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Toma $g(x) = x(1 - x)$, de modo que $g'(x) = 1 - 2x$ y $g''(x) = -2$. En $p = 1/2$, $g'(1/2) = 0$ y $\sigma^2 = p(1 - p) = 1/4$.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Caso $p \ne 1/2$ (1er orden):</b> Como $X_i \iid \text{Bernoulli}(p)$, $\mu = \E[X_1] = p$ y $\sigma^2 = \Var(X_1) = p(1 - p)$. Por el TLC:
+            $$\sqrt{n}(\bar X_n - p) \dto N\big(0,\, p(1 - p)\big).$$
+            Definimos $g(x) = x(1 - x) = x - x^2$, cuya derivada es $g'(x) = 1 - 2x$. En $x = p$, $g'(p) = 1 - 2p \ne 0$ (ya que $p \ne 1/2$). Aplicando el Método Delta de primer orden:
+            $$\sqrt{n}\big[\bar X_n(1 - \bar X_n) - p(1 - p)\big] \dto N\big(0,\, [g'(p)]^2\sigma^2\big) = N\big(0,\, p(1 - p)(1 - 2p)^2\big).$$</li>
+          <li><b>Caso degenerado $p = 1/2$ (2do orden):</b> Cuando $p = 1/2$, se tiene $g'(1/2) = 0$, luego la fórmula anterior se reduce a $N(0, 0)$ (masa puntual en $0$), es decir, $\sqrt{n}[\bar X_n(1 - \bar X_n) - 1/4] \pto 0$ (y también $\bar X_n(1 - \bar X_n) - p(1 - p) \pto 0$).
+            <br>Calculamos la segunda derivada: $g''(x) = -2$. Además, $\mu = 1/2$ y $\sigma^2 = \frac{1}{2}\left(1 - \frac{1}{2}\right) = \frac{1}{4}$. Aplicando el Método Delta de segundo orden (de hecho aquí el polinomio de Taylor es exacto porque $g(x) - g(1/2) = -(x - 1/2)^2$):
+            $$n\left[\bar X_n(1 - \bar X_n) - \frac{1}{4}\right] = \frac{1}{2}g''(1/2)\sigma^2 \left(\frac{\sqrt{n}(\bar X_n - 1/2)}{\sigma}\right)^2 = -\frac{1}{4}\left(\frac{\sqrt{n}(\bar X_n - 1/2)}{1/2}\right)^2 \dto -\frac{1}{4}\chi^2_{(1)}.$$</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJERCICIO 6 -->
+    <div class="box ejercicio" id="ej-6">
+      <span class="box-title">Ejemplo 6 · Distribución asintótica de la media armónica (Examen 2023 I PAO)</span>
+      <p>Sea $\{X_n\}_{n\ge 1}$ una sucesión de v.a. $\iid$ con densidad $f(x) = 3x^2$ para $0 &lt; x &lt; 1$ ($0$ en otro caso), y considere la media armónica muestral</p>
+      $$H_n = \frac{n}{\sum_{i=1}^n X_i^{-1}} = \frac{1}{\bar Y_n}, \quad \text{donde } Y_i = \frac{1}{X_i}.$$
+      <p>Calcule $\E[Y_1]$, $\E[Y_1^2]$ y $\Var(Y_1)$, pruebe que $H_n \xrightarrow{\text{c.s.}} 2/3$ y demuestre mediante el Método Delta que</p>
+      $$\sqrt{n}\left(H_n - \frac{2}{3}\right) \dto N\left(0,\, \frac{4}{27}\right).$$
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Calcula $\E[X_1^{-1}] = \int_0^1 \frac{1}{x} 3x^2\,dx$ y $\E[X_1^{-2}] = \int_0^1 \frac{1}{x^2} 3x^2\,dx$, escribe el TLC para $\bar Y_n$ y aplica el Método Delta con $g(u) = 1/u$.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Momentos de $Y_1 = 1/X_1$:</b> Las $Y_i$ son $\iid$ (funciones de las $X_i$) con momentos:
+            $$\E[Y_1] = \int_0^1 \frac{1}{x}\cdot 3x^2\,dx = \int_0^1 3x\,dx = \frac{3}{2}, \qquad \E[Y_1^2] = \int_0^1 \frac{1}{x^2}\cdot 3x^2\,dx = \int_0^1 3\,dx = 3.$$
+            Por tanto, su varianza finita es:
+            $$\Var(Y_1) = \E[Y_1^2] - \big(\E[Y_1]\big)^2 = 3 - \left(\frac{3}{2}\right)^2 = 3 - \frac{9}{4} = \frac{3}{4}.$$</li>
+          <li><b>Límite c.s. y TLC para $\bar Y_n$:</b> Por la LFGN de Kolmogorov, $\bar Y_n \xrightarrow{\text{c.s.}} 3/2$. Como $g(u) = 1/u$ es continua en $u = 3/2 \ne 0$, se obtiene $H_n = g(\bar Y_n) \xrightarrow{\text{c.s.}} \frac{2}{3}$ (menor que la media aritmética límite $\E[X_1] = \frac{3}{4}$, reflejando que la media armónica es menor o igual a la aritmética). Por el TLC:
+            $$\sqrt{n}\left(\bar Y_n - \frac{3}{2}\right) \dto N\left(0,\, \frac{3}{4}\right).$$</li>
+          <li><b>Método Delta con $g(u) = 1/u$:</b> Derivando $g'(u) = -\frac{1}{u^2}$ y evaluando en $\mu = \frac{3}{2}$:
+            $$g'\left(\frac{3}{2}\right) = -\frac{1}{(3/2)^2} = -\frac{4}{9} \ne 0.$$</li>
+          <li><b>Varianza asintótica:</b>
+            $$\sqrt{n}\left(H_n - \frac{2}{3}\right) = \sqrt{n}\big(g(\bar Y_n) - g(3/2)\big) \dto N\left(0,\, \left(-\frac{4}{9}\right)^2 \cdot \frac{3}{4}\right) = N\left(0,\, \frac{16}{81}\cdot\frac{3}{4}\right) = N\left(0,\, \frac{4}{27}\right).$$</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJERCICIO 7 -->
+    <div class="box ejercicio" id="ej-7">
+      <span class="box-title">Ejemplo 7 · Modelo de Laplace completo: MOM, EMV, Fisher y cociente (Exámenes 2023–2024)</span>
+      <p>Sean $X_1, \dots, X_n \iid$ con densidad de Laplace (doble exponencial):</p>
+      $$f(x;\sigma) = \frac{1}{2\sigma}\exp\left(-\frac{|x|}{\sigma}\right), \quad x \in \R,\ \sigma &gt; 0.$$
+      <p><i>Recordatorio del modelo:</i> por simetría, $\E[X] = 0$, y para $t \ge 0$ se cumple $\P(|X| \le t) = 2\int_0^t \frac{1}{2\sigma}e^{-x/\sigma}\,dx = 1 - e^{-t/\sigma}$, luego $|X| \sim \text{Exp}(\sigma)$. En consecuencia, $\E[|X|] = \sigma$, $\Var(|X|) = \sigma^2$, $\Var(X) = \E[X^2] = \E[|X|^2] = 2\sigma^2$, $\E[X^4] = \E[|X|^4] = 4!\,\sigma^4 = 24\sigma^4$ y $\Var(X^2) = 24\sigma^4 - (2\sigma^2)^2 = 20\sigma^4$.</p>
+      <ol class="pasos">
+        <li><b>(a)</b> Halle el estimador de momentos $\hat\sigma_{\text{MM}}$, demuestre que $\hat\sigma_{\text{MM}} \pto \sigma$ (y c.s.), y encuentre la distribución asintótica de $\sqrt{n}(\hat\sigma_{\text{MM}} - \sigma)$ mediante el Método Delta.</li>
+        <li><b>(b)</b> Halle el estimador de máxima verosimilitud $\hat\sigma_{\text{MV}}$, encuentre la distribución asintótica de $\sqrt{n}(\hat\sigma_{\text{MV}} - \sigma)$ verificando que coincide con $N\big(0, 1/I_1(\sigma)\big)$ (y compare su eficiencia frente a $\hat\sigma_{\text{MM}}$), y obtenga la distribución asintótica del EMV de $\tau = \P(X \ge 1) = \frac{1}{2}e^{-1/\sigma}$.</li>
+        <li><b>(c)</b> Combinando TLC, LFGN y Slutsky, demuestre que
+          $$\sqrt{n}\left(\frac{\sum_{i=1}^n X_i}{\sum_{i=1}^n X_i^2}\right) \dto N\left(0,\, \frac{1}{2\sigma^2}\right).$$</li>
+      </ol>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En (a), como $\E[X] = 0$, iguala el segundo momento $m_2 = \frac{1}{n}\sum X_i^2 = 2\sigma^2$ y usa $g(u) = \sqrt{u/2}$. En (b), maximiza $\ell(\sigma) = -n\ln(2\sigma) - \frac{1}{\sigma}\sum |x_i|$ y aplica Delta a $h(\sigma) = \frac{1}{2}e^{-1/\sigma}$. En (c), divide numerador y denominador por $n$ para obtener $\frac{\sqrt{n}\bar X_n}{m_2}$.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <h4>Apartado (a): Estimador de Momentos, consistencia y Delta</h4>
+        <ol class="pasos">
+          <li>El primer momento $\E[X] = 0$ no contiene a $\sigma$, así que igualamos el segundo momento: $m_2 = \frac{1}{n}\sum_{i=1}^n X_i^2 = 2\sigma^2$, obteniendo
+            $$\hat\sigma_{\text{MM}} = \sqrt{\frac{m_2}{2}} = \sqrt{\frac{1}{2n}\sum_{i=1}^n X_i^2}.$$</li>
+          <li>Como las $X_i^2$ son $\iid$ con media finita $2\sigma^2$, por la LFGN de Kolmogorov $m_2 \xrightarrow{\text{c.s.}} 2\sigma^2$. Por continuidad de $g(u) = \sqrt{u/2}$ en $u &gt; 0$, se sigue $\hat\sigma_{\text{MM}} \xrightarrow{\text{c.s.}} \sqrt{2\sigma^2/2} = \sigma$ (y por tanto $\hat\sigma_{\text{MM}} \pto \sigma$).</li>
+          <li>Por el TLC sobre $m_2$, $\sqrt{n}(m_2 - 2\sigma^2) \dto N(0, 20\sigma^4)$. Con $g(u) = \sqrt{u/2}$, su derivada es $g'(u) = \frac{1}{2\sqrt{2u}}$, y en $u = 2\sigma^2$ vale $g'(2\sigma^2) = \frac{1}{4\sigma} \ne 0$. Por el Método Delta:
+            $$\sqrt{n}(\hat\sigma_{\text{MM}} - \sigma) \dto N\left(0,\, \frac{1}{16\sigma^2} \cdot 20\sigma^4\right) = N\left(0,\, \frac{5\sigma^2}{4}\right).$$</li>
+        </ol>
+
+        <h4>Apartado (b): EMV, Información de Fisher y EMV de $\P(X \ge 1)$</h4>
+        <ol class="pasos">
+          <li>La función log-verosimilitud es $\ell(\sigma) = -n\ln(2\sigma) - \frac{1}{\sigma}\sum_{i=1}^n |x_i|$. Derivando:
+            $$\frac{d\ell}{d\sigma} = -\frac{n}{\sigma} + \frac{1}{\sigma^2}\sum_{i=1}^n |x_i| = 0 \implies \hat\sigma_{\text{MV}} = \frac{1}{n}\sum_{i=1}^n |X_i|.$$
+            Como $\ell''(\sigma) = \frac{n}{\sigma^2} - \frac{2\sum |x_i|}{\sigma^3}$, en $\hat\sigma_{\text{MV}}$ vale $-\frac{n}{\hat\sigma_{\text{MV}}^2} &lt; 0$, confirmando un máximo global.</li>
+          <li>Como $|X_i| \iid \text{Exp}(\sigma)$ tienen media $\sigma$ y varianza $\sigma^2$, el TLC da directamente:
+            $$\sqrt{n}(\hat\sigma_{\text{MV}} - \sigma) \dto N(0, \sigma^2).$$
+            Además, $I_n(\sigma) = -\E[\ell''(\sigma)] = -\left(\frac{n}{\sigma^2} - \frac{2n\sigma}{\sigma^3}\right) = \frac{n}{\sigma^2}$, luego $I_1(\sigma) = \frac{1}{\sigma^2}$ y $\frac{1}{I_1(\sigma)} = \sigma^2$, coincidiendo exactamente con la varianza asintótica del EMV. Comparando con el MOM ($\sigma^2 &lt; \frac{5}{4}\sigma^2$), el EMV es asintóticamente más eficiente (eficiencia relativa $\frac{\sigma^2}{5\sigma^2/4} = 80\%$).</li>
+          <li>Para $\tau = h(\sigma) = \P(X \ge 1) = \int_1^\infty \frac{1}{2\sigma}e^{-x/\sigma}\,dx = \frac{1}{2}e^{-1/\sigma}$, por el principio de invarianza el EMV es $\hat\tau_{\text{MV}} = \frac{1}{2}e^{-1/\hat\sigma_{\text{MV}}}$. Derivando $h'(\sigma) = \frac{1}{2}e^{-1/\sigma}\cdot\frac{1}{\sigma^2} \ne 0$ y aplicando el Método Delta:
+            $$\sqrt{n}\left(\frac{1}{2}e^{-1/\hat\sigma_{\text{MV}}} - \frac{1}{2}e^{-1/\sigma}\right) \dto N\left(0,\, \left(\frac{e^{-1/\sigma}}{2\sigma^2}\right)^2 \cdot \sigma^2\right) = N\left(0,\, \frac{e^{-2/\sigma}}{4\sigma^2}\right).$$</li>
+        </ol>
+
+        <h4>Apartado (c): Combinando TLC, LFGN y Slutsky</h4>
+        <ol class="pasos">
+          <li>Dividimos numerador y denominador por $n$:
+            $$\sqrt{n}\left(\frac{\sum_{i=1}^n X_i}{\sum_{i=1}^n X_i^2}\right) = \frac{\sqrt{n}\,\bar X_n}{m_2}, \qquad m_2 = \frac{1}{n}\sum_{i=1}^n X_i^2.$$</li>
+          <li><b>Numerador (TLC):</b> como $\E[X_1] = 0$ y $\Var(X_1) = 2\sigma^2$, se tiene $\sqrt{n}\bar X_n = \sqrt{n}(\bar X_n - 0) \dto N(0, 2\sigma^2)$.</li>
+          <li><b>Denominador (LFGN):</b> $m_2 \xrightarrow{\text{c.s.}} \E[X_1^2] = 2\sigma^2 \ne 0$ (por tanto $m_2 \pto 2\sigma^2$).</li>
+          <li><b>Slutsky (cociente):</b>
+            $$\frac{\sqrt{n}\bar X_n}{m_2} \dto \frac{1}{2\sigma^2}\, N(0, 2\sigma^2) \stackrel{d}{=} N\left(0,\, \frac{2\sigma^2}{4\sigma^4}\right) = N\left(0,\, \frac{1}{2\sigma^2}\right).$$</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJERCICIO 8 -->
+    <div class="box ejercicio" id="ej-8">
+      <span class="box-title">Ejemplo 8 · EMV y distribución asintótica de $\P(X \ge 1)$ en Exponencial (Examen 2024 I PAO)</span>
+      <p>Sean $X_1, \dots, X_n$ una muestra aleatoria de $X \sim \text{Exp}(\theta)$ con media $\theta &gt; 0$. Encuentre el estimador de máxima verosimilitud de</p>
+      $$g(\theta) = \P(X \ge 1)$$
+      <p>y determine su distribución asintótica.</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Calcula $g(\theta) = e^{-1/\theta}$, usa $\hat\theta_{\text{MV}} = \bar X_n$ junto con el principio de invarianza, y aplica el Método Delta sabiendo que $\sqrt{n}(\bar X_n - \theta) \dto N(0, \theta^2)$.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Función objetivo:</b> Como $f(x;\theta) = \frac{1}{\theta}e^{-x/\theta}$ ($x &gt; 0$), se tiene $g(\theta) = \P(X \ge 1) = e^{-1/\theta}$.</li>
+          <li><b>Invarianza del EMV:</b> Como el EMV de la media exponencial es $\hat\theta_{\text{MV}} = \bar X_n$, por el principio de invarianza:
+            $$\widehat{g(\theta)}_{\text{MV}} = g(\hat\theta_{\text{MV}}) = e^{-1/\bar X_n}.$$</li>
+          <li><b>TLC y derivada:</b> Dado que $\E[X] = \theta$ y $\Var(X) = \theta^2$ (con $I_1(\theta) = 1/\theta^2$), el TLC establece $\sqrt{n}(\bar X_n - \theta) \dto N(0, \theta^2)$. Además,
+            $$g'(\theta) = e^{-1/\theta} \cdot \frac{1}{\theta^2} \ne 0.$$</li>
+          <li><b>Método Delta:</b>
+            $$\sqrt{n}\left(e^{-1/\bar X_n} - e^{-1/\theta}\right) \dto N\left(0,\, \frac{e^{-2/\theta}}{\theta^4} \cdot \theta^2\right) = N\left(0,\, \frac{e^{-2/\theta}}{\theta^2}\right).$$
+            En muestras grandes, $e^{-1/\bar X_n} \overset{\text{aprox}}{\sim} N\left(e^{-1/\theta},\, \frac{e^{-2/\theta}}{n\theta^2}\right)$.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJERCICIO 9 -->
+    <div class="box ejercicio" id="ej-9">
+      <span class="box-title">Ejemplo 9 · Distribución límite de $\sqrt{S_n} - \sqrt{n}$ (Examen 2024 II PAO)</span>
+      <p>Sea $\{X_n\}_{n\ge 1}$ una sucesión de variables aleatorias $\iid$ con media $\E[X_1] = 1$ y varianza $\Var(X_1) = \sigma^2 \in (0, \infty)$, y sea $S_n = \sum_{i=1}^n X_i$. Demuestre que</p>
+      $$\sqrt{S_n} - \sqrt{n} \dto N(0, a^2),$$
+      <p>determinando explícitamente el valor de $a^2$.</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Saca $\sqrt{n}$ como factor común para reescribir la expresión en función de $\bar X_n = S_n / n$ y de $g(u) = \sqrt{u}$.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li>Factorizamos $\sqrt{n}$:
+            $$\sqrt{S_n} - \sqrt{n} = \sqrt{n}\left(\sqrt{\frac{S_n}{n}} - 1\right) = \sqrt{n}\left(\sqrt{\bar X_n} - \sqrt{1}\right) = \sqrt{n}\big(g(\bar X_n) - g(1)\big),$$
+            donde $g(u) = \sqrt{u}$. (Nótese que como $\bar X_n \pto 1 &gt; 0$, $\P(\bar X_n &gt; 0) \to 1$.)</li>
+          <li>Por el TLC, $\sqrt{n}(\bar X_n - 1) \dto N(0, \sigma^2)$.</li>
+          <li>Derivando $g(u) = \sqrt{u}$, obtenemos $g'(u) = \frac{1}{2\sqrt{u}}$, luego $g'(1) = \frac{1}{2} \ne 0$.</li>
+          <li>Por el Método Delta:
+            $$\sqrt{S_n} - \sqrt{n} \dto N\left(0,\, \left(\frac{1}{2}\right)^2 \sigma^2\right) = N\left(0,\, \frac{\sigma^2}{4}\right), \qquad \text{es decir, } a^2 = \frac{\sigma^2}{4}.$$</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJERCICIO 10 -->
+    <div class="box ejercicio" id="ej-10">
+      <span class="box-title">Ejemplo 10 · $\text{Gamma}(2, \theta)$, invarianza y Delta (Examen 2023 II PAO)</span>
+      <p>Sean $X_1, \dots, X_n \iid$ con densidad</p>
+      $$f(x \mid \theta) = \frac{x}{\theta^2}e^{-x/\theta}, \quad x \ge 0,\ \theta &gt; 0$$
+      <p>(es decir, $\text{Gamma}(2, \theta)$ con $\E[X] = 2\theta$ y $\Var(X) = 2\theta^2$).</p>
+      <ol class="pasos">
+        <li><b>(a)</b> Encuentre $\hat\theta_{\text{MM}}$ y demuestre que $\hat\theta_{\text{MM}} \pto \theta$.</li>
+        <li><b>(b)</b> Determine el EMV $\hat\theta_{\text{MV}}$, el EMV $\hat\gamma_{\text{MV}}$ de $\gamma = \Var(X) = 2\theta^2$, y la distribución asintótica de $\hat\gamma_{\text{MV}}$.</li>
+      </ol>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En (a), iguala $\bar X_n = 2\theta$ y usa la LFGN. En (b), halla $\hat\theta_{\text{MV}} = \bar X_n/2$, aplica invarianza para obtener $\hat\gamma_{\text{MV}} = \bar X_n^2/2$ y usa el Método Delta con $g(\theta) = 2\theta^2$.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Apartado (a):</b> Igualando el primer momento teórico y muestral: $\bar X_n = 2\theta \implies \hat\theta_{\text{MM}} = \frac{\bar X_n}{2}$. Como $\E[X_1] = 2\theta$ es finita, por la LFGN $\bar X_n \xrightarrow{\text{c.s.}} 2\theta$, luego $\hat\theta_{\text{MM}} = \frac{\bar X_n}{2} \xrightarrow{\text{c.s.}} \theta$, y en particular $\hat\theta_{\text{MM}} \pto \theta$.</li>
+          <li><b>Apartado (b) — EMV y TLC:</b> La log-verosimilitud es $\ell(\theta) = \sum_{i=1}^n \ln x_i - 2n\ln\theta - \frac{1}{\theta}\sum_{i=1}^n x_i$. Resolviendo $\ell'(\theta) = -\frac{2n}{\theta} + \frac{\sum x_i}{\theta^2} = 0$ resulta $\hat\theta_{\text{MV}} = \frac{\bar X_n}{2}$ (con $\ell''(\hat\theta_{\text{MV}}) = -\frac{2n}{\hat\theta_{\text{MV}}^2} &lt; 0$).
+            <br>Por el TLC, $\sqrt{n}(\bar X_n - 2\theta) \dto N(0, 2\theta^2)$. Dividiendo entre $2$:
+            $$\sqrt{n}(\hat\theta_{\text{MV}} - \theta) \dto N\left(0,\, \frac{2\theta^2}{4}\right) = N\left(0,\, \frac{\theta^2}{2}\right).$$
+            <i>(Verificación con Fisher:</i> $I_1(\theta) = -\E[\frac{d^2}{d\theta^2}\ln f(X\mid\theta)] = -\left(\frac{2}{\theta^2} - \frac{2(2\theta)}{\theta^3}\right) = \frac{2}{\theta^2}$, de modo que $1/I_1(\theta) = \theta^2/2$.)</li>
+          <li><b>Invarianza y Delta para $\gamma = 2\theta^2$:</b> Por invarianza del EMV, $\hat\gamma_{\text{MV}} = g(\hat\theta_{\text{MV}}) = 2(\bar X_n / 2)^2 = \frac{\bar X_n^2}{2}$. Como $g'(\theta) = 4\theta \ne 0$:
+            $$\sqrt{n}(\hat\gamma_{\text{MV}} - 2\theta^2) \dto N\left(0,\, (4\theta)^2 \cdot \frac{\theta^2}{2}\right) = N(0,\, 8\theta^4).$$
+            Para muestras grandes, $\hat\gamma_{\text{MV}} \overset{\text{aprox}}{\sim} N\left(2\theta^2,\, \frac{8\theta^4}{n}\right)$.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJERCICIO 11 -->
+    <div class="box ejercicio" id="ej-11">
+      <span class="box-title">Ejemplo 11 · Cierre del ciclo MOM de $U(-\theta, \theta)$ (Sesión 3)</span>
+      <p>Sean $X_1, \dots, X_n \iid U(-\theta, \theta)$ con $\theta &gt; 0$. Como $\E[X] = 0$, el estimador de momentos construido con el segundo momento ($\E[X^2] = \theta^2/3$) es</p>
+      $$\hat\theta_{\text{MM}} = \sqrt{T_1}, \qquad \text{donde } T_1 = \frac{3}{n}\sum_{i=1}^n X_i^2 = 3m_2.$$
+      <p>Sabiendo que $\Var(X^2) = \frac{4\theta^4}{45}$, aplique el Método Delta para demostrar que</p>
+      $$\sqrt{n}(\hat\theta_{\text{MM}} - \theta) \dto N\left(0,\, \frac{\theta^2}{5}\right),$$
+      <p>y contraste esta tasa de convergencia con la del estimador de máxima verosimilitud $\hat\theta_{\text{MV}} = \max_{1\le i\le n} |X_i|$.</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Comienza aplicando el TLC a $m_2 = \frac{1}{n}\sum_{i=1}^n X_i^2$ (o a $T_1 = 3m_2$, cuya varianza poblacional escalada es $9 \cdot \frac{4\theta^4}{45} = \frac{4\theta^4}{5}$), y luego aplica el Método Delta con $g(u) = \sqrt{3u}$ en $u = \theta^2/3$ (o $h(v) = \sqrt{v}$ en $v = \theta^2$).</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Verificación de momentos:</b> Para $X \sim U(-\theta, \theta)$, $\E[X^2] = \frac{\theta^2}{3}$ y $\E[X^4] = \frac{1}{2\theta}\int_{-\theta}^\theta x^4\,dx = \frac{\theta^4}{5}$, luego $\Var(X^2) = \frac{\theta^4}{5} - \left(\frac{\theta^2}{3}\right)^2 = \frac{4\theta^4}{45}$.</li>
+          <li><b>TLC para $T_1 = \frac{3}{n}\sum_{i=1}^n X_i^2$:</b> Como $3X_i^2$ son $\iid$ con media $\theta^2$ y varianza $9\cdot \frac{4\theta^4}{45} = \frac{4\theta^4}{5}$:
+            $$\sqrt{n}(T_1 - \theta^2) \dto N\left(0,\, \frac{4\theta^4}{5}\right).$$
+            (Equivalentemente, $\sqrt{n}(m_2 - \theta^2/3) \dto N(0, 4\theta^4/45)$ y usando $g(u) = \sqrt{3u}$ en $u = \theta^2/3$ se obtiene lo mismo.)</li>
+          <li><b>Método Delta con $h(v) = \sqrt{v}$:</b> Tenemos $\hat\theta_{\text{MM}} = h(T_1)$ y $h(\theta^2) = \theta$. La derivada en $\theta^2$ es $h'(\theta^2) = \frac{1}{2\theta} \ne 0$, luego:
+            $$\sqrt{n}(\hat\theta_{\text{MM}} - \theta) \dto N\left(0,\, \left(\frac{1}{2\theta}\right)^2 \cdot \frac{4\theta^4}{5}\right) = N\left(0,\, \frac{\theta^2}{5}\right).$$</li>
+          <li><b>Velocidad de convergencia frente al EMV:</b> El estimador de momentos $\hat\theta_{\text{MM}}$ es función suave de un promedio muestral, por lo que está regido por el TLC y converge a velocidad $1/\sqrt{n}$. En cambio, el modelo $U(-\theta, \theta)$ tiene soporte dependiente del parámetro (no es regular) y su EMV $\hat\theta_{\text{MV}} = \max_i |X_i|$ no proviene de promedios ni del Método Delta: de hecho $n(\theta - \hat\theta_{\text{MV}}) \dto \text{Exp}(\theta)$, convergiendo a velocidad $1/n$, muchísimo más rápido que $1/\sqrt{n}$.</li>
+        </ol>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="lebensztayn">5. Ejercicios del folleto de Lebensztayn</h2>
+    <div class="box nota">
+      <span class="box-title">Práctica recomendada (Folleto de Lebensztayn, Cap. 5)</span>
+      <p>Para reforzar la demostración de límites en distribución mediante FGM, Teorema de Scheffé, Teorema de Slutsky y Método Delta, resuelve los ejercicios <b>26, 28, 29, 32 y 75 del Capítulo 5</b> (junto con los misceláneos 67–71, 73, 76 y 77) disponibles con soluciones detalladas en: <a href="../deberes/lebensztayn.html#cap5-delta">Ejercicios de Lebensztayn · Bloque II: Continuidad, Slutsky y Método Delta</a>.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="simulaciones">6. Laboratorios interactivos</h2>
+
+    <!-- Simulación 1 -->
+    <div class="sim" id="sim-scheffe-poisson">
+      <p class="sim-title">Simulación 1 · Teorema de Poisson y contraejemplo al recíproco de Scheffé</p>
+      <p class="sim-desc">Alterna entre dos fenómenos fundamentales de la convergencia en distribución: la aproximación de las masas $\text{Bin}(n, \lambda/n)$ hacia $\text{Poisson}(\lambda)$, y el contraejemplo oscilatorio donde $F_n(x) \to x$ uniformemente pero $f_n(x) = 1 - \cos(2n\pi x)$ no converge a $1$.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+
+    <!-- Simulación 2 -->
+    <div class="sim" id="sim-delta">
+      <p class="sim-title">Simulación 2 · Método Delta de 1er y 2do orden en $g(\bar X_n) = \bar X_n(1 - \bar X_n)$</p>
+      <p class="sim-desc">Simula $2000$ muestras de tamaño $n$ de una población $\text{Bernoulli}(p)$. Para $p \ne 0.5$, observa el ajuste normal $\sqrt{n}[g(\bar X_n) - g(p)] \dto N(0, p(1-p)(1-2p)^2)$. Al fijar $p = 0.50$, el estimador entra en el régimen degenerado ($g'(0.5)=0$) y el laboratorio cambia automáticamente al escalado de segundo orden $n[g(\bar X_n) - 1/4] \dto -\frac{1}{4}\chi^2_{(1)}$.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="autoevaluacion">7. Autoevaluación</h2>
+    <p>Verifica tu comprensión de los criterios de convergencia en distribución, Slutsky y Método Delta con estas preguntas interactivas.</p>
+
+    <div id="quiz-1"></div>
+    <div id="quiz-2"></div>
+    <div id="quiz-3"></div>
+
+    <div style="margin-top: 2rem;">
+      <h3>Comprobadores numéricos</h3>
+      <div id="nc-1"></div>
+      <div id="nc-2"></div>
+    </div>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../assets/js/stats.js"></script>
+<script src="../assets/js/plot.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+(function () {
+  'use strict';
+  const { dist, fmt, lgamma, lchoose, rbinom, mulberry32 } = EM.stats;
+
+  /* ============================================================
+     SIMULACIÓN 1: Teorema de Poisson y Contraejemplo de Scheffé
+     ============================================================ */
+  (function () {
+    const root = document.getElementById('sim-scheffe-poisson');
+    if (!root) return;
+
+    let mode = 'poisson';
+    let nPois = 20;
+    let lambda = 3.0;
+    let nScheffe = 6;
+
+    const ctr = root.querySelector('.controls');
+    EM.ui.select(ctr, {
+      label: 'Experimento',
+      value: mode,
+      options: [
+        { value: 'poisson', label: 'Teorema de Poisson (Bin(n, λ/n) → Poisson(λ))' },
+        { value: 'scheffe', label: 'Contraejemplo de Scheffé (Fₙ → F pero fₙ ↛ f)' }
+      ],
+      onChange: v => {
+        mode = v;
+        updateControls();
+        render();
+      }
+    });
+
+    const poisWrap = document.createElement('div');
+    poisWrap.style.display = 'flex';
+    poisWrap.style.flexWrap = 'wrap';
+    poisWrap.style.gap = '12px 24px';
+    poisWrap.style.flex = '1 1 420px';
+
+    const scheffeWrap = document.createElement('div');
+    scheffeWrap.style.display = 'none';
+    scheffeWrap.style.flexWrap = 'wrap';
+    scheffeWrap.style.gap = '12px 24px';
+    scheffeWrap.style.flex = '1 1 240px';
+
+    ctr.appendChild(poisWrap);
+    ctr.appendChild(scheffeWrap);
+
+    EM.ui.slider(poisWrap, {
+      tex: 'n',
+      min: 5, max: 80, step: 1, value: nPois,
+      fmt: v => v.toFixed(0),
+      onInput: v => { nPois = Math.round(v); render(); }
+    });
+
+    EM.ui.slider(poisWrap, {
+      tex: '\\lambda',
+      min: 1, max: 8, step: 0.5, value: lambda,
+      fmt: v => v.toFixed(1),
+      onInput: v => { lambda = v; render(); }
+    });
+
+    EM.ui.slider(scheffeWrap, {
+      tex: 'n',
+      min: 1, max: 20, step: 1, value: nScheffe,
+      fmt: v => v.toFixed(0),
+      onInput: v => { nScheffe = Math.round(v); render(); }
+    });
+
+    function updateControls() {
+      poisWrap.style.display = mode === 'poisson' ? 'flex' : 'none';
+      scheffeWrap.style.display = mode === 'scheffe' ? 'flex' : 'none';
+    }
+
+    function binomPmf(n, p, k) {
+      if (k < 0 || k > n) return 0;
+      if (p <= 0) return k === 0 ? 1 : 0;
+      if (p >= 1) return k === n ? 1 : 0;
+      return Math.exp(lchoose(n, k) + k * Math.log(p) + (n - k) * Math.log(1 - p));
+    }
+
+    function poisPmf(lam, k) {
+      if (k < 0) return 0;
+      return Math.exp(k * Math.log(lam) - lam - lgamma(k + 1));
+    }
+
+    const plot = EM.plot.create(root.querySelector('.plot'), {
+      xmin: -0.6, xmax: 12.6, ymin: 0, ymax: 0.35,
+      height: 310, xlabel: 'k', ylabel: 'Probabilidad P(X = k)',
+      legendPos: 'tr'
+    });
+    const out = EM.ui.readout(root.querySelector('.out'));
+
+    function render() {
+      if (mode === 'poisson') {
+        const pn = Math.min(1, lambda / nPois);
+        const kMax = Math.max(10, Math.ceil(lambda + 4.2 * Math.sqrt(lambda) + 1));
+        const xsBin = [];
+        const ysBin = [];
+        const xsPois = [];
+        const ysPois = [];
+        let maxErr = 0;
+        let tvd = 0;
+
+        for (let k = 0; k <= kMax; k++) {
+          const pb = binomPmf(nPois, pn, k);
+          const pp = poisPmf(lambda, k);
+          xsBin.push(k - 0.18);
+          ysBin.push(pb);
+          xsPois.push(k + 0.18);
+          ysPois.push(pp);
+          const diff = Math.abs(pb - pp);
+          if (diff > maxErr) maxErr = diff;
+          tvd += diff;
+        }
+        // Incluir masa restante por encima de kMax en TVD aproximada si hubiera
+        tvd *= 0.5;
+        const ymax = EM.plot.autoYmax([...ysBin, ...ysPois], 1.18);
+
+        plot.setRange({
+          xmin: -0.7, xmax: kMax + 0.7, ymin: 0, ymax: Math.max(0.18, ymax),
+          xlabel: 'k', ylabel: 'PMF P(X = k)', legendPos: 'tr'
+        });
+
+        plot.draw(g => {
+          g.bars(xsBin, ysBin, { width: 0.34, color: 'c1', alpha: 0.85, label: `Bin(${nPois}, ${fmt(pn, 3)})` });
+          g.bars(xsPois, ysPois, { width: 0.34, color: 'c2', alpha: 0.85, label: `Poisson(${fmt(lambda, 1)})` });
+        });
+
+        const warnCap = (lambda / nPois > 1)
+          ? `<br><span style="color:var(--warn)">Nota: para $n = ${nPois} &lt; \\lambda = ${fmt(lambda, 1)}$, el cociente $\\lambda/n$ supera $1$ (se acota $p_n = 1$). Aumenta $n &gt; \\lambda$ para observar la convergencia.</span>`
+          : '';
+
+        out.set(`
+          <b>Modo Teorema de Poisson:</b> $n = ${nPois}$, $\\lambda = ${fmt(lambda, 1)}$, $p_n = ${fmt(pn, 4)}$<br>
+          • <b>Error máximo puntual</b> $\\max_k |\\P(\\text{Bin}(n,p_n)=k) - \\P(\\text{Pois}(\\lambda)=k)| = $ <b>${fmt(maxErr, 4)}</b><br>
+          • <b>Distancia de variación total aproximada</b> $\\frac{1}{2}\\sum_k |p_k - q_k| \\approx $ <b>${fmt(tvd, 4)}</b>
+          ${warnCap}
+        `);
+      } else {
+        const n = nScheffe;
+        const maxCdfErr = 1 / (2 * n * Math.PI);
+        const fn = x => (x >= 0 && x <= 1) ? 1 - Math.cos(2 * n * Math.PI * x) : 0;
+        const fLim = x => (x >= 0 && x <= 1) ? 1 : 0;
+
+        plot.setRange({
+          xmin: -0.05, xmax: 1.05, ymin: -0.08, ymax: 2.25,
+          xlabel: 'x', ylabel: 'Densidad f(x)', legendPos: 'tr'
+        });
+
+        plot.draw(g => {
+          g.curve(fLim, { from: 0, to: 1, n: 200, color: 'c2', dash: [6, 4], width: 2.4, label: 'f(x) = 1 (U(0, 1))' });
+          g.curve(fn, { from: 0, to: 1, n: Math.max(500, 50 * n), color: 'c1', width: 2.0, label: `fₙ(x) = 1 − cos(${2 * n}πx)` });
+        });
+
+        out.set(`
+          <b>Modo Contraejemplo de Scheffé ($n = ${n}$):</b><br>
+          • <b>Diferencia máxima de acumuladas:</b> $\\max_{x\\in[0,1]} |F_n(x) - x| = \\frac{1}{2n\\pi} = $ <b>${fmt(maxCdfErr, 4)}</b> $\\xrightarrow{n\\to\\infty} 0$ ($X_n \\dto U(0,1)$).<br>
+          • <b>Diferencia máxima de densidades:</b> $\\max_{x\\in(0,1)} |f_n(x) - 1| = |\\cos(2n\\pi x)|_{\\max} = $ <b>1</b> (constante para todo $n$: $f_n \\not\\to f$).
+        `);
+      }
+    }
+
+    updateControls();
+    render();
+  })();
+
+  /* ============================================================
+     SIMULACIÓN 2: Método Delta de 1er y 2do orden en Bernoulli(p)
+     ============================================================ */
+  (function () {
+    const root = document.getElementById('sim-delta');
+    if (!root) return;
+
+    let p = 0.25;
+    let n = 100;
+    let seed = 202612;
+    const M = 2000;
+
+    const ctr = root.querySelector('.controls');
+
+    EM.ui.slider(ctr, {
+      tex: 'p',
+      min: 0.1, max: 0.9, step: 0.05, value: p,
+      fmt: v => v.toFixed(2),
+      onInput: v => { p = +v.toFixed(2); render(); }
+    });
+
+    EM.ui.slider(ctr, {
+      tex: 'n',
+      min: 20, max: 400, step: 10, value: n,
+      fmt: v => v.toFixed(0),
+      onInput: v => { n = Math.round(v); render(); }
+    });
+
+    EM.ui.button(ctr, 'Simular (2000 réplicas)', () => {
+      seed = (seed * 1664525 + 1013904223) >>> 0;
+      render();
+    }, { primary: true });
+
+    const plot = EM.plot.create(root.querySelector('.plot'), {
+      xmin: -1, xmax: 1, ymin: 0, ymax: 2,
+      height: 320, xlabel: 'Estadístico reescalado', ylabel: 'Densidad',
+      legendPos: 'tl'
+    });
+    const out = EM.ui.readout(root.querySelector('.out'));
+
+    function histMaxDensity(data, lo, hi, bins) {
+      const w = (hi - lo) / bins;
+      const counts = new Array(bins).fill(0);
+      for (const x of data) {
+        const k = Math.floor((x - lo) / w);
+        if (k >= 0 && k < bins) counts[k]++;
+        else if (x === hi) counts[bins - 1]++;
+      }
+      let mx = 0;
+      const scale = 1 / (data.length * w);
+      for (let k = 0; k < bins; k++) if (counts[k] * scale > mx) mx = counts[k] * scale;
+      return mx;
+    }
+
+    function render() {
+      const rng = mulberry32(seed);
+      const degenerate = Math.abs(p - 0.5) < 1e-6;
+      const gTrue = p * (1 - p);
+      const vals = new Float64Array(M);
+
+      for (let m = 0; m < M; m++) {
+        const xbar = rbinom(n, p, rng) / n;
+        const diff = xbar * (1 - xbar) - gTrue;
+        vals[m] = degenerate ? (n * diff) : (Math.sqrt(n) * diff);
+      }
+
+      if (!degenerate) {
+        const varAsint = p * (1 - p) * (1 - 2 * p) * (1 - 2 * p);
+        const sdAsint = Math.sqrt(varAsint);
+        const span = Math.max(4 * sdAsint, 0.25);
+        const lo = -span;
+        const hi = span;
+        const bins = 36;
+        const Nlim = dist.normal(0, sdAsint);
+        const hMax = histMaxDensity(vals, lo, hi, bins);
+        const ymax = Math.max(hMax, Nlim.pdf(0)) * 1.16;
+
+        plot.setRange({
+          xmin: lo, xmax: hi, ymin: 0, ymax,
+          xlabel: '√n · [X̄ₙ(1 − X̄ₙ) − p(1 − p)]', ylabel: 'Densidad', legendPos: 'tr'
+        });
+
+        plot.draw(g => {
+          g.hist(vals, { bins, range: [lo, hi], density: true, color: 'c2', alpha: 0.55, label: 'Simulación (2000 réplicas)' });
+          g.curve(Nlim.pdf, { color: 'c1', width: 2.6, label: `N(0, ${fmt(varAsint, 4)})` });
+        });
+
+        const empMean = EM.stats.mean(Array.from(vals));
+        const empVar = EM.stats.var(Array.from(vals));
+
+        out.set(`
+          <b>Régimen de 1er orden ($p = ${p.toFixed(2)} \\ne 0.50$, $n = ${n}$):</b><br>
+          • <b>Derivada:</b> $g'(p) = 1 - 2p = $ <b>${fmt(1 - 2 * p, 2)}</b> $\\ne 0$.<br>
+          • <b>Distribución límite teórica:</b> $\\sqrt{n}[\\bar X_n(1 - \\bar X_n) - p(1-p)] \\dto N\\big(0,\\, p(1-p)(1-2p)^2\\big) = N(0,$ <b>${fmt(varAsint, 5)}</b>$)$.<br>
+          • <b>Resumen empírico ($M = 2000$):</b> media muestral $=$ <b>${fmt(empMean, 4)}</b> (teórica $0$), varianza muestral $=$ <b>${fmt(empVar, 5)}</b> (teórica ${fmt(varAsint, 5)}).
+        `);
+      } else {
+        const lo = -1.8;
+        const hi = 0.08;
+        const bins = 18;
+        // Densidad exacta de Y = -(1/4) * chi2(1) para y < 0: f_Y(y) = sqrt(2 / (pi * |y|)) * exp(2y)
+        const chiLimPdf = y => (y < -1e-3 && y >= lo) ? Math.sqrt(2 / (Math.PI * (-y))) * Math.exp(2 * y) : NaN;
+        const hMax = histMaxDensity(vals, lo, 0, bins);
+        const ymax = Math.min(7.5, Math.max(4.5, hMax * 1.15));
+
+        plot.setRange({
+          xmin: lo, xmax: hi, ymin: 0, ymax,
+          xlabel: 'n · [X̄ₙ(1 − X̄ₙ) − 1/4]', ylabel: 'Densidad', legendPos: 'tl'
+        });
+
+        plot.draw(g => {
+          g.hist(vals, { bins, range: [lo, 0], density: true, color: 'c2', alpha: 0.55, label: 'Simulación (2000 réplicas)' });
+          g.curve(chiLimPdf, { from: lo, to: -0.006, n: 450, color: 'c1', width: 2.6, label: '−(1/4) χ²(1)  (truncada en 0)' });
+        });
+
+        const empMean = EM.stats.mean(Array.from(vals));
+        const empVar = EM.stats.var(Array.from(vals));
+
+        out.set(`
+          <b>Régimen degenerado de 2do orden ($p = 0.50$, $n = ${n}$):</b><br>
+          • <b>Derivadas:</b> $g'(0.5) = 0$ (anula el escalado $\\sqrt{n}$) y $g''(0.5) = -2$, con $\\sigma^2 = 1/4$.<br>
+          • <b>Distribución límite teórica:</b> $n[\\bar X_n(1 - \\bar X_n) - 1/4] \\dto -\\frac{1}{4}\\chi^2_{(1)}$ (soporte en $(-\\infty, 0]$ con asíntota vertical en $0$).<br>
+          • <b>Momentos teóricos vs. empíricos ($M = 2000$):</b> media $=$ <b>${fmt(empMean, 4)}</b> (teórica $-0.25$), varianza $=$ <b>${fmt(empVar, 4)}</b> (teórica $\\frac{1}{16}\\cdot 2 = 0.125$).
+        `);
+      }
+    }
+
+    render();
+  })();
+
+  /* ============================================================
+     AUTOEVALUACIÓN: 3 QUIZZES Y 2 COMPROBADORES NUMÉRICOS
+     ============================================================ */
+  EM.ui.quiz('#quiz-1', {
+    question: '1. Sobre el Teorema de Scheffé y la convergencia en distribución de variables aleatorias continuas, ¿cuál afirmación es correcta?',
+    options: [
+      'Si las densidades $f_n(x)$ convergen a $f(x)$ para casi todo $x \\in \\R$, entonces $X_n \\dto X$; sin embargo, el recíproco es falso.',
+      '$X_n \\dto X$ entre variables continuas ocurre si y solo si $f_n(x) \\to f(x)$ puntualmente en todo $x \\in \\R$.',
+      'Si $f_n(x)$ falla en converger en un conjunto finito de puntos (como $x = 0$ y $x = 1$), el Teorema de Scheffé deja de aplicarse.',
+      'El Teorema de Scheffé solo es válido si todas las variables tienen soporte compacto en $[0, 1]$.'
+    ],
+    answer: 0,
+    explain: 'El Teorema de Scheffé afirma que $f_n(x) \\to f(x)$ c.t.p. (salvo en un conjunto de medida de Lebesgue nula) implica $X_n \\dto X$. El recíproco es falso, como muestra $f_n(x) = 1 - \\cos(2n\\pi x)$ en $(0,1)$, donde $F_n(x) \\to x$ pero $f_n(x)$ oscila sin converger a $1$.'
+  });
+
+  EM.ui.quiz('#quiz-2', {
+    question: '2. Suponga que $X_n \\dto X$ y queremos garantizar por el Teorema de Slutsky que $X_n / Y_n \\dto X / c$. ¿Qué hipótesis adicional sobre $Y_n$ se necesita?',
+    options: [
+      'Basta que $Y_n \\dto Y$, donde $Y$ es cualquier variable aleatoria no nula.',
+      'Que $Y_n \\pto c$ (equivalentemente $Y_n \\dto c$), donde $c \\ne 0$ es una constante.',
+      'Que $Y_n$ sea estrictamente independiente de $X_n$ para todo $n$, sin importar su límite.',
+      'Que $Y_n \\pto 0$ para que el cociente crezca más rápido que $X_n$.'
+    ],
+    answer: 1,
+    explain: 'El Teorema de Slutsky requiere que $Y_n$ converja en distribución (equivalentemente en probabilidad) a una <b>constante</b> $c$, y para el cociente $X_n/Y_n$ exige además $c \\ne 0$.'
+  });
+
+  EM.ui.quiz('#quiz-3', {
+    question: '3. Sea $\\sqrt{n}(Y_n - \\mu) \\dto N(0, \\sigma^2)$ con $\\sigma^2 &gt; 0$, y sea $g$ dos veces derivable en $\\mu$ con $g\'(\\mu) = 0$ y $g\'\'(\\mu) \\ne 0$. ¿Cuál es el comportamiento asintótico correcto de $g(Y_n) - g(\\mu)$?',
+    options: [
+      '$\\sqrt{n}(g(Y_n) - g(\\mu)) \\dto N(0, [g\'\'(\\mu)]^2\\sigma^2)$.',
+      '$\\sqrt{n}(g(Y_n) - g(\\mu)) \\pto 0$, y con el escalado de segundo orden $n(g(Y_n) - g(\\mu)) \\dto \\frac{1}{2}g\'\'(\\mu)\\sigma^2 \\chi^2_{(1)}$.',
+      '$n(g(Y_n) - g(\\mu)) \\dto N(0, \\frac{1}{4}[g\'\'(\\mu)]^2\\sigma^4)$.',
+      'No es posible obtener ninguna distribución límite porque $g\'(\\mu) = 0$ viola la diferenciabilidad.'
+    ],
+    answer: 1,
+    explain: 'Cuando $g\'(\\mu) = 0$, el término lineal de Taylor desaparece, por lo que $\\sqrt{n}(g(Y_n)-g(\\mu)) \\pto 0$. El término dominante pasa a ser $\\frac{1}{2}g\'\'(\\mu)(Y_n - \\mu)^2$, que al multiplicarse por $n$ converge a $\\frac{1}{2}g\'\'(\\mu)\\sigma^2 \\chi^2_{(1)}$.'
+  });
+
+  EM.ui.numcheck('#nc-1', {
+    prompt: '1. Sean $X_1, \\dots, X_n \\iid$ con $\\E[X_1] = 1$ y $\\Var(X_1) = 16$, y sea $S_n = \\sum_{i=1}^n X_i$. Por el Método Delta (Ejemplo 9), $\\sqrt{S_n} - \\sqrt{n} \\dto N(0, a^2)$. Calcula la varianza asintótica $a^2$:',
+    answer: 4,
+    tol: 0.01,
+    placeholder: 'ej. 4',
+    hint: 'Como demostramos en el Ejemplo 9, $a^2 = \\sigma^2 / 4$. Con $\\sigma^2 = 16$, resulta $16/4 = 4$.'
+  });
+
+  EM.ui.numcheck('#nc-2', {
+    prompt: '2. Sean $X_1, \\dots, X_n \\iid \\text{Bernoulli}(p = 0.2)$. Al aplicar el Método Delta a $g(\\bar X_n) = \\bar X_n(1 - \\bar X_n)$, $\\sqrt{n}[\\bar X_n(1 - \\bar X_n) - p(1-p)] \\dto N(0, \\tau^2)$. Calcula $\\tau^2$:',
+    answer: 0.0576,
+    tol: 0.001,
+    placeholder: 'ej. 0.0576',
+    hint: 'Usa $\\tau^2 = p(1-p)(1-2p)^2$. Para $p = 0.2$: $0.2 \\times 0.8 \\times (0.6)^2 = 0.16 \\times 0.36 = 0.0576$.'
+  });
+
+})();
+</script>
+</body>
+</html>

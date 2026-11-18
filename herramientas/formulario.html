@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Formulario completo · Estadística I + Est Mat</title>
-<meta name="description" content="Formulario de la guía: definiciones, modelos, FGM, transformaciones, estadísticos de orden, χ², t, F y TLC, con la notación de Estadística I y de Estadística Matemática.">
+<meta name="description" content="Formulario de la guía: definiciones, modelos, FGM, transformaciones, estadísticos de orden, χ², t, F, TLC, estimación, modos de convergencia, Borel–Cantelli, leyes de los grandes números, Método Delta ampliado y valores extremos, con la notación de Estadística I y de Estadística Matemática.">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <link rel="stylesheet" href="../assets/css/style.css">
 <script src="../assets/js/theme.js"></script>
@@ -673,7 +673,183 @@
 
   <!-- ================================================================ -->
   <section>
-    <h2 id="tablas">18. Cómo leer las tablas y los valores críticos</h2>
+    <h2 id="modos-borel">18. Modos de convergencia, Borel–Cantelli y mapeo continuo <span class="formula-tag">(Clase 11)</span></h2>
+
+    <div class="box definicion"><span class="box-title">Los tres modos de convergencia estocástica</span>
+      <p>Sean $X_1, X_2, \dots$ y $X$ variables aleatorias sobre $(\Omega, \mathcal{F}, \P)$ (en distribución sólo importan las marginales $F_{X_n}$ y $F_X$):</p>
+      <ul>
+        <li><b>Casi segura ($X_n \xrightarrow{\text{c.s.}} X$):</b> el conjunto de trayectorias donde converge puntualmente tiene probabilidad $1$:
+          $$\P\big(\{\omega \in \Omega : \lim_{n\to\infty} X_n(\omega) = X(\omega)\}\big) = 1 \iff \P\big(|X_n - X| &gt; \varepsilon \text{ i.v.}\big) = 0 \quad \forall\,\varepsilon &gt; 0,$$
+          donde «i.v.» (infinitas veces) es el límite superior conjuntista $\{A_n \text{ i.v.}\} = \limsup_{n\to\infty} A_n = \bigcap_{m=1}^\infty \bigcup_{n=m}^\infty A_n$.</li>
+        <li><b>En probabilidad ($X_n \pto X$):</b> para todo $\varepsilon &gt; 0$,
+          $$\lim_{n\to\infty} \P\big(|X_n - X| &gt; \varepsilon\big) = 0 \iff \lim_{n\to\infty} \P\big(|X_n - X| \le \varepsilon\big) = 1.$$</li>
+        <li><b>En distribución ($X_n \dto X$):</b> convergencia puntual de las acumuladas en los puntos de continuidad del límite:
+          $$\lim_{n\to\infty} F_{X_n}(x) = F_X(x) \quad \text{en todo } x \in \R \text{ donde } F_X \text{ es continua}.$$</li>
+      </ul>
+    </div>
+
+    <div class="box teorema"><span class="box-title">Jerarquía, unicidad del límite y equivalencia hacia una constante</span>
+      <ul>
+        <li><b>Jerarquía estricta:</b> $X_n \xrightarrow{\text{c.s.}} X \implies X_n \pto X \implies X_n \dto X$. Ninguna implicación recíproca vale en general sin hipótesis adicionales.</li>
+        <li><b>Unicidad del límite:</b> si $X_n \to X$ y $X_n \to Y$ en c.s. o en P, entonces $\P(X = Y) = 1$; si convergen en D, entonces $F_X(x) = F_Y(x)$ para todo $x \in \R$.</li>
+        <li><b>Equivalencia hacia una constante $c \in \R$:</b> para una variable degenerada en $c$ ($F_c(x) = \1\{x \ge c\}$, continua salvo en $x = c$):
+          $$X_n \dto c \iff X_n \pto c.$$</li>
+      </ul>
+    </div>
+
+    <div class="box teorema"><span class="box-title">Lemas de Borel–Cantelli y criterio suficiente c.s.</span>
+      <ul>
+        <li><b>1.º Lema de Borel–Cantelli (no requiere independencia):</b> si la serie de probabilidades converge, entonces con probabilidad $1$ ocurre a lo sumo un número finito de eventos $A_n$:
+          $$\sum_{n=1}^\infty \P(A_n) &lt; \infty \implies \P\big(\limsup_{n\to\infty} A_n\big) = \P(A_n \text{ i.v.}) = 0.$$</li>
+        <li><b>Criterio suficiente para convergencia c.s.:</b> tomando $A_n = \{|X_n - X| &gt; \varepsilon\}$, si para todo $\varepsilon &gt; 0$ se cumple
+          $$\sum_{n=1}^\infty \P\big(|X_n - X| &gt; \varepsilon\big) &lt; \infty \implies X_n \xrightarrow{\text{c.s.}} X \quad (\text{y por tanto } X_n \pto X).$$</li>
+        <li><b>2.º Lema de Borel–Cantelli (exige eventos independientes):</b> si $\{A_n\}_{n\ge 1}$ son <b>independientes</b> y la serie diverge, entonces ocurren infinitas veces con probabilidad $1$:
+          $$\sum_{n=1}^\infty \P(A_n) = \infty \text{ con } \{A_n\} \text{ independientes} \implies \P\big(\limsup_{n\to\infty} A_n\big) = \P(A_n \text{ i.v.}) = 1.$$</li>
+      </ul>
+    </div>
+
+    <div class="box teorema"><span class="box-title">Teorema del mapeo continuo y aritmética de límites</span>
+      <ul>
+        <li><b>Mapeo continuo:</b> si $g: \R \to \R$ es continua en el soporte de $X$ (o su conjunto de discontinuidades tiene probabilidad $0$ bajo $X$), entonces $X_n \to X \implies g(X_n) \to g(X)$ en el <b>mismo modo</b> ($\xrightarrow{\text{c.s.}}$, $\pto$ o $\dto$). Asimismo, si $c_n \to c \in \R$ (determinista), $c_n X_n \to c X$ en ese mismo modo.</li>
+        <li><b>Aritmética en c.s. y en P:</b> si $X_n \pto a$ y $Y_n \pto b$ (o en general $X_n \to X$, $Y_n \to Y$ en $\xrightarrow{\text{c.s.}}$ o $\pto$), entonces $X_n \pm Y_n \to X \pm Y$, $X_n Y_n \to XY$ y, si $\P(Y = 0) = 0$ (o $b \ne 0$), $X_n / Y_n \to X / Y$.</li>
+      </ul>
+    </div>
+    <div class="box cuidado"><span class="box-title">¡Cuidado con la suma en distribución!</span>
+      <p>Que $X_n \dto X$ y $Y_n \dto Y$ <b>no implica</b> en general que $X_n + Y_n \dto X + Y$ (la convergencia débil ignora la estructura conjunta), salvo bajo independencia ($X_n \ind Y_n$ y $X \ind Y$) o cuando una sucesión converge a una constante (Slutsky).</p>
+    </div>
+
+    <div class="box idea"><span class="box-title">Consistencia del EMV, velocidades de convergencia y máximo en $U(0,1)$</span>
+      <ul>
+        <li><b>Criterio ECM (MSE):</b> $\lim_{n\to\infty} \Var(\hat\theta_n) = 0$ y $\lim_{n\to\infty} B(\hat\theta_n) = 0 \iff \lim_{n\to\infty} \text{MSE}_\theta(\hat\theta_n) = 0 \implies \hat\theta_n \pto \theta$ (por Markov/Chebyshev). Bajo condiciones de regularidad, $\hat\theta_{\text{MV}} \pto \theta$ con tasa $\text{MSE} = O(1/n)$.</li>
+        <li><b>Modelos no regulares ($U(-\theta, \theta)$):</b> cuando el soporte depende de $\theta$, $\hat\theta_{\text{MV}} = M_n = \max_{1\le i\le n}|X_i|$ cumple $M_n/\theta \sim \text{Beta}(n,1)$ y $\text{MSE}_\theta(M_n) = \dfrac{2\theta^2}{(n+1)(n+2)} = O(1/n^2)$, mucho más rápido que el estimador de momentos $\hat\theta_{\text{MM}} = \sqrt{\frac{3}{n}\sum_{i=1}^n X_i^2}$ cuya tasa es $\text{MSE}_\theta(\hat\theta_{\text{MM}}) \approx \dfrac{\theta^2}{5n} = O(1/n)$.</li>
+        <li><b>Límite del máximo en $U(0,1)$:</b> para $X_1,\dots,X_n \iid U(0,1)$, se cumple $X_{(n)} \pto 1$ y en escala $n$:
+          $$n(1 - X_{(n)}) \dto \text{Exp}(1) \quad (\text{escala }\beta = 1), \qquad\text{y en general } n\,\text{Beta}(\alpha, n) \dto \text{Gamma}(\alpha, 1),\quad \frac{n(\theta - M_n)}{\theta} \dto \text{Exp}(1).$$</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="scheffe-delta">19. Teorema de la Continuidad, Scheffé, Slutsky y Método Delta ampliado <span class="formula-tag">(Clase 12)</span></h2>
+
+    <div class="box teorema"><span class="box-title">Teorema de la Continuidad (FGM / Lévy) y lema exponencial</span>
+      <p>Si las FGM $M_{X_n}(t)$ existen en $|t| &lt; b$ ($b &gt; 0$) y convergen puntualmente a la FGM de una variable aleatoria $X$:</p>
+      $$\lim_{n\to\infty} M_{X_n}(t) = M_X(t) \quad \text{para } |t| &lt; h \;\;(0 &lt; h \le b) \implies X_n \dto X.$$
+      <p><b>Lema exponencial útil:</b> si $c_n \to c \in \R$ cuando $n \to \infty$, entonces $\displaystyle\lim_{n\to\infty}\left(1 + \frac{c_n}{n}\right)^n = e^c$.</p>
+    </div>
+
+    <div class="box teorema"><span class="box-title">Teorema de Scheffé, criterio discreto y límite de Poisson</span>
+      <ul>
+        <li><b>Discretas:</b> si $X_n, X$ toman valores en un conjunto numerable fijo (p. ej. $\mathbb{N}$) y $\lim_{n\to\infty} p_{X_n}(k) = p_X(k)$ para todo $k$, entonces $X_n \dto X$ (en $\mathbb{N}$, es condición necesaria y suficiente).</li>
+        <li><b>Teorema de Scheffé (continuas):</b> si $\lim_{n\to\infty} f_{X_n}(x) = f_X(x)$ para casi todo $x \in \R$, entonces $X_n \dto X$.</li>
+        <li><b>Límite de Poisson:</b> si $X_n \sim \text{Bin}(n, p_n)$ y $\lim_{n\to\infty} n p_n = \lambda &gt; 0$, entonces $X_n \dto \text{Pois}(\lambda)$.</li>
+      </ul>
+    </div>
+    <div class="box cuidado"><span class="box-title">¡Cuidado! El recíproco del Teorema de Scheffé es falso</span>
+      <p>$X_n \dto X$ <b>no</b> implica $f_{X_n}(x) \to f_X(x)$: variables discretas pueden converger a una continua, y densidades altamente oscilatorias como $f_n(x) = 1 - \cos(2n\pi x)$ en $(0,1)$ cumplen $F_n(x) = x - \frac{\sin(2n\pi x)}{2n\pi} \to x$ ($U(0,1)$) sin que $f_n(x)$ converja.</p>
+    </div>
+
+    <div class="box teorema"><span class="box-title">Teorema de Slutsky y estrategia de multiplicar y dividir</span>
+      <p>Si $X_n \dto X$ y $Y_n \pto c$ (equivalentemente $Y_n \dto c$, donde $c \in \R$ es <b>constante</b>), entonces:</p>
+      $$X_n \pm Y_n \dto X \pm c, \qquad X_n Y_n \dto c X, \qquad \frac{X_n}{Y_n} \dto \frac{X}{c} \quad (c \ne 0).$$
+      <p><b>Estrategia práctica (multiplicar y dividir por el parámetro verdadero $\sigma$ o $\theta$):</b></p>
+      $$\text{Estadístico} = \underbrace{\frac{\text{término del TLC}}{\text{escala verdadera}}}_{\dto N(0,1)} \times \underbrace{\frac{\text{escala verdadera}}{\text{escala estimada}}}_{\pto 1 \text{ (o } c\text{)}}.$$
+      <p><i>Ejemplo (TLC estudentizado):</i> $\dfrac{\bar X_n - \mu}{S/\sqrt{n}} = \dfrac{\bar X_n - \mu}{\sigma/\sqrt{n}} \cdot \dfrac{\sigma}{S} \dto 1 \cdot N(0,1) = N(0,1)$ porque $S^2 \pto \sigma^2 \implies \sigma/S \pto 1$.</p>
+    </div>
+
+    <div class="box teorema"><span class="box-title">Método Delta de 2.º orden (caso degenerado $g'(\mu) = 0$)</span>
+      <p>Si $\sqrt{n}(Y_n - \mu) \dto N(0, \sigma^2)$ ($\sigma^2 &gt; 0$) y $g$ es dos veces derivable en $\mu$ con $g'(\mu) = 0$ y $g''(\mu) \ne 0$, entonces $\sqrt{n}\big(g(Y_n) - g(\mu)\big) \pto 0$ y el reescalado correcto es $n$:</p>
+      $$n\big(g(Y_n) - g(\mu)\big) \dto \frac{1}{2}\,g''(\mu)\,\sigma^2\,\chi^2_{(1)}.$$
+      <p><b>Ejemplo (varianza muestral Bernoulli):</b> para $X_i \iid \text{Ber}(p)$ y $\hat\sigma^2 = \bar X(1 - \bar X)$ ($g(x)=x(1-x)$), si $p \ne 1/2$ vale Delta 1.º orden ($\sqrt{n}(\hat\sigma^2 - p(1-p)) \dto N(0, p(1-p)(1-2p)^2)$); en $p = 1/2$, $g'(1/2) = 0$, $g''(1/2) = -2$ y $\sigma^2 = 1/4$:</p>
+      $$n\left(\hat\sigma^2 - \frac{1}{4}\right) \dto -\frac{1}{4}\chi^2_{(1)} \qquad \Longleftrightarrow \qquad 4n\left(\frac{1}{4} - \hat\sigma^2\right) \dto \chi^2_{(1)}.$$
+    </div>
+
+    <div class="box teorema"><span class="box-title">Método Delta Multivariado</span>
+      <p>Sea $\mathbf{Y}_n \in \R^k$ tal que $\sqrt{n}(\mathbf{Y}_n - \boldsymbol{\mu}) \dto N_k(\mathbf{0}, \boldsymbol{\Sigma})$ (para promedios muestrales $\mathbf{Y}_n = \bar{\mathbf{X}}_n$, $\Sigma_{ij} = \Cov(X_{1i}, X_{1j})$). Si $g: \R^k \to \R$ es diferenciable en $\boldsymbol{\mu}$ con $\nabla g(\boldsymbol{\mu}) = \nabla_{\boldsymbol{\mu}} \ne \mathbf{0}$ y $\nabla_{\boldsymbol{\mu}}^\top \boldsymbol{\Sigma} \nabla_{\boldsymbol{\mu}} &gt; 0$, entonces:</p>
+      $$\sqrt{n}\big(g(\mathbf{Y}_n) - g(\boldsymbol{\mu})\big) \dto N\!\left(0,\; \nabla_{\boldsymbol{\mu}}^\top \boldsymbol{\Sigma} \nabla_{\boldsymbol{\mu}}\right).$$
+      <ul>
+        <li><b>Cociente de medias $\bar X / \bar Y$ ($\mu_Y \ne 0$):</b> con $g(x,y)=x/y$, $\nabla_{\boldsymbol{\mu}} = \big(\frac{1}{\mu_Y},\; -\frac{\mu_X}{\mu_Y^2}\big)^\top$, resulta $\nabla_{\boldsymbol{\mu}}^\top \boldsymbol{\Sigma} \nabla_{\boldsymbol{\mu}} = \frac{\sigma_X^2}{\mu_Y^2} - \frac{2\mu_X\Cov(X,Y)}{\mu_Y^3} + \frac{\mu_X^2\sigma_Y^2}{\mu_Y^4}$.</li>
+        <li><b>Modelo de Laplace ($f(x;\sigma) = \frac{1}{2\sigma}e^{-|x|/\sigma}$):</b> para $\mathbf{Y}_n = \big(\frac{1}{n}\sum |X_i|, \bar X\big)^\top$, se tiene $\E[|X_1|]=\sigma$, $\E[X_1]=0$, $\Var(|X_1|)=\sigma^2$, $\Var(X_1)=2\sigma^2$ y por simetría $\Cov(|X_1|, X_1) = 0$ ($\boldsymbol{\Sigma} = \operatorname{diag}(\sigma^2, 2\sigma^2)$).</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="lgn">20. Leyes Débiles y Fuertes de los Grandes Números <span class="formula-tag">(Clase 13)</span></h2>
+
+    <div class="box teorema"><span class="box-title">Leyes Débiles de los Grandes Números (LDGN · convergencia en probabilidad $\pto$)</span>
+      <ul>
+        <li><b>LDGN de Bernoulli:</b> si $X_1, X_2, \dots \iid \text{Ber}(p)$ y $S_n = \sum_{i=1}^n X_i$, entonces $\hat p_n = \dfrac{S_n}{n} \pto p$.</li>
+        <li><b>LDGN de Khintchine:</b> si $X_1, X_2, \dots \iid$ con media finita $\E[|X_1|] &lt; \infty$ y $\E[X_1] = \mu$ (<b>sin requerir $\sigma^2 &lt; \infty$</b>), entonces $\bar X_n = \dfrac{S_n}{n} \pto \mu$.</li>
+        <li><b>LDGN de Chebyshev (no requiere i.i.d. ni independencia):</b> para una sucesión cualquiera $\{X_n\}$ con $S_n = \sum_{i=1}^n X_i$:
+          $$\lim_{n\to\infty} \frac{\Var(S_n)}{n^2} = 0 \implies \frac{S_n - \E[S_n]}{n} \pto 0.$$
+          En presencia de dependencia (p. ej. rachas $k$-dependientes), recuerda incluir las covarianzas cruzadas:
+          $$\Var(S_n) = \sum_{i=1}^n \Var(X_i) + 2\sum_{1 \le i &lt; j \le n} \Cov(X_i, X_j).$$</li>
+      </ul>
+    </div>
+
+    <div class="box teorema"><span class="box-title">Leyes Fuertes de los Grandes Números (LFGN · convergencia casi segura $\xrightarrow{\text{c.s.}}$)</span>
+      <ul>
+        <li><b>LFGN de Borel:</b> si $X_1, X_2, \dots \iid \text{Ber}(p)$, entonces $\dfrac{S_n}{n} \xrightarrow{\text{c.s.}} p$.</li>
+        <li><b>LFGN de Kolmogorov (i.i.d.):</b> si $X_1, X_2, \dots \iid$, entonces $\E[|X_1|] &lt; \infty \iff \bar X_n = \dfrac{S_n}{n} \xrightarrow{\text{c.s.}} \mu = \E[X_1]$.</li>
+        <li><b>LFGN de Kolmogorov (independientes no i.d.):</b> si $X_1, X_2, \dots$ son <b>independientes</b> con varianzas finitas y
+          $$\sum_{n=1}^\infty \frac{\Var(X_n)}{n^2} &lt; \infty \implies \frac{S_n - \E[S_n]}{n} \xrightarrow{\text{c.s.}} 0.$$</li>
+      </ul>
+    </div>
+
+    <div class="box idea"><span class="box-title">Promedios no lineales (receta de Sesión 2)</span>
+      <p>Reescribe el estadístico en función de promedios $\frac{1}{n}\sum_{i=1}^n h(X_i)$, comprueba $\E[|h(X_1)|] &lt; \infty$, aplica la LGN y concluye por mapeo continuo:</p>
+      <ul>
+        <li><b>Media geométrica</b> ($X_i &gt; 0$ i.i.d., $\E[|\ln X_1|] &lt; \infty$):
+          $$G_n = \left(\prod_{i=1}^n X_i\right)^{1/n} = \exp\!\left(\frac{1}{n}\sum_{i=1}^n \ln X_i\right) \xrightarrow{\text{c.s.}} e^{\E[\ln X_1]} \qquad \big(\text{ej. } U(0,1) \implies e^{-1}\big).$$</li>
+        <li><b>Media armónica</b> ($X_i &gt; 0$ i.i.d., $\E[X_1^{-1}] &lt; \infty$):
+          $$H_n = \left(\frac{1}{n}\sum_{i=1}^n X_i^{-1}\right)^{-1} \xrightarrow{\text{c.s.}} \big(\E[X_1^{-1}]\big)^{-1} \qquad \big(\text{ej. } f(x)=3x^2,\ 0 &lt; x &lt; 1 \implies 2/3\big).$$</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="tlc-tve">21. TLC generalizado, Pivotes Asintóticos y Teoría del Valor Extremo <span class="formula-tag">(Clase 14)</span></h2>
+
+    <div class="box teorema"><span class="box-title">Teoremas del Límite Central (De Moivre–Laplace, Lindeberg–Lévy y no i.d.)</span>
+      <ul>
+        <li><b>De Moivre–Laplace:</b> si $S_n \sim \text{Bin}(n,p)$ con $0 &lt; p &lt; 1$, entonces $\dfrac{S_n - np}{\sqrt{np(1-p)}} \dto N(0,1)$.</li>
+        <li><b>Lindeberg–Lévy (i.i.d.):</b> si $X_1, X_2, \dots \iid$ con $\E[X_1]=\mu$ y $\Var(X_1)=\sigma^2 \in (0,\infty)$, entonces $\dfrac{S_n - n\mu}{\sigma\sqrt{n}} = \dfrac{\sqrt{n}(\bar X_n - \mu)}{\sigma} \dto N(0,1)$.</li>
+        <li><b>TLC de Liapunov–Lindeberg (independientes no i.d.):</b> sean $X_1, X_2, \dots$ <b>independientes</b> con $\mu_i = \E[X_i]$, $\sigma_i^2 = \Var(X_i)$, $\E[S_n] = \sum_{i=1}^n \mu_i$ y $s_n^2 = \Var(S_n) = \sum_{i=1}^n \sigma_i^2$. En particular, si están uniformemente acotadas ($|X_i| \le M$ c.s. para todo $i$) y $s_n^2 \to \infty$, entonces:
+          $$\frac{S_n - \E[S_n]}{s_n} \dto N(0,1).$$</li>
+      </ul>
+    </div>
+
+    <div class="box teorema"><span class="box-title">Estadísticos con residuo, pivotes asintóticos y consistencia universal de $S^2$</span>
+      <ul>
+        <li><b>Estadísticos con residuo:</b> si $T_n = \sum_{i=1}^n g(X_i) + R_n$ con $X_i \iid$, $\E[g(X_1)] = \xi$, $\Var(g(X_1)) = \nu^2 \in (0,\infty)$ y $R_n/\sqrt{n} \pto 0$, entonces el término dominante fija el TLC por Slutsky:
+          $$\frac{T_n - n\xi}{\nu\sqrt{n}} \dto N(0,1).$$</li>
+        <li><b>Pivotes asintóticos y Delta encadenado:</b> dividir por un estimador consistente de escala elimina el parámetro desconocido (ej. en $U(-\theta,\theta)$ con $Y_n = X_{(n)} \pto \theta$, $\frac{S_n}{\sqrt{n}\,Y_n} \dto N(0, 1/3)$); además, la salida asintótica de un Método Delta puede encadenarse como entrada de otro.</li>
+        <li><b>Consistencia universal de $S^2$:</b> para toda población i.i.d. con $\E[X_1^2] &lt; \infty$ (sin exigir 4.º momento), por Jensen/Cauchy–Schwarz $\E[|X_1|] \le \sqrt{\E[X_1^2]} &lt; \infty$; reescribiendo $S^2 = \frac{n}{n-1}\big(\frac{1}{n}\sum_{i=1}^n X_i^2 - \bar X_n^2\big)$ y aplicando LFGN se obtiene $S^2 \xrightarrow{\text{c.s.}} \sigma^2$ (y $S^2 \pto \sigma^2$).</li>
+      </ul>
+    </div>
+
+    <div class="box teorema"><span class="box-title">Teoría del Valor Extremo (TVE · Fisher–Tippett–Gnedenko)</span>
+      <p>Sea $X_{(n)} = \max_{1\le i\le n} X_i$ de $X_i \iid$ con FDA $F_X$ ($F_{X_{(n)}}(x) = [F_X(x)]^n$). Si existen sucesiones $a_n \in \R$ y $b_n &gt; 0$ tales que</p>
+      $$\frac{X_{(n)} - a_n}{b_n} \dto Y$$
+      <p>con distribución no degenerada, entonces $Y$ pertenece necesariamente a una de las <b>3 familias (GEV)</b>:</p>
+      <ol>
+        <li><b>Tipo 1 · Gumbel</b> $\text{Gumb}(a,b)$ ($\xi = 0$, colas exponenciales como Exp, Normal, Gamma):
+          $$G_1(z) = \exp\!\left\{-\exp\!\left[-\frac{z - a}{b}\right]\right\}, \qquad z \in \R \;\;(b &gt; 0).$$
+          <i>Caso estándar $\text{Gumb}(0,1)$:</i> $G_1(z) = e^{-e^{-z}}$, densidad $f(z) = e^{-z-e^{-z}}$, $\E[Z] = \gamma \approx 0.5772$, $\Var(Z) = \pi^2/6$. Para $X_i \iid \text{Exp}(1)$: $X_{(n)} - \ln n \dto \text{Gumb}(0,1)$.</li>
+        <li><b>Tipo 2 · Fréchet</b> ($\xi &gt; 0$, colas pesadas / polinomiales como Pareto, Cauchy, $t$):
+          $$G_2(z) = \exp\!\big\{-(z - a)^{-\alpha}\big\}\,\1_{\{z &gt; a\}}, \qquad \alpha &gt; 0.$$</li>
+        <li><b>Tipo 3 · Weibull</b> ($\xi &lt; 0$, soporte acotado por arriba como $U(0,1)$, Beta):
+          $$G_3(z) = \exp\!\big\{-(a - z)^{\alpha}\big\}\,\1_{\{z \le a\}} + \1_{\{z &gt; a\}}, \qquad \alpha &gt; 0.$$</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="tablas">22. Cómo leer las tablas y los valores críticos</h2>
     <div class="box idea"><span class="box-title">La regla que evita todos los líos de colas</span>
       <p>Las tablas ESPOL dan el valor con <b>área a la IZQUIERDA</b> $q$: $\P(X\le x)=q$. En clase se escribe el valor crítico con <b>área $\alpha$ a la DERECHA</b>. Entonces:</p>
       $$\text{valor crítico con cola derecha }\alpha \;=\; \text{valor de la tabla en la columna } q=1-\alpha .$$
@@ -698,7 +874,7 @@
 
   <!-- ================================================================ -->
   <section>
-    <h2 id="mapa">19. Mapa rápido: qué usar en cada caso</h2>
+    <h2 id="mapa">23. Mapa rápido: qué usar en cada caso</h2>
     <div class="table-wrap"><table class="tabla compact text-left">
       <thead><tr><th>Si te piden…</th><th>Usa</th><th>Fórmula clave</th></tr></thead>
       <tbody>
@@ -731,6 +907,16 @@
         <tr><td>Distribución de función $g(T_n)$ con $T_n$ asintóticamente normal</td><td>Método Delta (§17)</td><td>$\Var_{\text{asint}} = \sigma^2 [g'(\theta)]^2$</td></tr>
         <tr><td>Demostrar consistencia de un estimador</td><td>Criterio MSE (§17)</td><td>$\Var\to 0$ y $B\to 0 \implies \hat\theta\xrightarrow{p}\theta$</td></tr>
         <tr><td>Acotar probabilidad de colas sin conocer distribución</td><td>Desigualdad de Chebyshev (§17)</td><td>$\P(|X-\mu|\ge\varepsilon) \le \sigma^2/\varepsilon^2$</td></tr>
+        <tr><td>Probar $X_n \pto c$ sabiendo $X_n \dto c$ (o viceversa)</td><td>Equivalencia hacia constante (§18)</td><td>$X_n \dto c \iff X_n \pto c$ ($c$ constante)</td></tr>
+        <tr><td>Decidir si un evento ocurre i.v. o si $X_n \xrightarrow{\text{c.s.}} X$</td><td>Lemas de Borel–Cantelli (§18)</td><td>$\sum \P(A_n) &lt; \infty \implies 0$; indep. y $=\infty \implies 1$</td></tr>
+        <tr><td>Probar $X_n \dto X$ vía FGM, masas o densidades</td><td>Continuidad / Scheffé (§19)</td><td>$M_{X_n}(t) \to M_X(t)$ o $f_n \to f$ c.t.p. $\implies X_n \dto X$</td></tr>
+        <tr><td>Reemplazar $\sigma$ o $\theta$ desconocida por estimador consistente</td><td>Slutsky + truco $\times/\div$ (§19)</td><td>$\frac{\text{TLC}}{\text{escala real}} \cdot \frac{\text{escala real}}{\text{escala est.}} \dto N(0,1)\cdot c$</td></tr>
+        <tr><td>Distribución asintótica de $g(Y_n)$ cuando $g'(\mu) = 0$</td><td>Método Delta 2.º orden (§19)</td><td>$n\big(g(Y_n) - g(\mu)\big) \dto \frac{1}{2}\,g''(\mu)\,\sigma^2\,\chi^2_{(1)}$</td></tr>
+        <tr><td>Distribución asintótica de $g(\mathbf{Y}_n)$ con $\mathbf{Y}_n \in \R^k$</td><td>Método Delta multivariado (§19)</td><td>$\sqrt{n}\big(g(\mathbf{Y}_n) - g(\boldsymbol{\mu})\big) \dto N(0, \nabla_{\boldsymbol{\mu}}^\top \boldsymbol{\Sigma} \nabla_{\boldsymbol{\mu}})$</td></tr>
+        <tr><td>Probar $\bar X_n \pto \mu$ sin $\sigma^2 &lt; \infty$ o con dependencia</td><td>LDGN Khintchine / Chebyshev (§20)</td><td>i.i.d. $\E|X_1| &lt; \infty \implies \pto \mu$; $\Var(S_n)/n^2 \to 0$</td></tr>
+        <tr><td>Probar convergencia c.s. (i.i.d. o independientes no i.d.)</td><td>LFGN Kolmogorov (§20)</td><td>i.i.d. $\E|X_1| &lt; \infty$; o indep. $\sum \Var(X_n)/n^2 &lt; \infty$</td></tr>
+        <tr><td>Suma estandarizada de v.a. independientes no i.d.</td><td>TLC Liapunov–Lindeberg (§21)</td><td>$|X_i| \le M$ y $s_n^2 \to \infty \implies (S_n - \E[S_n])/s_n \dto N(0,1)$</td></tr>
+        <tr><td>Distribución límite del máximo normalizado $(X_{(n)} - a_n)/b_n$</td><td>Valor Extremo (TVE) (§21)</td><td>Gumbel $e^{-e^{-(z-a)/b}}$, Fréchet, Weibull</td></tr>
       </tbody>
     </table></div>
     <p class="small muted">¿Falta algún resultado? Aparecerá aquí a medida que avancen las clases. Los temas en detalle están en el <a href="distribuciones.html">laboratorio de distribuciones</a>, en <a href="tablas.html">cómo leer las tablas</a> y en el <a href="../temas/repaso.html">repaso de Estadística I</a>.</p>

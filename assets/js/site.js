@@ -24,9 +24,13 @@ EM.SITE = [
     { id: 'clase-08', title: 'Clase 8 · Métodos de estimación: Momentos y Máxima Verosimilitud', href: 'temas/clase-08.html', desc: 'Método de los momentos (MM), función de verosimilitud L(θ), log-verosimilitud, EMV, soporte dependiente y ejemplos.' },
     { id: 'clase-09', title: 'Clase 9 · Estimadores eficientes y Cota de Cramér-Rao', href: 'temas/clase-09.html', desc: 'Eficiencia, función Score, Información de Fisher, cota inferior de varianza y Teorema de Cramér-Rao.' },
     { id: 'clase-10', title: 'Clase 10 · Invarianza, Consistencia y Robustez', href: 'temas/clase-10.html', desc: 'Principio de invarianza de Zehna, normalidad asintótica de EMV, consistencia en probabilidad, desigualdades y robustez.' },
+    { id: 'clase-11', title: 'Clase 11 · Modos de convergencia y Borel–Cantelli', href: 'temas/clase-11.html', desc: 'Convergencia c.s., en probabilidad y en distribución, lemas de Borel–Cantelli, mapeo continuo y consistencia del EMV.' },
+    { id: 'clase-12', title: 'Clase 12 · Continuidad, Scheffé, Slutsky y Método Delta', href: 'temas/clase-12.html', desc: 'Teorema de continuidad (FGM), teorema de Scheffé, límite Binomial–Poisson, Slutsky y método Delta (1.º y 2.º orden y multivariado).' },
+    { id: 'clase-13', title: 'Clase 13 · Leyes Débiles y Fuertes de los Grandes Números', href: 'temas/clase-13.html', desc: 'LDGN de Bernoulli, Khintchine y Chebyshev; LFGN de Borel y Kolmogorov (i.i.d. y no i.d.); medias geométrica y armónica y variables dependientes.' },
+    { id: 'clase-14', title: 'Clase 14 · TLC generalizado y Teoría del Valor Extremo', href: 'temas/clase-14.html', desc: 'TLC de De Moivre–Laplace y Liapunov–Lindeberg, pivotes asintóticos, consistencia universal de S² y leyes extremas (Gumbel, Fréchet, Weibull).' },
   ]},
   { group: 'Herramientas', items: [
-    { id: 'formulario', title: 'Formulario completo (Est. I + Est Mat)', href: 'herramientas/formulario.html', desc: 'Todas las fórmulas esenciales en una página: modelos, FGM, transformaciones, estadísticos de orden, χ², t, F y TLC.' },
+    { id: 'formulario', title: 'Formulario completo (Est. I + Est Mat)', href: 'herramientas/formulario.html', desc: 'Todas las fórmulas esenciales en una página: modelos, FGM, transformaciones, estadísticos de orden, χ², t, F, estimación puntual, modos de convergencia, LGN, TLC y teoría del valor extremo.' },
     { id: 'distribuciones', title: 'Laboratorio de distribuciones', href: 'herramientas/distribuciones.html', desc: 'Explora Normal, χ², t, F, Gamma, Beta… con deslizadores y simulaciones.' },
     { id: 'tablas', title: 'Cómo leer las tablas (χ², t, F, K-S)', href: 'herramientas/tablas.html', desc: 'Percentil vs. valor crítico, colas, tablas interactivas y calculadora.' },
   ]},
@@ -34,5 +38,8 @@ EM.SITE = [
     { id: 'lista-1-1', title: 'Lista 1.1 · Transformaciones y estadísticos de orden', href: 'deberes/lista-1-1.html', desc: 'Pistas graduales, soluciones completas y verificación por simulación.' },
     { id: 'lista-1-2', title: 'Lista 1.2 · Teorema del límite central', href: 'deberes/lista-1-2.html', desc: 'Estimación Monte Carlo de π, procesos multiplicativos, sumas de Poisson y particiones aleatorias con simulaciones.' },
     { id: 'deber-estimacion-puntual', title: 'Deber · Estimación puntual (Unidad II)', href: 'deberes/deber-estimacion-puntual.html', desc: '5 ejercicios completos: familias afines y MSE, modelo geométrico, densidad de Rayleigh, familia potencia no regular y exponencial desplazada.' },
+  ]},
+  { group: 'Libro de Lebensztayn', items: [
+    { id: 'lebensztayn', title: 'Lebensztayn · Exercícios de Probabilidade (Cap. 5)', href: 'deberes/lebensztayn.html', desc: 'Solucionario progresivo del libro de Élcio Lebensztayn: modos de convergencia, LGN, TLC, Slutsky y método Delta.' },
   ]},
 ];

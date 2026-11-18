@@ -22,12 +22,17 @@ traen pistas graduales, solución completa paso a paso y verificación numérica
 | `temas/clase-08.html` | Métodos de estimación: Momentos y Máxima Verosimilitud (MM y EMV) |
 | `temas/clase-09.html` | Estimadores eficientes y Cota de Cramér-Rao (Score, Fisher, CRLB) |
 | `temas/clase-10.html` | Invarianza, Propiedades Asintóticas del EMV, Consistencia y Robustez |
+| `temas/clase-11.html` | Modos de convergencia y lemas de Borel–Cantelli |
+| `temas/clase-12.html` | Teorema de continuidad (FGM), Scheffé, Slutsky y Método Delta |
+| `temas/clase-13.html` | Leyes Débiles y Fuertes de los Grandes Números (LDGN y LFGN) |
+| `temas/clase-14.html` | TLC generalizado, pivotes asintóticos y Teoría del Valor Extremo |
 | `herramientas/formulario.html` | Formulario (Est. I + Est Mat): versión completa y de examen (2 págs.), en PDF/LaTeX |
 | `herramientas/distribuciones.html` | Laboratorio de distribuciones |
 | `herramientas/tablas.html` | Tablas χ², t, F, normal estándar y K-S, transcritas e interactivas |
 | `deberes/lista-1-1.html` | Lista 1.1 resuelta (transformaciones y estadísticos de orden) |
 | `deberes/lista-1-2.html` | Lista 1.2 resuelta (teorema del límite central) |
 | `deberes/deber-estimacion-puntual.html` | Deber resuelto de estimación puntual (Unidad II, 5 problemas completos) |
+| `deberes/lebensztayn.html` | Solucionario progresivo de Lebensztayn (Cap. 5: 28 ejercicios citados en el curso) |
 
 ## Uso local
 
@@ -56,10 +61,10 @@ intermedios quedan en `scripts/build/` (no versionado).
 
 ## Formulario
 
-`herramientas/formulario.html` resume Estadística I y las clases 01–10, y se ofrece
+`herramientas/formulario.html` resume Estadística I y las clases 01–14, y se ofrece
 en dos versiones descargables, cada una con su fuente LaTeX:
 
-- **Completa** (15 págs.): `herramientas/formulario.pdf` / `formulario.tex`.
+- **Completa** (20 págs.): `herramientas/formulario.pdf` / `formulario.tex`.
 - **De examen** (2 págs., a dos columnas): `herramientas/formulario-2p.pdf` /
   `formulario-2p.tex`.
 
@@ -81,10 +86,11 @@ est-mat/
 ├── assets/
 │   ├── css/style.css
 │   └── js/{theme,stats,plot,site,ui}.js
-├── temas/                  repaso + clases 01–10
+├── temas/                  repaso + clases 01–14
 ├── herramientas/           distribuciones.html, tablas.html, formulario.html
 │                           formulario.tex/.pdf y formulario-2p.tex/.pdf
-├── deberes/                lista-1-1.html, lista-1-2.html, deber-estimacion-puntual.html
+├── deberes/                lista-1-1.html, lista-1-2.html, deber-estimacion-puntual.html,
+│                           lebensztayn.html
 ├── scripts/                pipeline de tablas
 └── tests/                  stats.test.js, smoke.js, shot.sh
 ```

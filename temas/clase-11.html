@@ -1,0 +1,832 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clase 11 · Introducción a la convergencia estocástica</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/theme.js"></script>
+<style>
+  .table-wrap { overflow-x: auto; margin: 1.2rem 0; }
+  table.tabla th, table.tabla td { padding: 9px 12px; }
+  table.tabla td.izq, table.tabla th.izq { text-align: left; white-space: normal; }
+  .comp-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.82rem; font-weight: 600; font-family: var(--font-mono); }
+  .tag-win { background: var(--good-soft); color: var(--good); }
+  .tag-loss { background: var(--bad-soft); color: var(--bad); }
+  .tag-warn { background: var(--warn-soft); color: var(--warn); }
+  .mode-chain { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; margin: 14px 0; font-family: var(--font-ui); font-weight: 600; }
+  .mode-pill { padding: 6px 14px; border-radius: var(--radius-pill); background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent-border); }
+  .mode-arrow { color: var(--ink); font-size: 1.15rem; }
+</style>
+</head>
+<body data-page="clase-11" data-root="../">
+<main id="contenido">
+
+  <header class="page-head">
+    <p class="kicker">Clase 11 · Unidad 3 — Convergencia Estocástica</p>
+    <h1>Introducción a la convergencia estocástica: modos, propiedades y consistencia</h1>
+    <p class="lead">Qué significa rigurosamente que una sucesión de variables aleatorias o estimadores «converja» cuando crece el tamaño de muestra: los tres modos fundamentales de convergencia, los lemas de Borel–Cantelli, la preservación por mapeo continuo, la consistencia de los estimadores y la jerarquía exacta entre modos.</p>
+  </header>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="modos">1. Los tres modos de convergencia</h2>
+
+    <div class="box idea"><span class="box-title">Intuición: ¿por qué no existe un único modo de converger?</span>
+      <p>En cálculo real sabes exactamente qué significa que una sucesión numérica $a_n$ converja a $a$: a partir de cierto índice, la distancia $|a_n - a|$ se vuelve tan pequeña como quieras. Pero una variable aleatoria $X_n$ no es un número fijo, sino una función $X_n(\omega)$ que depende del resultado aleatorio $\omega \in \Omega$.</p>
+      <p>Cuando tienes una sucesión $X_1, X_2, \dots$ y una variable límite $X$, surgen al menos tres preguntas naturales de distinto nivel de exigencia:</p>
+      <ul>
+        <li><b>Nivel trayectoria ($\xrightarrow{\text{c.s.}}$):</b> Si fijamos el resultado del universo aleatorio $\omega$ y observamos toda la película $X_1(\omega), X_2(\omega), \dots$, ¿converge esa sucesión numérica a $X(\omega)$ para casi todo $\omega$?</li>
+        <li><b>Nivel masa de error ($\pto$):</b> En cada paso $n$, ¿la probabilidad de que $X_n$ se desvíe de $X$ por más de $\varepsilon$ tiende a cero, aunque en algunas trayectorias individuales sigan ocurriendo saltos aislados?</li>
+        <li><b>Nivel forma de la distribución ($\dto$):</b> Sin comparar $X_n(\omega)$ con $X(\omega)$ punto a punto, ¿las curvas de distribución acumulada $F_{X_n}(x)$ terminan calcando la curva límite $F_X(x)$?</li>
+      </ul>
+    </div>
+
+    <p>Formalicemos ahora estas tres ideas sobre un espacio de probabilidad $(\Omega, \mathcal{F}, \P)$.</p>
+
+    <div class="box definicion" id="def-modos"><span class="box-title">Definición · Los tres modos de convergencia estocástica</span>
+      <p>Sean $X_1, X_2, \dots$ y $X$ variables aleatorias definidas sobre $(\Omega, \mathcal{F}, \P)$ (para el tercer modo basta con conocer las distribuciones de cada $X_n$ y de $X$).</p>
+      <ol class="pasos">
+        <li><b>Convergencia casi segura (c.s.):</b> Se dice que $X_n$ converge casi seguramente a $X$, y se escribe $X_n \xrightarrow{\text{c.s.}} X$, si el evento donde ocurre la convergencia puntual tiene probabilidad $1$:
+          $$\P\big(\{\omega \in \Omega : \lim_{n\to\infty} X_n(\omega) = X(\omega)\}\big) = 1.$$
+          Equivalentemente, para todo $\varepsilon &gt; 0$, el error supera $\varepsilon$ solo un número finito de veces con probabilidad $1$:
+          $$\P\big(\lim_{n\to\infty}|X_n - X| &gt; \varepsilon\big) = 0 \qquad \Longleftrightarrow \qquad \P\big(|X_n - X| &gt; \varepsilon \text{ i.v.}\big) = 0 \quad \forall\,\varepsilon &gt; 0,$$
+          donde «i.v.» significa <i>infinitas veces</i> (de manera precisa, $\lim_{m\to\infty}\P(\sup_{n \ge m}|X_n - X| &gt; \varepsilon) = 0$ para todo $\varepsilon &gt; 0$).</li>
+        <li><b>Convergencia en probabilidad:</b> Se dice que $X_n$ converge en probabilidad a $X$, y se escribe $X_n \pto X$, si para todo margen $\varepsilon &gt; 0$:
+          $$\lim_{n\to\infty} \P(|X_n - X| &gt; \varepsilon) = 0 \qquad \Longleftrightarrow \qquad \lim_{n\to\infty} \P(|X_n - X| \le \varepsilon) = 1.$$</li>
+        <li><b>Convergencia en distribución (o convergencia débil):</b> Se dice que $X_n$ converge en distribución a $X$, y se escribe $X_n \dto X$, si las funciones de distribución acumulada convergen puntualmente en todos los puntos donde el límite es continuo:
+          $$\lim_{n\to\infty} \P(X_n \le x) = \P(X \le x) \quad \text{en todo } x \in \R \text{ donde } F_X(x) = \P(X \le x) \text{ es continua}.$$</li>
+      </ol>
+    </div>
+
+    <div class="box nota"><span class="box-title">¿Dónde está el límite en cada modo?</span>
+      <p>Observa el contraste posicional entre la convergencia casi segura y la convergencia en probabilidad:</p>
+      <ul>
+        <li>En <b>casi segura</b>, el límite vive <i>adentro</i> de $\P(\cdot)$: exige estabilidad definitiva de las trayectorias completas $\omega \mapsto \{X_n(\omega)\}_{n\ge 1}$.</li>
+        <li>En <b>probabilidad</b>, el límite vive <i>afuera</i> de $\P(\cdot)$: solo mide la probabilidad transversal en el instante $n$ sin prohibir que, de vez en cuando, una misma trayectoria vuelva a salir del túnel $[X-\varepsilon, X+\varepsilon]$ en índices futuros arbitrariamente grandes.</li>
+        <li>En <b>distribución</b>, ni siquiera hace falta que $X_n$ y $X$ compartan el mismo experimento aleatorio $\Omega$; solo comparamos sus leyes marginales $F_{X_n}$ y $F_X$ (como ocurre en el Teorema del Límite Central).</li>
+      </ul>
+    </div>
+
+    <h3>Lemas de Borel–Cantelli y criterio operativo para convergencia casi segura</h3>
+    <p>Comprobar directamente $\P(\lim_{n\to\infty} X_n = X) = 1$ a partir de la definición es difícil porque involucra simultáneamente infinitos índices $n$. La herramienta estrella para decidir si una sucesión converge o no casi seguramente son los <b>Lemas de Borel–Cantelli</b>.</p>
+    <p>Recordemos que para una sucesión de eventos $\{A_n\}_{n\ge 1}$, el evento «$A_n$ ocurre infinitas veces» ($A_n \text{ i.v.}$) es el límite superior conjuntista:</p>
+    $$\{A_n \text{ i.v.}\} = \limsup_{n\to\infty} A_n = \bigcap_{m=1}^{\infty} \bigcup_{n=m}^{\infty} A_n.$$
+    <p>Un resultado $\omega$ pertenece a $\{A_n \text{ i.v.}\}$ si y solo si, sin importar cuán adelante mires ($m$), siempre existe algún índice posterior $n \ge m$ tal que $\omega \in A_n$.</p>
+
+    <div class="box teorema" id="thm-borel-cantelli"><span class="box-title">Teorema · Lemas de Borel–Cantelli y criterio de convergencia c.s.</span>
+      <p>Sea $\{A_n\}_{n\ge 1}$ una sucesión de eventos en $(\Omega, \mathcal{F}, \P)$.</p>
+      <ul>
+        <li><b>Primer Lema de Borel–Cantelli (no requiere independencia):</b> Si la serie de probabilidades converge, entonces con probabilidad $1$ solo ocurre un número finito de eventos $A_n$:
+          $$\sum_{n=1}^{\infty} \P(A_n) &lt; \infty \implies \P(A_n \text{ i.v.}) = 0.$$
+          <b>Implicación directa para convergencia estocástica:</b> Tomando $A_n = \{|X_n - X| &gt; \varepsilon\}$, si para todo $\varepsilon &gt; 0$ se cumple
+          $$\sum_{n=1}^{\infty} \P(|X_n - X| &gt; \varepsilon) &lt; \infty,$$
+          entonces $\P(|X_n - X| &gt; \varepsilon \text{ i.v.}) = 0$ para todo $\varepsilon &gt; 0$, lo que implica $X_n \xrightarrow{\text{c.s.}} X$ (y como el término general de toda serie convergente tiende a cero, automáticamente $\lim_{n\to\infty}\P(|X_n - X| &gt; \varepsilon) = 0$, es decir, $X_n \pto X$).</li>
+        <li><b>Segundo Lema de Borel–Cantelli (exige independencia):</b> Si los eventos $\{A_n\}_{n\ge 1}$ son <b>independientes</b> y la serie de probabilidades diverge, entonces con probabilidad $1$ los eventos ocurren infinitas veces:
+          $$\sum_{n=1}^{\infty} \P(A_n) = \infty \quad \text{con } \{A_n\} \text{ independientes} \implies \P(A_n \text{ i.v.}) = 1.$$</li>
+      </ul>
+
+      <details class="prueba"><summary>Demostración de ambos lemas</summary><div>
+        <ol class="pasos">
+          <li><b>Lema 1:</b> Para cualquier entero $m \ge 1$, $\{A_n \text{ i.v.}\} \subseteq \bigcup_{n=m}^{\infty} A_n$. Por monotonía y subaditividad numerable de la probabilidad:
+            $$0 \le \P(A_n \text{ i.v.}) \le \P\left(\bigcup_{n=m}^{\infty} A_n\right) \le \sum_{n=m}^{\infty} \P(A_n).$$
+            Como la serie $\sum_{n=1}^\infty \P(A_n)$ converge, su resto $\sum_{n=m}^\infty \P(A_n) \to 0$ cuando $m \to \infty$. Luego $\P(A_n \text{ i.v.}) = 0$.</li>
+          <li><b>Lema 2:</b> Tomando complementos, $\{A_n \text{ i.v.}\}^c = \bigcup_{m=1}^\infty \bigcap_{n=m}^\infty A_n^c$. Basta probar que $\P\big(\bigcap_{n=m}^\infty A_n^c\big) = 0$ para todo $m \ge 1$ (pues una unión numerable de eventos nulos tiene probabilidad $0$). Usando independencia de $\{A_n\}$ y la desigualdad elemental $1 - u \le e^{-u}$:
+            $$\P\left(\bigcap_{n=m}^{M} A_n^c\right) = \prod_{n=m}^{M} \big(1 - \P(A_n)\big) \le \exp\left(-\sum_{n=m}^{M} \P(A_n)\right).$$
+            Como $\sum_{n=1}^{\infty} \P(A_n) = \infty$, también $\sum_{n=m}^{M} \P(A_n) \to \infty$ cuando $M \to \infty$, de modo que el miembro derecho tiende a $e^{-\infty} = 0$. Así $\P\big(\bigcap_{n=m}^\infty A_n^c\big) = 0$ para todo $m$, luego $\P(\{A_n \text{ i.v.}\}^c) = 0$ y $\P(A_n \text{ i.v.}) = 1$. $\blacksquare$</li>
+        </ol>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="propiedades">2. Propiedades, preservación, unicidad y jerarquía</h2>
+
+    <h3>Preservación por funciones continuas</h3>
+    <p>Una vez establecida la convergencia de un estimador o estadística básica (por ejemplo $\bar X \pto \mu$), rara vez queremos probar desde cero que $\bar X^2 \pto \mu^2$ o $e^{\bar X} \pto e^\mu$. El siguiente resultado nos ahorra ese trabajo.</p>
+
+    <div class="box teorema" id="thm-mapeo-continuo"><span class="box-title">Teorema · Preservación por función continua (Mapeo Continuo)</span>
+      <p>Sea $g : \R \to \R$ una función continua (o cuyo conjunto de discontinuidades tenga probabilidad cero bajo el límite $X$). Si $X_n \to X$, entonces $g(X_n) \to g(X)$ en el <b>mismo modo</b>:</p>
+      <ul>
+        <li>$X_n \xrightarrow{\text{c.s.}} X \implies g(X_n) \xrightarrow{\text{c.s.}} g(X)$.</li>
+        <li>$X_n \pto X \implies g(X_n) \pto g(X)$.</li>
+        <li>$X_n \dto X \implies g(X_n) \dto g(X)$.</li>
+      </ul>
+      <p>Además, si $\{c_n\}_{n\ge 1}$ es una sucesión determinista de constantes con $\lim_{n\to\infty} c_n = c \in \R$ y $X_n \to X$ en cualquiera de los tres modos, entonces $c_n X_n \to c X$ en ese mismo modo.</p>
+    </div>
+
+    <h3>Consistencia de los EMV y criterio del Error Cuadrático Medio (MSE)</h3>
+    <p>En la Unidad 2 introdujimos la <b>consistencia</b> de un estimador $\hat\theta_n$: significa exactamente que $\hat\theta_n \pto \theta$. Dos hechos fundamentales conectan la teoría de estimación con la convergencia en probabilidad.</p>
+
+    <div class="box teorema" id="thm-consistencia-mse"><span class="box-title">Teorema 1 · Consistencia del EMV y criterio del error cuadrático medio ($\text{MSE}$)</span>
+      <ol class="pasos">
+        <li><b>Consistencia de los EMV:</b> Bajo condiciones estándar de regularidad (identificabilidad del parámetro y suavidad o control uniforme de la verosimilitud), los estimadores de máxima verosimilitud son consistentes:
+          $$\hat\theta_{\text{MV}} \pto \theta.$$</li>
+        <li><b>Criterio suficiente mediante el MSE:</b> Sea $(\hat\theta_n)_{n\ge 1}$ una sucesión de estimadores de $\theta$. Si
+          $$\lim_{n\to\infty} \text{MSE}_\theta(\hat\theta_n) = \lim_{n\to\infty} \E\big[(\hat\theta_n - \theta)^2\big] = 0,$$
+          entonces $\hat\theta_n \pto \theta$ (es decir, $\hat\theta_n$ es consistente para $\theta$).</li>
+      </ol>
+
+      <details class="prueba"><summary>Demostración del criterio del MSE por la Desigualdad de Markov</summary><div>
+        <p>Fijemos un margen de tolerancia $\varepsilon &gt; 0$ cualquiera. Como el cuadrado es estrictamente creciente en $[0, \infty)$, el evento $\{|\hat\theta_n - \theta| &gt; \varepsilon\}$ es idéntico al evento $\{(\hat\theta_n - \theta)^2 &gt; \varepsilon^2\}$.</p>
+        <p>Aplicando la Desigualdad de Markov a la variable no negativa $Y_n = (\hat\theta_n - \theta)^2 \ge 0$ con umbral $\varepsilon^2 &gt; 0$:</p>
+        $$0 \le \P(|\hat\theta_n - \theta| &gt; \varepsilon) = \P\big((\hat\theta_n - \theta)^2 &gt; \varepsilon^2\big) \le \frac{\E\big[(\hat\theta_n - \theta)^2\big]}{\varepsilon^2} = \frac{\text{MSE}_\theta(\hat\theta_n)}{\varepsilon^2}.$$
+        <p>Tomando el límite cuando $n \to \infty$, la hipótesis $\lim_{n\to\infty} \text{MSE}_\theta(\hat\theta_n) = 0$ hace que el miembro derecho tienda a $0/\varepsilon^2 = 0$. Por el teorema del sándwich:</p>
+        $$\lim_{n\to\infty} \P(|\hat\theta_n - \theta| &gt; \varepsilon) = 0 \quad \forall\,\varepsilon &gt; 0,$$
+        <p>lo que demuestra que $\hat\theta_n \pto \theta$. $\blacksquare$</p>
+      </div></details>
+    </div>
+
+    <div class="box nota"><span class="box-title">Descomposición útil</span>
+      <p>Como $\text{MSE}_\theta(\hat\theta_n) = \Var_\theta(\hat\theta_n) + [\mathbb{B}_\theta(\hat\theta_n)]^2$, la condición $\text{MSE}_\theta(\hat\theta_n) \to 0$ equivale a exigir simultáneamente que la varianza colapse ($\Var_\theta(\hat\theta_n) \to 0$) y que el estimador sea asintóticamente insesgado ($\mathbb{B}_\theta(\hat\theta_n) \to 0$). Sin embargo, recuerda que esta condición es <b>suficiente pero no necesaria</b>: un estimador puede ser consistente incluso cuando sus momentos no convergen (como veremos en el <a href="#ej-8">Ejemplo 9</a>).</p>
+    </div>
+
+    <h3>Convergencia de sumas de secuencias</h3>
+    <p>Si conocemos el comportamiento límite de dos sucesiones $(X_n)$ y $(Y_n)$ por separado, ¿podemos sumar sus límites?</p>
+
+    <div class="box cuidado" id="sumas-secuencias"><span class="box-title">Regla de la suma: sí en c.s. y en P, ¡cuidado en D!</span>
+      <ol class="pasos">
+        <li><b>Casi segura (válida siempre):</b> Si $X_n \xrightarrow{\text{c.s.}} X$ y $Y_n \xrightarrow{\text{c.s.}} Y$, entonces $X_n + Y_n \xrightarrow{\text{c.s.}} X + Y$. (Basta notar que la intersección de dos conjuntos de probabilidad $1$ sigue teniendo probabilidad $1$.)</li>
+        <li><b>En probabilidad (válida siempre):</b> Si $X_n \pto X$ y $Y_n \pto Y$, entonces $X_n + Y_n \pto X + Y$. (Por desigualdad triangular, $\{|(X_n+Y_n)-(X+Y)| &gt; \varepsilon\} \subseteq \{|X_n-X| &gt; \varepsilon/2\} \cup \{|Y_n-Y| &gt; \varepsilon/2\}$, luego la suma de ambas probabilidades tiende a $0$.)</li>
+        <li><b>En distribución (NO vale en general):</b> Si $X_n \dto X$ y $Y_n \dto Y$, <b>no podemos concluir</b> que $X_n + Y_n \dto X + Y$. La razón es que la convergencia en distribución ignora cómo están acopladas $X_n$ y $Y_n$.
+          <br><i>Contraejemplo rápido:</i> Toma $X \sim N(0, 1)$, define $X_n = X$ e $Y_n = -X$. Ambos cumplen $X_n \dto N(0,1)$ y $Y_n \dto N(0,1)$, pero $X_n + Y_n \equiv 0$, que ciertamente no converge en distribución a la suma de dos normales independientes $N(0,2)$.
+          <br><i>Hipótesis adicional suficiente:</i> La suma sí se preserva ($X_n + Y_n \dto X + Y$) si además <b>$X_n \ind Y_n$ para todo $n$ y $X \ind Y$</b> (independencia), o bien si una de las sucesiones converge hacia una constante ($Y_n \pto c$, por el teorema de Slutsky).</li>
+      </ol>
+    </div>
+
+    <h3>Unicidad del límite</h3>
+    <div class="box teorema" id="thm-unicidad"><span class="box-title">Teorema · Unicidad del límite según el modo</span>
+      <ul>
+        <li><b>(i) En casi segura:</b> Si $X_n \xrightarrow{\text{c.s.}} X$ y $X_n \xrightarrow{\text{c.s.}} Y$, entonces $\P(X = Y) = 1$.</li>
+        <li><b>(ii) En probabilidad:</b> Si $X_n \pto X$ y $X_n \pto Y$, entonces $\P(X = Y) = 1$.</li>
+        <li><b>(iii) En distribución:</b> Si $X_n \dto X$ y $X_n \dto Y$, entonces $F_X(x) = F_Y(x)$ para todo $x \in \R$ (tienen la misma distribución, aunque no necesariamente sean iguales como variables aleatorias).</li>
+      </ul>
+
+      <details class="prueba"><summary>Verificación breve de (ii) y (iii)</summary><div>
+        <p><b>Para (ii):</b> Para cualquier $\varepsilon &gt; 0$, $|X - Y| \le |X - X_n| + |X_n - Y|$, así que $\P(|X - Y| &gt; \varepsilon) \le \P(|X_n - X| &gt; \varepsilon/2) + \P(|X_n - Y| &gt; \varepsilon/2) \xrightarrow{n\to\infty} 0$. Luego $\P(|X - Y| &gt; 1/k) = 0$ para todo entero $k \ge 1$. Como $\{X \ne Y\} = \bigcup_{k=1}^\infty \{|X - Y| &gt; 1/k\}$, por subaditividad $\P(X \ne Y) = 0$, es decir, $\P(X = Y) = 1$.</p>
+        <p><b>Para (iii):</b> En todo punto $x$ donde tanto $F_X$ como $F_Y$ sean continuas (que es un subconjunto denso en $\R$, porque una función monótona tiene a lo sumo un número numerable de discontinuidades), se cumple $F_X(x) = \lim_{n\to\infty} F_{X_n}(x) = F_Y(x)$. Por continuidad por la derecha de toda función de distribución acumulada, la igualdad en un conjunto denso implica $F_X(x) = F_Y(x)$ en todo $x \in \R$.</p>
+      </div></details>
+    </div>
+
+    <h3>Jerarquía entre modos y equivalencia hacia una constante</h3>
+    <div class="box teorema" id="thm-jerarquia"><span class="box-title">Teorema · Jerarquía de convergencias y caso límite constante</span>
+      <div class="mode-chain">
+        <span class="mode-pill">$X_n \xrightarrow{\text{c.s.}} X$</span>
+        <span class="mode-arrow">$\implies$</span>
+        <span class="mode-pill">$X_n \pto X$</span>
+        <span class="mode-arrow">$\implies$</span>
+        <span class="mode-pill">$X_n \dto X$</span>
+      </div>
+      <ol class="pasos">
+        <li><b>Jerarquía estricta en general:</b> Toda sucesión que converge casi seguramente converge también en probabilidad, y toda sucesión que converge en probabilidad converge también en distribución. <b>Ninguna otra implicación vale en general</b> (en la <a href="#ejemplos">Sección 3</a> veremos ejemplos donde $\dto$ no implica $\pto$ y donde $\pto$ no implica $\xrightarrow{\text{c.s.}}$).</li>
+        <li><b>Variable degenerada y equivalencia hacia una constante:</b> Una variable aleatoria $X$ se llama <b>degenerada en $c \in \R$</b> si toma el valor $c$ con probabilidad $1$:
+          $$\P(X = c) = 1 \iff \Var(X) = 0 \text{ con } \E[X] = c.$$
+          Su función de distribución acumulada es la función escalón en $c$:
+          $$F_c(x) = \1\{x \ge c\} = \begin{cases} 0, &amp; x &lt; c, \\ 1, &amp; x \ge c, \end{cases}$$
+          que es continua en todo $x \ne c$ y discontinua únicamente en $x = c$.
+          <br>Cuando el límite es una constante $c \in \R$, la convergencia en distribución y en probabilidad son <b>equivalentes</b>:
+          $$X_n \dto c \iff X_n \pto c.$$</li>
+      </ol>
+    </div>
+
+    <div class="box ejercicio" id="dem-constante">
+      <span class="box-title">Demostración completa · Equivalencia $X_n \dto c \iff X_n \pto c$</span>
+      <p>Sigue paso a paso ambas direcciones de esta equivalencia clave, observando el papel decisivo de los puntos de continuidad de la función escalón $F_c(x) = \1\{x \ge c\}$.</p>
+      <details class="solucion" open><summary>Demostración paso a paso de ambas implicaciones</summary><div>
+        <h4>Implicación ($\Longleftarrow$): Si $X_n \pto c$, entonces $X_n \dto c$</h4>
+        <p>Queremos probar que $\lim_{n\to\infty} F_{X_n}(x) = F_c(x)$ en todo punto $x$ donde $F_c$ es continua, es decir, para todo $x \ne c$.</p>
+        <ol class="pasos">
+          <li><b>Caso $x &lt; c$:</b> Definimos $\varepsilon = c - x &gt; 0$. Si $X_n \le x$, entonces $X_n \le c - \varepsilon$, luego $c - X_n \ge \varepsilon &gt; \varepsilon/2$, de modo que $\{X_n \le x\} \subseteq \{|X_n - c| &gt; \varepsilon/2\}$. Por monotonía de la probabilidad:
+            $$0 \le F_{X_n}(x) = \P(X_n \le x) \le \P(|X_n - c| &gt; \varepsilon/2) \xrightarrow{n\to\infty} 0,$$
+            porque $X_n \pto c$. Así $\lim_{n\to\infty} F_{X_n}(x) = 0 = F_c(x)$.</li>
+          <li><b>Caso $x &gt; c$:</b> Definimos $\varepsilon = x - c &gt; 0$. Observa que $\{X_n &gt; x\} = \{X_n - c &gt; \varepsilon\} \subseteq \{|X_n - c| &gt; \varepsilon\}$. Por tanto:
+            $$0 \le 1 - F_{X_n}(x) = \P(X_n &gt; x) \le \P(|X_n - c| &gt; \varepsilon) \xrightarrow{n\to\infty} 0.$$
+            De aquí se sigue inmediatamente que $\lim_{n\to\infty} F_{X_n}(x) = 1 = F_c(x)$.</li>
+        </ol>
+        <p>En ambos casos obtenemos $\lim_{n\to\infty} F_{X_n}(x) = F_c(x)$ para todo $x \ne c$, por lo que $X_n \dto c$.</p>
+
+        <h4>Implicación ($\implies$): Si $X_n \dto c$, entonces $X_n \pto c$</h4>
+        <p>Sea $\varepsilon &gt; 0$ arbitrario. Queremos demostrar que $\lim_{n\to\infty}\P(|X_n - c| &gt; \varepsilon) = 0$.</p>
+        <ol class="pasos">
+          <li>Descomponemos el evento $\{|X_n - c| &gt; \varepsilon\}$ en dos eventos disjuntos:
+            $$\P(|X_n - c| &gt; \varepsilon) = \P(X_n &lt; c - \varepsilon) + \P(X_n &gt; c + \varepsilon).$$</li>
+          <li>Puesto que $c - \varepsilon &lt; c$ y $c + \varepsilon &gt; c$, <b>ambos puntos $c - \varepsilon$ y $c + \varepsilon$ son puntos de continuidad de $F_c$</b> (el único salto está en $c$). Por la definición de $X_n \dto c$, tenemos:
+            $$\lim_{n\to\infty} F_{X_n}(c - \varepsilon) = F_c(c - \varepsilon) = 0, \qquad \lim_{n\to\infty} F_{X_n}(c + \varepsilon) = F_c(c + \varepsilon) = 1.$$</li>
+          <li>Acotamos la cola izquierda usando $\{X_n &lt; c - \varepsilon\} \subseteq \{X_n \le c - \varepsilon\}$ y expresamos la cola derecha con la acumulada:
+            $$0 \le \P(X_n &lt; c - \varepsilon) \le F_{X_n}(c - \varepsilon) \xrightarrow{n\to\infty} 0,$$
+            $$0 \le \P(X_n &gt; c + \varepsilon) = 1 - F_{X_n}(c + \varepsilon) \xrightarrow{n\to\infty} 1 - 1 = 0.$$</li>
+          <li>Sumando ambas colas y aplicando el teorema del sándwich:
+            $$\lim_{n\to\infty} \P(|X_n - c| &gt; \varepsilon) = 0 + 0 = 0.$$
+            Como $\varepsilon &gt; 0$ fue arbitrario, concluimos que $X_n \pto c$. $\blacksquare$</li>
+        </ol>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="ejemplos">3. Ejemplos y ejercicios resueltos paso a paso</h2>
+    <p>A continuación aplicamos toda la teoría anterior a una colección completa de ejemplos de clase y ejercicios de evaluación. Intenta plantear cada uno con ayuda de la pista antes de abrir la solución.</p>
+
+    <!-- EJEMPLO 1 -->
+    <div class="box ejercicio" id="ej-1">
+      <span class="box-title">Ejemplo 1 · Consistencia de $\bar X$ y preservación por función continua</span>
+      <p>Sea $X_1, \dots, X_n$ una muestra aleatoria $\iid$ de una población con media $\mu \in \R$ y varianza finita $\sigma^2 &lt; \infty$.</p>
+      <ol class="pasos">
+        <li>Demuestra que la media muestral es consistente: $\bar X_n \pto \mu$.</li>
+        <li>A partir de lo anterior, demuestra que:
+          $$\bar X_n^2 \pto \mu^2, \qquad k\bar X_n \pto k\mu \;(k\in\R), \qquad e^{\bar X_n} \pto e^\mu, \qquad \frac{n}{n+1}\bar X_n \pto \mu, \qquad \frac{n}{n-1}\bar X_n \pto \mu.$$</li>
+      </ol>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Para (1), calcula $\text{MSE}_\mu(\bar X_n)$ recordando que $\bar X_n$ es insesgado y $\Var(\bar X_n) = \sigma^2/n$. Para (2), identifica funciones continuas $g$ adecuadas y sucesiones deterministas $c_n \to 1$.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Consistencia de $\bar X_n$:</b> Sabemos que $\E[\bar X_n] = \mu$ (sesgo nulo) y $\Var(\bar X_n) = \frac{\sigma^2}{n}$. Por tanto:
+            $$\text{MSE}_\mu(\bar X_n) = \Var(\bar X_n) + [\mathbb{B}(\bar X_n)]^2 = \frac{\sigma^2}{n} + 0 = \frac{\sigma^2}{n} \xrightarrow{n\to\infty} 0.$$
+            Por el Teorema 1 (criterio del MSE), $\bar X_n \pto \mu$.</li>
+          <li><b>Preservación por continuidad:</b> Las funciones $g_1(u) = u^2$, $g_2(u) = ku$ y $g_3(u) = e^u$ son continuas en toda la recta real $\R$. Por el Teorema de Mapeo Continuo aplicado a $\bar X_n \pto \mu$:
+            $$\bar X_n^2 \pto \mu^2, \qquad k\bar X_n \pto k\mu, \qquad e^{\bar X_n} \pto e^\mu.$$</li>
+          <li><b>Producto por sucesión convergente:</b> Como $c_n = \frac{n}{n+1} \to 1$ y $d_n = \frac{n}{n-1} \to 1$ (para $n \ge 2$) cuando $n \to \infty$, la propiedad $c_n Y_n \pto c Y$ implica inmediatamente:
+            $$\frac{n}{n+1}\bar X_n \pto 1\cdot\mu = \mu \qquad \text{y} \qquad \frac{n}{n-1}\bar X_n \pto 1\cdot\mu = \mu.$$</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJEMPLO 2 -->
+    <div class="box ejercicio" id="ej-2">
+      <span class="box-title">Ejemplo 2 · Diferencia de medias de dos muestras independientes</span>
+      <p>Se tienen dos muestras aleatorias independientes de igual tamaño $n$: $X_1, \dots, X_n \iid (\mu_1, \sigma_1^2)$ e $Y_1, \dots, Y_n \iid (\mu_2, \sigma_2^2)$, con varianzas finitas $\sigma_1^2, \sigma_2^2 &lt; \infty$. Demuestra que:</p>
+      $$\bar X_n - \bar Y_n \pto \mu_1 - \mu_2.$$
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Puedes resolverlo de dos maneras: calculando directamente $\text{MSE}_{\mu_1-\mu_2}(\bar X_n - \bar Y_n)$ usando independencia, o aplicando consistencia individual más la propiedad de suma de sucesiones convergentes en probabilidad.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <h4>Método 1: Criterio del error cuadrático medio ($\text{MSE}$)</h4>
+        <ol class="pasos">
+          <li><b>Insesgadez:</b> Por linealidad de la esperanza, $\E[\bar X_n - \bar Y_n] = \E[\bar X_n] - \E[\bar Y_n] = \mu_1 - \mu_2$.</li>
+          <li><b>Varianza y MSE:</b> Como ambas muestras son independientes entre sí, $\bar X_n$ y $\bar Y_n$ son independientes, luego:
+            $$\text{MSE}_{\mu_1-\mu_2}(\bar X_n - \bar Y_n) = \Var(\bar X_n - \bar Y_n) = \Var(\bar X_n) + \Var(\bar Y_n) = \frac{\sigma_1^2}{n} + \frac{\sigma_2^2}{n} = \frac{\sigma_1^2 + \sigma_2^2}{n}.$$</li>
+          <li>Al tomar el límite cuando $n \to \infty$, $\frac{\sigma_1^2 + \sigma_2^2}{n} \to 0$. Por el Teorema 1, $\bar X_n - \bar Y_n \pto \mu_1 - \mu_2$.</li>
+        </ol>
+        <h4>Método 2: Álgebra de convergencias en probabilidad</h4>
+        <p>Por el Ejemplo 1, $\bar X_n \pto \mu_1$ y $\bar Y_n \pto \mu_2$ (luego $-\bar Y_n \pto -\mu_2$). Como la convergencia en probabilidad se preserva bajo sumas, $\bar X_n + (-\bar Y_n) \pto \mu_1 - \mu_2$.</p>
+      </div></details>
+    </div>
+
+    <!-- EJEMPLO 3 -->
+    <div class="box ejercicio" id="ej-3">
+      <span class="box-title">Ejemplo 3 · Dos estimadores consistentes en $U(0, \theta)$</span>
+      <p>Sea $X_1, \dots, X_n \iid U(0, \theta)$ con $\theta &gt; 0$ desconocido. Considera dos estimadores naturales de $\theta$:</p>
+      $$\hat\theta_1 = 2\bar X_n, \qquad \hat\theta_2 = \frac{n+1}{n}X_{(n)}, \quad \text{donde } X_{(n)} = \max_{1\le i\le n} X_i.$$
+      <p>Demuestra que ambos estimadores son consistentes para $\theta$ y compara la velocidad con la que su $\text{MSE}$ tiende a cero.</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Para $\hat\theta_1$, usa $\E[X_1] = \theta/2$ y $\Var(X_1) = \theta^2/12$. Para $\hat\theta_2$, parte de la acumulada del máximo $F_{X_{(n)}}(t) = (t/\theta)^n$ para $t \in [0, \theta]$, halla su densidad y calcula $\E[X_{(n)}]$ y $\E[X_{(n)}^2]$.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Consistencia de $\hat\theta_1 = 2\bar X_n$:</b> Como $X_i \sim U(0, \theta)$, $\E[X_i] = \theta/2$ y $\Var(X_i) = \theta^2/12$. Entonces:
+            $$\E[\hat\theta_1] = 2\E[\bar X_n] = 2\cdot\frac{\theta}{2} = \theta \quad (\text{insesgado}),$$
+            $$\text{MSE}_\theta(\hat\theta_1) = \Var(2\bar X_n) = 4\,\frac{\Var(X_1)}{n} = 4\,\frac{\theta^2}{12n} = \frac{\theta^2}{3n} \xrightarrow{n\to\infty} 0.$$
+            Por el criterio del MSE, $\hat\theta_1 \pto \theta$.</li>
+          <li><b>Distribución y momentos de $X_{(n)}$:</b> Para $t \in [0, \theta]$, por independencia:
+            $$F_{X_{(n)}}(t) = \P(X_1 \le t, \dots, X_n \le t) = \left(\frac{t}{\theta}\right)^n \implies f_{X_{(n)}}(t) = \frac{n t^{n-1}}{\theta^n}\1\{0 &lt; t &lt; \theta\}.$$
+            Calculamos el momento de orden $k$:
+            $$\E[X_{(n)}^k] = \int_0^\theta t^k \frac{n t^{n-1}}{\theta^n}\,dt = \frac{n}{\theta^n}\left[\frac{t^{n+k}}{n+k}\right]_0^\theta = \frac{n\theta^k}{n+k}.$$
+            Por tanto $\E[X_{(n)}] = \frac{n}{n+1}\theta$, $\E[X_{(n)}^2] = \frac{n}{n+2}\theta^2$, y su varianza es:
+            $$\Var(X_{(n)}) = \frac{n\theta^2}{n+2} - \left(\frac{n\theta}{n+1}\right)^2 = \frac{n\theta^2}{(n+1)^2(n+2)}.$$</li>
+          <li><b>Consistencia de $\hat\theta_2 = \frac{n+1}{n}X_{(n)}$:</b>
+            $$\E[\hat\theta_2] = \frac{n+1}{n}\cdot\frac{n\theta}{n+1} = \theta \quad (\text{insesgado}),$$
+            $$\text{MSE}_\theta(\hat\theta_2) = \Var(\hat\theta_2) = \left(\frac{n+1}{n}\right)^2 \frac{n\theta^2}{(n+1)^2(n+2)} = \frac{\theta^2}{n(n+2)} \xrightarrow{n\to\infty} 0.$$
+            Luego $\hat\theta_2 \pto \theta$. Además, como $\frac{n}{n+1} \to 1$, también $X_{(n)} = \frac{n}{n+1}\hat\theta_2 \pto \theta$.</li>
+          <li><b>Comparación de rapidez:</b> $\text{MSE}(\hat\theta_1) = O(1/n)$ mientras que $\text{MSE}(\hat\theta_2) = O(1/n^2)$; el estimador basado en el máximo converge cuadráticamente más rápido en MSE.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJERCICIO 4 (SESION 1) -->
+    <div class="box ejercicio" id="ej-4">
+      <span class="box-title">Ejercicio de Sesión 1 · EMV vs. MOM y órdenes de convergencia en $U(-\theta, \theta)$</span>
+      <p>Sean $X_1, \dots, X_n \iid U(-\theta, \theta)$ con $\theta &gt; 0$ desconocido.</p>
+      <ol class="pasos">
+        <li><b>(a)</b> Encuentra el estimador de máxima verosimilitud $\hat\theta_{\text{MV}} = M_n = \max_{1\le i\le n}|X_i|$. Determina la distribución de $|X_1|$, la acumulada $F_{M_n}(t)$, la distribución de $M_n/\theta$ y la fórmula general $\E[M_n^k]$ para $k \ge 1$.</li>
+        <li><b>(b)</b> Encuentra el estimador por el método de los momentos $\hat\theta_{\text{MM}}$ y calcula $\E[X^2]$, $\E[X^4]$ y $\Var(X^2)$.</li>
+        <li><b>(c)</b> Compara los estimadores mediante su $\text{MSE}$ tanto en escala de $\theta^2$ (comparando $T_1 = \hat\theta_{\text{MM}}^2$ frente a $T_2 = M_n^2$ para todo $n \ge 1$) como en escala de $\theta$ ($\text{MSE}(M_n)$ exacto frente al $\text{MSE}(\hat\theta_{\text{MM}})$ asintótico).</li>
+        <li><b>(d)</b> Demuestra rigurosamente que tanto $\hat\theta_{\text{MV}}$ como $\hat\theta_{\text{MM}}$ son consistentes para $\theta$.</li>
+      </ol>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En (a), la densidad es $f(x;\theta) = \frac{1}{2\theta}\1\{|x| \le \theta\}$; ten presente que el soporte depende de $\theta$ y que $d\ell/d\theta = -n/\theta \ne 0$. En (b), $\E[X] = 0$ no contiene a $\theta$, así que debes usar el segundo momento $\E[X^2] = \theta^2/3$. En (c), para $T_1$ vs $T_2$ te aparecerá la expresión cuadrática $n^2 - 4n + 8$.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <h4>(a) Estimador de Máxima Verosimilitud $\hat\theta_{\text{MV}}$ y su distribución</h4>
+        <ol class="pasos">
+          <li><b>Verosimilitud y análisis de frontera:</b> Como $|x_i| \le \theta$ para todo $i=1,\dots,n$ equivale a $\max_{1\le i\le n}|x_i| \le \theta$, la verosimilitud es:
+            $$L(\theta) = \prod_{i=1}^n \frac{1}{2\theta}\1\{|x_i| \le \theta\} = \frac{1}{(2\theta)^n}\1\{M_n \le \theta\}, \qquad M_n = \max_{1\le i\le n}|X_i|.$$
+            En la región $\theta \ge M_n$, la log-verosimilitud es $\ell(\theta) = -n\ln 2 - n\ln\theta$, cuya derivada vale:
+            $$\frac{d\ell(\theta)}{d\theta} = -\frac{n}{\theta} &lt; 0 \quad (\ne 0 \;\forall\,\theta &gt; 0).$$
+            Como $L(\theta)$ es estrictamente decreciente en $\theta$, su máximo global se alcanza en el extremo inferior del dominio permitido ($\theta \ge M_n$), esto es, en la frontera:
+            $$\hat\theta_{\text{MV}} = M_n = \max_{1\le i\le n}|X_i|.$$</li>
+          <li><b>Distribución de $|X_1|$ y $M_n$:</b> Para $t \in [0, \theta]$:
+            $$\P(|X_1| \le t) = \P(-t \le X_1 \le t) = \int_{-t}^t \frac{1}{2\theta}\,dx = \frac{t}{\theta} \implies |X_1| \sim U(0, \theta).$$
+            Por independencia de $|X_1|, \dots, |X_n|$, la función acumulada de $M_n$ para $t \in [0, \theta]$ es:
+            $$F_{M_n}(t) = \P(|X_1| \le t, \dots, |X_n| \le t) = \left(\frac{t}{\theta}\right)^n.$$</li>
+          <li><b>Relación Beta y momentos:</b> Haciendo $Y = M_n/\theta \in [0, 1]$, su acumulada es $F_Y(y) = y^n$ y su densidad es $f_Y(y) = n y^{n-1} = \frac{\Gamma(n+1)}{\Gamma(n)\Gamma(1)}y^{n-1}(1-y)^{1-1}$, por lo que:
+            $$\frac{M_n}{\theta} \sim \text{Beta}(n, 1).$$
+            En consecuencia, el $k$-ésimo momento de $M_n$ para cualquier $k \ge 1$ es:
+            $$\E[M_n^k] = \theta^k \E[Y^k] = \theta^k \int_0^1 y^k \cdot n y^{n-1}\,dy = \frac{n\theta^k}{n+k}.$$</li>
+        </ol>
+
+        <h4>(b) Estimador por el Método de los Momentos $\hat\theta_{\text{MM}}$</h4>
+        <ol class="pasos">
+          <li>El primer momento poblacional es $\E[X] = 0$ (por simetría), que no depende de $\theta$. Calculamos entonces los momentos pares:
+            $$\E[X^2] = \int_{-\theta}^{\theta} \frac{x^2}{2\theta}\,dx = \frac{\theta^2}{3}, \qquad \E[X^4] = \int_{-\theta}^{\theta} \frac{x^4}{2\theta}\,dx = \frac{\theta^4}{5}.$$</li>
+          <li>Igualando $\E[X^2] = m_2 = \frac{1}{n}\sum_{i=1}^n X_i^2$ y despejando $\theta &gt; 0$:
+            $$\frac{\theta^2}{3} = \frac{1}{n}\sum_{i=1}^n X_i^2 \implies \hat\theta_{\text{MM}} = \sqrt{\frac{3}{n}\sum_{i=1}^n X_i^2}.$$</li>
+          <li>Además, la varianza de $X^2$ resulta:
+            $$\Var(X^2) = \E[X^4] - \big(\E[X^2]\big)^2 = \frac{\theta^4}{5} - \left(\frac{\theta^2}{3}\right)^2 = \frac{9 - 5}{45}\theta^4 = \frac{4\theta^4}{45}.$$</li>
+        </ol>
+
+        <h4>(c) Comparación por MSE en escala de $\theta^2$ y de $\theta$</h4>
+        <ol class="pasos">
+          <li><b>En escala de $\theta^2$ ($T_1 = \hat\theta_{\text{MM}}^2$ vs. $T_2 = M_n^2$):</b>
+            <ul>
+              <li>Para $T_1 = \frac{3}{n}\sum_{i=1}^n X_i^2$, $\E[T_1] = 3(\theta^2/3) = \theta^2$ (insesgado), luego:
+                $$\text{MSE}_{\theta^2}(T_1) = \Var(T_1) = \frac{9}{n^2}\sum_{i=1}^n \Var(X_i^2) = \frac{9}{n}\cdot\frac{4\theta^4}{45} = \frac{4\theta^4}{5n}.$$</li>
+              <li>Para $T_2 = M_n^2$, usando $\E[M_n^2] = \frac{n\theta^2}{n+2}$ y $\E[M_n^4] = \frac{n\theta^4}{n+4}$:
+                $$\text{MSE}_{\theta^2}(T_2) = \E\big[(M_n^2 - \theta^2)^2\big] = \theta^4\left(\frac{n}{n+4} - \frac{2n}{n+2} + 1\right) = \frac{8\theta^4}{(n+2)(n+4)}.$$</li>
+              <li>Comparando ambos para todo $n \ge 1$:
+                $$\text{MSE}_{\theta^2}(T_2) &lt; \text{MSE}_{\theta^2}(T_1) \iff \frac{8}{(n+2)(n+4)} &lt; \frac{4}{5n} \iff 10n &lt; n^2 + 6n + 8 \iff n^2 - 4n + 8 &gt; 0.$$
+                Completando cuadrados, $n^2 - 4n + 8 = (n - 2)^2 + 4 \ge 4 &gt; 0$ para todo $n \ge 1$. ¡El estimador basado en el máximo vence en MSE cuadrático desde $n = 1$!</li>
+            </ul>
+          </li>
+          <li><b>En escala de $\theta$ ($\hat\theta_{\text{MV}} = M_n$ vs. $\hat\theta_{\text{MM}}$):</b>
+            <ul>
+              <li>Para $M_n$, con $\E[M_n] = \frac{n\theta}{n+1}$ y $\E[M_n^2] = \frac{n\theta^2}{n+2}$:
+                $$\text{MSE}_\theta(M_n) = \E\big[(M_n - \theta)^2\big] = \theta^2\left(\frac{n}{n+2} - \frac{2n}{n+1} + 1\right) = \frac{2\theta^2}{(n+1)(n+2)} = O\!\left(\frac{1}{n^2}\right).$$</li>
+              <li>Para $\hat\theta_{\text{MM}} = \sqrt{T_1}$, aplicando el Método Delta con $g(u) = \sqrt{u}$ en $u = \theta^2$ (donde $g'(\theta^2) = \frac{1}{2\theta}$):
+                $$\text{MSE}_\theta(\hat\theta_{\text{MM}}) \approx \big[g'(\theta^2)\big]^2 \Var(T_1) = \frac{1}{4\theta^2}\cdot\frac{4\theta^4}{5n} = \frac{\theta^2}{5n} = O\!\left(\frac{1}{n}\right).$$</li>
+            </ul>
+            La razón de errores cuadráticos medios crece proporcionalmente a $n$: $\hat\theta_{\text{MV}}$ converge con orden $O(1/n^2)$, mucho más rápido que el orden $O(1/n)$ de $\hat\theta_{\text{MM}}$.</li>
+        </ol>
+
+        <h4>(d) Demostración de consistencia de ambos estimadores</h4>
+        <ol class="pasos">
+          <li><b>Consistencia de $\hat\theta_{\text{MV}} = M_n$:</b>
+            <ul>
+              <li><i>Vía criterio del MSE:</i> $\lim_{n\to\infty}\text{MSE}_\theta(M_n) = \lim_{n\to\infty}\frac{2\theta^2}{(n+1)(n+2)} = 0 \implies M_n \pto \theta$.</li>
+              <li><i>Vía definición directa:</i> para $0 &lt; \varepsilon &lt; \theta$, como $M_n \le \theta$ siempre, se tiene:
+                $$\P(|M_n - \theta| &gt; \varepsilon) = \P(M_n &lt; \theta - \varepsilon) = \left(\frac{\theta - \varepsilon}{\theta}\right)^n = \left(1 - \frac{\varepsilon}{\theta}\right)^n \xrightarrow{n\to\infty} 0,$$
+                y para $\varepsilon \ge \theta$ la probabilidad es $0$. (Además $\sum_{n=1}^\infty (1 - \varepsilon/\theta)^n &lt; \infty$, luego por Borel–Cantelli incluso $M_n \xrightarrow{\text{c.s.}} \theta$.)</li>
+            </ul>
+          </li>
+          <li><b>Consistencia de $\hat\theta_{\text{MM}}$:</b> Como $\lim_{n\to\infty}\text{MSE}_{\theta^2}(T_1) = \lim_{n\to\infty}\frac{4\theta^4}{5n} = 0$, el Teorema 1 garantiza $T_1 = \hat\theta_{\text{MM}}^2 \pto \theta^2$. Aplicando la función $g(u) = \sqrt{u}$, que es continua en $[0, \infty)$, por preservación bajo mapeo continuo:
+            $$\hat\theta_{\text{MM}} = \sqrt{T_1} \pto \sqrt{\theta^2} = \theta.$$</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJERCICIO 5 -->
+    <div class="box ejercicio" id="ej-5">
+      <span class="box-title">Ejercicio 1 (Clase 11) + Exámenes 2022–2024 · Máximo de uniformes $U(0, 1)$</span>
+      <p>Sean $X_1, \dots, X_n \iid U(0, 1)$ y sea $X_{(n)} = \max_{1\le i\le n} X_i$.</p>
+      <ol class="pasos">
+        <li><b>(a)</b> Demuestra por definición que $X_{(n)} \dto 1$.</li>
+        <li><b>(b)</b> Concluye que $X_{(n)} \pto 1$.</li>
+        <li><b>(c)</b> Demuestra que $W_n = n(1 - X_{(n)}) \dto \text{Exp}(1)$ tanto por cálculo directo de su acumulada como usando la familia Beta: $X_{(1)} \sim \text{Beta}(1, n)$, $X_{(n)} \sim \text{Beta}(n, 1)$, $1 - X_{(n)} \stackrel{d}{=} X_{(1)}$ y $\lim_{n\to\infty} n\,\text{Beta}(\alpha, n) = \text{Gamma}(\alpha, 1)$. Conecta esto con $\frac{n(\theta - M_n)}{\theta} \dto \text{Exp}(1)$ en el modelo $U(-\theta, \theta)$.</li>
+      </ol>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En (a), calcula $F_{X_{(n)}}(x)$ para $x &lt; 0$, $0 \le x &lt; 1$ y $x \ge 1$, y compara con $F_1(x) = \1\{x \ge 1\}$ en todo $x \ne 1$. En (c), reescribe $\{n(1 - X_{(n)}) \le w\}$ como $\{X_{(n)} \ge 1 - w/n\}$.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><b>(a) Convergencia en distribución $X_{(n)} \dto 1$:</b> La función de distribución acumulada de $X_{(n)}$ es:
+            $$F_{X_{(n)}}(x) = \begin{cases} 0, &amp; x &lt; 0, \\ x^n, &amp; 0 \le x &lt; 1, \\ 1, &amp; x \ge 1. \end{cases}$$
+            Al tomar el límite cuando $n \to \infty$:
+            <ul>
+              <li>Si $x &lt; 0$: $F_{X_{(n)}}(x) = 0 \to 0$.</li>
+              <li>Si $0 \le x &lt; 1$: $F_{X_{(n)}}(x) = x^n \to 0$ (pues $0 \le x &lt; 1$).</li>
+              <li>Si $x \ge 1$: $F_{X_{(n)}}(x) = 1 \to 1$.</li>
+            </ul>
+            En todos los puntos de continuidad $x \ne 1$ de la acumulada degenerada $F_1(x) = \1\{x \ge 1\}$, se cumple $\lim_{n\to\infty} F_{X_{(n)}}(x) = F_1(x)$. Por tanto, $X_{(n)} \dto 1$.</li>
+          <li><b>(b) Convergencia en probabilidad $X_{(n)} \pto 1$:</b> Como el límite $c = 1$ es una constante determinista (variable degenerada), el teorema de equivalencia $X_n \dto c \iff X_n \pto c$ garantiza de inmediato que $X_{(n)} \pto 1$.</li>
+          <li><b>(c) Camino 1 — Cálculo directo de la acumulada de $W_n = n(1 - X_{(n)})$:</b>
+            Para $w \le 0$, como $X_{(n)} \le 1$, se cumple $W_n \ge 0$, luego $F_{W_n}(w) = 0$. Para $w &gt; 0$ fijado y $n &gt; w$ (de modo que $0 &lt; 1 - w/n &lt; 1$):
+            $$F_{W_n}(w) = \P\big(n(1 - X_{(n)}) \le w\big) = \P\left(X_{(n)} \ge 1 - \frac{w}{n}\right) = 1 - \P\left(X_{(n)} &lt; 1 - \frac{w}{n}\right) = 1 - \left(1 - \frac{w}{n}\right)^n.$$
+            Tomando el límite cuando $n \to \infty$ y recordando que $\lim_{n\to\infty}(1 - w/n)^n = e^{-w}$:
+            $$\lim_{n\to\infty} F_{W_n}(w) = 1 - e^{-w} \quad (w &gt; 0),$$
+            que es la acumulada de $\text{Exp}(\beta = 1)$ (continua en todo $\R$). Por consiguiente, $W_n \dto \text{Exp}(1)$.</li>
+          <li><b>(c) Camino 2 — Vía familia Beta y límite hacia Gamma:</b>
+            De estadísticos de orden para $U(0, 1)$ sabemos que $X_{(1)} \sim \text{Beta}(1, n)$ y $X_{(n)} \sim \text{Beta}(n, 1)$. Además, por simetría $1 - X_i \sim U(0, 1)$, por lo que $1 - X_{(n)} = \min_{1\le i\le n}(1 - X_i) \stackrel{d}{=} X_{(1)} \sim \text{Beta}(1, n)$.
+            En general, si $Y_n \sim \text{Beta}(\alpha, n)$, la densidad de $Z_n = n Y_n$ para $z \in (0, n)$ es:
+            $$f_{Z_n}(z) = \frac{1}{n} f_{Y_n}\!\left(\frac{z}{n}\right) = \frac{\Gamma(\alpha + n)}{n^\alpha \Gamma(n)} \cdot \frac{z^{\alpha - 1}}{\Gamma(\alpha)} \left(1 - \frac{z}{n}\right)^{n-1}.$$
+            Cuando $n \to \infty$, $\frac{\Gamma(\alpha+n)}{n^\alpha \Gamma(n)} \to 1$ y $(1 - z/n)^{n-1} \to e^{-z}$, obteniendo la densidad límite $\frac{z^{\alpha - 1} e^{-z}}{\Gamma(\alpha)}$ para $z &gt; 0$, es decir, $n\,\text{Beta}(\alpha, n) \dto \text{Gamma}(\alpha, 1)$ (escala $\beta = 1$). Para $\alpha = 1$, $\text{Gamma}(1, 1) = \text{Exp}(1)$, confirmando $W_n \dto \text{Exp}(1)$.</li>
+          <li><b>Conexión con $U(-\theta, \theta)$:</b> En el <a href="#ej-4">Ejercicio 4</a> probamos que $M_n / \theta \sim \text{Beta}(n, 1)$, es decir, $M_n / \theta \stackrel{d}{=} X_{(n)}$. Por lo tanto:
+            $$\frac{n(\theta - M_n)}{\theta} = n\left(1 - \frac{M_n}{\theta}\right) \dto \text{Exp}(1).$$
+            Este resultado asintótico permite incluso construir intervalos de confianza de orden $O(1/n)$ para $\theta$.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJERCICIO 6 -->
+    <div class="box ejercicio" id="ej-6">
+      <span class="box-title">Ejemplos 4 y 7 · Normal que colapsa $X_n \sim N(0, 1/n)$</span>
+      <p>Sea $X_n \sim N(0, 1/n)$ para $n \ge 1$.</p>
+      <ol class="pasos">
+        <li>Demuestra que $X_n \dto 0$ estandarizando con $Z = \sqrt{n}X_n$ y analizando cuidadosamente los tres casos $x &lt; 0$, $x &gt; 0$ y $x = 0$. Concluye que $X_n \pto 0$.</li>
+        <li>Demuestra directamente $X_n \pto 0$ (Ejemplo 7) mediante la Desigualdad de Markov Generalizada.</li>
+      </ol>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En (1), $F_{X_n}(x) = \Phi(\sqrt{n}\,x)$. Observa qué pasa en $x = 0$ y recuerda que $F_0(x) = \1\{x \ge 0\}$ es discontinua en $0$. En (2), aplica la DMG con $t = 2$.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Camino 1 — Estandarización de la acumulada:</b> Como $X_n \sim N(0, \sigma_n^2)$ con desviación estándar $\sigma_n = 1/\sqrt{n}$, la variable $Z = \sqrt{n}\,X_n$ sigue una distribución $N(0, 1)$, luego:
+            $$F_{X_n}(x) = \P(X_n \le x) = \P(\sqrt{n}\,X_n \le \sqrt{n}\,x) = \Phi(\sqrt{n}\,x).$$
+            Analizamos los tres regímenes de $x \in \R$ cuando $n \to \infty$:
+            <ul>
+              <li>Si $x &lt; 0$: $\sqrt{n}\,x \to -\infty \implies \lim_{n\to\infty} F_{X_n}(x) = 0 = F_0(x)$.</li>
+              <li>Si $x &gt; 0$: $\sqrt{n}\,x \to +\infty \implies \lim_{n\to\infty} F_{X_n}(x) = 1 = F_0(x)$.</li>
+              <li>Si $x = 0$: $F_{X_n}(0) = \Phi(0) = \frac{1}{2}$ para todo $n$, mientras que $F_0(0) = \1\{0 \ge 0\} = 1$. Aunque aquí los valores no coinciden, <b>$x = 0$ es un punto de discontinuidad de $F_0$</b>, de modo que la definición de $\dto$ no exige convergencia en $x = 0$.</li>
+            </ul>
+            Como $F_{X_n}(x) \to F_0(x)$ en todos los puntos de continuidad $x \ne 0$, tenemos $X_n \dto 0$, y por la equivalencia hacia una constante, $X_n \pto 0$.</li>
+          <li><b>Camino 2 — Desigualdad de Markov Generalizada (Ejemplo 7):</b> Para cualquier $\varepsilon &gt; 0$, aplicando la DMG con $t = 2$:
+            $$0 \le \P(|X_n - 0| &gt; \varepsilon) \le \frac{\E[|X_n|^2]}{\varepsilon^2} = \frac{\Var(X_n) + (\E[X_n])^2}{\varepsilon^2} = \frac{1/n}{\varepsilon^2} = \frac{1}{n\varepsilon^2} \xrightarrow{n\to\infty} 0.$$
+            Por tanto $X_n \pto 0$ (y de nuevo, por equivalencia, $X_n \dto 0$).</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJERCICIO 7 -->
+    <div class="box ejercicio" id="ej-7">
+      <span class="box-title">Ejemplo 8 · Contraejemplo clásico: $X_n \dto X \not\implies X_n \pto X$</span>
+      <p>Sea $X \sim N(0, 1)$ y define la sucesión $X_n = -X$ para todo $n \ge 1$. Demuestra que $X_n \dto X$, pero que $X_n$ no converge en probabilidad a $X$.</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Usa la simetría de la normal estándar para comparar $F_{X_n}(x)$ con $F_X(x)$. Para negar la convergencia en probabilidad, evalúa $\P(|X_n - X| &gt; 1)$.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Sí converge en distribución ($X_n \dto X$):</b> Por simetría de la distribución $N(0, 1)$ respecto al origen ($1 - \Phi(-x) = \Phi(x)$):
+            $$F_{X_n}(x) = \P(-X \le x) = \P(X \ge -x) = 1 - \Phi(-x) = \Phi(x) = F_X(x) \quad \forall\,x \in \R, \;\forall\,n \ge 1.$$
+            Como las acumuladas son idénticas para todo $n$, $\lim_{n\to\infty} F_{X_n}(x) = F_X(x)$ en todo $x \in \R$, es decir, $X_n \dto X$.</li>
+          <li><b>No converge en probabilidad ($X_n \not\to X$ en $\P$):</b> Observa que $|X_n - X| = |-X - X| = 2|X|$. Eligiendo $\varepsilon = 1 &gt; 0$:
+            $$\P(|X_n - X| &gt; 1) = \P(2|X| &gt; 1) = \P(|X| &gt; 0.5) = 2\big(1 - \Phi(0.5)\big) \approx 0.6171 &gt; 0 \quad \forall\,n \ge 1.$$
+            Esta probabilidad no tiende a $0$ cuando $n \to \infty$ (permanece fija en $0.6171$). Por lo tanto, $X_n$ <b>no</b> converge en probabilidad a $X$.</li>
+        </ol>
+        <p><b>Lección conceptual:</b> Cuando el límite $X$ es una variable aleatoria no degenerada, $X_n \dto X$ solo garantiza que la forma marginal de $X_n$ coincide con la de $X$, pero no dice nada sobre qué tan cerca está $X_n(\omega)$ de $X(\omega)$.</p>
+      </div></details>
+    </div>
+
+    <!-- EJERCICIO 8 -->
+    <div class="box ejercicio" id="ej-8">
+      <span class="box-title">Ejemplo 9 + Observaciones 1–3 + Ejercicio 3 (Sesión 1) · Borel–Cantelli y momentos</span>
+      <p>Sean $X_1, X_2, \dots$ variables aleatorias <b>independientes</b> tales que para cada $n \ge 1$:</p>
+      $$\P(X_n = n^2) = \frac{1}{n}, \qquad \P(X_n = 0) = 1 - \frac{1}{n}.$$
+      <ol class="pasos">
+        <li><b>(a)</b> Demuestra que $X_n \pto 0$.</li>
+        <li><b>(b)</b> Calcula $\E[X_n]$ y comenta por qué $X_n \pto 0$ no implica $\E[X_n] \to \E[0]$ (qué resultados de teoría de la medida garantizan la convergencia de momentos y la conexión con la Paradoja de San Petersburgo).</li>
+        <li><b>(c)</b> Aplica el Segundo Lema de Borel–Cantelli para probar que $X_n$ <b>no</b> converge casi seguramente a $0$ (contraejemplo de $X_n \pto X \not\implies X_n \xrightarrow{\text{c.s.}} X$).</li>
+        <li><b>(d)</b> Cambia ahora las probabilidades a $\P(X_n = n^2) = \frac{1}{n^2}$ y $\P(X_n = 0) = 1 - \frac{1}{n^2}$. Demuestra que ahora sí $X_n \xrightarrow{\text{c.s.}} 0$ por el Primer Lema de Borel–Cantelli, aunque $\E[X_n] = 1 \not\to 0$.</li>
+      </ol>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Para (a), observa que si $n^2 &gt; \varepsilon$, entonces $|X_n| &gt; \varepsilon$ equivale a $X_n = n^2$. Para (c), usa el evento $A_n = \{X_n = n^2\}$ y la divergencia de la serie armónica $\sum 1/n$. Para (d), usa $\sum 1/n^2 = \pi^2/6 &lt; \infty$.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><b>(a) Convergencia en probabilidad $X_n \pto 0$:</b> Fijado $\varepsilon &gt; 0$, para todo índice $n &gt; \sqrt{\varepsilon}$ (es decir, $n^2 &gt; \varepsilon$) el único valor de $X_n$ cuya distancia al $0$ supera $\varepsilon$ es $n^2$. Luego:
+            $$\P(|X_n - 0| &gt; \varepsilon) = \P(X_n = n^2) = \frac{1}{n} \xrightarrow{n\to\infty} 0.$$
+            Por tanto, $X_n \pto 0$.</li>
+          <li><b>(b) Divergencia de la esperanza $\E[X_n] = n \to \infty$:</b> Calculando directamente:
+            $$\E[X_n] = n^2 \cdot \frac{1}{n} + 0 \cdot \left(1 - \frac{1}{n}\right) = n \xrightarrow{n\to\infty} +\infty \ne 0 = \E[0].$$
+            <b>Observación sobre momentos:</b> Aunque los saltos ocurren con probabilidad $1/n \to 0$, su altura $n^2$ crece más rápido y hace explotar la esperanza. Por eso ni $\pto$ ni $\xrightarrow{\text{c.s.}}$ garantizan por sí solas que $\lim \E[X_n] = \E[\lim X_n]$. Para intercambiar límite y esperanza se requieren hipótesis adicionales provistas por teoremas clásicos como el <b>Lema de Fatou</b> ($\E[\liminf X_n] \le \liminf \E[X_n]$ para $X_n \ge 0$), el <b>Teorema de Convergencia Monótona</b> o el <b>Teorema de Convergencia Dominada</b> (si $|X_n| \le Y$ con $\E[Y] &lt; \infty$), o en general integrabilidad uniforme.
+            <br>Este fenómeno recuerda a la célebre <b>Paradoja de San Petersburgo</b>: en una lotería donde ganas $2^k$ con probabilidad $2^{-k}$, los premios astronómicos son casi imposibles individualmente, pero el producto premio $\times$ probabilidad no decrece, haciendo infinita la esperanza matemática.</li>
+          <li><b>(c) Fallo de la convergencia casi segura:</b> Toma $\varepsilon = 1/2$ y define $A_n = \{X_n &gt; 1/2\} = \{X_n = n^2\}$. Como las variables $X_n$ son independientes, los eventos $A_n$ son independientes y la serie de sus probabilidades diverge:
+            $$\sum_{n=1}^{\infty} \P(A_n) = \sum_{n=1}^{\infty} \frac{1}{n} = \infty.$$
+            Por el <b>Segundo Lema de Borel–Cantelli</b>, $\P(A_n \text{ i.v.}) = 1$. En otras palabras, con probabilidad $1$ seguirán apareciendo infinitos índices $n$ con $X_n(\omega) = n^2 \to \infty$, de modo que $X_n(\omega)$ no puede converger a $0$: $\P(\lim_{n\to\infty} X_n = 0) = 0$. Así $X_n \pto 0$ pero $X_n$ <b>no</b> converge c.s. a $0$.</li>
+          <li><b>(d) Cambio a $\P(X_n = n^2) = 1/n^2$:</b> Ahora, para todo $\varepsilon &gt; 0$:
+            $$\sum_{n=1}^{\infty} \P(|X_n - 0| &gt; \varepsilon) \le \sum_{n=1}^{\infty} \P(X_n = n^2) = \sum_{n=1}^{\infty} \frac{1}{n^2} = \frac{\pi^2}{6} &lt; \infty.$$
+            Por el <b>Primer Lema de Borel–Cantelli</b>, $\P(|X_n| &gt; \varepsilon \text{ i.v.}) = 0$ para todo $\varepsilon &gt; 0$. Con probabilidad $1$, después de algún paso finito $N(\omega)$ todos los términos valen $0$, luego $X_n \xrightarrow{\text{c.s.}} 0$. Sin embargo:
+            $$\E[X_n] = n^2 \cdot \frac{1}{n^2} + 0 \cdot \left(1 - \frac{1}{n^2}\right) = 1 \quad \forall\,n \ge 1 \implies \lim_{n\to\infty} \E[X_n] = 1 \ne 0.$$
+            Incluso la convergencia casi segura puede fallar al preservar los momentos si no hay una variable integrable que domine las colas.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJEMPLO 9 -->
+    <div class="box ejercicio" id="ej-9">
+      <span class="box-title">Ejemplo 10 · Binomial con probabilidad $1/n^2$</span>
+      <p>Sea $X_n \sim \text{Bin}(n, p_n)$ con $p_n = \frac{1}{n^2}$ para $n \ge 1$. Demuestra utilizando la Desigualdad de Chebyshev que:</p>
+      $$X_n - \frac{1}{n} \pto 0.$$
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Calcula $\E[X_n] = n p_n$ y $\Var(X_n) = n p_n (1 - p_n)$. Como $1/n$ es exactamente la media de $X_n$, aplica Chebyshev directamente al evento $\{|X_n - \E[X_n]| &gt; \varepsilon\}$.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Media y varianza de $X_n$:</b> Para $X_n \sim \text{Bin}(n, 1/n^2)$:
+            $$\E[X_n] = n \cdot \frac{1}{n^2} = \frac{1}{n}, \qquad \Var(X_n) = n \cdot \frac{1}{n^2}\left(1 - \frac{1}{n^2}\right) = \frac{1}{n}\left(1 - \frac{1}{n^2}\right).$$</li>
+          <li><b>Aplicación de Chebyshev:</b> Para todo $\varepsilon &gt; 0$:
+            $$0 \le \P\left(\left|X_n - \frac{1}{n}\right| &gt; \varepsilon\right) = \P\big(|X_n - \E[X_n]| &gt; \varepsilon\big) \le \frac{\Var(X_n)}{\varepsilon^2} = \frac{1 - 1/n^2}{n\varepsilon^2} \le \frac{1}{n\varepsilon^2} \xrightarrow{n\to\infty} 0.$$</li>
+          <li>Por el teorema del sándwich, $\lim_{n\to\infty} \P(|X_n - 1/n| &gt; \varepsilon) = 0$ para todo $\varepsilon &gt; 0$, es decir, $X_n - \frac{1}{n} \pto 0$. (Además, como $\frac{1}{n} \to 0$, sumando $\frac{1}{n} \pto 0$ se sigue también que $X_n \pto 0$.)</li>
+        </ol>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="lebensztayn">4. Ejercicios del folleto de Lebensztayn</h2>
+    <div class="box nota"><span class="box-title">Práctica recomendada del folleto</span>
+      <p>Para consolidar las definiciones de convergencia en distribución, en probabilidad, casi segura y los teoremas de mapeo continuo y Borel–Cantelli, resuelve los ejercicios <b>12, 14, 15, 17, 18 y 19 del Capítulo 5</b> en <a href="../deberes/lebensztayn.html#cap5-modos">Ejercicios de Lebensztayn · Bloque I: Modos de convergencia</a>.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="simulaciones">5. Laboratorios interactivos</h2>
+
+    <!-- SIMULACIÓN 1 -->
+    <div class="sim" id="sim-modos">
+      <p class="sim-title">Laboratorio 1 · Convergencia de $W_n = n(1 - X_{(n)})$ hacia $\text{Exp}(1)$ y contraste de MSE</p>
+      <p class="sim-desc">Generamos $M = 3000$ muestras de tamaño $n$ de $U(0, 1)$ y graficamos el histograma normalizado de $W_n = n(1 - X_{(n)})$ frente a la densidad límite $\text{Exp}(1)$ ($e^{-w}$). Abajo comparamos también la convergencia cuadrática del error cuadrático medio de $M_n$ en $U(-\theta, \theta)$ frente al estimador de momentos $\hat\theta_{\text{MM}}$.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+
+    <!-- SIMULACIÓN 2 -->
+    <div class="sim" id="sim-borel">
+      <p class="sim-title">Laboratorio 2 · Borel–Cantelli en acción: $\P(X_n = n^2) = 1/n$ frente a $1/n^2$</p>
+      <p class="sim-desc">Simula una trayectoria completa $\omega$ de variables independientes $X_1(\omega), \dots, X_N(\omega)$. Cada barra roja indica un paso $n$ donde ocurrió un pico $X_n(\omega) = n^2$ (en escala $\log_{10}(1 + X_n)$ para visualizar picos tempranos y tardíos); en todos los demás pasos $X_n(\omega) = 0$. Cambia entre $1/n$ (serie divergente: siguen apareciendo picos indefinidamente) y $1/n^2$ (serie convergente: tras unos pocos saltos iniciales, la trayectoria se estabiliza en $0$).</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="autoevaluacion">6. Autoevaluación</h2>
+    <p>Comprueba tu dominio de los modos de convergencia, sus teoremas puente y las tasas asintóticas.</p>
+
+    <div id="quiz-1"></div>
+    <div id="quiz-2"></div>
+    <div id="quiz-3"></div>
+
+    <h3>Comprobadores numéricos</h3>
+    <div id="nc-1"></div>
+    <div id="nc-2"></div>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../assets/js/stats.js"></script>
+<script src="../assets/js/plot.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+(function () {
+  'use strict';
+  const { fmt, mulberry32 } = EM.stats;
+
+  /* ============================================================
+     SIMULACIÓN 1: W_n = n(1 - X_{(n)}) -> Exp(1) y MSE O(1/n^2) vs O(1/n)
+     ============================================================ */
+  (function () {
+    const root = document.getElementById('sim-modos');
+    if (!root) return;
+
+    const M = 3000;
+    let n = 15;
+    let seed = 202611;
+
+    const ctr = root.querySelector('.controls');
+    EM.ui.slider(ctr, {
+      tex: 'n',
+      min: 3, max: 60, step: 1, value: n,
+      fmt: v => String(Math.round(v)),
+      onInput: v => { n = Math.round(v); render(); }
+    });
+    EM.ui.button(ctr, 'Simular de nuevo', () => {
+      seed = (seed * 1664525 + 1013904223) >>> 0;
+      render();
+    }, { primary: true });
+
+    const plot = EM.plot.create(root.querySelector('.plot'), {
+      xmin: 0, xmax: 5, ymin: 0, ymax: 1.35,
+      height: 290, xlabel: 'w', ylabel: 'densidad',
+      legendPos: 'tr'
+    });
+    const out = EM.ui.readout(root.querySelector('.out'));
+
+    function render() {
+      const rng = mulberry32(seed);
+      const ws = new Array(M);
+      let sumW = 0;
+      let sumSqErrM = 0; // para U(-1, 1), theta = 1: (M_n - 1)^2
+      let le2 = 0;
+
+      for (let j = 0; j < M; j++) {
+        // X_{(n)} ~ Beta(n, 1) tiene exactamente la distribucion de U^{1/n}
+        const xMax = Math.pow(rng(), 1 / n);
+        const w = n * (1 - xMax);
+        ws[j] = w;
+        sumW += w;
+        if (w <= 2) le2++;
+        sumSqErrM += (xMax - 1) * (xMax - 1);
+      }
+
+      const meanW = sumW / M;
+      const probLe2Emp = le2 / M;
+      const probLe2Teo = 1 - Math.exp(-2);
+      const mseEmpM1 = sumSqErrM / M;
+      const mseTeoM = 2 / ((n + 1) * (n + 2)); // en unidades de theta^2
+      const mseTeoMM = 1 / (5 * n);             // en unidades de theta^2 (aprox. asintotica)
+      const ratio = mseTeoMM / mseTeoM;
+
+      // Ajustar ymax segun el pico del histograma
+      const bins = 25;
+      const bw = 5 / bins;
+      const counts = new Array(bins).fill(0);
+      for (let j = 0; j < M; j++) {
+        const k = Math.floor(ws[j] / bw);
+        if (k >= 0 && k < bins) counts[k]++;
+      }
+      const maxH = Math.max(...counts.map(c => c / (M * bw)), 1.0);
+      plot.setRange({ xmin: 0, xmax: 5, ymin: 0, ymax: Math.max(1.3, maxH * 1.15) });
+
+      plot.draw(g => {
+        g.hist(ws, { range: [0, 5], bins, density: true, color: 'c2', alpha: 0.55, label: 'Histograma de Wₙ = n(1 − X₍ₙ₎)' });
+        g.curve(w => (w >= 0 ? Math.exp(-w) : 0), { from: 0, to: 5, color: 'c1', width: 2.6, label: 'Densidad límite Exp(1): e⁻ʷ' });
+      });
+
+      out.set(`
+        <b>Réplicas Monte Carlo ($M = ${M}$, $n = ${n}$):</b><br>
+        &bull; <b>Media empírica de $W_n$:</b> <b>${fmt(meanW, 4)}</b> frente a $\\E[W_n] = \\frac{n}{n+1} = ${fmt(n / (n + 1), 4)}$ y al límite teórico <b>$1$</b>.<br>
+        &bull; <b>Cola izquierda $\\hat\\P(W_n \\le 2)$:</b> <b>${fmt(probLe2Emp, 4)}</b> frente a $1 - e^{-2} = ${fmt(probLe2Teo, 4)}$.<br>
+        &bull; <b>Velocidad de convergencia en $U(-\\theta, \\theta)$ (para $\\theta = 1$, o en múltiplos de $\\theta^2$):</b><br>
+        &emsp;— $\\text{MSE}_{\\theta=1}(M_n)$ empírico = <b>${fmt(mseEmpM1, 5)}</b> &nbsp;|&nbsp; teórico $\\frac{2\\theta^2}{(n+1)(n+2)} =$ <b>${fmt(mseTeoM, 5)}</b> $\\big[O(1/n^2)\\big]$<br>
+        &emsp;— $\\text{MSE}_{\\theta=1}(\\hat\\theta_{\\text{MM}}) \\approx \\frac{\\theta^2}{5n} =$ <b>${fmt(mseTeoMM, 5)}</b> $\\big[O(1/n)\\big]$ &nbsp;→&nbsp; el EMV $M_n$ reduce el MSE por un factor de <b>${fmt(ratio, 2)}×</b>.
+      `);
+    }
+
+    render();
+  })();
+
+  /* ============================================================
+     SIMULACIÓN 2: Borel-Cantelli 1/n vs 1/n^2
+     ============================================================ */
+  (function () {
+    const root = document.getElementById('sim-borel');
+    if (!root) return;
+
+    let mode = 'invN';
+    let N = 250;
+    let seed = 98765;
+
+    const ctr = root.querySelector('.controls');
+    EM.ui.select(ctr, {
+      label: 'Probabilidad de pico',
+      value: mode,
+      options: [
+        { value: 'invN', label: 'P(Xₙ = n²) = 1/n (converge en P, NO c.s.)' },
+        { value: 'invN2', label: 'P(Xₙ = n²) = 1/n² (converge c.s.)' }
+      ],
+      onChange: v => { mode = v; render(); }
+    });
+    EM.ui.slider(ctr, {
+      tex: 'N',
+      min: 50, max: 500, step: 25, value: N,
+      fmt: v => String(Math.round(v)),
+      onInput: v => { N = Math.round(v); render(); }
+    });
+    EM.ui.button(ctr, 'Nueva realización ω', () => {
+      seed = (seed * 1664525 + 1013904223) >>> 0;
+      render();
+    }, { primary: true });
+
+    const plot = EM.plot.create(root.querySelector('.plot'), {
+      xmin: 1, xmax: N, ymin: 0, ymax: Math.log10(1 + N * N) * 1.15,
+      height: 290, xlabel: 'Paso n', ylabel: 'log₁₀(1 + Xₙ(ω))',
+      legendPos: 'tl'
+    });
+    const out = EM.ui.readout(root.querySelector('.out'));
+
+    function render() {
+      const rng = mulberry32(seed);
+      const peakX = [];
+      const peakY = [];
+      let sumP = 0;
+      let lastPeakN = null;
+
+      for (let k = 1; k <= N; k++) {
+        const p = mode === 'invN' ? 1 / k : 1 / (k * k);
+        sumP += p;
+        if (rng() < p) {
+          peakX.push(k);
+          peakY.push(Math.log10(1 + k * k));
+          lastPeakN = k;
+        }
+      }
+
+      const maxLog = Math.log10(1 + N * N);
+      plot.setRange({ xmin: 1, xmax: N, ymin: 0, ymax: maxLog * 1.16 });
+
+      plot.draw(g => {
+        // Envolvente de la altura de un pico n^2 en escala log10
+        g.curve(x => (x >= 1 ? Math.log10(1 + x * x) : 0), {
+          from: 1, to: N, color: 'muted', dash: [5, 4], width: 1.6,
+          label: 'Altura de salto log₁₀(1 + n²)'
+        });
+        // Base nula X_n = 0
+        g.line(1, 0, N, 0, { color: 'c3', width: 2 });
+        // Tallos verticales para cada pico observado
+        for (let i = 0; i < peakX.length; i++) {
+          g.line(peakX[i], 0, peakX[i], peakY[i], { color: 'bad', width: 2 });
+        }
+        g.points(peakX, peakY, {
+          color: 'bad', r: 4.5,
+          label: `Picos Xₙ(ω) = n² (${peakX.length} en [1, ${N}])`
+        });
+      });
+
+      const lastValText = lastPeakN
+        ? `último pico en $n = ${lastPeakN}$ con $X_{${lastPeakN}}(\\omega) = ${String(lastPeakN * lastPeakN).replace(/\B(?=(\d{3})+(?!\d))/g, '\\,')}$`
+        : 'ningún pico en toda la ventana';
+      const expNow = mode === 'invN' ? N : 1;
+      const pNow = mode === 'invN' ? 1 / N : 1 / (N * N);
+      const bcVerdict = mode === 'invN'
+        ? '<span class="comp-tag tag-loss">∑ 1/k = ∞ → NO converge c.s. (pero sí en P)</span>'
+        : '<span class="comp-tag tag-win">∑ 1/k² &lt; π²/6 &lt; ∞ → SÍ converge c.s.</span>';
+
+      out.set(`
+        <b>Diagnóstico de Borel–Cantelli en $N = ${N}$ pasos:</b> ${bcVerdict}<br>
+        &bull; <b>Picos observados ($X_n(\\omega) &gt; 0$):</b> <b>${peakX.length}</b> (${lastValText}).<br>
+        &bull; <b>Suma acumulada de probabilidades:</b> $\\sum_{k=1}^{${N}} \\P(A_k) = $ <b>${fmt(sumP, 4)}</b> (número esperado de picos hasta $N$).<br>
+        &bull; <b>En el paso final $n = ${N}$:</b> $\\P(X_{${N}} = ${N}^2) = ${fmt(pNow, 6)}$, mientras que $\\E[X_{${N}}] = $ <b>${expNow}</b> (nunca tiende a $0$ en ninguno de los dos casos).
+      `);
+    }
+
+    render();
+  })();
+
+  /* ============================================================
+     AUTOEVALUACIÓN (3 QUIZZES + 2 COMPROBADORES NUMÉRICOS)
+     ============================================================ */
+  EM.ui.quiz('#quiz-1', {
+    question: '1. Respecto a la jerarquía general entre los tres modos de convergencia estocástica, ¿cuál de las siguientes afirmaciones es SIEMPRE verdadera para variables aleatorias $X_n$ y $X$ arbitrarias?',
+    options: [
+      '$X_n \\dto X \\implies X_n \\pto X$, porque si las funciones acumuladas coinciden en el límite, las variables aleatorias deben aproximarse punto a punto.',
+      '$X_n \\xrightarrow{\\text{c.s.}} X \\implies X_n \\pto X \\implies X_n \\dto X$, y ninguna de las implicaciones recíprocas vale en general sin hipótesis adicionales.',
+      '$X_n \\pto X \\implies X_n \\xrightarrow{\\text{c.s.}} X$, mientras que $X_n \\dto X$ no guarda relación alguna con los otros dos modos.',
+      'Si $X_n \\dto X$ e $Y_n \\dto Y$, entonces siempre se cumple $X_n + Y_n \\dto X + Y$, aunque $X_n$ e $Y_n$ sean dependientes.'
+    ],
+    answer: 1,
+    explain: 'La jerarquía estricta es c.s. $\\implies$ P $\\implies$ D. Como muestran nuestros contraejemplos, $X_n = -X$ con $X \\sim N(0,1)$ satisface $X_n \\dto X$ sin converger en probabilidad, y la sucesión con $\\P(X_n = n^2) = 1/n$ satisface $X_n \\pto 0$ sin converger c.s. Además, la suma en distribución falla en general sin independencia (o convergencia de una parte a constante).'
+  });
+
+  EM.ui.quiz('#quiz-2', {
+    question: '2. Sea $c \\in \\R$ una constante real fija. Al estudiar la relación entre $X_n \\dto c$ y $X_n \\pto c$, ¿qué afirmación es correcta?',
+    options: [
+      'Son equivalentes ($X_n \\dto c \\iff X_n \\pto c$) porque la función acumulada límite $F_c(x) = \\1\\{x \\ge c\\}$ es continua en $c - \\varepsilon$ y $c + \\varepsilon$, permitiendo controlar las colas de $|X_n - c| &gt; \\varepsilon$.',
+      'Solo vale $X_n \\pto c \\implies X_n \\dto c$; el recíproco falla igual que con cualquier otra variable límite.',
+      'Para que $X_n \\dto c$ se cumpla, es indispensable verificar también que $F_{X_n}(c) \\to F_c(c) = 1$ exactamente en el punto de salto $x = c$.',
+      'Si $X_n \\sim N(0, 1/n)$, entonces $X_n$ no converge en distribución a $0$ porque $\\Phi(0) = 1/2 \\ne 1$.'
+    ],
+    answer: 0,
+    explain: 'Cuando el límite es degenerado en una constante $c$, la convergencia en distribución y la convergencia en probabilidad coinciden. En $x = c$, $F_c$ tiene su único salto (discontinuidad), así que la definición de $\\dto$ no exige que $F_{X_n}(c) \\to 1$ (como ocurre en $N(0, 1/n)$, donde $F_{X_n}(0) = 1/2$ para todo $n$).'
+  });
+
+  EM.ui.quiz('#quiz-3', {
+    question: '3. Sean $A_1, A_2, \\dots$ eventos y $X_n$ variables aleatorias independientes con $\\P(X_n = n^2) = p_n$ y $\\P(X_n = 0) = 1 - p_n$. Según los lemas de Borel–Cantelli, ¿qué sucede con $p_n = 1/n$ frente a $p_n = 1/n^2$?',
+    options: [
+      'Con $p_n = 1/n$, como $p_n \\to 0$, se garantiza tanto $X_n \\pto 0$ como $X_n \\xrightarrow{\\text{c.s.}} 0$ por el Primer Lema.',
+      'Con $p_n = 1/n$ (y eventos independientes), $\\sum p_n = \\infty$ implica $\\P(A_n\\text{ i.v.}) = 1$ (Segundo Lema), luego $X_n \\pto 0$ pero NO $X_n \\xrightarrow{\\text{c.s.}} 0$; en cambio con $p_n = 1/n^2$, $\\sum p_n &lt; \\infty$ implica $X_n \\xrightarrow{\\text{c.s.}} 0$ (Primer Lema).',
+      'Con $p_n = 1/n^2$, como $X_n \\xrightarrow{\\text{c.s.}} 0$, necesariamente también $\\lim_{n\\to\\infty} \\E[X_n] = 0$.',
+      'El Primer Lema de Borel–Cantelli exige que los eventos $A_n$ sean independientes para concluir $\\P(A_n\\text{ i.v.}) = 0$.'
+    ],
+    answer: 1,
+    explain: 'El Primer Lema ($\\sum \\P(A_n) &lt; \\infty \\implies \\P(A_n\\text{ i.v.}) = 0$) no requiere independencia y asegura $X_n \\xrightarrow{\\text{c.s.}} 0$ cuando $p_n = 1/n^2$. El Segundo Lema sí usa independencia y concluye que con $p_n = 1/n$ hay infinitos picos con probabilidad $1$, rompiendo la convergencia c.s. Además, en ambos casos $\\E[X_n] \\not\\to 0$ ($n$ y $1$, respectivamente).'
+  });
+
+  EM.ui.numcheck('#nc-1', {
+    prompt: '1) Sea $X_1, \\dots, X_4 \\iid U(-3, 3)$ ($\\theta = 3$, $n = 4$) y $M_4 = \\max_{1\\le i\\le 4}|X_i|$. Calcula el error cuadrático medio exacto $\\text{MSE}_{\\theta=3}(M_4)$:',
+    answer: 0.6,
+    tol: 0.005,
+    placeholder: 'ej. 0.6',
+    hint: 'Usa la fórmula deducida en el Ejercicio 4: $\\text{MSE}_\\theta(M_n) = \\frac{2\\theta^2}{(n+1)(n+2)}$. Con $\\theta = 3$ y $n = 4$: $\\frac{2\\cdot 9}{5\\cdot 6} = \\frac{18}{30} = 0.6$.'
+  });
+
+  EM.ui.numcheck('#nc-2', {
+    prompt: '2) Sean $X_1, \\dots, X_n \\iid U(0, 1)$. Calcula el límite $\\lim_{n\\to\\infty} \\P\\big(n(1 - X_{(n)}) \\le 2\\big)$ (redondeado a 4 decimales):',
+    answer: 1 - Math.exp(-2),
+    tol: 0.002,
+    placeholder: 'ej. 0.8647',
+    hint: 'Por el Ejercicio 5, $W_n = n(1 - X_{(n)}) \\dto \\text{Exp}(1)$, cuya acumulada en $w = 2$ es $1 - e^{-2} \\approx 0.8647$.'
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,734 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clase 13 · Teoremas límites I: Leyes de los grandes números</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/theme.js"></script>
+<style>
+  .comp-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.82rem; font-weight: 600; font-family: var(--font-mono); }
+  .tag-win { background: rgba(34, 197, 94, 0.15); color: var(--good, #16a34a); }
+  .tag-loss { background: rgba(239, 68, 68, 0.15); color: var(--bad, #dc2626); }
+  .tag-warn { background: rgba(245, 158, 11, 0.15); color: var(--warn, #d97706); }
+  .btn-group { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+</style>
+</head>
+<body data-page="clase-13" data-root="../">
+<main id="contenido">
+
+  <header class="page-head">
+    <p class="kicker">Clase 13 · Unidad 3 — Teoremas Límites</p>
+    <h1>Teoremas límites I: Leyes débiles y fuertes de los grandes números</h1>
+    <p class="lead">Estabilidad asintótica de los promedios muestrales: Leyes Débiles de los Grandes Números (Bernoulli, Khintchine y Chebyshev), Leyes Fuertes (Borel y Kolmogorov) y cálculo de límites casi seguros mediante transformaciones y funciones continuas.</p>
+  </header>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="leyes-debiles">1. Leyes débiles de los grandes números (LDGN)</h2>
+    <p>Las leyes débiles de los grandes números formalizan la idea de que el promedio acumulado de observaciones aleatorias se concentra alrededor de su valor esperado conforme crece el tamaño muestral $n$, entendiendo dicha concentración en el sentido de la <b>convergencia en probabilidad</b> ($\pto$).</p>
+
+    <div class="box teorema" id="thm-ldgn-bernoulli">
+      <span class="box-title">Teorema · Ley débil de los grandes números de Bernoulli (1713)</span>
+      <p>Considere una secuencia de ensayos Bernoulli independientes, con la misma probabilidad $p \in [0, 1]$ de éxito en cada ensayo. Si $S_n$ es el número de éxitos en los primeros $n$ ensayos, entonces:</p>
+      $$\frac{S_n}{n} \pto p.$$
+      <details class="solucion"><summary>Verificación inmediata con la desigualdad de Chebyshev</summary><div>
+        <p>Como $S_n = \sum_{i=1}^n X_i$ con $X_i \iid \text{Bernoulli}(p)$, se tiene $\E[S_n/n] = p$ y $\Var(S_n/n) = \frac{np(1-p)}{n^2} = \frac{p(1-p)}{n}$. Para todo $\varepsilon &gt; 0$:</p>
+        $$\P\!\left(\left|\frac{S_n}{n} - p\right| \ge \varepsilon\right) \le \frac{\Var(S_n/n)}{\varepsilon^2} = \frac{p(1-p)}{n\varepsilon^2} \xrightarrow{n\to\infty} 0.$$
+      </div></details>
+    </div>
+
+    <div class="box teorema" id="thm-ldgn-khintchine">
+      <span class="box-title">Teorema · Ley débil de los grandes números de Khintchine (1929)</span>
+      <p>Sea $X_1, X_2, \dots, X_n$ una secuencia de variables aleatorias $\iid$ con media finita $\mu$ (es decir, $\E[|X_1|] &lt; \infty$ y $\E[X_1] = \mu$, <b>sin exigir varianza finita</b>). Las sumas parciales $S_n = X_1 + X_2 + \dots + X_n$ satisfacen:</p>
+      $$\frac{S_n}{n} \pto \mu.$$
+    </div>
+
+    <p>La LDGN de Khintchine es la más conocida en inferencia elemental. Sin embargo, tanto la exigencia de independencia como la de idéntica distribución pueden relajarse cuando se controla adecuadamente el crecimiento de la varianza de la suma.</p>
+
+    <div class="box teorema" id="thm-ldgn-chebyshev">
+      <span class="box-title">Teorema · LDGN de Chebyshev (1867)</span>
+      <p>Sea $X_1, X_2, \dots, X_n$ una secuencia cualquiera de variables aleatorias (no necesariamente independientes ni idénticamente distribuidas) y consideremos $S_n = X_1 + X_2 + \dots + X_n$. Si</p>
+      $$\lim_{n\to\infty} \frac{\Var(S_n)}{n^2} = 0,$$
+      <p>entonces:</p>
+      $$\frac{S_n - \E[S_n]}{n} \pto 0.$$
+      <details class="solucion"><summary>Demostración directa mediante la desigualdad de Chebyshev</summary><div>
+        <p>Definamos $\bar X_n = \frac{S_n}{n}$, cuya esperanza es $\E[\bar X_n] = \frac{\E[S_n]}{n}$ y cuya varianza es $\Var(\bar X_n) = \frac{\Var(S_n)}{n^2}$. Fijado cualquier $\varepsilon &gt; 0$, la desigualdad de Chebyshev aplicada a la variable aleatoria $\bar X_n$ da:</p>
+        $$0 \le \P\!\left(\left|\frac{S_n - \E[S_n]}{n}\right| \ge \varepsilon\right) = \P\!\left(|\bar X_n - \E[\bar X_n]| \ge \varepsilon\right) \le \frac{\Var(\bar X_n)}{\varepsilon^2} = \frac{\Var(S_n)}{n^2\varepsilon^2}.$$
+        <p>Tomando el límite cuando $n \to \infty$ y usando la hipótesis $\lim_{n\to\infty}\frac{\Var(S_n)}{n^2} = 0$, el lado derecho tiende a $0$, por lo que $\frac{S_n - \E[S_n]}{n} \pto 0$. $\blacksquare$</p>
+      </div></details>
+    </div>
+
+    <div class="box cuidado" id="obs-dependencia">
+      <span class="box-title">Observaciones clave sobre dependencia y notación</span>
+      <ul>
+        <li><b>Aplicación directa:</b> El resultado de Chebyshev se obtiene aplicando la desigualdad de Chebyshev directamente a la variable aleatoria $S_n/n$, es decir, $\bar X$.</li>
+        <li><b>Cuidado con la notación $\bar X$:</b> Fuera del contexto i.i.d., escribir $\bar X$ puede generar confusión, ya que en general $\Var(\bar X) \ne \frac{\sigma^2}{n}$.</li>
+        <li><b>Fórmula general para variables dependientes:</b> Para variables aleatorias cualesquiera (con varianzas finitas),
+          $$\Var(\bar X) = \frac{\Var(S_n)}{n^2},$$
+          donde la varianza de la suma debe incluir todas las covarianzas cruzadas:
+          $$\Var(S_n) = \Var\!\left(\sum_{i=1}^n X_i\right) = \sum_{i=1}^n \Var(X_i) + 2 \sum_{1 \le i &lt; j \le n} \Cov(X_i, X_j) \ne \sum_{i=1}^n \Var(X_i).$$</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="leyes-fuertes">2. Leyes fuertes de los grandes números (LFGN)</h2>
+    <p>Mientras que la convergencia en probabilidad ($\pto$) garantiza que para un $n$ grande dado es muy poco probable observar una desviación mayor que $\varepsilon$, la <b>convergencia casi segura</b> ($\xrightarrow{\text{c.s.}}$) afirma algo más profundo: con probabilidad $1$, la trayectoria completa $\left(\frac{S_n}{n}\right)_{n \ge 1}$ converge puntualmente al límite. Recuerda que $\text{c.s.} \implies \text{P} \implies \text{D}$.</p>
+
+    <div class="box teorema" id="thm-lfgn-borel">
+      <span class="box-title">Teorema · Ley fuerte de los grandes números de Borel (1909)</span>
+      <p>Considere una secuencia $X_1, X_2, \dots$ de ensayos Bernoulli independientes, con la misma probabilidad $p$ de éxito en cada ensayo, es decir, $\P(X_n = 1) = p$ y $\P(X_n = 0) = 1 - p$. Entonces:</p>
+      $$\frac{S_n}{n} \xrightarrow{\text{c.s.}} p,$$
+      <p>donde $S_n = X_1 + X_2 + \dots + X_n$.</p>
+    </div>
+
+    <div class="box teorema" id="thm-lfgn-kolmogorov">
+      <span class="box-title">Teorema · Ley fuerte de los grandes números de Kolmogorov (1933)</span>
+      <p>Sea $X_1, X_2, \dots, X_n$ una secuencia de variables aleatorias $\iid$ con media finita $\mu$ (es decir, $\E[|X_1|] &lt; \infty$ y $\E[X_1] = \mu$). Las sumas parciales $S_n = X_1 + X_2 + \dots + X_n$ satisfacen:</p>
+      $$\frac{S_n}{n} \xrightarrow{\text{c.s.}} \mu.$$
+    </div>
+
+    <div class="box nota" id="nota-kolmogorov-indep">
+      <span class="box-title">Criterio de Kolmogorov para variables independientes no i.d.</span>
+      <p>Cuando las variables aleatorias $X_1, X_2, \dots$ son independientes pero <b>no necesariamente idénticamente distribuidas</b>, la condición de Kolmogorov sobre sus varianzas establece que si</p>
+      $$\sum_{n=1}^\infty \frac{\Var(X_n)}{n^2} &lt; \infty,$$
+      <p>entonces se cumple la convergencia casi segura centrada:</p>
+      $$\frac{S_n - \E[S_n]}{n} \xrightarrow{\text{c.s.}} 0.$$
+    </div>
+
+    <div class="box idea" id="receta-sesion2">
+      <span class="box-title">Receta práctica (Sesión 2): hallar límites casi seguros con la LFGN</span>
+      <p>En problemas y exámenes, rara vez te pedirán el límite directo de $\bar X_n$, sino el de una transformación no lineal o combinación de promedios. Sigue estos cuatro pasos:</p>
+      <ol class="pasos">
+        <li><b>Identificar promedios de variables i.i.d.:</b> Reescribe el estadístico para aislar expresiones de la forma $\frac{1}{n}\sum_{i=1}^n Z_i$ con $Z_i = h(X_i)$. A veces conviene aplicar primero logaritmos (si hay productos o potencias $1/n$) o dividir numerador y denominador por $n$.</li>
+        <li><b>Verificar integrabilidad y calcular $\E[Z_1]$:</b> Comprueba que $\E[|Z_1|] &lt; \infty$ y evalúa la esperanza $\mu_Z = \E[h(X_1)]$.</li>
+        <li><b>Aplicar la LFGN de Kolmogorov:</b> Concluye de inmediato que $\bar Z_n = \frac{1}{n}\sum_{i=1}^n Z_i \xrightarrow{\text{c.s.}} \mu_Z$.</li>
+        <li><b>Combinar y aplicar funciones continuas:</b> Por preservación de la convergencia c.s., si $U_n \xrightarrow{\text{c.s.}} a$ y $V_n \xrightarrow{\text{c.s.}} b$, entonces $U_n \pm V_n \xrightarrow{\text{c.s.}} a \pm b$, $U_n V_n \xrightarrow{\text{c.s.}} ab$, y $U_n / V_n \xrightarrow{\text{c.s.}} a/b$ (si $b \ne 0$). Además, para cualquier función $g$ continua en $a$, se tiene $g(U_n) \xrightarrow{\text{c.s.}} g(a)$.</li>
+      </ol>
+    </div>
+
+    <h3>Resumen comparativo: leyes débiles vs. leyes fuertes</h3>
+    <div class="table-wrap">
+      <table class="tabla text-left">
+        <thead>
+          <tr>
+            <th>Teorema</th>
+            <th>Hipótesis principales</th>
+            <th>Modo y límite</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>Bernoulli (1713)</b></td>
+            <td>$X_i \iid \text{Bernoulli}(p)$</td>
+            <td><span class="comp-tag tag-warn">Débil</span> $\;S_n/n \pto p$</td>
+          </tr>
+          <tr>
+            <td><b>Khintchine (1929)</b></td>
+            <td>$X_i \iid$ con $\E[|X_1|] &lt; \infty$</td>
+            <td><span class="comp-tag tag-warn">Débil</span> $\;S_n/n \pto \mu$</td>
+          </tr>
+          <tr>
+            <td><b>Chebyshev (1867)</b></td>
+            <td>Cualquier secuencia con $\Var(S_n)/n^2 \to 0$</td>
+            <td><span class="comp-tag tag-warn">Débil</span> $\;(S_n - \E[S_n])/n \pto 0$</td>
+          </tr>
+          <tr>
+            <td><b>Borel (1909)</b></td>
+            <td>$X_i \iid \text{Bernoulli}(p)$</td>
+            <td><span class="comp-tag tag-win">Fuerte</span> $\;S_n/n \xrightarrow{\text{c.s.}} p$</td>
+          </tr>
+          <tr>
+            <td><b>Kolmogorov i.i.d. (1933)</b></td>
+            <td>$X_i \iid$ con $\E[|X_1|] &lt; \infty$</td>
+            <td><span class="comp-tag tag-win">Fuerte</span> $\;S_n/n \xrightarrow{\text{c.s.}} \mu$</td>
+          </tr>
+          <tr>
+            <td><b>Kolmogorov indep.</b></td>
+            <td>$X_i$ indep. con $\sum_{n=1}^\infty \Var(X_n)/n^2 &lt; \infty$</td>
+            <td><span class="comp-tag tag-win">Fuerte</span> $\;(S_n - \E[S_n])/n \xrightarrow{\text{c.s.}} 0$</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="ejemplos">3. Ejemplos y ejercicios resueltos paso a paso</h2>
+
+    <!-- ---------------- Ejercicio 1 (Clase 13) ---------------- -->
+    <div class="box ejercicio" id="ej-1">
+      <span class="box-title">Ejercicio 1 (Clase 13) · Rachas de dos caras consecutivas (dependencia local)</span>
+      <p>Una moneda balanceada es lanzada infinitas veces de forma independiente. Sean $X_1, X_2, \dots$ las variables aleatorias definidas por:</p>
+      $$X_i = \begin{cases} 1 &amp; \text{si el } i\text{-ésimo y el } (i+1)\text{-ésimo lanzamiento resultan cara,} \\ 0 &amp; \text{caso contrario.} \end{cases}$$
+      <ol>
+        <li>Obtenga $\E(X_i)$ y $\Var(X_i)$.</li>
+        <li>Demuestre que $\Cov(X_i, X_j) = \begin{cases} 1/16 &amp; \text{si } j = i + 1, \\ 0 &amp; \text{si } j &gt; i + 1. \end{cases}$</li>
+        <li>Sea $S_n = \sum_{i=1}^n X_i$, $n \ge 1$. Determine $\E(S_n)$ y $\Var(S_n)$.</li>
+        <li>Pruebe que $\frac{S_n}{n} \pto \frac{1}{4}$.</li>
+      </ol>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Representa cada lanzamiento independiente mediante $C_k \iid \text{Bernoulli}(1/2)$, de modo que $X_i = C_i C_{i+1}$. Para (b), nota que si $j = i + 1$, el producto $X_i X_{i+1} = 1$ exige tres caras seguidas ($C_i = C_{i+1} = C_{i+2} = 1$), mientras que para $j &gt; i + 1$ los bloques $\{i, i+1\}$ y $\{j, j+1\}$ no comparten lanzamientos. En (c), cuenta exactamente cuántos pares adyacentes $(i, i+1)$ caben dentro de $\{1, \dots, n\}$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><b>Esperanza y varianza de cada indicador $X_i$:</b>
+            Sean $C_1, C_2, \dots \iid \text{Bernoulli}(1/2)$ los resultados de los lanzamientos ($1$ si cara, $0$ si sello). Como $X_i = 1 \iff C_i = 1 \text{ y } C_{i+1} = 1$:
+            $$\P(X_i = 1) = \P(C_i = 1)\P(C_{i+1} = 1) = \frac{1}{2} \cdot \frac{1}{2} = \frac{1}{4}.$$
+            Por tanto $X_i \sim \text{Bernoulli}(1/4)$, de donde:
+            $$\E(X_i) = \frac{1}{4}, \qquad \Var(X_i) = \frac{1}{4}\left(1 - \frac{1}{4}\right) = \frac{3}{16}.$$
+          </li>
+          <li><b>Estructura de covarianzas para $i &lt; j$:</b>
+            <ul>
+              <li><i>Caso $j = i + 1$:</i> El producto $X_i X_{i+1}$ vale $1$ únicamente cuando los tres lanzamientos consecutivos $i$, $i+1$ e $i+2$ resultan cara:
+                $$\E[X_i X_{i+1}] = \P(C_i = 1, C_{i+1} = 1, C_{i+2} = 1) = \left(\frac{1}{2}\right)^3 = \frac{1}{8}.$$
+                Restando el producto de las medias:
+                $$\Cov(X_i, X_{i+1}) = \E[X_i X_{i+1}] - \E[X_i]\E[X_{i+1}] = \frac{1}{8} - \frac{1}{4}\cdot\frac{1}{4} = \frac{1}{8} - \frac{1}{16} = \frac{1}{16}.$$
+              </li>
+              <li><i>Caso $j &gt; i + 1$ (es decir, $j \ge i + 2$):</i> $X_i$ depende solo de $\{C_i, C_{i+1}\}$ y $X_j$ depende solo de $\{C_j, C_{j+1}\}$. Como estos conjuntos de índices son disjuntos y los lanzamientos son independientes, $X_i$ y $X_j$ son independientes, lo que implica $\Cov(X_i, X_j) = 0$.</li>
+            </ul>
+          </li>
+          <li><b>Esperanza y varianza de la suma $S_n = \sum_{i=1}^n X_i$:</b>
+            Por linealidad de la esperanza:
+            $$\E(S_n) = \sum_{i=1}^n \E(X_i) = \frac{n}{4}.$$
+            Para la varianza, incluimos los pares con covarianza no nula. Entre $1 \le i &lt; j \le n$, solo los $n - 1$ pares consecutivos $(1,2), (2,3), \dots, (n-1,n)$ cumplen $j = i + 1$:
+            $$\Var(S_n) = \sum_{i=1}^n \Var(X_i) + 2\sum_{1 \le i &lt; j \le n} \Cov(X_i, X_j) = n\left(\frac{3}{16}\right) + 2(n - 1)\left(\frac{1}{16}\right) = \frac{3n + 2n - 2}{16} = \frac{5n - 2}{16}.$$
+            <i>Comprobación rápida:</i> para $n = 1$, $\frac{5(1)-2}{16} = \frac{3}{16} = \Var(X_1)$. Si se hubiera supuesto erróneamente independencia, se habría obtenido $\frac{3n}{16}$, subestimando la varianza real.
+          </li>
+          <li><b>Convergencia en probabilidad por la LDGN de Chebyshev:</b>
+            Verificamos la condición de Chebyshev sobre $\Var(S_n)/n^2$:
+            $$\lim_{n\to\infty} \frac{\Var(S_n)}{n^2} = \lim_{n\to\infty} \frac{5n - 2}{16n^2} = 0.$$
+            Por la LDGN de Chebyshev, $\frac{S_n - \E[S_n]}{n} \pto 0$. Como $\frac{\E[S_n]}{n} = \frac{1}{4}$, concluimos:
+            $$\frac{S_n}{n} - \frac{1}{4} \pto 0 \iff \frac{S_n}{n} \pto \frac{1}{4}. \quad \blacksquare$$
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- ---------------- Ejemplo 1 (Clase 13) ---------------- -->
+    <div class="box ejercicio" id="ej-2">
+      <span class="box-title">Ejemplo 1 (Clase 13) · Media geométrica de uniformes $U(0, 1)$</span>
+      <p>Sea $\{X_n\}_{n \ge 1}$ una secuencia de variables aleatorias $\iid$ con distribución uniforme en $(0, 1)$. Definimos la media geométrica de $X_1, \dots, X_n$ por:</p>
+      $$Y_n = \left(\prod_{i=1}^n X_i\right)^{1/n}.$$
+      <p>Demuestre que la secuencia $\{Y_n\}_{n \ge 1}$ converge casi seguramente a una constante y encuentre su valor.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Un producto con exponente $1/n$ se transforma en una media aritmética al tomar logaritmo natural: $\log Y_n = \frac{1}{n}\sum_{i=1}^n \log X_i$. Evalúa $\E[\log X_1]$ como integral impropia en $(0, 1)$ e invoca luego la LFGN de Kolmogorov y la continuidad de la función exponencial.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><b>Transformación logarítmica en un promedio:</b>
+            Con probabilidad $1$, cada $X_i \in (0, 1)$, de modo que $Y_n &gt; 0$. Aplicando logaritmo natural a ambos lados:
+            $$\log Y_n = \frac{1}{n}\sum_{i=1}^n \log X_i.$$
+          </li>
+          <li><b>Definición de las variables transformadas e integrabilidad:</b>
+            Definamos $Z_i = \log X_i$ para $i \ge 1$. Puesto que las $X_i$ son $\iid$, las variables $Z_i$ también son $\iid$. Calculamos $\E[Z_1]$ mediante la integral impropia en $0^+$ (integrando por partes con $u = \log x$ y $dv = dx$):
+            $$\E[Z_1] = \E[\log X_1] = \int_0^1 \log x\,dx = \lim_{\varepsilon \to 0^+} \int_\varepsilon^1 \log x\,dx = \lim_{\varepsilon \to 0^+} \big(x\log x - x\big)\Big|_\varepsilon^1 = -1 - \lim_{\varepsilon \to 0^+} (\varepsilon\log\varepsilon - \varepsilon) = -1.$$
+            Como $X_1 \in (0, 1)$ c.s., se tiene $|Z_1| = -\log X_1$, luego $\E[|Z_1|] = 1 &lt; \infty$.
+          </li>
+          <li><b>Aplicación de la LFGN de Kolmogorov:</b>
+            Al ser $Z_1, Z_2, \dots \iid$ con media finita $-1$:
+            $$\log Y_n = \frac{Z_1 + \dots + Z_n}{n} \xrightarrow{\text{c.s.}} -1.$$
+          </li>
+          <li><b>Preservación por continuidad:</b>
+            Considerando la función continua $g(x) = \exp(x)$, la preservación de la convergencia casi segura bajo funciones continuas garantiza:
+            $$Y_n = \exp(\log Y_n) \xrightarrow{\text{c.s.}} e^{-1} \approx 0.3679. \quad \blacksquare$$
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- ---------------- Ejercicio 1 de Sesión 2 ---------------- -->
+    <div class="box ejercicio" id="ej-3">
+      <span class="box-title">Ejercicio 1 de Sesión 2 · Media armónica con $f(x) = 3x^2$ (Examen 2023 I PAO)</span>
+      <p>Sea $\{X_n\}_{n \ge 1}$ una secuencia de variables aleatorias $\iid$ con función de densidad:</p>
+      $$f(x) = 3x^2, \qquad 0 &lt; x &lt; 1,$$
+      <p>y sea la media armónica muestral:</p>
+      $$H_n = \frac{n}{\sum_{i=1}^n X_i^{-1}}.$$
+      <p>Muestre que $\{H_n\}_{n \ge 1}$ converge casi seguramente a una constante $c$, encuentre $c$ y compare el resultado con el límite de la media aritmética $\bar X_n$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Divide numerador y denominador de $H_n$ entre $n$ para expresar $H_n = 1/\bar Y_n$, donde $Y_i = 1/X_i$. Calcula $\E[Y_1] = \int_0^1 \frac{1}{x} 3x^2\,dx$ y aplica la función continua $g(u) = 1/u$ en el límite obtenido.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><b>Reescritura para identificar el promedio:</b>
+            Dividiendo numerador y denominador por $n$:
+            $$H_n = \frac{1}{\frac{1}{n}\sum_{i=1}^n X_i^{-1}} = \frac{1}{\bar Y_n}, \qquad \text{donde } Y_i = \frac{1}{X_i}.$$
+          </li>
+          <li><b>Verificación de media finita para $Y_i$:</b>
+            Las variables $Y_i = 1/X_i &gt; 0$ son $\iid$ por ser funciones medibles de las $X_i$ $\iid$. Su esperanza es:
+            $$\E[|Y_1|] = \E[Y_1] = \E\!\left[\frac{1}{X_1}\right] = \int_0^1 \frac{1}{x}\,3x^2\,dx = \int_0^1 3x\,dx = \left.\frac{3x^2}{2}\right|_0^1 = \frac{3}{2} &lt; \infty.$$
+          </li>
+          <li><b>LFGN de Kolmogorov sobre $\bar Y_n$:</b>
+            Por la LFGN de Kolmogorov:
+            $$\bar Y_n = \frac{1}{n}\sum_{i=1}^n \frac{1}{X_i} \xrightarrow{\text{c.s.}} \frac{3}{2}.$$
+          </li>
+          <li><b>Aplicación de una función continua y conclusión:</b>
+            La función $g(u) = 1/u$ es continua en $u = 3/2 \ne 0$. Por preservación de la convergencia casi segura:
+            $$H_n = g(\bar Y_n) \xrightarrow{\text{c.s.}} g\!\left(\frac{3}{2}\right) = \frac{2}{3} \approx 0.6667.$$
+            Por tanto, $c = \frac{2}{3}$.
+          </li>
+          <li><b>Comparación con la media aritmética:</b>
+            La media aritmética cumple $\bar X_n \xrightarrow{\text{c.s.}} \E[X_1] = \int_0^1 x \cdot 3x^2\,dx = \int_0^1 3x^3\,dx = \frac{3}{4} = 0.75$. Como $\frac{2}{3} &lt; \frac{3}{4}$, los límites respetan la desigualdad clásica entre medias: armónica $\le$ aritmética. <br>
+            <small class="muted"><i>Contraste instructivo:</i> si $X_i \iid U(0,1)$, entonces $\E[1/X_1] = \int_0^1 \frac{1}{x}\,dx = +\infty$, lo que empuja a $\bar Y_n \xrightarrow{\text{c.s.}} +\infty$ y hace que $H_n \xrightarrow{\text{c.s.}} 0$. En $f(x)=3x^2$, la densidad se anula en $0$ y hace integrable a $1/X_1$.</small></li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- ---------------- Ejercicio 2 (Clase 13) + Ejercicio 2 de Sesión 2 ---------------- -->
+    <div class="box ejercicio" id="ej-4">
+      <span class="box-title">Ejercicio 2 (Clase 13) + Ejercicio 2 (Sesión 2) · Promedio de senos vs. seno del promedio en $U[0,\theta]$ y $U[0,\pi]$ (Exámenes 2022–2024)</span>
+      <p><b>Parte I (caso general, Sesión 2 · Exámenes 2022 II PAO y 2024 I PAO):</b> Sea $\{X_n\}_{n \ge 1}$ una secuencia de variables aleatorias $\iid$ con distribución $U[0, \theta]$, donde $\theta &gt; 0$.</p>
+      <ol>
+        <li>Demuestre que $\hat\theta_{\text{MV}} = X_{(n)} \pto \theta$ (y compruebe que incluso converge casi seguramente).</li>
+        <li>Encuentre la constante $\xi$ tal que:
+          $$\exp\left\{\frac{\sum_{i=1}^n \sin X_i}{n} + \sin\!\left(\frac{\sum_{i=1}^n X_i}{n}\right)\right\} \xrightarrow{\text{c.s.}} \xi.$$</li>
+      </ol>
+      <p><b>Parte II (caso particular $\theta = \pi$, Ejercicio 2 de Clase 13):</b> Cuando $X_i \iid U[0, \pi]$, determine las constantes $\alpha$ y $\beta$ tales que:</p>
+      $$\sin\!\left(\frac{\sum_{i=1}^n X_i}{n}\right) \xrightarrow{\text{c.s.}} \alpha \qquad \text{y} \qquad \frac{\sum_{i=1}^n \sin X_i}{n} \xrightarrow{\text{c.s.}} \beta.$$
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>¡Cuidado! $\frac{1}{n}\sum \sin X_i$ (promedio de los senos) y $\sin(\frac{1}{n}\sum X_i)$ (seno del promedio) <b>no son lo mismo</b>. Al primero aplícale la LFGN directamente a $Z_i = \sin X_i$; al segundo, aplica la LFGN a $\bar X_n$ y luego evalúa la función continua $\sin$. Para $X_{(n)}$, recuerda que $F_{X_{(n)}}(t) = (t/\theta)^n$ en $[0, \theta]$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <h4>Parte I(a): Consistencia del EMV $X_{(n)}$</h4>
+        <ol class="pasos">
+          <li>Para una muestra $U[0, \theta]$, la función de distribución acumulada del máximo $X_{(n)} = \max\{X_1, \dots, X_n\}$ es $F_{X_{(n)}}(t) = \P(X_1 \le t)^n = (t/\theta)^n$ para $0 \le t \le \theta$.</li>
+          <li>Como $X_{(n)} \le \theta$ con probabilidad $1$, para cualquier $0 &lt; \varepsilon &lt; \theta$ el evento $\{|X_{(n)} - \theta| &gt; \varepsilon\}$ coincide con $\{X_{(n)} &lt; \theta - \varepsilon\}$:
+            $$\P(|X_{(n)} - \theta| &gt; \varepsilon) = \P(X_{(n)} &lt; \theta - \varepsilon) = \left(\frac{\theta - \varepsilon}{\theta}\right)^n = \left(1 - \frac{\varepsilon}{\theta}\right)^n \xrightarrow{n\to\infty} 0.$$
+            (Si $\varepsilon \ge \theta$, la probabilidad es exactamente $0$.) Por lo tanto, $X_{(n)} \pto \theta$.</li>
+          <li><i>Resultado más fuerte (c.s.):</i> Para $0 &lt; \varepsilon &lt; \theta$, la razón $r = 1 - \varepsilon/\theta$ satisface $0 &lt; r &lt; 1$, por lo que la serie geométrica converge:
+            $$\sum_{n=1}^\infty \P(|X_{(n)} - \theta| &gt; \varepsilon) = \sum_{n=1}^\infty \left(1 - \frac{\varepsilon}{\theta}\right)^n &lt; \infty.$$
+            Por el Lema de Borel–Cantelli, $X_{(n)} \xrightarrow{\text{c.s.}} \theta$.</li>
+        </ol>
+
+        <h4>Parte I(b): Límite casi seguro $\xi$</h4>
+        <ol class="pasos">
+          <li><b>El promedio de los senos $A_n$:</b> Definimos $Z_i = \sin X_i$. Son $\iid$ y acotadas ($|Z_i| \le 1$), luego $\E[|Z_1|] \le 1 &lt; \infty$. Calculamos su esperanza:
+            $$\E[\sin X_1] = \int_0^\theta \frac{\sin x}{\theta}\,dx = \frac{1}{\theta}\big[-\cos x\big]_0^\theta = \frac{1 - \cos\theta}{\theta}.$$
+            Por la LFGN de Kolmogorov:
+            $$A_n = \frac{1}{n}\sum_{i=1}^n \sin X_i \xrightarrow{\text{c.s.}} \frac{1 - \cos\theta}{\theta}.$$
+          </li>
+          <li><b>El seno del promedio $B_n$:</b> Como $X_i \iid U[0, \theta]$ tiene esperanza finita $\E[X_1] = \theta/2$, la LFGN de Kolmogorov asegura $\bar X_n \xrightarrow{\text{c.s.}} \frac{\theta}{2}$. Por continuidad de la función $\sin(\cdot)$ en $\R$:
+            $$B_n = \sin(\bar X_n) \xrightarrow{\text{c.s.}} \sin\!\left(\frac{\theta}{2}\right).$$
+          </li>
+          <li><b>Suma de convergencias c.s. y aplicación de $\exp$:</b> Combinando ambas convergencias casi seguras:
+            $$A_n + B_n \xrightarrow{\text{c.s.}} \frac{1 - \cos\theta}{\theta} + \sin\!\left(\frac{\theta}{2}\right).$$
+            Como $\exp(\cdot)$ es continua en toda la recta real, concluimos:
+            $$\exp(A_n + B_n) \xrightarrow{\text{c.s.}} \xi = \exp\!\left\{\frac{1 - \cos\theta}{\theta} + \sin\!\left(\frac{\theta}{2}\right)\right\}.$$
+          </li>
+        </ol>
+
+        <h4>Parte II: Caso particular $\theta = \pi$ (Clase 13)</h4>
+        <p>Evaluando directamente las expresiones anteriores en $\theta = \pi$:</p>
+        $$\alpha = \sin\!\left(\frac{\pi}{2}\right) = 1, \qquad \beta = \frac{1 - \cos\pi}{\pi} = \frac{1 - (-1)}{\pi} = \frac{2}{\pi} \approx 0.6366.$$
+        <p>Y, en consecuencia, el límite de la expresión exponencial en $\theta = \pi$ resulta $\xi = e^{1 + 2/\pi} \approx 5.1378$. $\blacksquare$</p>
+      </div></details>
+    </div>
+
+    <!-- ---------------- Ejercicio de práctica de Sesión 2 ---------------- -->
+    <div class="box ejercicio" id="ej-5">
+      <span class="box-title">Ejercicio de práctica (Sesión 2) · Logaritmo de la media en $U[0, 2\theta]$ (Exámenes 2022–2024)</span>
+      <p>Sean $X_1, X_2, \dots$ variables aleatorias $\iid$ con distribución uniforme $U[0, 2\theta]$, donde $\theta &gt; 0$. Pruebe que $\log \bar X_n \xrightarrow{\text{c.s.}} c$ y halle el valor de la constante $c$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Calcula primero la media de $U[0, 2\theta]$, aplica la LFGN de Kolmogorov a $\bar X_n$ y utiliza la continuidad de $g(u) = \log u$ en el punto límite $\theta &gt; 0$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><b>Esperanza de una observación:</b> Para $X_1 \sim U[0, 2\theta]$, la variable es no negativa y tiene media finita:
+            $$\E[|X_1|] = \E[X_1] = \frac{0 + 2\theta}{2} = \theta &lt; \infty.$$
+          </li>
+          <li><b>LFGN de Kolmogorov:</b> Puesto que las $X_i$ son $\iid$ con media finita $\theta$, se cumple:
+            $$\bar X_n = \frac{1}{n}\sum_{i=1}^n X_i \xrightarrow{\text{c.s.}} \theta.$$
+          </li>
+          <li><b>Continuidad del logaritmo:</b> Nótese que $\bar X_n &gt; 0$ con probabilidad $1$ y que $\theta &gt; 0$. Como la función $g(u) = \log u$ es continua en $(0, \infty)$ (y en particular en $u = \theta$), por preservación de la convergencia casi segura:
+            $$\log \bar X_n \xrightarrow{\text{c.s.}} \log \theta \implies c = \log \theta. \quad \blacksquare$$
+          </li>
+        </ol>
+        <p><small class="muted"><i>Observación comparativa:</i> No confundas $\log(\bar X_n)$ (el logaritmo del promedio, que tiende a $\log\theta$) con $\frac{1}{n}\sum \log X_i$ (el promedio de los logaritmos, equivalente al logaritmo de la media geométrica, que en $U[0, 2\theta]$ converge a $\log(2\theta) - 1 &lt; \log\theta$ por la desigualdad de Jensen).</small></p>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="lebensztayn">4. Ejercicios del folleto de Lebensztayn</h2>
+    <div class="box nota">
+      <span class="box-title">Práctica recomendada del Capítulo 5</span>
+      <p>Para consolidar los criterios de convergencia débil y fuerte, resuelve los ejercicios <b>37, 40, 42, 43 y 45 del Capítulo 5</b> del folleto de Lebensztayn en <a href="../deberes/lebensztayn.html#cap5-lgn">Ejercicios de Lebensztayn · Bloque III: Leyes de los grandes números</a>.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="simulaciones">5. Laboratorios interactivos</h2>
+
+    <!-- Simulación 1: Medias aritmética, geométrica y armónica -->
+    <div class="sim" id="sim-medias">
+      <p class="sim-title">Simulación 1 · Convergencia c.s. de las medias aritmética ($\bar X_n$), geométrica ($G_n$) y armónica ($H_n$)</p>
+      <p class="sim-desc">Compara en una misma realización aleatoria cómo evolucionan $\bar X_n$, $G_n = (\prod_{i=1}^n X_i)^{1/n}$ y $H_n = n / \sum_{i=1}^n X_i^{-1}$ desde $n = 1$ hasta $N$. Alterna entre $U(0, 1)$ (donde $\E[1/X_1] = \infty$ y $H_n \xrightarrow{\text{c.s.}} 0$) y $f(x) = 3x^2$ (donde $H_n \xrightarrow{\text{c.s.}} 2/3$), observando además la desigualdad $H_n \le G_n \le \bar X_n$.</p>
+      <div class="controls"></div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+
+    <!-- Simulación 2: Rachas de dos caras consecutivas -->
+    <div class="sim" id="sim-rachas">
+      <p class="sim-title">Simulación 2 · Rachas de dos caras consecutivas: $S_n/n \pto 1/4$ y efecto de la covarianza en $\Var(S_n)$</p>
+      <p class="sim-desc">Explora el Ejercicio 1 simulando $M$ trayectorias independientes de monedas balanceadas. A la izquierda verás las proporciones acumuladas $S_n/n$ estabilizarse alrededor de $1/4 = 0.25$. A la derecha comprobarás que la varianza empírica de $S_n$ sigue la fórmula exacta $\frac{5n - 2}{16}$ (con covarianza) y se separa claramente de la fórmula errónea $\frac{3n}{16}$ que ignora la dependencia entre indicadores vecinos.</p>
+      <div class="controls"></div>
+      <div class="grid-2">
+        <div class="plot plot-tray"></div>
+        <div class="plot plot-var"></div>
+      </div>
+      <div class="out"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="autoevaluacion">6. Autoevaluación</h2>
+    <p>Comprueba tu dominio de las leyes débiles y fuertes de los grandes números con estas preguntas conceptuales y verificadores numéricos.</p>
+
+    <div id="quiz-1"></div>
+    <div id="quiz-2"></div>
+    <div id="quiz-3"></div>
+
+    <div style="margin-top: 2rem;">
+      <h3>Comprobadores numéricos</h3>
+      <div id="nc-1"></div>
+      <div id="nc-2"></div>
+    </div>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../assets/js/stats.js"></script>
+<script src="../assets/js/plot.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+(function () {
+  'use strict';
+  const { fmt, mulberry32 } = EM.stats;
+
+  /* ============================================================
+     SIMULACIÓN 1: Medias aritmética, geométrica y armónica
+     ============================================================ */
+  (function () {
+    const root = document.getElementById('sim-medias');
+    if (!root) return;
+
+    let pop = 'pow3';
+    let N = 350;
+    let seed = 202613;
+
+    const ctr = root.querySelector('.controls');
+
+    EM.ui.select(ctr, {
+      label: 'Población',
+      value: pop,
+      options: [
+        { value: 'u01', label: 'Uniforme U(0, 1)' },
+        { value: 'pow3', label: 'Potencia f(x) = 3x² en (0, 1)' }
+      ],
+      onChange: v => { pop = v; render(); }
+    });
+
+    EM.ui.slider(ctr, {
+      tex: 'N',
+      min: 100, max: 600, step: 25, value: N,
+      fmt: v => v.toString(),
+      onInput: v => { N = v; render(); }
+    });
+
+    EM.ui.button(ctr, '🎲 Nueva trayectoria', () => {
+      seed = (seed * 1664525 + 1013904223) >>> 0;
+      render();
+    }, { primary: true });
+
+    const plot = EM.plot.create(root.querySelector('.plot'), {
+      xmin: 1, xmax: N, ymin: 0, ymax: 1.12,
+      height: 330, xlabel: 'Tamaño muestral n', ylabel: 'Media muestral',
+      legendPos: 'tr'
+    });
+    const out = EM.ui.readout(root.querySelector('.out'));
+
+    function render() {
+      const rng = mulberry32(seed);
+      const arrA = new Float64Array(N);
+      const arrG = new Float64Array(N);
+      const arrH = new Float64Array(N);
+
+      let sum = 0;
+      let sumLog = 0;
+      let sumInv = 0;
+
+      for (let i = 0; i < N; i++) {
+        const u = Math.max(rng(), 1e-12);
+        const x = pop === 'u01' ? u : Math.cbrt(u);
+        sum += x;
+        sumLog += Math.log(x);
+        sumInv += 1 / x;
+
+        const n = i + 1;
+        arrA[i] = sum / n;
+        arrG[i] = Math.exp(sumLog / n);
+        arrH[i] = n / sumInv;
+      }
+
+      const limA = pop === 'u01' ? 0.5 : 0.75;
+      const limG = pop === 'u01' ? Math.exp(-1) : Math.exp(-1 / 3);
+      const limH = pop === 'u01' ? 0 : 2 / 3;
+
+      plot.setRange({ xmin: 1, xmax: N, ymin: 0, ymax: 1.12 });
+
+      plot.draw(g => {
+        // Líneas punteadas en los límites teóricos
+        g.hline(limA, { color: 'c1', dash: [5, 4], width: 1.4 });
+        g.hline(limG, { color: 'c2', dash: [5, 4], width: 1.4 });
+        g.hline(limH, { color: 'c3', dash: [5, 4], width: 1.4 });
+
+        // Trayectorias exactas para n = 1..N
+        g.curve(t => arrA[Math.min(N - 1, Math.max(0, Math.round(t) - 1))], {
+          from: 1, to: N, n: N - 1, color: 'c1', width: 2.2,
+          label: `Aritmética X̄ₙ (lím = ${fmt(limA, 4)})`
+        });
+        g.curve(t => arrG[Math.min(N - 1, Math.max(0, Math.round(t) - 1))], {
+          from: 1, to: N, n: N - 1, color: 'c2', width: 2.2,
+          label: `Geométrica Gₙ (lím = ${fmt(limG, 4)})`
+        });
+        g.curve(t => arrH[Math.min(N - 1, Math.max(0, Math.round(t) - 1))], {
+          from: 1, to: N, n: N - 1, color: 'c3', width: 2.2,
+          label: `Armónica Hₙ (lím = ${fmt(limH, 4)})`
+        });
+      });
+
+      const aN = arrA[N - 1], gN = arrG[N - 1], hN = arrH[N - 1];
+      const distLabel = pop === 'u01'
+        ? '$U(0, 1)$'
+        : '$f(x) = 3x^2$ en $(0, 1)$ (generada vía $X = U^{1/3}$)';
+      const noteH = pop === 'u01'
+        ? 'En $U(0,1)$, $\\E[1/X_1] = \\int_0^1 \\frac{1}{x}\\,dx = +\\infty$, por lo que cada observación muy cercana a $0$ dispara $\\sum X_i^{-1}$ y empuja a $H_n \\xrightarrow{\\text{c.s.}} 0$.'
+        : 'Para $f(x) = 3x^2$, $\\E[1/X_1] = 3/2 &lt; \\infty$, así que $H_n \\xrightarrow{\\text{c.s.}} 2/3 \\approx 0.6667$.';
+
+      out.set(`
+        <b>Población:</b> ${distLabel} · Paso final $N = ${N}$<br>
+        • <b>Media aritmética ($\\bar X_N$):</b> <b>${fmt(aN, 4)}</b> &nbsp;|&nbsp; Límite c.s.: $${fmt(limA, 4)}$ (error $|\\bar X_N - \\mu| = ${fmt(Math.abs(aN - limA), 4)}$)<br>
+        • <b>Media geométrica ($G_N$):</b> <b>${fmt(gN, 4)}</b> &nbsp;|&nbsp; Límite c.s.: $${pop === 'u01' ? 'e^{-1}' : 'e^{-1/3}'} \\approx ${fmt(limG, 4)}$<br>
+        • <b>Media armónica ($H_N$):</b> <b>${fmt(hN, 4)}</b> &nbsp;|&nbsp; Límite c.s.: $${pop === 'u01' ? '0' : '2/3 \\approx 0.6667'}$<br>
+        • <b>Desigualdad entre medias en $N$:</b> $H_N (${fmt(hN, 4)}) \\le G_N (${fmt(gN, 4)}) \\le \\bar X_N (${fmt(aN, 4)})$.<br>
+        <small style="color:var(--muted)">${noteH}</small>
+      `);
+    }
+
+    render();
+  })();
+
+  /* ============================================================
+     SIMULACIÓN 2: Rachas de dos caras consecutivas (Ejercicio 1)
+     ============================================================ */
+  (function () {
+    const root = document.getElementById('sim-rachas');
+    if (!root) return;
+
+    let N = 100;
+    let M = 60;
+    let seed = 81317;
+
+    const ctr = root.querySelector('.controls');
+
+    EM.ui.slider(ctr, {
+      tex: 'n',
+      min: 20, max: 140, step: 10, value: N,
+      fmt: v => v.toString(),
+      onInput: v => { N = v; render(); }
+    });
+
+    EM.ui.slider(ctr, {
+      label: 'Réplicas M',
+      min: 20, max: 100, step: 10, value: M,
+      fmt: v => v.toString(),
+      onInput: v => { M = v; render(); }
+    });
+
+    EM.ui.button(ctr, '🪙 Simular lanzamientos', () => {
+      seed = (seed * 1664525 + 1013904223) >>> 0;
+      render();
+    }, { primary: true });
+
+    const pTray = EM.plot.create(root.querySelector('.plot-tray'), {
+      xmin: 1, xmax: N, ymin: 0, ymax: 0.72,
+      height: 290, xlabel: 'Número de indicadores n', ylabel: 'Sₙ / n',
+      legendPos: 'tr'
+    });
+    const pVar = EM.plot.create(root.querySelector('.plot-var'), {
+      xmin: 1, xmax: N, ymin: 0, ymax: 50,
+      height: 290, xlabel: 'Número de indicadores n', ylabel: 'Var(Sₙ)',
+      legendPos: 'tl'
+    });
+    const out = EM.ui.readout(root.querySelector('.out'));
+
+    function render() {
+      const rng = mulberry32(seed);
+      const showK = Math.min(8, M);
+      const sampleTrajs = [];
+
+      // Acumuladores para E[S_n] y E[S_n^2] en cada paso n = 1..N
+      const sumS = new Float64Array(N);
+      const sumS2 = new Float64Array(N);
+
+      for (let m = 0; m < M; m++) {
+        let prevHead = rng() < 0.5 ? 1 : 0;
+        let s = 0;
+        const traj = m < showK ? new Float64Array(N) : null;
+
+        for (let i = 0; i < N; i++) {
+          const curHead = rng() < 0.5 ? 1 : 0;
+          if (prevHead === 1 && curHead === 1) s += 1;
+          prevHead = curHead;
+
+          sumS[i] += s;
+          sumS2[i] += s * s;
+          if (traj) traj[i] = s / (i + 1);
+        }
+        if (traj) sampleTrajs.push(traj);
+      }
+
+      const empVar = new Float64Array(N);
+      for (let i = 0; i < N; i++) {
+        const mean = sumS[i] / M;
+        const ex2 = sumS2[i] / M;
+        empVar[i] = Math.max(0, (M / (M - 1)) * (ex2 - mean * mean));
+      }
+
+      pTray.setRange({ xmin: 1, xmax: N, ymin: 0, ymax: 0.72 });
+      const colors = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6'];
+
+      pTray.draw(g => {
+        sampleTrajs.forEach((tr, idx) => {
+          g.curve(t => tr[Math.min(N - 1, Math.max(0, Math.round(t) - 1))], {
+            from: 1, to: N, n: N - 1,
+            color: colors[idx % colors.length],
+            width: 1.5,
+            label: idx === 0 ? `Trayectorias Sₙ/n (${showK} de ${M})` : undefined
+          });
+        });
+
+        g.curve(() => 0.25, {
+          from: 1, to: N, n: 2, color: 'ink', width: 2.2, dash: [5, 4],
+          label: 'Límite 1/4 = 0.25'
+        });
+      });
+
+      const varExactN = (5 * N - 2) / 16;
+      const varIndepN = (3 * N) / 16;
+      let maxEmpVar = 0;
+      for (let i = 0; i < N; i++) if (empVar[i] > maxEmpVar) maxEmpVar = empVar[i];
+      const ymaxVar = Math.max(varExactN, maxEmpVar) * 1.15;
+
+      pVar.setRange({ xmin: 1, xmax: N, ymin: 0, ymax: ymaxVar });
+      pVar.draw(g => {
+        g.curve(n => (5 * n - 2) / 16, {
+          from: 1, to: N, n: N - 1, color: 'c1', width: 2.4,
+          label: 'Exacta (5n−2)/16'
+        });
+        g.curve(n => (3 * n) / 16, {
+          from: 1, to: N, n: N - 1, color: 'bad', width: 2.0, dash: [5, 4],
+          label: 'Sin cov. 3n/16'
+        });
+        g.curve(t => empVar[Math.min(N - 1, Math.max(0, Math.round(t) - 1))], {
+          from: 1, to: N, n: N - 1, color: 'c3', width: 1.8,
+          label: `Empírica (${M} réplicas)`
+        });
+      });
+
+      const meanPropN = (sumS[N - 1] / M) / N;
+      const empVarN = empVar[N - 1];
+      const ratioN2 = varExactN / (N * N);
+
+      out.set(`
+        <b>Resultados en $n = ${N}$ con $M = ${M}$ réplicas independientes:</b><br>
+        • <b>Promedio empírico de $S_{${N}}/${N}$:</b> <b>${fmt(meanPropN, 4)}</b> (valor teórico $\\E[S_n/n] = 0.2500$)<br>
+        • <b>Varianza exacta $\\Var(S_{${N}}) = \\frac{5(${N}) - 2}{16}$:</b> <b>${fmt(varExactN, 3)}</b> &nbsp;|&nbsp; <b>Varianza empírica simulada:</b> <b>${fmt(empVarN, 3)}</b><br>
+        • <b>Fórmula errónea sin covarianza $\\frac{3(${N})}{16}$:</b> <b style="color:var(--bad)">${fmt(varIndepN, 3)}</b> (subestima el término $2(n-1)/16 = ${fmt(2 * (N - 1) / 16, 3)}$)<br>
+        • <b>Criterio de Chebyshev:</b> $\\frac{\\Var(S_{${N}})}{${N}^2} = $ <b>${fmt(ratioN2, 5)}</b> $\\xrightarrow{n\\to\\infty} 0$, garantizando $\\frac{S_n}{n} \\pto \\frac{1}{4}$.
+      `);
+    }
+
+    render();
+  })();
+
+  /* ============================================================
+     AUTOEVALUACIÓN Y COMPROBADORES NUMÉRICOS
+     ============================================================ */
+  EM.ui.quiz('#quiz-1', {
+    question: '1. ¿Qué exige la LDGN de Khintchine (1929) respecto a la existencia de momentos de las variables $X_1, X_2, \\dots \\iid$, y en qué se diferencia de la demostración elemental mediante la desigualdad de Chebyshev?',
+    options: [
+      'Khintchine solo requiere que la media $\\E[|X_1|]$ sea finita (sin exigir varianza finita), mientras que la demostración directa con la desigualdad de Chebyshev exige varianza finita ($\\sigma^2 &lt; \\infty$).',
+      'Khintchine exige que existan todos los momentos de orden par, mientras que Chebyshev solo requiere $\\E[X_1] &lt; \\infty$.',
+      'Ambos resultados exigen necesariamente que las variables tengan varianza finita y estén acotadas.',
+      'Chebyshev solo se aplica a variables independientes, mientras que Khintchine admite variables arbitrariamente correlacionadas.'
+    ],
+    answer: 0,
+    explain: 'La LDGN de Khintchine garantiza $\\bar X_n \\pto \\mu$ únicamente suponiendo que $X_i \\iid$ y $\\E[|X_1|] &lt; \\infty$. En contraste, usar la desigualdad de Chebyshev en el caso i.i.d. requiere $\\Var(X_1) = \\sigma^2 &lt; \\infty$, aunque la versión general de Chebyshev (1867) permite dependencia siempre que $\\Var(S_n)/n^2 \\to 0$.'
+  });
+
+  EM.ui.quiz('#quiz-2', {
+    question: '2. Sean $X_1, X_2, \\dots \\iid$ con distribución uniforme en $[0, \\pi]$. ¿Cuál es la relación correcta entre el límite casi seguro del promedio de los senos $A_n = \\frac{1}{n}\\sum_{i=1}^n \\sin X_i$ y el del seno del promedio $B_n = \\sin\\left(\\frac{1}{n}\\sum_{i=1}^n X_i\\right)$?',
+    options: [
+      'Ambos convergen c.s. al mismo valor $1$, porque la función $\\sin$ conmuta con el promedio.',
+      'Ambos convergen c.s. al mismo valor $2/\\pi$, por linealidad de la esperanza.',
+      '$A_n \\xrightarrow{\\text{c.s.}} \\frac{2}{\\pi}$ (calculando $\\E[\\sin X_1]$), mientras que $B_n \\xrightarrow{\\text{c.s.}} \\sin(\\pi/2) = 1$ (evaluando $\\sin$ en $\\E[X_1]$).',
+      '$A_n \\xrightarrow{\\text{c.s.}} 0$ y $B_n \\xrightarrow{\\text{c.s.}} \\pi/2$.'
+    ],
+    answer: 2,
+    explain: 'El promedio de los senos converge por la LFGN a $\\E[\\sin X_1] = \\frac{1}{\\pi}\\int_0^\\pi \\sin x\\,dx = \\frac{2}{\\pi} \\approx 0.6366$. En cambio, $\\bar X_n \\xrightarrow{\\text{c.s.}} \\E[X_1] = \\frac{\\pi}{2}$ y, por continuidad de $\\sin$, el seno del promedio converge a $\\sin(\\pi/2) = 1$. Como $\\sin x$ es cóncava en $[0,\\pi]$, Jensen confirma $\\frac{2}{\\pi} &lt; 1$.'
+  });
+
+  EM.ui.quiz('#quiz-3', {
+    question: '3. Sea $X_1, X_2, \\dots \\iid U(0, 1)$. ¿Cuál de las siguientes afirmaciones sobre sus medias muestrales cuando $n \\to \\infty$ es verdadera?',
+    options: [
+      'Tanto la media geométrica $G_n = (\\prod_{i=1}^n X_i)^{1/n}$ como la media armónica $H_n = n / \\sum_{i=1}^n X_i^{-1}$ convergen c.s. a $1/2$.',
+      'La media geométrica converge c.s. a $e^{-1} \\approx 0.3679$, mientras que la media armónica converge c.s. a $0$ porque $\\E[1/X_1] = \\infty$.',
+      'La media geométrica no converge porque $\\E[\\log X_1] = -\\infty$.',
+      'La media armónica converge c.s. a $2/3$, igual que en la población con densidad $f(x) = 3x^2$.'
+    ],
+    answer: 1,
+    explain: 'Para $X_1 \\sim U(0, 1)$ se tiene $\\E[\\log X_1] = \\int_0^1 \\log x\\,dx = -1$, por lo que $G_n \\xrightarrow{\\text{c.s.}} e^{-1}$. Sin embargo, $\\E[1/X_1] = \\int_0^1 \\frac{1}{x}\\,dx = +\\infty$, de modo que $\\frac{1}{n}\\sum X_i^{-1} \\xrightarrow{\\text{c.s.}} +\\infty$ y por tanto $H_n \\xrightarrow{\\text{c.s.}} 0$.'
+  });
+
+  EM.ui.numcheck('#nc-1', {
+    prompt: '1) En el experimento de rachas de dos caras consecutivas (Ejercicio 1), con $S_n = \\sum_{i=1}^n X_i$, calcula el valor exacto de $\\Var(S_{18})$ (para $n = 18$):',
+    answer: 5.5,
+    tol: 0.01,
+    placeholder: 'ej. 5.5',
+    hint: 'Usa la fórmula exacta con covarianzas: $\\Var(S_n) = \\frac{5n - 2}{16}$. Para $n = 18$, resulta $\\frac{5(18) - 2}{16} = \\frac{88}{16} = 5.5$.'
+  });
+
+  EM.ui.numcheck('#nc-2', {
+    prompt: '2) Para $X_1, X_2, \\dots \\iid$ con densidad $f(x) = 3x^2$ en $(0, 1)$, calcula el límite casi seguro (con 4 decimales) de la media geométrica $G_n = \\left(\\prod_{i=1}^n X_i\\right)^{1/n}$:',
+    answer: Math.exp(-1 / 3),
+    tol: 0.002,
+    placeholder: 'ej. 0.7165',
+    hint: 'Toma logaritmo: $\\E[\\log X_1] = \\int_0^1 3x^2\\log x\\,dx = -1/3$ (integrando por partes). Por la LFGN y continuidad de $\\exp$, $G_n \\xrightarrow{\\text{c.s.}} e^{-1/3} \\approx 0.7165$.'
+  });
+
+})();
+</script>
+</body>
+</html>
