@@ -28,9 +28,10 @@ EM.SITE = [
     { id: 'clase-12', title: 'Clase 12 · Continuidad, Scheffé, Slutsky y Método Delta', href: 'temas/clase-12.html', desc: 'Teorema de continuidad (FGM), teorema de Scheffé, límite Binomial–Poisson, Slutsky y método Delta (1.º y 2.º orden y multivariado).' },
     { id: 'clase-13', title: 'Clase 13 · Leyes Débiles y Fuertes de los Grandes Números', href: 'temas/clase-13.html', desc: 'LDGN de Bernoulli, Khintchine y Chebyshev; LFGN de Borel y Kolmogorov (i.i.d. y no i.d.); medias geométrica y armónica y variables dependientes.' },
     { id: 'clase-14', title: 'Clase 14 · TLC generalizado y Teoría del Valor Extremo', href: 'temas/clase-14.html', desc: 'TLC de De Moivre–Laplace y Liapunov–Lindeberg, pivotes asintóticos, consistencia universal de S² y leyes extremas (Gumbel, Fréchet, Weibull).' },
+    { id: 'clase-15', title: 'Clase 15 · Suficiencia y Factorización de Fisher–Neyman', href: 'temas/clase-15.html', desc: 'Estadísticos suficientes por definición condicional, teorema de factorización de Fisher–Neyman y ejemplos clásicos y no regulares.' },
   ]},
   { group: 'Herramientas', items: [
-    { id: 'formulario', title: 'Formulario completo (Est. I + Est Mat)', href: 'herramientas/formulario.html', desc: 'Todas las fórmulas esenciales en una página: modelos, FGM, transformaciones, estadísticos de orden, χ², t, F, estimación puntual, modos de convergencia, LGN, TLC y teoría del valor extremo.' },
+    { id: 'formulario', title: 'Formulario completo (Est. I + Est Mat)', href: 'herramientas/formulario.html', desc: 'Todas las fórmulas esenciales en una página: modelos, FGM, transformaciones, estadísticos de orden, χ², t, F, estimación puntual, modos de convergencia, LGN, TLC y teoría del valor extremo, suficiencia.' },
     { id: 'distribuciones', title: 'Laboratorio de distribuciones', href: 'herramientas/distribuciones.html', desc: 'Explora Normal, χ², t, F, Gamma, Beta… con deslizadores y simulaciones.' },
     { id: 'tablas', title: 'Cómo leer las tablas (χ², t, F, K-S)', href: 'herramientas/tablas.html', desc: 'Percentil vs. valor crítico, colas, tablas interactivas y calculadora.' },
   ]},

@@ -1267,6 +1267,48 @@ con distribución no degenerada, entonces $Y$ pertenece necesariamente a una de 
 \end{thmbox}
 
 % =====================================================================
+\section{Suficiencia y Factorización de Fisher--Neyman \textmd{(Clase 15)}}
+
+\begin{defbox}[frametitle={Definición · Estadístico suficiente}]
+Sea $X_1, \dots, X_n$ una muestra aleatoria de una población con parámetro desconocido $\theta$. El estadístico $T = T(X_1, \dots, X_n)$ es \textbf{suficiente para $\theta$} si la distribución condicional de $\mathbf{X} = (X_1, \dots, X_n)$ dado $T = t$,
+\[
+\Prob(\mathbf{X} = \mathbf{x} \mid T = t) = \Prob(X_1 = x_1, \dots, X_n = x_n \mid T = t),
+\]
+\textbf{no depende de $\theta$} (en discretas, el cociente $L(\theta \mid \mathbf{x}) / p_T(t;\theta)$ evaluado en $T(\mathbf{x}) = t$ es libre de $\theta$).
+
+Además, si $T$ es suficiente para $\theta$ y $T = \psi(U)$ para alguna función $\psi$ (en particular, si $U$ es una transformación biyectiva de $T$), entonces $U$ también es suficiente para $\theta$ (ej.\ $\sum_{i=1}^n X_i \iff \bar X$).
+\end{defbox}
+
+\begin{thmbox}[frametitle={Teorema de Factorización de Fisher--Neyman}]
+Un estadístico $T = T(X_1, \dots, X_n)$ es suficiente para $\theta$ si y solo si existen funciones no negativas $g\big(T(\mathbf{x}),\,\theta\big) \ge 0$ (que depende de $\mathbf{x}$ únicamente a través de $T(\mathbf{x})$) y $h(\mathbf{x}) \ge 0$ (independiente de $\theta$) tales que:
+\[
+L(\theta \mid \mathbf{x}) = g\big(T(\mathbf{x}),\,\theta\big) \times h(\mathbf{x}).
+\]
+\begin{itemize}
+  \item \textbf{Soporte dependiente de $\theta$:} toda función indicadora que involucre a $\theta$ debe quedar absorbida dentro de $g\big(T(\mathbf{x}),\theta\big)$.
+  \item \textbf{Conexión con el EMV:} si existe un EMV único $\hat\theta_{\text{MV}}$, maximizar $L(\theta \mid \mathbf{x}) = g(T(\mathbf{x}),\theta)\,h(\mathbf{x})$ respecto a $\theta$ equivale a maximizar $g(T(\mathbf{x}),\theta)$, por lo que $\hat\theta_{\text{MV}}$ es necesariamente función de cualquier estadístico suficiente $T(\mathbf{X})$.
+\end{itemize}
+\end{thmbox}
+
+\begingroup\footnotesize
+\setlength{\tabcolsep}{4pt}
+\noindent
+\begin{tabular}{@{}p{3.0cm} p{2.4cm} p{3.4cm} p{7.4cm}@{}}
+\toprule
+\textbf{Modelo} & \textbf{Parámetro desc.} & \textbf{Estadístico suficiente $T$} & \textbf{Factorización clave}\\
+\midrule
+$\text{Ber}(p)$ & $p$ & \rr $T = \sum_{i=1}^n X_i$ (o $\bar X$) & \rr $g(t,p) = p^t(1-p)^{n-t}$, $h(\mathbf{x}) = 1$\\[2pt]
+$\text{Pois}(\lambda)$ & $\lambda$ & \rr $T = \sum_{i=1}^n X_i$ (o $\bar X$) & \rr $g(t,\lambda) = e^{-n\lambda}\lambda^t$, $h(\mathbf{x}) = \big(\prod_{i=1}^n x_i!\big)^{-1}$\\[2pt]
+$\text{Exp}(\beta)$ & $\beta$ (escala) & \rr $T = \sum_{i=1}^n X_i$ (o $\bar X$) & \rr $g(t,\beta) = \beta^{-n}e^{-t/\beta}$, $h(\mathbf{x}) = \mathbf{1}_{\{x_{(1)} > 0\}}$\\[2pt]
+$\text{Gamma}(\alpha, \beta)$ ($\alpha$ con.) & $\beta$ & \rr $T = \bar X$ (o $\sum_{i=1}^n X_i$) & \rr $g(\bar x,\beta) = \beta^{-n\alpha}e^{-n\bar x/\beta}$, $h(\mathbf{x}) \propto \prod_{i=1}^n x_i^{\alpha-1}$\\[2pt]
+$\text{Unif}(0, \theta)$ & $\theta$ (soporte dep.) & \rr $T = X_{(n)} = \max_i X_i$ & \rr $g(x_{(n)},\theta) = \theta^{-n}\mathbf{1}_{\{x_{(n)} \le \theta\}}$, $h(\mathbf{x}) = \mathbf{1}_{\{x_{(1)} \ge 0\}}$\\[2pt]
+$N(\mu, \sigma^2)$ ($\sigma^2$ con.) & $\mu$ & \rr $T = \sum_{i=1}^n X_i$ (o $\bar X$) & \rr $g(\bar x,\mu) = \exp\!\big(\frac{n\mu\bar x}{\sigma^2} - \frac{n\mu^2}{2\sigma^2}\big)$\\[2pt]
+$N(0, \sigma^2)$ ($\mu=0$ con.) & $\sigma^2$ & \rr $T = \sum_{i=1}^n X_i^2$ & \rr $g(t,\sigma^2) = (\sigma^2)^{-n/2}e^{-t/(2\sigma^2)}$, $h(\mathbf{x}) = (2\pi)^{-n/2}$\\
+\bottomrule
+\end{tabular}
+\endgroup
+
+% =====================================================================
 \section{Cómo leer las tablas y los valores críticos}
 
 \begin{notebox}[frametitle={La regla que evita todos los líos de colas}]
@@ -1363,7 +1405,9 @@ $F$ & \rr bloque $\nu_2$ (denominador), fila $q$, columna $\nu_1$ (numerador) & 
 \rr Probar $\bar X_n \pto \mu$ sin $\sigma^2<\infty$ o con dependencia & \rr LDGN Khintchine / Chebyshev (sección 20) & \rr i.i.d.\ $\E|X_1|<\infty\Rightarrow \pto\mu$; $\Var(S_n)/n^2\to 0$\\[3pt]
 \rr Probar convergencia c.s.\ (i.i.d.\ o indep.\ no i.d.) & \rr LFGN Kolmogorov (sección 20) & \rr i.i.d.\ $\E|X_1|<\infty$; indep.\ $\sum \Var(X_n)/n^2<\infty$\\[3pt]
 \rr Suma estandarizada de indep.\ no i.d.\ acotadas & \rr TLC Liapunov--Lindeberg (sección 21) & \rr $|X_i|\le M$ y $s_n^2\to\infty \Rightarrow (S_n-\E[S_n])/s_n \dto N(0,1)$\\[3pt]
-\rr Distribución límite de $(X_{(n)} - a_n)/b_n$ & \rr Valor Extremo TVE (sección 21) & \rr Gumbel $e^{-e^{-(z-a)/b}}$, Fréchet, Weibull\\
+\rr Distribución límite de $(X_{(n)} - a_n)/b_n$ & \rr Valor Extremo TVE (sección 21) & \rr Gumbel $e^{-e^{-(z-a)/b}}$, Fréchet, Weibull\\[3pt]
+\rr Verificar suficiencia de $T$ por ley condicional & \rr Definición suficiencia (sección 22) & \rr $\Prob(\mathbf{X}=\mathbf{x}\mid T=t)$ no depende de $\theta$\\[3pt]
+\rr Hallar estadístico suficiente $T$ de la muestra & \rr Fisher--Neyman (sección 22) & \rr $L(\theta\mid\mathbf{x}) = g(T(\mathbf{x}),\theta)\,h(\mathbf{x})$\\
 \end{longtable}
 \endgroup
 

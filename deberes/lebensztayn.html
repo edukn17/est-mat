@@ -29,8 +29,8 @@
   <header class="page-head">
     <p class="kicker">Libro de referencia · Élcio Lebensztayn</p>
     <h1>Ejercicios del libro de Lebensztayn</h1>
-    <p class="lead">Esta sección reúne, traduce y resuelve paso a paso los ejercicios del libro <em>Exercícios de Probabilidade</em> (Élcio Lebensztayn) asignados en el curso, comenzando por los 28 problemas del Capítulo 5 (Modos de Convergencia y Teoremas Límites) y dejando la estructura lista para ampliar con otros capítulos.</p>
-    <p><span class="badge">FCNM · ESPOL</span> <span class="badge">Capítulo 5 · 28 ejercicios resueltos</span></p>
+    <p class="lead">Esta sección reúne, traduce y resuelve paso a paso los ejercicios del libro <em>Exercícios de Probabilidade</em> (Élcio Lebensztayn) asignados en el curso, incluyendo ya 65 de los 84 problemas del Capítulo 5 (Modos de Convergencia y Teoremas Límites) y dejando la estructura lista para ampliar con otros capítulos.</p>
+    <p><span class="badge">FCNM · ESPOL</span> <span class="badge">Capítulo 5 · 65 de 84 ejercicios resueltos</span></p>
   </header>
 
   <!-- ================================================================
@@ -73,7 +73,7 @@
           <tr>
             <td class="hl"><b>Cap. 5</b></td>
             <td class="hl">Modos de Convergencia y Teoremas Límites</td>
-            <td class="hl"><b>28 ejercicios asignados en Clases 5, 11, 12, 13 y 14 resueltos por completo abajo</b> (base teórica en <a href="../temas/clase-05.html">Clase 5</a> y <a href="../temas/clase-10.html">Clase 10</a>).</td>
+            <td class="hl"><b>65 de 84 ejercicios del Cap. 5 resueltos abajo</b>: <a href="#cap5-borel">Borel–Cantelli (1*–10*)</a>, <a href="#cap5-modos">Modos (11–25*)</a>, <a href="#cap5-delta">Continuidad, Slutsky y Delta (26*–32 y 75)</a>, <a href="#cap5-lgn">LGN (37–45*)</a>, <a href="#cap5-tlc">Aplicaciones del TLC (50–66)</a> y <a href="#cap5-misc">Miscelánea (67–77*)</a>; pendientes únicamente LGN restantes y Convergencia de momentos (base teórica en <a href="../temas/clase-05.html">Clase 5</a>, <a href="../temas/clase-10.html">Clase 10</a> y <a href="../temas/clase-11.html">Clase 11</a>).</td>
           </tr>
         </tbody>
       </table>
@@ -84,27 +84,55 @@
       En el libro original, $\text{Exp}(\lambda)$ y $\text{Gama}(\alpha, \lambda)$ utilizan el parámetro de <b>tasa</b> $\lambda$ (densidad proporcional a $x^{\alpha-1}e^{-\lambda x}$ y media $\alpha/\lambda$). En el <a href="../herramientas/formulario.html">Formulario completo (FCNM · ESPOL)</a> se usa el parámetro de <b>escala</b> $\beta = 1/\lambda$ (media $\alpha\beta$). Cuando aparezcan distribuciones Gamma o Exponencial (por ejemplo, en el <a href="#ej-5-32">Ej. 5.32</a> o el <a href="#ej-5-68">Ej. 5.68</a>), se especifica explícitamente la correspondencia para evitar confusiones. Asimismo, recuerda que $\log$ denota el logaritmo natural $\ln$.
     </div>
 
-    <h3>Índice rápido del Capítulo 5 (5 bloques · 28 ejercicios)</h3>
+    <h3>Índice rápido del Capítulo 5 (6 bloques · 65 ejercicios)</h3>
     <div class="indice-partes">
       <div>
-        <h3><a href="#cap5-modos">Bloque I · Modos de Convergencia</a></h3>
-        <p class="small muted" style="margin:0 0 6px">Clase 11 · 6 ejercicios</p>
+        <h3><a href="#cap5-borel">Bloque 0 · Lema de Borel–Cantelli</a></h3>
+        <p class="small muted" style="margin:0 0 6px">Clase 11 · Ej. 1*–10* · 10 ejercicios</p>
         <ul>
+          <li><a href="#ej-5-1">Ej. 5.1*</a> · Moneda: $A_n$ y $B_n$ i.v.</li>
+          <li><a href="#ej-5-2">Ej. 5.2*</a> · Patrón finito ocurre i.v.</li>
+          <li><a href="#ej-5-3">Ej. 5.3*</a> · Rachas de ceros en $\text{Ber}(1/2)$</li>
+          <li><a href="#ej-5-4">Ej. 5.4*</a> · $U[0,a_n]$: $a_n=n^2$ vs. $a_n=n$</li>
+          <li><a href="#ej-5-5">Ej. 5.5*</a> · Criterio de Barndorff-Nielsen</li>
+          <li><a href="#ej-5-6">Ej. 5.6*</a> · Criterio condicional de Lévy</li>
+          <li><a href="#ej-5-7">Ej. 5.7*</a> · $\limsup X_n/\log n = 1/\lambda$ ($\text{Exp}$)</li>
+          <li><a href="#ej-5-8">Ej. 5.8*</a> · $\limsup X_n/\sqrt{2\log n} = 1$ ($N(0,1)$)</li>
+          <li><a href="#ej-5-9">Ej. 5.9*</a> · $\limsup S_n/\sqrt{2n\log n} \le 1$</li>
+          <li><a href="#ej-5-10">Ej. 5.10*</a> · $\limsup (\log X_n)/n \le 0$</li>
+        </ul>
+      </div>
+      <div>
+        <h3><a href="#cap5-modos">Bloque I · Modos de Convergencia</a></h3>
+        <p class="small muted" style="margin:0 0 6px">Clase 11 · Ej. 11–25* · 15 ejercicios</p>
+        <ul>
+          <li><a href="#ej-5-11">Ej. 5.11</a> · Discreta $\{j/n\} \dto U(0,1)$</li>
           <li><a href="#ej-5-12">Ej. 5.12</a> · Potencia $n x^{n-1}/\theta^n \dto \theta$</li>
+          <li><a href="#ej-5-13">Ej. 5.13</a> · $N(0,1/n) \dto 0$</li>
           <li><a href="#ej-5-14">Ej. 5.14</a> · Máximo exponencial $\to$ Gumbel</li>
           <li><a href="#ej-5-15">Ej. 5.15</a> · Máximo con cola pesada $\to$ Fréchet</li>
+          <li><a href="#ej-5-16">Ej. 5.16</a> · $k\min\{X_1,\dots,X_{N_k}\} \dto \text{Exp}(1)$</li>
           <li><a href="#ej-5-17">Ej. 5.17</a> · $\text{Bin}(n, 1/n^2)$ y Chebyshev</li>
           <li><a href="#ej-5-18">Ej. 5.18</a> · Saltos $n$ con prob. $1/n^2$</li>
           <li><a href="#ej-5-19">Ej. 5.19</a> · Mínimo y máximo en $U[0,1]$</li>
+          <li><a href="#ej-5-20">Ej. 5.20</a> · $X_n \pto X$, pero $\E[|X_n-X|] \to \infty$</li>
+          <li><a href="#ej-5-21">Ej. 5.21</a> · $\E[X_n] \to \alpha,\ \Var(X_n) \to 0$</li>
+          <li><a href="#ej-5-22">Ej. 5.22*</a> · $\text{Ber}(p_n)$: $\pto 0$ vs. $\xrightarrow{\text{c.s.}} 0$</li>
+          <li><a href="#ej-5-23">Ej. 5.23*</a> · $X_n/\log n$: $\pto 0$, no c.s.</li>
+          <li><a href="#ej-5-24">Ej. 5.24*</a> · $n^3$ con prob. $1/n^2$: c.s., $\E \to \infty$</li>
+          <li><a href="#ej-5-25">Ej. 5.25*</a> · $\sum \E[|X_n-X|^r] &lt; \infty \implies \text{c.s.}$</li>
         </ul>
       </div>
       <div>
         <h3><a href="#cap5-delta">Bloque II · Continuidad, Slutsky y Delta</a></h3>
-        <p class="small muted" style="margin:0 0 6px">Clase 12 · 5 ejercicios</p>
+        <p class="small muted" style="margin:0 0 6px">Clase 12 · Ej. 26*–32 y 75 · 8 ejercicios</p>
         <ul>
-          <li><a href="#ej-5-26">Ej. 5.26</a> · $N(\mu_n,\sigma_n^2) \dto N(\mu,\sigma^2)$</li>
-          <li><a href="#ej-5-28">Ej. 5.28</a> · Geométrica$(1/n)$ reescalada</li>
+          <li><a href="#ej-5-26">Ej. 5.26*</a> · $N(\mu_n,\sigma_n^2) \dto N(\mu,\sigma^2)$</li>
+          <li><a href="#ej-5-27">Ej. 5.27*</a> · Proceso AR(1): $Y_n = \alpha Y_{n-1} + X_n$</li>
+          <li><a href="#ej-5-28">Ej. 5.28*</a> · Geométrica$(1/n)$ reescalada</li>
           <li><a href="#ej-5-29">Ej. 5.29</a> · $\text{Poisson}(\lambda)$: $S_n/n \dto \lambda$</li>
+          <li><a href="#ej-5-30">Ej. 5.30</a> · $U[0,1]$ sin convergencia de densidades</li>
+          <li><a href="#ej-5-31">Ej. 5.31</a> · Suma c.s., $\pto$ y contraejemplo $\dto$</li>
           <li><a href="#ej-5-32">Ej. 5.32</a> · $t_{(n)} = Z_n/\sqrt{V_n/n} \dto N(0,1)$</li>
           <li><a href="#ej-5-75">Ej. 5.75</a> · $\sqrt{S_n} - \sqrt{n} \dto N(0, \sigma^2/4)$</li>
         </ul>
@@ -122,37 +150,592 @@
       </div>
       <div>
         <h3><a href="#cap5-tlc">Bloque IV · Aplicaciones del TLC</a></h3>
-        <p class="small muted" style="margin:0 0 6px">Clase 5 · 4 ejercicios</p>
+        <p class="small muted" style="margin:0 0 6px">Clase 5 · Ej. 50–66 · 17 ejercicios</p>
         <ul>
+          <li><a href="#ej-5-50">Ej. 5.50</a> · Paquetes de chocolate ($\text{Poisson}$)</li>
+          <li><a href="#ej-5-51">Ej. 5.51</a> · Bolígrafos y cuadernos (covarianza)</li>
+          <li><a href="#ej-5-52">Ej. 5.52</a> · Tamaño de lote de tornillos</li>
+          <li><a href="#ej-5-53">Ej. 5.53</a> · Premios en tres emisoras</li>
+          <li><a href="#ej-5-54">Ej. 5.54</a> · Salario promedio (Pareto)</li>
+          <li><a href="#ej-5-55">Ej. 5.55</a> · Suma de errores de redondeo</li>
+          <li><a href="#ej-5-56">Ej. 5.56</a> · Tiempo total en examen</li>
+          <li><a href="#ej-5-57">Ej. 5.57</a> · Impurezas en agua ($\text{Beta}(3,2)$)</li>
           <li><a href="#ej-5-58">Ej. 5.58</a> · Ruleta en casino (80 y 400 mil)</li>
+          <li><a href="#ej-5-59">Ej. 5.59</a> · Tamaño muestral uniforme</li>
           <li><a href="#ej-5-60">Ej. 5.60</a> · Lanzamientos de un dado honesto</li>
+          <li><a href="#ej-5-61">Ej. 5.61</a> · Lanzamientos hasta $450$ caras</li>
           <li><a href="#ej-5-62">Ej. 5.62</a> · Repartidor de periódicos</li>
           <li><a href="#ej-5-63">Ej. 5.63</a> · Producto de anotaciones de dado</li>
+          <li><a href="#ej-5-64">Ej. 5.64</a> · Duración de pilas en reproductor</li>
+          <li><a href="#ej-5-65">Ej. 5.65</a> · Límite de cola de Poisson</li>
+          <li><a href="#ej-5-66">Ej. 5.66</a> · Varianza muestral Bernoulli (Delta)</li>
         </ul>
       </div>
       <div>
         <h3><a href="#cap5-misc">Bloque V · Miscelánea de Teoremas Límites</a></h3>
-        <p class="small muted" style="margin:0 0 6px">Clase 14 · 8 ejercicios</p>
+        <p class="small muted" style="margin:0 0 6px">Clase 14 · Ej. 67–77* (exc. 75) · 10 ejercicios</p>
         <ul>
           <li><a href="#ej-5-67">Ej. 5.67</a> · $U(-1,1)$: c.s. y Slutsky</li>
           <li><a href="#ej-5-68">Ej. 5.68</a> · $\text{Gamma}(n, 1)$ estandarizada</li>
           <li><a href="#ej-5-69">Ej. 5.69</a> · Laplace estándar $\dto N(0, 1/2)$</li>
           <li><a href="#ej-5-70">Ej. 5.70</a> · $S_n / (\sqrt{n}\,\max X_i)$ en $U(-\theta,\theta)$</li>
           <li><a href="#ej-5-71">Ej. 5.71</a> · Estadístico $T_n = \sum g(X_i) + R_n$</li>
+          <li><a href="#ej-5-72">Ej. 5.72</a> · $\log \bar X_n$ en $U[0,2\theta]$</li>
           <li><a href="#ej-5-73">Ej. 5.73</a> · Media armónica con $f(x)=3x^2$</li>
+          <li><a href="#ej-5-74">Ej. 5.74</a> · Dos estimadores de $\text{Exp}(\theta)$</li>
           <li><a href="#ej-5-76">Ej. 5.76</a> · Método Delta: $\bar X_n^2$ y $\log\bar X_n$</li>
-          <li><a href="#ej-5-77">Ej. 5.77</a> · $\star$ Reto: $S_n/\sqrt{\log n} \dto N(0,1)$</li>
+          <li><a href="#ej-5-77">Ej. 5.77*</a> · $\star$ Reto: $S_n/\sqrt{\log n} \dto N(0,1)$</li>
         </ul>
       </div>
     </div>
   </section>
 
   <!-- ================================================================
-       SECCIÓN 2: BLOQUE I — MODOS DE CONVERGENCIA
+       SECCIÓN 2: BLOQUE 0 — LEMA DE BOREL-CANTELLI
        ================================================================ -->
   <section>
-    <h2 id="cap5-modos">Bloque I · Modos de Convergencia (Clase 11: Ej. 12, 14, 15, 17, 18 y 19)</h2>
+    <h2 id="cap5-borel">Bloque 0 · Lema de Borel–Cantelli (Clase 11: Ej. 1* al 10*)</h2>
+    <p>Antes de estudiar los modos de convergencia, el <b>Lema de Borel–Cantelli</b> (1.º y 2.º lemas, estudiados en la <a href="../temas/clase-11.html#thm-borel-cantelli">Clase 11</a>) permite decidir si una familia numerable de sucesos ocurre infinitas veces ($\limsup_{n\to\infty} A_n$) con probabilidad $0$ o $1$. Todos los problemas de esta subsección están marcados con asterisco en el texto original por su contenido de análisis probabilístico avanzado.</p>
+
+    <!-- Ej. 5.1* -->
+    <div class="box ejercicio" id="ej-5-1">
+      <span class="box-title">Ejercicio 5.1* (Clase 11) <span class="badge star">★ reto</span></span>
+      <p>Se lanza repetidamente una moneda honesta, siendo los lanzamientos independientes. Para $n \ge 1$, considera los eventos:
+      $$A_n : \text{el } n\text{-ésimo lanzamiento resulta cara}, \qquad B_n : \text{el } n\text{-ésimo y el } (n+1)\text{-ésimo lanzamientos resultan ambos cara}.$$
+      Demuestra que:</p>
+      <ol type="a">
+        <li>$\P(A_n \text{ infinitas veces}) = \P(A_n \text{ i.v.}) = 1$.</li>
+        <li>$\P(B_n \text{ i.v.}) = 1$.</li>
+      </ol>
+      <p><em>Sugerencia para (b):</em> para $n \ge 1$, define $C_n$ como el evento de que el $(2n-1)$-ésimo y el $(2n)$-ésimo lanzamientos resulten ambos cara.</p>
+      <p class="tecnica">Técnica: Segundo Lema de Borel–Cantelli + extracción de una subsucesión de bloques disjuntos independientes.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En (a), los eventos $A_n$ son independientes con $\P(A_n) = 1/2$. En (b), observa que $B_n$ y $B_{n+1}$ se solapan en el lanzamiento $n+1$ y por ello no son independientes; en cambio, los eventos $C_n = B_{2n-1}$ involucran pares disjuntos $(2n-1, 2n)$ de lanzamientos, luego sí son independientes y cumplen $\{C_n \text{ i.v.}\} \subseteq \{B_n \text{ i.v.}\}$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <p class="sol-inciso">(a) Ocurrencia infinita de caras ($\P(A_n \text{ i.v.}) = 1$)</p>
+        <ol class="pasos">
+          <li><b>Independencia y divergencia de la serie de probabilidades.</b>
+            Al ser la moneda honesta, cada lanzamiento resulta cara con probabilidad $\P(A_n) = \frac{1}{2}$. Por tanto, la serie de probabilidades diverge:
+            $$\sum_{n=1}^\infty \P(A_n) = \sum_{n=1}^\infty \frac{1}{2} = \infty.$$
+            Además, cada evento $A_n$ depende exclusivamente del $n$-ésimo lanzamiento; como los lanzamientos son independientes entre sí, la sucesión de eventos $(A_n)_{n\ge 1}$ es independiente.</li>
+          <li><b>Aplicación del Segundo Lema de Borel–Cantelli (BC2).</b>
+            Al cumplirse $\sum_{n=1}^\infty \P(A_n) = \infty$ junto con la independencia de $(A_n)_{n\ge 1}$, el Segundo Lema de Borel–Cantelli garantiza inmediatamente que:
+            $$\P(A_n \text{ i.v.}) = 1.$$</li>
+        </ol>
+
+        <p class="sol-inciso">(b) Ocurrencia infinita de dos caras consecutivas ($\P(B_n \text{ i.v.}) = 1$)</p>
+        <ol class="pasos">
+          <li><b>Por qué no basta aplicar BC2 directamente a $(B_n)_{n\ge 1}$.</b>
+            Aunque $\P(B_n) = \frac{1}{2}\cdot\frac{1}{2} = \frac{1}{4}$ y $\sum_{n=1}^\infty \P(B_n) = \infty$, los eventos $(B_n)_{n\ge 1}$ <b>no son independientes</b>: $B_n$ y $B_{n+1}$ comparten el $(n+1)$-ésimo lanzamiento, de modo que
+            $$\P(B_n \cap B_{n+1}) = \P(\text{caras en } n, n+1, n+2) = \frac{1}{8} \ne \frac{1}{16} = \P(B_n)\P(B_{n+1}).$$</li>
+          <li><b>Construcción de la subsucesión independiente $(C_n)_{n\ge 1}$.</b>
+            Siguiendo la sugerencia, definimos para cada $n \ge 1$ el evento
+            $$C_n = B_{2n-1} = \{\text{los lanzamientos } (2n-1) \text{ y } (2n) \text{ resultan ambos cara}\}.$$
+            Los pares de índices $\{1,2\}, \{3,4\}, \dots, \{2n-1, 2n\}, \dots$ son disjuntos dos a dos. Como los lanzamientos de la moneda son independientes, los eventos $(C_n)_{n\ge 1}$ dependen de bloques disjuntos de lanzamientos y son <b>independientes</b>.</li>
+          <li><b>Divergencia de $\sum \P(C_n)$ e inclusión de eventos límite.</b>
+            Para todo $n \ge 1$, $\P(C_n) = \frac{1}{2}\cdot\frac{1}{2} = \frac{1}{4}$, luego
+            $$\sum_{n=1}^\infty \P(C_n) = \sum_{n=1}^\infty \frac{1}{4} = \infty.$$
+            Por el Segundo Lema de Borel–Cantelli aplicado a $(C_n)_{n\ge 1}$, resulta $\P(C_n \text{ i.v.}) = 1$.
+            Ahora bien, cada $C_n = B_{2n-1}$ es un evento de la sucesión $(B_k)_{k\ge 1}$ con índice $2n-1 \to \infty$, por lo que todo resultado en el que ocurren infinitos $C_n$ también produce infinitos $B_k$:
+            $$\{C_n \text{ i.v.}\} = \limsup_{n\to\infty} B_{2n-1} \subseteq \limsup_{k\to\infty} B_k = \{B_n \text{ i.v.}\}.$$
+            Por monotonía de la probabilidad, $1 = \P(C_n \text{ i.v.}) \le \P(B_n \text{ i.v.}) \le 1$.
+            <div class="resultado">$$\P(A_n \text{ i.v.}) = 1 \qquad \text{y} \qquad \P(B_n \text{ i.v.}) = 1.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.2* -->
+    <div class="box ejercicio" id="ej-5-2">
+      <span class="box-title">Ejercicio 5.2* (Clase 11) <span class="badge star">★ reto</span></span>
+      <p>Se lanza repetidamente una moneda honesta, siendo los lanzamientos independientes. Prueba que cualquier secuencia finita de resultados ocurre infinitas veces, con probabilidad $1$.</p>
+      <p class="tecnica">Técnica: partición en bloques contiguos disjuntos de longitud $k$ + Segundo Lema de Borel–Cantelli.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Fija un patrón cualquiera $(w_1, \dots, w_k) \in \{C, S\}^k$ de longitud $k \ge 1$. Agrupa la sucesión de lanzamientos en bloques disjuntos de tamaño $k$: $C_m = \{(X_{(m-1)k+1}, \dots, X_{mk}) = (w_1, \dots, w_k)\}$ para $m \ge 1$, comprueba su independencia y verifica $\sum_{m=1}^\infty \P(C_m) = \infty$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Modelado del experimento y del patrón finito.</b>
+            Representemos el resultado del $i$-ésimo lanzamiento mediante $X_i \in \{C, S\}$ (cara o sello), donde $(X_i)_{i\ge 1}$ son variables aleatorias independientes con $\P(X_i = C) = \P(X_i = S) = \frac{1}{2}$.
+            Fijemos una longitud $k \ge 1$ y una secuencia finita arbitraria $w = (w_1, \dots, w_k) \in \{C, S\}^k$. Para $n \ge 1$, definimos el evento de que el patrón comience en la posición $n$:
+            $$B_n = \big\{(X_n, X_{n+1}, \dots, X_{n+k-1}) = (w_1, \dots, w_k)\big\}.$$
+            Queremos demostrar que $\P(B_n \text{ i.v.}) = 1$.</li>
+          <li><b>Subsucesión de bloques disjuntos independientes.</b>
+            Para $k \ge 2$, eventos consecutivos como $B_n$ y $B_{n+1}$ se solapan y no son independientes. Para eliminar la dependencia, consideramos bloques contiguos no solapados de longitud $k$: para cada entero $m \ge 1$, definimos
+            $$C_m = B_{(m-1)k+1} = \big\{(X_{(m-1)k+1}, X_{(m-1)k+2}, \dots, X_{mk}) = (w_1, w_2, \dots, w_k)\big\}.$$
+            Los conjuntos de índices $\{(m-1)k + 1, \dots, mk\}$ para $m = 1, 2, \dots$ son disjuntos dos a dos. Dado que las variables $(X_i)_{i\ge 1}$ son independientes, los eventos $(C_m)_{m\ge 1}$ son <b>independientes</b>.</li>
+          <li><b>Probabilidad de cada bloque y aplicación de BC2.</b>
+            Por independencia dentro de cada bloque de longitud $k$:
+            $$\P(C_m) = \prod_{j=1}^k \P\big(X_{(m-1)k+j} = w_j\big) = \left(\frac{1}{2}\right)^k = 2^{-k} &gt; 0.$$
+            Como $2^{-k}$ es una constante estrictamente positiva que no depende de $m$, la serie diverge:
+            $$\sum_{m=1}^\infty \P(C_m) = \sum_{m=1}^\infty 2^{-k} = \infty.$$
+            Por el Segundo Lema de Borel–Cantelli, $\P(C_m \text{ i.v.}) = 1$.</li>
+          <li><b>Conclusión.</b>
+            Puesto que $(m-1)k + 1 \to \infty$ cuando $m \to \infty$, si $C_m$ ocurre para infinitos $m$, entonces $B_n$ ocurre para infinitos $n$; es decir, $\{C_m \text{ i.v.}\} \subseteq \{B_n \text{ i.v.}\}$. Luego $\P(B_n \text{ i.v.}) = 1$.
+            <em>(Observación: como la colección de todas las secuencias finitas $\bigcup_{k=1}^\infty \{C, S\}^k$ es numerable, la intersección sobre todos los patrones posibles de los eventos $\{B_n(w) \text{ i.v.}\}$ también tiene probabilidad $1$.)</em>
+            <div class="resultado">$$\forall\, k \ge 1,\ \forall\, (w_1,\dots,w_k) \in \{C,S\}^k: \quad \P\big((X_n,\dots,X_{n+k-1}) = (w_1,\dots,w_k) \text{ i.v.}\big) = 1.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.3* -->
+    <div class="box ejercicio" id="ej-5-3">
+      <span class="box-title">Ejercicio 5.3* (Clase 11) <span class="badge star">★ reto</span></span>
+      <p>Sean $X_1, X_2, \dots$ variables aleatorias i.i.d. con distribución $\text{Bernoulli}(1/2)$. Para $n \ge 1$, definimos $Y_n$ como la longitud de la racha de ceros que comienza en $X_n$, es decir,
+      $$Y_n = \begin{cases} 0, &amp; \text{si } X_n = 1, \\ k, &amp; \text{si } X_n = \dots = X_{n+k-1} = 0 \text{ y } X_{n+k} = 1 \quad (k \ge 1). \end{cases}$$
+      Demuestra que:</p>
+      <ol type="a">
+        <li>$\P(Y_n = k) = \dfrac{1}{2^{k+1}}$ para todo $k \ge 0$.</li>
+        <li>$\P(Y_n = k \text{ i.v.}) = 1$ para todo $k \ge 0$.</li>
+        <li>$\P(Y_n = n \text{ i.v.}) = 0$.</li>
+      </ol>
+      <p class="tecnica">Técnica: independencia por bloques de longitud $k+1$ (BC2) + Primer Lema de Borel–Cantelli para la diagonal $\{Y_n = n\}$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En (a), expresa $\{Y_n = k\}$ como intersección de $k+1$ valores consecutivos de $(X_i)$. En (b), nota que $\{Y_n = k\}$ solo depende de $(X_n, \dots, X_{n+k})$, por lo que tomando índices espaciados $n_j = 1 + (j-1)(k+1)$ los bloques $[n_j, n_j+k]$ son disjuntos e independientes. En (c), sustituye $k = n$ en (a) y suma $\sum_{n=1}^\infty \P(Y_n = n)$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <p class="sol-inciso">(a) Distribución de $Y_n$</p>
+        <ol class="pasos">
+          <li><b>Evaluación directa por independencia.</b>
+            Si $k = 0$, el evento $\{Y_n = 0\}$ coincide con $\{X_n = 1\}$, cuya probabilidad es $\frac{1}{2} = \frac{1}{2^{0+1}}$.
+            Para cualquier entero $k \ge 1$, se cumple $\{Y_n = k\} = \{X_n = 0, \dots, X_{n+k-1} = 0, X_{n+k} = 1\}$. Como las variables $(X_i)_{i\ge 1}$ son i.i.d. con $\P(X_i = 0) = \P(X_i = 1) = \frac{1}{2}$:
+            $$\P(Y_n = k) = \left(\prod_{i=n}^{n+k-1} \P(X_i = 0)\right) \P(X_{n+k} = 1) = \left(\frac{1}{2}\right)^k \cdot \frac{1}{2} = \frac{1}{2^{k+1}}, \qquad \forall\, k \ge 0.$$
+            <em>(Además, $\sum_{k=0}^\infty 2^{-(k+1)} = 1$, por lo que $\P(Y_n = \infty) = 0$.)</em></li>
+        </ol>
+
+        <p class="sol-inciso">(b) Ocurrencia infinita de rachas de longitud fija $k \ge 0$</p>
+        <ol class="pasos">
+          <li><b>Selección de bloques disjuntos de longitud $k+1$.</b>
+            Fijemos cualquier entero $k \ge 0$. Por definición, el evento $\{Y_n = k\}$ depende únicamente del bloque de $k+1$ variables $(X_n, X_{n+1}, \dots, X_{n+k})$.
+            Definimos la subsucesión de índices $n_j = 1 + (j - 1)(k + 1)$ para $j = 1, 2, \dots$, y los eventos
+            $$C_j = \{Y_{n_j} = k\}, \qquad j \ge 1.$$
+            Los intervalos de índices correspondientes $[n_j, n_j + k] = \{1 + (j-1)(k+1), \dots, j(k+1)\}$ son disjuntos dos a dos. Al depender de conjuntos disjuntos de variables independientes, la sucesión $(C_j)_{j\ge 1}$ es <b>independiente</b>.</li>
+          <li><b>Aplicación de BC2.</b>
+            Por el apartado (a), $\P(C_j) = \P(Y_{n_j} = k) = \frac{1}{2^{k+1}} &gt; 0$ para todo $j \ge 1$, de modo que
+            $$\sum_{j=1}^\infty \P(C_j) = \sum_{j=1}^\infty \frac{1}{2^{k+1}} = \infty.$$
+            Por el Segundo Lema de Borel–Cantelli, $\P(C_j \text{ i.v.}) = 1$. Como $\{C_j \text{ i.v.}\} \subseteq \{Y_n = k \text{ i.v.}\}$, concluimos que $\P(Y_n = k \text{ i.v.}) = 1$.</li>
+        </ol>
+
+        <p class="sol-inciso">(c) Probabilidad nula para $\{Y_n = n \text{ i.v.}\}$</p>
+        <ol class="pasos">
+          <li><b>Aplicación del Primer Lema de Borel–Cantelli (BC1).</b>
+            Tomando $k = n$ en la fórmula del apartado (a), para cada $n \ge 1$ se tiene $\P(Y_n = n) = \frac{1}{2^{n+1}}$. Sumando la serie geométrica resultante:
+            $$\sum_{n=1}^\infty \P(Y_n = n) = \sum_{n=1}^\infty \frac{1}{2^{n+1}} = \frac{1/4}{1 - 1/2} = \frac{1}{2} &lt; \infty.$$
+            Como la serie converge (y el Primer Lema de Borel–Cantelli no requiere independencia entre los eventos $\{Y_n = n\}$), obtenemos inmediatamente $\P(Y_n = n \text{ i.v.}) = 0$.
+            <div class="resultado">$$\text{(a) } \P(Y_n = k) = \frac{1}{2^{k+1}},\quad \text{(b) } \P(Y_n = k \text{ i.v.}) = 1 \ (\forall\, k \ge 0),\quad \text{(c) } \P(Y_n = n \text{ i.v.}) = 0.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.4* -->
+    <div class="box ejercicio" id="ej-5-4">
+      <span class="box-title">Ejercicio 5.4* (Clase 11) <span class="badge star">★ reto</span></span>
+      <p>Sean $X_1, X_2, \dots$ variables aleatorias independientes tales que $X_n \sim U[0, a_n]$, con $a_n &gt; 0$. Demuestra que:</p>
+      <ol type="a">
+        <li>Si $a_n = n^2$, entonces, con probabilidad $1$, solo un número finito de las $X_n$ son menores que $1$.</li>
+        <li>Si $a_n = n$, entonces, con probabilidad $1$, un número infinito de las $X_n$ son menores que $1$.</li>
+      </ol>
+      <p class="tecnica">Técnica: comparación directa entre el Primer y el Segundo Lema de Borel–Cantelli mediante la serie $\sum 1/a_n$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Define $A_n = \{X_n &lt; 1\}$. Como $a_n \ge 1$ para todo $n \ge 1$ en ambos incisos, $\P(A_n) = 1/a_n$. Compara la convergencia de $\sum 1/n^2$ frente a la divergencia de $\sum 1/n$ usando la independencia de $(X_n)_{n\ge 1}$ en (b).</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Expresión general de $\P(X_n &lt; 1)$.</b>
+            Para $X_n \sim U[0, a_n]$, definimos los eventos $A_n = \{X_n &lt; 1\}$, $n \ge 1$. Cuando $a_n \ge 1$, se cumple
+            $$\P(A_n) = \P(X_n &lt; 1) = \int_0^1 \frac{1}{a_n}\,dx = \frac{1}{a_n}.$$
+            Como las variables $(X_n)_{n\ge 1}$ son independientes, los eventos $(A_n)_{n\ge 1}$ también lo son.</li>
+          <li><b>Apartado (a): caso $a_n = n^2$.</b>
+            Como $a_n = n^2 \ge 1$ para todo $n \ge 1$, tenemos $\P(A_n) = \frac{1}{n^2}$ y la serie converge:
+            $$\sum_{n=1}^\infty \P(A_n) = \sum_{n=1}^\infty \frac{1}{n^2} = \frac{\pi^2}{6} &lt; \infty \qquad (p\text{-serie con } p = 2 &gt; 1).$$
+            Por el Primer Lema de Borel–Cantelli, $\P(A_n \text{ i.v.}) = 0$, es decir, $\P\big((A_n \text{ i.v.})^c\big) = 1$: con probabilidad $1$, solo un número finito de variables $X_n$ toma valores menores que $1$.</li>
+          <li><b>Apartado (b): caso $a_n = n$.</b>
+            Como $a_n = n \ge 1$ para todo $n \ge 1$, ahora $\P(A_n) = \frac{1}{n}$ y la serie armónica diverge:
+            $$\sum_{n=1}^\infty \P(A_n) = \sum_{n=1}^\infty \frac{1}{n} = \infty.$$
+            Dado que además los eventos $(A_n)_{n\ge 1}$ son independientes, el Segundo Lema de Borel–Cantelli implica $\P(A_n \text{ i.v.}) = 1$: con probabilidad $1$, infinitas variables $X_n$ son menores que $1$.
+            <div class="resultado">$$\text{(a) } a_n = n^2 \implies \P(X_n &lt; 1 \text{ i.v.}) = 0; \qquad \text{(b) } a_n = n \implies \P(X_n &lt; 1 \text{ i.v.}) = 1.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.5* -->
+    <div class="box ejercicio" id="ej-5-5">
+      <span class="box-title">Ejercicio 5.5* (Clase 11) <span class="badge star">★ reto</span></span>
+      <p><b>(Barndorff-Nielsen, 1961).</b> Sean $A_1, A_2, \dots$ eventos en un espacio de probabilidad tales que
+      $$\lim_{n\to\infty} \P(A_n) = 0 \qquad \text{y} \qquad \sum_{n=1}^\infty \P(A_n \cap A_{n+1}^c) &lt; \infty.$$
+      Prueba que $\P(A_n \text{ i.v.}) = 0$.</p>
+      <p class="tecnica">Técnica: descomposición por el último índice de ocurrencia en $\bigcup_{n=m}^N A_n$ + continuidad de la probabilidad.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Fijados $m \le N$, si un resultado $\omega$ pertenece a $\bigcup_{n=m}^N A_n$, considera el <em>último</em> índice $k \in \{m, \dots, N\}$ tal que $\omega \in A_k$: o bien $k = N$ (luego $\omega \in A_N$), o bien $m \le k \le N-1$ (luego $\omega \in A_k \cap A_{k+1}^c$). Toma primero $N \to \infty$ y luego $m \to \infty$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Descomposición de la unión finita $\bigcup_{n=m}^N A_n$.</b>
+            Fijemos dos enteros $1 \le m \le N$. Si $\omega \in \bigcup_{n=m}^N A_n$, sea $k = \max\{n \in \{m, \dots, N\} : \omega \in A_n\}$ el mayor índice hasta $N$ en que ocurre $A_n$. Hay exactamente dos casos:
+            <ul>
+              <li>si $k = N$, entonces $\omega \in A_N$;</li>
+              <li>si $m \le k \le N - 1$, entonces $\omega \in A_k$ pero $\omega \notin A_{k+1}$, es decir, $\omega \in A_k \cap A_{k+1}^c$.</li>
+            </ul>
+            Recíprocamente, tanto $A_N$ como cada $A_n \cap A_{n+1}^c$ ($m \le n \le N-1$) están contenidos en $\bigcup_{n=m}^N A_n$. Por tanto, se cumple la identidad conjuntista
+            $$\bigcup_{n=m}^N A_n = A_N \cup \bigcup_{n=m}^{N-1} (A_n \cap A_{n+1}^c).$$</li>
+          <li><b>Cota superior por subaditividad y paso al límite $N \to \infty$.</b>
+            Aplicando subaditividad finita de la probabilidad:
+            $$\P\left(\bigcup_{n=m}^N A_n\right) \le \P(A_N) + \sum_{n=m}^{N-1} \P(A_n \cap A_{n+1}^c).$$
+            Como la familia de eventos $\left(\bigcup_{n=m}^N A_n\right)_{N \ge m}$ es creciente y converge a $\bigcup_{n=m}^\infty A_n$, por continuidad de la probabilidad desde abajo y usando $\lim_{N\to\infty} \P(A_N) = 0$:
+            $$\P\left(\bigcup_{n=m}^\infty A_n\right) = \lim_{N\to\infty} \P\left(\bigcup_{n=m}^N A_n\right) \le \lim_{N\to\infty} \P(A_N) + \sum_{n=m}^\infty \P(A_n \cap A_{n+1}^c) = \sum_{n=m}^\infty \P(A_n \cap A_{n+1}^c).$$</li>
+          <li><b>Paso al límite $m \to \infty$ y conclusión.</b>
+            Recordando que $\{A_n \text{ i.v.}\} = \bigcap_{m=1}^\infty \bigcup_{n=m}^\infty A_n$ es la intersección de la sucesión decreciente $\left(\bigcup_{n=m}^\infty A_n\right)_{m \ge 1}$, la continuidad de la probabilidad desde arriba da:
+            $$0 \le \P(A_n \text{ i.v.}) = \lim_{m\to\infty} \P\left(\bigcup_{n=m}^\infty A_n\right) \le \lim_{m\to\infty} \sum_{n=m}^\infty \P(A_n \cap A_{n+1}^c).$$
+            Como $\sum_{n=1}^\infty \P(A_n \cap A_{n+1}^c) &lt; \infty$, la cola de la serie tiende a $0$ cuando $m \to \infty$.
+            <em>(Nota: este criterio generaliza al Primer Lema de Borel–Cantelli, pues si $\sum \P(A_n) &lt; \infty$ entonces automáticamente $\P(A_n) \to 0$ y $\P(A_n \cap A_{n+1}^c) \le \P(A_n)$.)</em>
+            <div class="resultado">$$\P(A_n \text{ i.v.}) = 0.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.6* -->
+    <div class="box ejercicio" id="ej-5-6">
+      <span class="box-title">Ejercicio 5.6* (Clase 11) <span class="badge star">★ reto</span></span>
+      <p>Sean $A_1, A_2, \dots$ eventos en un espacio de probabilidad.</p>
+      <ol type="a">
+        <li>Prueba que $\P(A_n \text{ i.v.}) = 1$ si para todo $k \ge 1$ se cumple
+          $$\sum_{n &gt; k} \P(A_n \mid A_k^c \cap \dots \cap A_{n-1}^c) = \infty.$$
+          Deduce a partir de aquí el ítem (b) del Lema de Borel–Cantelli.</li>
+        <li>Muestra mediante un ejemplo explícito que $\P(A_n \text{ i.v.}) = 1$ <b>no</b> se deduce únicamente de la divergencia de $\sum_{n \ge 2} \P(A_n \mid A_1^c \cap \dots \cap A_{n-1}^c)$ (es decir, exigiendo la condición solo para $k = 1$).</li>
+        <li>Demuestra que $\P(A_n \text{ i.v.}) = 1$ si y solo si $\sum_{n=1}^\infty \P(A \cap A_n) = \infty$ para todo evento $A$ con $\P(A) &gt; 0$.</li>
+      </ol>
+      <p class="tecnica">Técnica: regla de la cadena + cota $1 - u \le e^{-u}$; contraejemplo explícito de partición disjunta en $(0,1]$; caracterización dual vía BC1 y continuidad de $\P$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En (a), acota $\P(\bigcap_{n=k}^N A_n^c)$ factorizando por probabilidades condicionales y aplicando $1 - u \le e^{-u}$. En (b), toma en $\Omega = (0, 1]$ los intervalos disjuntos $A_n = \big(\frac{1}{n+1}, \frac{1}{n}\big]$ ($n \ge 1$) y calcula $\P(A_n \mid A_1^c \cap \dots \cap A_{n-1}^c)$. En (c), para ($\Rightarrow$) aplica BC1 a $(A \cap A_n)_{n\ge 1}$; para ($\Leftarrow$), si $\P((A_n \text{ i.v.})^c) &gt; 0$, encuentra un $m$ tal que $B_m = \bigcap_{n=m}^\infty A_n^c$ tenga $\P(B_m) &gt; 0$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <p class="sol-inciso">(a) Criterio condicional de Lévy y deducción de BC2</p>
+        <ol class="pasos">
+          <li><b>Nulidad de las colas de complementos $\bigcap_{n=k}^\infty A_n^c$.</b>
+            Recordemos que $(A_n \text{ i.v.})^c = \bigcup_{k=1}^\infty \bigcap_{n=k}^\infty A_n^c$. Por subaditividad numerable, basta probar que $\P\big(\bigcap_{n=k}^\infty A_n^c\big) = 0$ para todo $k \ge 1$.
+            Fijado $k \ge 1$:
+            <ul>
+              <li>Si existiera algún $N_0 \ge k$ con $\P\big(\bigcap_{n=k}^{N_0} A_n^c\big) = 0$, entonces por monotonía $\P\big(\bigcap_{n=k}^\infty A_n^c\big) \le \P\big(\bigcap_{n=k}^{N_0} A_n^c\big) = 0$ directamente.</li>
+              <li>En caso contrario, $\P\big(\bigcap_{n=k}^{m} A_n^c\big) &gt; 0$ para todo $m \ge k$, por lo que todas las probabilidades condicionales están bien definidas. Para todo $N &gt; k$, por la regla de multiplicación de probabilidades condicionales y la desigualdad elemental $1 - u \le e^{-u}$ ($u \in \R$):
+                $$\begin{aligned}
+                \P\left(\bigcap_{n=k}^N A_n^c\right)
+                &amp;= \P(A_k^c) \prod_{n=k+1}^N \P(A_n^c \mid A_k^c \cap \dots \cap A_{n-1}^c) \\
+                &amp;= \P(A_k^c) \prod_{n=k+1}^N \Big(1 - \P(A_n \mid A_k^c \cap \dots \cap A_{n-1}^c)\Big) \\
+                &amp;\le \exp\left(-\sum_{n=k+1}^N \P(A_n \mid A_k^c \cap \dots \cap A_{n-1}^c)\right).
+                \end{aligned}$$</li>
+            </ul>
+            Tomando $N \to \infty$, por continuidad de la probabilidad y por la hipótesis $\sum_{n &gt; k} \P(A_n \mid A_k^c \cap \dots \cap A_{n-1}^c) = \infty$:
+            $$\P\left(\bigcap_{n=k}^\infty A_n^c\right) = \lim_{N\to\infty} \P\left(\bigcap_{n=k}^N A_n^c\right) \le e^{-\infty} = 0.$$
+            Por tanto, $\P\big((A_n \text{ i.v.})^c\big) \le \sum_{k=1}^\infty \P\big(\bigcap_{n=k}^\infty A_n^c\big) = 0$, luego $\P(A_n \text{ i.v.}) = 1$.</li>
+          <li><b>Deducción del Segundo Lema de Borel–Cantelli (BC2).</b>
+            Supongamos que $(A_n)_{n\ge 1}$ son independientes y $\sum_{n=1}^\infty \P(A_n) = \infty$. Fijado $k \ge 1$, o bien existe $n &gt; k$ con $\P(A_k^c \cap \dots \cap A_{n-1}^c) = 0$ (y entonces $\P(\bigcap_{m=k}^\infty A_m^c) = 0$), o bien para todo $n &gt; k$ la independencia entre $A_n$ y $A_k^c \cap \dots \cap A_{n-1}^c$ implica
+            $$\P(A_n \mid A_k^c \cap \dots \cap A_{n-1}^c) = \P(A_n).$$
+            Como retirar los primeros $k$ términos no altera la divergencia de la serie, $\sum_{n &gt; k} \P(A_n \mid A_k^c \cap \dots \cap A_{n-1}^c) = \sum_{n=k+1}^\infty \P(A_n) = \infty$ para todo $k \ge 1$. Aplicando la parte (a), se obtiene $\P(A_n \text{ i.v.}) = 1$.</li>
+        </ol>
+
+        <p class="sol-inciso">(b) Contraejemplo cuando solo diverge la serie para $k = 1$</p>
+        <ol class="pasos">
+          <li><b>Construcción explícita en $\Omega = (0, 1]$.</b>
+            Consideremos $\Omega = (0, 1]$ dotado de la probabilidad uniforme (medida de Lebesgue $\P$), y definamos la sucesión de intervalos
+            $$A_n = \left(\frac{1}{n+1},\, \frac{1}{n}\right], \qquad n = 1, 2, 3, \dots$$
+            Nótese que $\P(A_n) = \frac{1}{n} - \frac{1}{n+1} = \frac{1}{n(n+1)}$ y que los eventos $(A_n)_{n\ge 1}$ son <b>disjuntos dos a dos</b>.</li>
+          <li><b>Verificación de las dos propiedades opuestas.</b>
+            <ul>
+              <li><em>Divergencia para $k = 1$:</em> para todo $n \ge 2$, $\bigcup_{j=1}^{n-1} A_j = \left(\frac{1}{n}, 1\right]$, por lo que el evento condicionante es
+                $$A_1^c \cap \dots \cap A_{n-1}^c = \left(0,\, \frac{1}{n}\right], \qquad \P(A_1^c \cap \dots \cap A_{n-1}^c) = \frac{1}{n} &gt; 0.$$
+                Además $A_n \subseteq \left(0, \frac{1}{n}\right]$, luego para todo $n \ge 2$:
+                $$\P(A_n \mid A_1^c \cap \dots \cap A_{n-1}^c) = \frac{\P(A_n)}{\P(A_1^c \cap \dots \cap A_{n-1}^c)} = \frac{\frac{1}{n(n+1)}}{\frac{1}{n}} = \frac{1}{n+1}.$$
+                Por tanto, $\sum_{n=2}^\infty \P(A_n \mid A_1^c \cap \dots \cap A_{n-1}^c) = \sum_{n=2}^\infty \frac{1}{n+1} = \infty$.</li>
+              <li><em>Probabilidad nula de ocurrencia infinita:</em> al ser los $(A_n)_{n\ge 1}$ disjuntos dos a dos, cada $\omega \in (0, 1]$ pertenece a lo sumo a un $A_n$, de modo que $\{A_n \text{ i.v.}\} = \emptyset$ y por consiguiente $\P(A_n \text{ i.v.}) = 0 \ne 1$. <em>(La condición de (a) falla ya desde $k = 2$, pues $\P(A_2^c \cap \dots \cap A_{n-1}^c) \ge \P(A_1) = 1/2$ hace que la serie converja.)</em></li>
+            </ul></li>
+        </ol>
+
+        <p class="sol-inciso">(c) Caracterización $\P(A_n \text{ i.v.}) = 1 \iff \sum_{n=1}^\infty \P(A \cap A_n) = \infty$ para todo $A$ con $\P(A) &gt; 0$</p>
+        <ol class="pasos">
+          <li><b>Implicación directa ($\Rightarrow$).</b>
+            Supongamos que $\P(A_n \text{ i.v.}) = 1$ y sea $A$ cualquier evento con $\P(A) &gt; 0$. Si por absurdo fuera $\sum_{n=1}^\infty \P(A \cap A_n) &lt; \infty$, aplicando el Primer Lema de Borel–Cantelli a la sucesión $(A \cap A_n)_{n\ge 1}$ tendríamos $\P((A \cap A_n) \text{ i.v.}) = 0$.
+            Sin embargo, $\omega \in A \cap A_n$ para infinitos $n$ si y solo si $\omega \in A$ y $\omega \in A_n$ para infinitos $n$, es decir,
+            $$\limsup_{n\to\infty} (A \cap A_n) = A \cap \{A_n \text{ i.v.}\}.$$
+            Como $\P(A_n \text{ i.v.}) = 1$, se tiene $\P(A \cap \{A_n \text{ i.v.}\}) = \P(A) &gt; 0$, contradicción. Luego $\sum_{n=1}^\infty \P(A \cap A_n) = \infty$.</li>
+          <li><b>Implicación recíproca ($\Leftarrow$).</b>
+            Supongamos que $\sum_{n=1}^\infty \P(A \cap A_n) = \infty$ para todo evento $A$ con $\P(A) &gt; 0$, y supongamos por absurdo que $\P(A_n \text{ i.v.}) &lt; 1$. Entonces el complemento
+            $$B = \{A_n \text{ i.v.}\}^c = \bigcup_{m=1}^\infty B_m, \qquad B_m = \bigcap_{n=m}^\infty A_n^c,$$
+            satisface $\P(B) = 1 - \P(A_n \text{ i.v.}) &gt; 0$. Por subaditividad numerable, $0 &lt; \P(B) \le \sum_{m=1}^\infty \P(B_m)$, de modo que existe algún índice $m_0 \ge 1$ tal que $\P(B_{m_0}) &gt; 0$.
+            Ahora bien, para todo $n \ge m_0$ se tiene $B_{m_0} \subseteq A_n^c$, por lo cual $B_{m_0} \cap A_n = \emptyset$ y $\P(B_{m_0} \cap A_n) = 0$. En consecuencia,
+            $$\sum_{n=1}^\infty \P(B_{m_0} \cap A_n) = \sum_{n=1}^{m_0 - 1} \P(B_{m_0} \cap A_n) \le m_0 - 1 &lt; \infty,$$
+            lo cual contradice la hipótesis aplicada al evento $A = B_{m_0}$ (de probabilidad positiva). Por lo tanto, $\P(A_n \text{ i.v.}) = 1$.
+            <div class="resultado">$$\P(A_n \text{ i.v.}) = 1 \iff \forall\, A \text{ con } \P(A) &gt; 0,\ \sum_{n=1}^\infty \P(A \cap A_n) = \infty.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.7* -->
+    <div class="box ejercicio" id="ej-5-7">
+      <span class="box-title">Ejercicio 5.7* (Clase 11) <span class="badge star">★ reto</span></span>
+      <p>Sean $X_1, X_2, \dots$ variables aleatorias i.i.d. con distribución exponencial de parámetro $\lambda &gt; 0$ (tasa $\lambda$, densidad $f(x) = \lambda e^{-\lambda x}$ para $x &gt; 0$). Demuestra que:</p>
+      <ol type="a">
+        <li>$\P\left(\limsup_{n\to\infty} \dfrac{X_n}{\log n} \ge \dfrac{1}{\lambda}\right) = 1$.</li>
+        <li>Para cualquier $\delta &gt; 0$, $\P\left(\limsup_{n\to\infty} \dfrac{X_n}{\log n} \le \dfrac{1 + \delta}{\lambda}\right) = 1$.</li>
+        <li>A partir de (b), $\P\left(\limsup_{n\to\infty} \dfrac{X_n}{\log n} \le \dfrac{1}{\lambda}\right) = 1$, concluyendo así que $\limsup_{n\to\infty} \dfrac{X_n}{\log n} = \dfrac{1}{\lambda}$ casi seguramente.</li>
+      </ol>
+      <p class="tecnica">Técnica: colas exponenciales evaluadas en múltiplos de $\log n$ + BC2 para la cota inferior + BC1 y límite en $\delta_k = 1/k$ para la cota superior.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Usa $\P(X_n \ge x) = e^{-\lambda x}$ para $x \ge 0$. Con $x = \frac{\log n}{\lambda}$ obtienes $\frac{1}{n}$ (serie armónica divergente, aplica BC2 en (a)); con $x = \frac{(1+\delta)\log n}{\lambda}$ obtienes $\frac{1}{n^{1+\delta}}$ (serie convergente, aplica BC1 en (b)). En (c), toma la intersección sobre $\delta_k = 1/k$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <p class="sol-inciso">(a) Cota inferior $\P\big(\limsup_{n\to\infty} \frac{X_n}{\log n} \ge \frac{1}{\lambda}\big) = 1$</p>
+        <ol class="pasos">
+          <li><b>Evaluación de colas y aplicación de BC2.</b>
+            Para $X_n \sim \text{Exp}(\lambda)$ (parámetro de tasa $\lambda &gt; 0$), la función de supervivencia es $\P(X_n \ge x) = e^{-\lambda x}$ para $x \ge 0$. Definimos para $n \ge 2$ los eventos
+            $$A_n = \left\{\frac{X_n}{\log n} \ge \frac{1}{\lambda}\right\} = \left\{X_n \ge \frac{\log n}{\lambda}\right\}.$$
+            Sus probabilidades son $\P(A_n) = \exp\big(-\lambda\cdot\frac{\log n}{\lambda}\big) = e^{-\log n} = \frac{1}{n}$, cuya serie diverge:
+            $$\sum_{n=2}^\infty \P(A_n) = \sum_{n=2}^\infty \frac{1}{n} = \infty.$$
+            Como los eventos $(A_n)_{n\ge 2}$ son independientes (por independencia de $(X_n)_{n\ge 1}$), el Segundo Lema de Borel–Cantelli asegura que $\P(A_n \text{ i.v.}) = 1$.
+            Todo $\omega \in \{A_n \text{ i.v.}\}$ satisface $\frac{X_n(\omega)}{\log n} \ge \frac{1}{\lambda}$ para infinitos $n \ge 2$, lo cual implica $\limsup_{n\to\infty} \frac{X_n(\omega)}{\log n} \ge \frac{1}{\lambda}$. Luego:
+            $$\P\left(\limsup_{n\to\infty} \frac{X_n}{\log n} \ge \frac{1}{\lambda}\right) = 1.$$</li>
+        </ol>
+
+        <p class="sol-inciso">(b) Cota superior con margen $\delta &gt; 0$</p>
+        <ol class="pasos">
+          <li><b>Convergencia de la $p$-serie y aplicación de BC1.</b>
+            Fijado $\delta &gt; 0$, definimos para $n \ge 2$ los eventos
+            $$B_n = \left\{\frac{X_n}{\log n} &gt; \frac{1 + \delta}{\lambda}\right\} = \left\{X_n &gt; \frac{(1 + \delta)\log n}{\lambda}\right\}.$$
+            Calculamos su probabilidad de cola:
+            $$\P(B_n) = \exp\big(-(1+\delta)\log n\big) = \frac{1}{n^{1+\delta}} \implies \sum_{n=2}^\infty \P(B_n) = \sum_{n=2}^\infty \frac{1}{n^{1+\delta}} &lt; \infty,$$
+            pues $1 + \delta &gt; 1$. Por el Primer Lema de Borel–Cantelli, $\P(B_n \text{ i.v.}) = 0$.
+            Es decir, con probabilidad $1$ existe un índice $N(\omega)$ a partir del cual $\frac{X_n(\omega)}{\log n} \le \frac{1 + \delta}{\lambda}$ para todo $n \ge N(\omega)$, y tomando límite superior resulta:
+            $$\P\left(\limsup_{n\to\infty} \frac{X_n}{\log n} \le \frac{1 + \delta}{\lambda}\right) = 1.$$</li>
+        </ol>
+
+        <p class="sol-inciso">(c) Paso al límite $\delta_k = 1/k \to 0$ y conclusión</p>
+        <ol class="pasos">
+          <li><b>Intersección numerable de eventos de probabilidad $1$.</b>
+            Aplicando el apartado (b) a $\delta_k = \frac{1}{k}$ ($k \ge 1$), cada evento
+            $$E_k = \left\{\limsup_{n\to\infty} \frac{X_n}{\log n} \le \frac{1 + 1/k}{\lambda}\right\}$$
+            tiene probabilidad $\P(E_k) = 1$. Como $E_1 \supseteq E_2 \supseteq \dots$ y cuando $k \to \infty$ se tiene
+            $$\bigcap_{k=1}^\infty E_k = \left\{\limsup_{n\to\infty} \frac{X_n}{\log n} \le \frac{1}{\lambda}\right\},$$
+            por continuidad de la probabilidad desde arriba resulta $\P\left(\limsup_{n\to\infty} \frac{X_n}{\log n} \le \frac{1}{\lambda}\right) = \lim_{k\to\infty} \P(E_k) = 1$.
+            Combinando este resultado con el apartado (a), concluimos que con probabilidad $1$ se cumple la igualdad exacta:
+            <div class="resultado">$$\P\left(\limsup_{n\to\infty} \frac{X_n}{\log n} = \frac{1}{\lambda}\right) = 1.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.8* -->
+    <div class="box ejercicio" id="ej-5-8">
+      <span class="box-title">Ejercicio 5.8* (Clase 11) <span class="badge star">★ reto</span></span>
+      <p>Sean $X_1, X_2, \dots$ variables aleatorias i.i.d. con distribución $N(0, 1)$. Los apartados (a) y (c) demuestran que $\limsup_{n\to\infty} \frac{X_n}{\sqrt{2\log n}} = 1$ con probabilidad $1$. Prueba que:</p>
+      <ol type="a">
+        <li>$\P\left(\limsup_{n\to\infty} \dfrac{X_n}{\sqrt{2\log n}} \ge 1\right) = 1$.</li>
+        <li>Para cualquier $\delta &gt; 0$, $\P\left(\limsup_{n\to\infty} \dfrac{X_n}{\sqrt{2\log n}} \le 1 + \delta\right) = 1$.</li>
+        <li>A partir de (b), $\P\left(\limsup_{n\to\infty} \dfrac{X_n}{\sqrt{2\log n}} \le 1\right) = 1$.</li>
+      </ol>
+      <p><em>Sugerencia:</em> utiliza la <b>Razón de Mill</b> (Cap. 3, Ej. 42): $\big(\frac{1}{x} - \frac{1}{x^3}\big)\phi(x) \le 1 - \Phi(x) \le \frac{\phi(x)}{x}$ para todo $x &gt; 0$.</p>
+      <p class="tecnica">Técnica: demostración y aplicación de la Razón de Mill normal en $x_n = c\sqrt{2\log n}$ + BC2 en (a) + BC1 y límite en $\delta_k = 1/k$ en (b)–(c).</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Para demostrar la Razón de Mill con $\phi(t) = \frac{1}{\sqrt{2\pi}}e^{-t^2/2}$ y $\phi'(t) = -t\phi(t)$, acota $\int_x^\infty \phi(t)\,dt \le \int_x^\infty \frac{t}{x}\phi(t)\,dt$ y deriva $-\big(\frac{1}{t} - \frac{1}{t^3}\big)\phi(t)$ para la cota inferior. Luego evalúa en $x_n = \sqrt{2\log n}$ (observa que $\phi(x_n) = \frac{1}{\sqrt{2\pi}\,n}$) y en $y_n = (1+\delta)\sqrt{2\log n}$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <p class="sol-inciso">Lema auxiliar · Demostración de la Razón de Mill</p>
+        <ol class="pasos">
+          <li><b>Cotas superior e inferior de $1 - \Phi(x)$ para $x &gt; 0$.</b>
+            Sean $\phi(t) = \frac{1}{\sqrt{2\pi}}e^{-t^2/2}$ y $\Phi(x) = \int_{-\infty}^x \phi(t)\,dt$. Usando que $\phi'(t) = -t\phi(t)$:
+            <ul>
+              <li><em>Cota superior:</em> para $t \ge x &gt; 0$ se tiene $1 \le \frac{t}{x}$, luego
+                $$1 - \Phi(x) = \int_x^\infty \phi(t)\,dt \le \int_x^\infty \frac{t}{x}\phi(t)\,dt = \frac{1}{x}\int_x^\infty -\phi'(t)\,dt = \frac{\phi(x)}{x}.$$</li>
+              <li><em>Cota inferior:</em> derivando $\big(\frac{1}{t} - \frac{1}{t^3}\big)\phi(t)$ obtenemos
+                $$\frac{d}{dt}\left[\left(\frac{1}{t} - \frac{1}{t^3}\right)\phi(t)\right] = \left(-\frac{1}{t^2} + \frac{3}{t^4}\right)\phi(t) + \left(\frac{1}{t} - \frac{1}{t^3}\right)\big(-t\phi(t)\big) = -\left(1 - \frac{3}{t^4}\right)\phi(t).$$
+                Como $1 - \frac{3}{t^4} &lt; 1$ para todo $t &gt; 0$ y $\big(\frac{1}{t} - \frac{1}{t^3}\big)\phi(t) \to 0$ cuando $t \to \infty$, al integrar en $[x, \infty)$ resulta:
+                $$1 - \Phi(x) = \int_x^\infty \phi(t)\,dt \ge \int_x^\infty -\frac{d}{dt}\left[\left(\frac{1}{t} - \frac{1}{t^3}\right)\phi(t)\right]dt = \left(\frac{1}{x} - \frac{1}{x^3}\right)\phi(x).$$</li>
+            </ul>
+            En particular, $\lim_{x\to\infty}\frac{1 - \Phi(x)}{\phi(x)/x} = 1$.</li>
+        </ol>
+
+        <p class="sol-inciso">(a) Cota inferior $\P\big(\limsup_{n\to\infty} \frac{X_n}{\sqrt{2\log n}} \ge 1\big) = 1$</p>
+        <ol class="pasos">
+          <li><b>Cota inferior de la cola en $x_n = \sqrt{2\log n}$ y aplicación de BC2.</b>
+            Para $n \ge 2$, sea $x_n = \sqrt{2\log n} &gt; 0$ y definamos $A_n = \big\{\frac{X_n}{\sqrt{2\log n}} \ge 1\big\} = \{X_n \ge x_n\}$. Nótese que $\phi(x_n) = \frac{1}{\sqrt{2\pi}}e^{-\log n} = \frac{1}{\sqrt{2\pi}\,n}$.
+            Para todo $n \ge 3$, se cumple $x_n^2 = 2\log n &gt; 2$, luego $1 - \frac{1}{x_n^2} &gt; \frac{1}{2}$. Por la cota inferior de Mill:
+            $$\P(A_n) = 1 - \Phi(x_n) \ge \left(1 - \frac{1}{x_n^2}\right)\frac{\phi(x_n)}{x_n} \ge \frac{1}{2}\cdot\frac{1}{\sqrt{2\pi}\,n\sqrt{2\log n}} = \frac{1}{4\sqrt{\pi}\,n\sqrt{\log n}}, \qquad n \ge 3.$$
+            La función $t \mapsto \frac{1}{t\sqrt{\log t}}$ es positiva y decreciente en $[3, \infty)$, con integral impropia divergente:
+            $$\int_3^\infty \frac{dt}{t\sqrt{\log t}} = \Big[2\sqrt{\log t}\Big]_3^\infty = \infty \implies \sum_{n=2}^\infty \P(A_n) = \infty.$$
+            Como $(A_n)_{n\ge 2}$ son eventos independientes, el Segundo Lema de Borel–Cantelli implica $\P(A_n \text{ i.v.}) = 1$, de donde $\P\big(\limsup_{n\to\infty} \frac{X_n}{\sqrt{2\log n}} \ge 1\big) = 1$.</li>
+        </ol>
+
+        <p class="sol-inciso">(b) Cota superior con margen $\delta &gt; 0$</p>
+        <ol class="pasos">
+          <li><b>Cota superior de la cola en $y_n = (1+\delta)\sqrt{2\log n}$ y aplicación de BC1.</b>
+            Fijado $\delta &gt; 0$, para $n \ge 2$ sea $y_n = (1 + \delta)\sqrt{2\log n}$ y $B_n = \big\{\frac{X_n}{\sqrt{2\log n}} &gt; 1 + \delta\big\} = \{X_n &gt; y_n\}$.
+            Evaluando la densidad normal en $y_n$, tenemos $\phi(y_n) = \frac{1}{\sqrt{2\pi}} e^{-(1+\delta)^2 \log n} = \frac{1}{\sqrt{2\pi}\,n^{(1+\delta)^2}}$. Por la cota superior de Mill:
+            $$\P(B_n) = 1 - \Phi(y_n) \le \frac{\phi(y_n)}{y_n} = \frac{1}{(1+\delta)\sqrt{4\pi\log n}\; n^{(1+\delta)^2}} \le \frac{1}{(1+\delta)\sqrt{4\pi\log 2}}\cdot\frac{1}{n^{(1+\delta)^2}}.$$
+            Dado que $(1+\delta)^2 &gt; 1$, la $p$-serie $\sum_{n=2}^\infty n^{-(1+\delta)^2}$ converge, luego $\sum_{n=2}^\infty \P(B_n) &lt; \infty$.
+            Por el Primer Lema de Borel–Cantelli, $\P(B_n \text{ i.v.}) = 0$, lo que implica que $\P\big(\limsup_{n\to\infty} \frac{X_n}{\sqrt{2\log n}} \le 1 + \delta\big) = 1$.</li>
+        </ol>
+
+        <p class="sol-inciso">(c) Paso al límite $\delta_k = 1/k \to 0$ y conclusión</p>
+        <ol class="pasos">
+          <li><b>Intersección numerable.</b>
+            Evaluando (b) en $\delta_k = \frac{1}{k}$ ($k \ge 1$), los eventos $E_k = \big\{\limsup_{n\to\infty} \frac{X_n}{\sqrt{2\log n}} \le 1 + \frac{1}{k}\big\}$ forman una sucesión decreciente con $\P(E_k) = 1$ para todo $k \ge 1$. Su intersección es $\bigcap_{k=1}^\infty E_k = \big\{\limsup_{n\to\infty} \frac{X_n}{\sqrt{2\log n}} \le 1\big\}$, luego por continuidad de la probabilidad:
+            $$\P\left(\limsup_{n\to\infty} \frac{X_n}{\sqrt{2\log n}} \le 1\right) = \lim_{k\to\infty} \P(E_k) = 1.$$
+            En conjunto con (a), queda demostrado que:
+            <div class="resultado">$$\P\left(\limsup_{n\to\infty} \frac{X_n}{\sqrt{2\log n}} = 1\right) = 1.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.9* -->
+    <div class="box ejercicio" id="ej-5-9">
+      <span class="box-title">Ejercicio 5.9* (Clase 11) <span class="badge star">★ reto</span></span>
+      <p>Sean $X_1, X_2, \dots$ variables aleatorias i.i.d. con distribución $N(0, 1)$ y define $S_n = \sum_{i=1}^n X_i$. Demuestra que
+      $$\P\left(\limsup_{n\to\infty} \frac{S_n}{\sqrt{2n\log n}} \le 1\right) = 1.$$
+      <em>Sugerencia:</em> observa que la independencia de la sucesión estandarizada no se utiliza en la demostración de los apartados (b) y (c) del Ejercicio 5.8*.</p>
+      <p class="tecnica">Técnica: estandarización $Z_n = S_n/\sqrt{n} \sim N(0,1)$ + Primer Lema de Borel–Cantelli sin independencia + comentario sobre la Ley del Logaritmo Iterado.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Define $Z_n = S_n / \sqrt{n}$. Aunque $(Z_n)_{n\ge 1}$ no son independientes entre sí, cada una tiene distribución marginal $N(0,1)$, y la prueba de 5.8*(b)–(c) solo emplea la cota superior de Mill junto con el Primer Lema de Borel–Cantelli (que no exige independencia).</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Estandarización de las sumas parciales $S_n$.</b>
+            Como $X_1, \dots, X_n \iid N(0, 1)$, la suma parcial sigue una distribución normal $S_n \sim N(0, n)$. Definimos la sucesión estandarizada
+            $$Z_n = \frac{S_n}{\sqrt{n}}, \qquad n \ge 1.$$
+            Cada variable $Z_n$ tiene distribución marginal $N(0, 1)$, y para todo $n \ge 2$ se cumple la identidad
+            $$\frac{S_n}{\sqrt{2n\log n}} = \frac{Z_n}{\sqrt{2\log n}}.$$</li>
+          <li><b>Aplicación de 5.8*(b)–(c) sin hipótesis de independencia.</b>
+            A diferencia de la sucesión original $(X_n)$, las variables $(Z_n)_{n\ge 1}$ <b>no son independientes</b> (de hecho, $\Cov(Z_m, Z_n) = \sqrt{m/n} &gt; 0$ para $m \le n$). Sin embargo, en la demostración de los apartados (b) y (c) del Ejercicio 5.8* nunca se usó independencia:
+            <ul>
+              <li>Fijado $\delta &gt; 0$, usando únicamente la distribución marginal $Z_n \sim N(0, 1)$ y la cota superior de Mill:
+                $$\sum_{n=2}^\infty \P\left(\frac{Z_n}{\sqrt{2\log n}} &gt; 1 + \delta\right) = \sum_{n=2}^\infty \Big[1 - \Phi\big((1+\delta)\sqrt{2\log n}\big)\Big] &lt; \infty.$$</li>
+              <li>El <b>Primer Lema de Borel–Cantelli</b> es válido para cualquier sucesión de eventos (sin requerir independencia), por lo que $\P\big(\limsup_{n\to\infty} \frac{Z_n}{\sqrt{2\log n}} \le 1 + \delta\big) = 1$ para todo $\delta &gt; 0$.</li>
+              <li>Intersecando sobre la sucesión numerable $\delta_k = \frac{1}{k}$ ($k \ge 1$), como en 5.8*(c), se obtiene $\P\big(\limsup_{n\to\infty} \frac{Z_n}{\sqrt{2\log n}} \le 1\big) = 1$.</li>
+            </ul></li>
+          <li><b>Conclusión y contraste con la Ley del Logaritmo Iterado.</b>
+            Sustituyendo $Z_n = S_n / \sqrt{n}$, queda demostrado que
+            $$\P\left(\limsup_{n\to\infty} \frac{S_n}{\sqrt{2n\log n}} \le 1\right) = 1.$$
+            <em>Observación sobre la escala óptima:</em> al no aprovechar la dependencia entre $S_m$ y $S_n$, la cota obtenida es más gruesa que la real. Un resultado mucho más preciso es la <b>Ley del Logaritmo Iterado</b> (Khintchine–Kolmogorov), que establece que para $X_1, X_2, \dots \iid$ con $\E[X_i] = 0$ y $\Var(X_i) = 1$,
+            $$\P\left(\limsup_{n\to\infty} \frac{S_n}{\sqrt{2n\log\log n}} = 1\right) = 1.$$
+            Como $\log\log n$ crece muchísimo más despacio que $\log n$, la LIL implica en particular que $\limsup_{n\to\infty} \frac{S_n}{\sqrt{2n\log n}} = 0 \le 1$ casi seguramente.
+            <div class="resultado">$$\P\left(\limsup_{n\to\infty} \frac{S_n}{\sqrt{2n\log n}} \le 1\right) = 1 \qquad \left(\text{mejora exacta por LIL: } \limsup_{n\to\infty} \frac{S_n}{\sqrt{2n\log\log n}} = 1 \text{ c.s.}\right).$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.10* -->
+    <div class="box ejercicio" id="ej-5-10">
+      <span class="box-title">Ejercicio 5.10* (Clase 11) <span class="badge star">★ reto</span></span>
+      <p>Sean $X_1, X_2, \dots$ variables aleatorias positivas tales que $\E[X_n] \le C$ para todo $n \ge 1$, donde $C$ es una constante. Demuestra que, para cualquier $\delta &gt; 0$,
+      $$\P\left(\limsup_{n\to\infty} \frac{\log X_n}{n} \le \delta\right) = 1$$
+      y, por consiguiente,
+      $$\P\left(\limsup_{n\to\infty} \frac{\log X_n}{n} \le 0\right) = 1.$$ </p>
+      <p class="tecnica">Técnica: Desigualdad de Markov exponencial + Primer Lema de Borel–Cantelli + intersección numerable en $\delta_k = 1/k$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Observa que $\left\{\frac{\log X_n}{n} &gt; \delta\right\} = \{X_n &gt; e^{n\delta}\}$. Aplica la Desigualdad de Markov usando $\E[X_n] \le C$ para acotar $\P(X_n &gt; e^{n\delta}) \le C e^{-n\delta}$, suma la serie geométrica y aplica BC1 (no se asume independencia). Luego toma $\delta_k = 1/k$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Cota de cola vía Desigualdad de Markov.</b>
+            Al ser $X_n &gt; 0$, el logaritmo $\log X_n$ está bien definido en $\R$ para todo $n \ge 1$. Fijado un margen $\delta &gt; 0$, consideremos los eventos
+            $$A_n = \left\{\frac{\log X_n}{n} &gt; \delta\right\} = \left\{X_n &gt; e^{n\delta}\right\}, \qquad n \ge 1.$$
+            Aplicando la Desigualdad de Markov a la variable no negativa $X_n$ con umbral $e^{n\delta} &gt; 0$ y usando la cota uniforme $\E[X_n] \le C$:
+            $$\P(A_n) = \P\big(X_n &gt; e^{n\delta}\big) \le \P\big(X_n \ge e^{n\delta}\big) \le \frac{\E[X_n]}{e^{n\delta}} \le C e^{-n\delta}.$$</li>
+          <li><b>Convergencia de la serie y aplicación de BC1.</b>
+            Como $\delta &gt; 0$, se tiene $0 &lt; e^{-\delta} &lt; 1$, por lo cual la serie geométrica converge:
+            $$\sum_{n=1}^\infty \P(A_n) \le C \sum_{n=1}^\infty \big(e^{-\delta}\big)^n = \frac{C e^{-\delta}}{1 - e^{-\delta}} &lt; \infty.$$
+            Puesto que el Primer Lema de Borel–Cantelli no requiere independencia entre las variables $X_n$, concluimos que $\P(A_n \text{ i.v.}) = 0$.
+            En consecuencia, con probabilidad $1$ existe un índice $N(\omega)$ tal que $\frac{\log X_n(\omega)}{n} \le \delta$ para todo $n \ge N(\omega)$, de modo que
+            $$\P\left(\limsup_{n\to\infty} \frac{\log X_n}{n} \le \delta\right) = 1.$$</li>
+          <li><b>Paso al límite $\delta \downarrow 0$ mediante $\delta_k = 1/k$.</b>
+            Para cada entero $k \ge 1$, definimos el evento
+            $$E_k = \left\{\limsup_{n\to\infty} \frac{\log X_n}{n} \le \frac{1}{k}\right\}.$$
+            Por el paso anterior (con $\delta = 1/k &gt; 0$), $\P(E_k) = 1$ para todo $k \ge 1$. Además, la sucesión de eventos $(E_k)_{k\ge 1}$ es decreciente ($E_1 \supseteq E_2 \supseteq \dots$) y su intersección cumple
+            $$\bigcap_{k=1}^\infty E_k = \left\{\limsup_{n\to\infty} \frac{\log X_n}{n} \le 0\right\}.$$
+            Por continuidad de la probabilidad desde arriba (o intersección numerable de eventos de probabilidad $1$):
+            $$\P\left(\limsup_{n\to\infty} \frac{\log X_n}{n} \le 0\right) = \lim_{k\to\infty} \P(E_k) = 1.$$
+            <div class="resultado">$$\forall\,\delta &gt; 0,\ \P\left(\limsup_{n\to\infty} \frac{\log X_n}{n} \le \delta\right) = 1 \qquad \Longrightarrow \qquad \P\left(\limsup_{n\to\infty} \frac{\log X_n}{n} \le 0\right) = 1.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       SECCIÓN 3: BLOQUE I — MODOS DE CONVERGENCIA
+       ================================================================ -->
+  <section>
+    <h2 id="cap5-modos">Bloque I · Modos de Convergencia (Clase 11: Ej. 11 al 25*)</h2>
     <p>Este bloque trabaja directamente con las definiciones de convergencia en distribución ($X_n \dto X$), convergencia en probabilidad ($X_n \pto X$) y convergencia casi segura ($X_n \xrightarrow{\text{c.s.}} X$), el cálculo de funciones de distribución de máximos y mínimos, y las desigualdades clásicas (Chebyshev y Borel–Cantelli). Puedes repasar la jerarquía de modos de convergencia en la <a href="../temas/clase-10.html">Clase 10</a>.</p>
+
+    <!-- Ej. 5.11 -->
+    <div class="box ejercicio" id="ej-5-11">
+      <span class="box-title">Ejercicio 5.11 (Clase 11)</span>
+      <p>Sea $(X_n)_{n\ge 1}$ una sucesión de variables aleatorias tal que cada $X_n$ toma valores en $\{0, 1/n, \dots, (n-1)/n, 1\}$ con $\P(X_n = j/n) = 1/(n+1)$ para $j = 0, 1, \dots, n$. Demuestra que $X_n \dto U(0, 1)$.</p>
+      <p class="tecnica">Técnica: definición de convergencia en distribución (<a href="../temas/clase-10.html">Clase 10</a>) mediante la función de distribución acumulada $F_{X_n}(x)$ y encuadramiento por tramos.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Calcula explícitamente $F_{X_n}(x) = \P(X_n \le x)$ distinguiendo $x &lt; 0$, $\frac{k-1}{n} \le x &lt; \frac{k}{n}$ ($k = 1, \dots, n$) y $x \ge 1$. En el tramo $0 \le x &lt; 1$, usa que $F_{X_n}(x) = \frac{k}{n+1}$ para encuadrar $F_{X_n}(x) - x$ entre $-\frac{1}{n+1}$ y $\frac{1}{n+1}$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Función de distribución acumulada límite $U(0, 1)$.</b>
+            Sea $X \sim U(0, 1)$. Su función de distribución acumulada (continua en todo $\R$) es:
+            $$F_X(x) = \begin{cases}
+              0, &amp; \text{si } x &lt; 0, \\
+              x, &amp; \text{si } 0 \le x &lt; 1, \\
+              1, &amp; \text{si } x \ge 1.
+            \end{cases}$$</li>
+          <li><b>Función de distribución acumulada de $X_n$.</b>
+            Para cada $n \ge 1$, los $n + 1$ puntos del soporte $\left\{0, \frac{1}{n}, \dots, \frac{n-1}{n}, 1\right\}$ son equiprobables con masa $\frac{1}{n+1}$:
+            <ul>
+              <li>Si $x &lt; 0$: ningún valor del soporte es $\le x$, luego $F_{X_n}(x) = 0$.</li>
+              <li>Si $0 \le x &lt; 1$: existe un único entero $k \in \{1, \dots, n\}$ tal que $\frac{k-1}{n} \le x &lt; \frac{k}{n}$. Los puntos del soporte menores o iguales que $x$ son exactamente $\{0, 1/n, \dots, (k-1)/n\}$ ($k$ puntos en total), de modo que $F_{X_n}(x) = \frac{k}{n+1}$.</li>
+              <li>Si $x \ge 1$: todos los $n+1$ valores del soporte son $\le x$, luego $F_{X_n}(x) = 1$.</li>
+            </ul>
+            En resumen:
+            $$F_{X_n}(x) = \begin{cases}
+              0, &amp; \text{si } x &lt; 0, \\[4pt]
+              \dfrac{k}{n+1}, &amp; \text{si } \dfrac{k-1}{n} \le x &lt; \dfrac{k}{n},\quad k \in \{1, \dots, n\}, \\[8pt]
+              1, &amp; \text{si } x \ge 1.
+            \end{cases}$$</li>
+          <li><b>Paso al límite cuando $n \to \infty$.</b>
+            Para $x &lt; 0$ o $x \ge 1$, se cumple $F_{X_n}(x) = F_X(x)$ para todo $n \ge 1$, por lo que $\lim_{n\to\infty} F_{X_n}(x) = F_X(x)$.
+            Para $0 \le x &lt; 1$, sea $k \in \{1, \dots, n\}$ el índice que verifica $\frac{k-1}{n} \le x &lt; \frac{k}{n}$. Restando $F_X(x) = x$ y usando $1 \le k \le n$:
+            $$-\frac{1}{n+1} = -\frac{n}{n(n+1)} \le -\frac{k}{n(n+1)} = \frac{k}{n+1} - \frac{k}{n} &lt; F_{X_n}(x) - x \le \frac{k}{n+1} - \frac{k-1}{n} = \frac{n + 1 - k}{n(n+1)} \le \frac{n}{n(n+1)} = \frac{1}{n+1}.$$
+            Por tanto, $-\frac{1}{n+1} \le F_{X_n}(x) - x \le \frac{1}{n+1}$ para todo $x \in [0, 1)$, y por el teorema del emparedado $\lim_{n\to\infty} F_{X_n}(x) = x = F_X(x)$.</li>
+          <li><b>Conclusión.</b>
+            Como $\lim_{n\to\infty} F_{X_n}(x) = F_X(x)$ para todo $x \in \R$ (en particular en todos los puntos de continuidad de $F_X$):</li>
+        </ol>
+        <div class="resultado">$$F_{X_n}(x) \xrightarrow[n\to\infty]{} F_{U(0,1)}(x) \quad \forall x \in \R \implies X_n \dto U(0, 1).$$</div>
+      </div></details>
+    </div>
 
     <!-- Ej. 5.12 -->
     <div class="box ejercicio" id="ej-5-12">
@@ -189,6 +772,45 @@
             <div class="resultado">$$X_n \dto \theta \quad (\text{y como el límite es constante, también } X_n \pto \theta).$$</div>
           </li>
         </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.13 -->
+    <div class="box ejercicio" id="ej-5-13">
+      <span class="box-title">Ejercicio 5.13 (Clase 11)</span>
+      <p>Supón que $X_n \sim N(0, 1/n)$ para $n \ge 1$. Prueba que $X_n \dto X \equiv 0$.</p>
+      <p class="tecnica">Técnica: estandarización a $\Phi(\sqrt{n}\,x)$ en puntos de continuidad de $F_X$ (y verificación alternativa vía Desigualdad de Chebyshev).</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Estandariza $X_n$ como $\sqrt{n}\,X_n \sim N(0, 1)$ para expresar $F_{X_n}(x) = \Phi(\sqrt{n}\,x)$. Evalúa el límite cuando $n \to \infty$ por separado en $x &lt; 0$ y $x &gt; 0$, y observa por qué la discrepancia en $x = 0$ no afecta la convergencia en distribución.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Función de distribución acumulada del límite $X \equiv 0$.</b>
+            Para la variable degenerada en $0$ ($\P(X = 0) = 1$), la función de distribución acumulada es
+            $$F_X(x) = \P(0 \le x) = \begin{cases}
+              0, &amp; \text{si } x &lt; 0, \\
+              1, &amp; \text{si } x \ge 0.
+            \end{cases}$$
+            El único punto de discontinuidad de $F_X$ es $x = 0$, luego su conjunto de puntos de continuidad es $\R \setminus \{0\}$.</li>
+          <li><b>Cálculo de $F_{X_n}(x)$ mediante la normal estándar.</b>
+            Dado que $X_n \sim N(0, 1/n)$, su desviación estándar es $1/\sqrt{n}$ y $Z_n = \sqrt{n}\,X_n \sim N(0, 1)$. Por consiguiente, para todo $x \in \R$:
+            $$F_{X_n}(x) = \P(X_n \le x) = \P\big(\sqrt{n}\,X_n \le \sqrt{n}\,x\big) = \Phi(\sqrt{n}\,x).$$</li>
+          <li><b>Límite en los puntos de continuidad y análisis en $x = 0$.</b>
+            Evaluamos $\lim_{n\to\infty} \Phi(\sqrt{n}\,x)$ según el signo de $x$:
+            <ul>
+              <li>Si $x &lt; 0$: $\sqrt{n}\,x \to -\infty$, luego $\lim_{n\to\infty} F_{X_n}(x) = \lim_{z\to-\infty}\Phi(z) = 0 = F_X(x)$.</li>
+              <li>Si $x &gt; 0$: $\sqrt{n}\,x \to +\infty$, luego $\lim_{n\to\infty} F_{X_n}(x) = \lim_{z\to+\infty}\Phi(z) = 1 = F_X(x)$.</li>
+              <li><em>Punto de discontinuidad $x = 0$:</em> para todo $n \ge 1$ se tiene $F_{X_n}(0) = \Phi(0) = \frac{1}{2} \ne 1 = F_X(0)$. Sin embargo, la definición de convergencia en distribución solo exige convergencia de $F_{X_n}(x)$ hacia $F_X(x)$ en los puntos donde $F_X$ es continua ($\R \setminus \{0\}$).</li>
+            </ul>
+            En consecuencia, $X_n \dto X \equiv 0$.</li>
+          <li><b>Verificación alternativa mediante la Desigualdad de Chebyshev.</b>
+            Como $\E[X_n] = 0$ y $\Var(X_n) = 1/n$, para todo $\varepsilon &gt; 0$:
+            $$\P(|X_n - 0| \ge \varepsilon) \le \frac{\Var(X_n)}{\varepsilon^2} = \frac{1}{n\varepsilon^2} \xrightarrow[n\to\infty]{} 0.$$
+            Esto prueba que $X_n \pto 0$, lo que a su vez implica $X_n \dto 0$ (ambos modos coinciden cuando el límite es una constante).</li>
+        </ol>
+        <div class="resultado">$$F_{X_n}(x) = \Phi(\sqrt{n}\,x) \xrightarrow[n\to\infty]{} F_0(x) \quad \forall x \ne 0 \implies X_n \dto X \equiv 0 \quad (\text{y también } X_n \pto 0).$$</div>
       </div></details>
     </div>
 
@@ -266,6 +888,59 @@
             <div class="resultado">$$F_{W_n}(w) = \left(1 - \frac{1}{1+nw}\right)^n \1_{\{w &gt; 0\}} \xrightarrow[n\to\infty]{} F_W(w) = \begin{cases} e^{-1/w}, &amp; w &gt; 0, \\ 0, &amp; w \le 0. \end{cases}$$</div>
           </li>
         </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.16 -->
+    <div class="box ejercicio" id="ej-5-16">
+      <span class="box-title">Ejercicio 5.16 (Clase 11)</span>
+      <p>Sean $X_1, X_2, \dots$ variables aleatorias i.i.d. con distribución uniforme en $(0, 1)$, y sea $N_k \sim \text{Poisson}(k)$ independiente de $X_1, X_2, \dots$ Considera
+      $$Y_k = \begin{cases}
+        0, &amp; \text{si } N_k = 0, \\[4pt]
+        k\min\{X_1, \dots, X_{N_k}\}, &amp; \text{si } N_k \ge 1.
+      \end{cases}$$
+      Demuestra que $Y_k$ converge en distribución cuando $k \to \infty$ y obtén la distribución límite.</p>
+      <p class="tecnica">Técnica: Ley de la Probabilidad Total condicionando en $N_k = n$ + cola del mínimo de uniformes + serie exponencial.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Para $0 \le y &lt; k$, calcula $\P(Y_k &gt; y)$ condicionando sobre los valores de $N_k = n$. Observa que para $n = 0$ esa probabilidad condicional es $0$, mientras que para $n \ge 1$ resulta $\P(\min\{X_1, \dots, X_n\} &gt; y/k) = (1 - y/k)^n$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Tramos extremos $y &lt; 0$ y $y \ge k$.</b>
+            Como $X_i \in (0, 1)$ y $N_k \in \{0, 1, 2, \dots\}$, siempre se cumple $0 \le Y_k &lt; k$ (c.s.). Por tanto:
+            <ul>
+              <li>Si $y &lt; 0$: $F_{Y_k}(y) = \P(Y_k \le y) = 0$.</li>
+              <li>Si $y \ge k$: $Y_k &lt; k \le y$ c.s., luego $F_{Y_k}(y) = \P(Y_k \le y) = 1$.</li>
+            </ul></li>
+          <li><b>Probabilidad de supervivencia para $0 \le y &lt; k$ condicionando en $N_k$.</b>
+            Sea $0 \le y &lt; k$. Si $N_k = 0$, entonces $Y_k = 0 \le y$, así que $\P(Y_k &gt; y \mid N_k = 0) = 0$.
+            Para $N_k = n \ge 1$, usando que $N_k$ es independiente de $(X_i)_{i\ge 1}$ y que $X_1, \dots, X_n \iid U(0, 1)$:
+            $$\P(Y_k &gt; y \mid N_k = n) = \P\left(\min\{X_1, \dots, X_n\} &gt; \frac{y}{k}\right) = \prod_{i=1}^n \P\left(X_i &gt; \frac{y}{k}\right) = \left(1 - \frac{y}{k}\right)^n.$$
+            Aplicando la Ley de la Probabilidad Total con $\P(N_k = n) = e^{-k}\frac{k^n}{n!}$:
+            $$\P(Y_k &gt; y) = \sum_{n=1}^\infty \left(1 - \frac{y}{k}\right)^n e^{-k}\frac{k^n}{n!} = e^{-k}\sum_{n=1}^\infty \frac{\big[k(1 - y/k)\big]^n}{n!}.$$
+            Identificando la serie de $e^u = \sum_{n=0}^\infty \frac{u^n}{n!}$ (sin el término $n = 0$):
+            $$\P(Y_k &gt; y) = e^{-k}\Big(e^{k(1 - y/k)} - 1\Big) = e^{-k}\big(e^{k - y} - 1\big) = e^{-y} - e^{-k}.$$</li>
+          <li><b>Función de distribución acumulada $F_{Y_k}(y)$ y límite cuando $k \to \infty$.</b>
+            Como $F_{Y_k}(y) = 1 - \P(Y_k &gt; y)$ para $0 \le y &lt; k$ (nótese el átomo $\P(Y_k = 0) = \P(N_k = 0) = e^{-k}$ en $y = 0$):
+            $$F_{Y_k}(y) = \begin{cases}
+              0, &amp; \text{si } y &lt; 0, \\
+              1 + e^{-k} - e^{-y}, &amp; \text{si } 0 \le y &lt; k, \\
+              1, &amp; \text{si } y \ge k.
+            \end{cases}$$
+            Fijemos ahora cualquier $y \in \R$ y tomemos $k \to \infty$:
+            <ul>
+              <li>Si $y &lt; 0$: $F_{Y_k}(y) = 0 \to 0$.</li>
+              <li>Si $y \ge 0$: para todo $k &gt; y$ se tiene $0 \le y &lt; k$, luego $\lim_{k\to\infty} F_{Y_k}(y) = \lim_{k\to\infty}(1 + e^{-k} - e^{-y}) = 1 - e^{-y}$.</li>
+            </ul>
+            Así, $F_{Y_k}(y) \to (1 - e^{-y})\1_{\{y \ge 0\}}$ para todo $y \in \R$, que es la función de distribución acumulada de una variable exponencial de tasa $1$ (media $1$).</li>
+        </ol>
+        <div class="resultado">$$F_{Y_k}(y) = \begin{cases}
+          0, &amp; y &lt; 0, \\
+          1 + e^{-k} - e^{-y}, &amp; 0 \le y &lt; k, \\
+          1, &amp; y \ge k,
+        \end{cases} \qquad Y_k \dto Y \sim \text{Exp}(1) \quad (k \to \infty).$$</div>
       </div></details>
     </div>
 
@@ -371,13 +1046,216 @@
         </ol>
       </div></details>
     </div>
+
+    <!-- Ej. 5.20 -->
+    <div class="box ejercicio" id="ej-5-20">
+      <span class="box-title">Ejercicio 5.20 (Clase 11)</span>
+      <p>Sea $X$ una variable aleatoria que toma los valores $1$ y $-1$ con probabilidad $1/2$ cada uno, y supón que $(Y_n)_{n\ge 1}$ es una sucesión de variables aleatorias independientes de $X$ tales que
+      $$\P(Y_n = 1) = 1 - \P(Y_n = 0) = 1 - \frac{1}{n}.$$
+      Definimos la sucesión de variables aleatorias $(X_n)_{n\ge 1}$ por
+      $$X_n = \begin{cases}
+        X, &amp; \text{si } Y_n = 1, \\
+        e^n, &amp; \text{si } Y_n = 0.
+      \end{cases}$$
+      Responde si las siguientes afirmaciones son verdaderas o falsas, justificando tu respuesta:</p>
+      <ol type="a">
+        <li>$X_n \pto X$.</li>
+        <li>$\lim_{n\to\infty} \E[|X_n - X|] = 0$.</li>
+      </ol>
+      <p class="tecnica">Técnica: inclusión de eventos $\{|X_n - X| &gt; \varepsilon\} \subseteq \{Y_n = 0\}$ frente al cálculo directo de $\E[|X_n - X|]$ ($X_n \pto X$ no implica $L^1$).</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En (a), nota que si $Y_n = 1$ entonces $X_n - X = 0$, por lo que $\{|X_n - X| &gt; \varepsilon\} \subseteq \{Y_n = 0\}$. En (b), escribe $|X_n - X| = (e^n - X)\1_{\{Y_n = 0\}}$ (ya que $e^n &gt; 1 \ge X$) y aprovecha la independencia entre $X$ e $Y_n$ junto con $\E[X] = 0$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Apartado (a): $X_n \pto X$ — <em>Verdadera</em>.</b>
+            Sea $\varepsilon &gt; 0$ arbitrario. Por construcción, en el evento $\{Y_n = 1\}$ se cumple $X_n = X$, luego $|X_n - X| = 0 \le \varepsilon$. Por contraposición, si $|X_n - X| &gt; \varepsilon$, necesariamente debe ocurrir $Y_n = 0$:
+            $$\{|X_n - X| &gt; \varepsilon\} \subseteq \{Y_n = 0\}.$$
+            Tomando probabilidades resulta:
+            $$\P(|X_n - X| &gt; \varepsilon) \le \P(Y_n = 0) = \frac{1}{n} \xrightarrow[n\to\infty]{} 0.$$
+            Como esto se verifica para todo $\varepsilon &gt; 0$, concluimos que $X_n \pto X$.</li>
+          <li><b>Apartado (b): $\lim_{n\to\infty}\E[|X_n - X|] = 0$ — <em>Falsa</em>.</b>
+            Cuando $Y_n = 1$, $|X_n - X| = 0$. Cuando $Y_n = 0$, como $n \ge 1$ implica $e^n &gt; 1 \ge X$, tenemos $|X_n - X| = |e^n - X| = e^n - X$. Así:
+            $$|X_n - X| = (e^n - X)\1_{\{Y_n = 0\}}.$$
+            Usando que $X$ e $Y_n$ son independientes y que $\E[X] = 1\cdot\frac{1}{2} + (-1)\cdot\frac{1}{2} = 0$:
+            $$\E\big[|X_n - X|\big] = \E[e^n - X]\,\P(Y_n = 0) = (e^n - \E[X])\cdot\frac{1}{n} = \frac{e^n}{n}.$$
+            Dado que la función exponencial crece más rápido que cualquier potencia de $n$:
+            $$\lim_{n\to\infty}\E\big[|X_n - X|\big] = \lim_{n\to\infty}\frac{e^n}{n} = \infty \ne 0.$$
+            Por tanto, la afirmación (b) es falsa (la convergencia en probabilidad no implica convergencia en media $L^1$).</li>
+        </ol>
+        <div class="resultado">$$\text{(a) Verdadera: } X_n \pto X; \qquad \text{(b) Falsa: } \lim_{n\to\infty}\E[|X_n - X|] = \lim_{n\to\infty}\frac{e^n}{n} = \infty \ne 0.$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.21 -->
+    <div class="box ejercicio" id="ej-5-21">
+      <span class="box-title">Ejercicio 5.21 (Clase 11)</span>
+      <p>Sea $(X_n)_{n\ge 1}$ una sucesión de variables aleatorias con $\E[X_n^2] &lt; \infty$ para todo $n \ge 1$. Demuestra que si $\lim_{n\to\infty} \E[X_n] = \alpha$ y $\lim_{n\to\infty} \Var(X_n) = 0$, entonces $X_n \pto \alpha$.</p>
+      <p class="tecnica">Técnica: descomposición sesgo–varianza de $\E[(X_n - \alpha)^2]$ + Desigualdad de Markov / Chebyshev generalizada.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Suma y resta $\E[X_n]$ dentro de $\E[(X_n - \alpha)^2]$ para obtener $\Var(X_n) + (\E[X_n] - \alpha)^2$. Después acota $\P(|X_n - \alpha| &gt; \varepsilon) = \P((X_n - \alpha)^2 &gt; \varepsilon^2)$ usando la Desigualdad de Markov.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Descomposición del error cuadrático medio.</b>
+            Como $\E[X_n^2] &lt; \infty$, existen $\mu_n = \E[X_n]$ y $\Var(X_n)$, y $\E[(X_n - \alpha)^2] &lt; \infty$. Sumando y restando $\mu_n$:
+            $$\E\big[(X_n - \alpha)^2\big] = \E\big[\big((X_n - \mu_n) + (\mu_n - \alpha)\big)^2\big] = \E\big[(X_n - \mu_n)^2\big] + 2(\mu_n - \alpha)\E[X_n - \mu_n] + (\mu_n - \alpha)^2.$$
+            Como $\E[X_n - \mu_n] = 0$, el término cruzado desaparece y queda la identidad sesgo–varianza:
+            $$\E\big[(X_n - \alpha)^2\big] = \Var(X_n) + \big(\E[X_n] - \alpha\big)^2.$$</li>
+          <li><b>Límite del error cuadrático medio.</b>
+            Por las hipótesis $\lim_{n\to\infty}\Var(X_n) = 0$ y $\lim_{n\to\infty}\E[X_n] = \alpha$:
+            $$\lim_{n\to\infty}\E\big[(X_n - \alpha)^2\big] = 0 + (\alpha - \alpha)^2 = 0.$$</li>
+          <li><b>Aplicación de Markov / Chebyshev generalizada.</b>
+            Para cualquier $\varepsilon &gt; 0$, aplicando la Desigualdad de Markov a la variable no negativa $(X_n - \alpha)^2$:
+            $$\P(|X_n - \alpha| &gt; \varepsilon) = \P\big((X_n - \alpha)^2 &gt; \varepsilon^2\big) \le \frac{\E[(X_n - \alpha)^2]}{\varepsilon^2} = \frac{\Var(X_n) + (\E[X_n] - \alpha)^2}{\varepsilon^2} \xrightarrow[n\to\infty]{} 0.$$
+            Por definición, $X_n \pto \alpha$.</li>
+        </ol>
+        <div class="resultado">$$\P(|X_n - \alpha| &gt; \varepsilon) \le \frac{\Var(X_n) + (\E[X_n] - \alpha)^2}{\varepsilon^2} \xrightarrow[n\to\infty]{} 0 \implies X_n \pto \alpha.$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.22* -->
+    <div class="box ejercicio" id="ej-5-22">
+      <span class="box-title">Ejercicio 5.22 (Clase 11) <span class="badge star">★ reto</span></span>
+      <p>Sean $X_1, X_2, \dots$ variables aleatorias independientes con $\P(X_n = 1) = p_n$ y $\P(X_n = 0) = 1 - p_n$ (es decir, $X_n \sim \text{Ber}(p_n)$). Demuestra que:</p>
+      <ol type="a">
+        <li>$X_n \pto 0$ si y solo si $\lim_{n\to\infty} p_n = 0$.</li>
+        <li>$X_n \xrightarrow{\text{c.s.}} 0$ si y solo si $\sum_{n=1}^\infty p_n &lt; \infty$.</li>
+      </ol>
+      <p class="tecnica">Técnica: caracterización de convergencia en probabilidad y casi segura + Primer y Segundo Lema de Borel–Cantelli sobre $\{|X_n| &gt; 1/2\} = \{X_n = 1\}$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Observa que para $\varepsilon = 1/2$, el evento $\{|X_n| &gt; 1/2\}$ es exactamente $\{X_n = 1\}$, de probabilidad $p_n$. En (b), usa el Primer Lema de Borel–Cantelli cuando $\sum p_n &lt; \infty$ y el Segundo Lema de Borel–Cantelli (aprovechando la independencia de los $X_n$) cuando $\sum p_n = \infty$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Apartado (a): equivalencia $X_n \pto 0 \iff \lim_{n\to\infty} p_n = 0$.</b>
+            <ul>
+              <li><em>($\Leftarrow$)</em> Supongamos que $\lim_{n\to\infty} p_n = 0$. Como $X_n \in \{0, 1\}$, para cualquier $\varepsilon &gt; 0$ se tiene $\{|X_n| &gt; \varepsilon\} \subseteq \{X_n \ne 0\} = \{X_n = 1\}$, luego:
+                $$\P(|X_n - 0| &gt; \varepsilon) \le \P(X_n = 1) = p_n \xrightarrow[n\to\infty]{} 0 \implies X_n \pto 0.$$</li>
+              <li><em>($\Rightarrow$)</em> Recíprocamente, si $X_n \pto 0$, aplicando la definición con $\varepsilon = 1/2$ y notando que $\{|X_n| &gt; 1/2\} = \{X_n = 1\}$:
+                $$p_n = \P(X_n = 1) = \P(|X_n - 0| &gt; 1/2) \xrightarrow[n\to\infty]{} 0.$$</li>
+            </ul></li>
+          <li><b>Apartado (b), ida ($\Leftarrow$): si $\sum_{n=1}^\infty p_n &lt; \infty$, entonces $X_n \xrightarrow{\text{c.s.}} 0$.</b>
+            Recordamos el criterio de convergencia casi segura: $X_n \xrightarrow{\text{c.s.}} 0$ si y solo si $\P(|X_n| &gt; \varepsilon \text{ infinitas veces}) = 0$ para todo $\varepsilon &gt; 0$. Para cualquier $\varepsilon &gt; 0$:
+            $$\sum_{n=1}^\infty \P(|X_n| &gt; \varepsilon) \le \sum_{n=1}^\infty \P(X_n = 1) = \sum_{n=1}^\infty p_n &lt; \infty.$$
+            Por el Primer Lema de Borel–Cantelli (BC1), $\P(|X_n| &gt; \varepsilon \text{ i.v.}) = 0$ para todo $\varepsilon &gt; 0$, lo cual prueba que $X_n \xrightarrow{\text{c.s.}} 0$.</li>
+          <li><b>Apartado (b), vuelta ($\Rightarrow$): si $X_n \xrightarrow{\text{c.s.}} 0$, entonces $\sum_{n=1}^\infty p_n &lt; \infty$.</b>
+            Razonamos por contrarrecíproca: supongamos que $\sum_{n=1}^\infty p_n = \infty$. Consideremos los eventos $A_n = \{|X_n| &gt; 1/2\} = \{X_n = 1\}$ para $n \ge 1$.
+            Al ser $X_1, X_2, \dots$ independientes, los eventos $A_1, A_2, \dots$ son independientes y satisfacen:
+            $$\sum_{n=1}^\infty \P(A_n) = \sum_{n=1}^\infty p_n = \infty.$$
+            Por el Segundo Lema de Borel–Cantelli (BC2), $\P(|X_n| &gt; 1/2 \text{ i.v.}) = 1$. Luego, con probabilidad $1$, $X_n = 1$ ocurre infinitas veces, por lo que $X_n$ no converge casi seguramente a $0$.</li>
+        </ol>
+        <div class="resultado">$$X_n \pto 0 \iff \lim_{n\to\infty} p_n = 0, \qquad X_n \xrightarrow{\text{c.s.}} 0 \iff \sum_{n=1}^\infty p_n &lt; \infty.$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.23* -->
+    <div class="box ejercicio" id="ej-5-23">
+      <span class="box-title">Ejercicio 5.23 (Clase 11) <span class="badge star">★ reto</span></span>
+      <p>Sean $X_2, X_3, \dots$ variables aleatorias i.i.d. con distribución exponencial de parámetro (tasa) $1$. Para $n \ge 2$, considera
+      $$Y_n = \frac{X_n}{\log n}.$$</p>
+      <ol type="a">
+        <li>Muestra que $Y_n \pto 0$.</li>
+        <li>Prueba que $\P(|Y_n| &gt; 1/2 \text{ infinitas veces}) = 1$.</li>
+        <li>Concluye del inciso (b) que $Y_n$ no converge casi seguramente a $0$.</li>
+      </ol>
+      <p class="tecnica">Técnica: probabilidad de cola de $\text{Exp}(1)$ + Segundo Lema de Borel–Cantelli (BC2) con independencia.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Usa que $\P(X_n &gt; t) = e^{-t}$ para $t &gt; 0$. Evalúa $\P(|Y_n| &gt; \varepsilon) = \P(X_n &gt; \varepsilon\log n) = n^{-\varepsilon}$. En (b), pon $\varepsilon = 1/2$ y analiza la serie $\sum_{n=2}^\infty n^{-1/2}$ junto con la independencia.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Apartado (a): demostración de $Y_n \pto 0$.</b>
+            Como $X_n \sim \text{Exp}(1)$ (tasa $1$) es positiva c.s. y $\log n &gt; 0$ para todo $n \ge 2$, para cualquier $\varepsilon &gt; 0$:
+            $$\P(|Y_n - 0| &gt; \varepsilon) = \P\left(\frac{X_n}{\log n} &gt; \varepsilon\right) = \P\big(X_n &gt; \varepsilon\log n\big) = e^{-\varepsilon\log n} = n^{-\varepsilon}.$$
+            Puesto que $\varepsilon &gt; 0$, $\lim_{n\to\infty} n^{-\varepsilon} = 0$, lo que demuestra que $Y_n \pto 0$.</li>
+          <li><b>Apartado (b): $\P(|Y_n| &gt; 1/2 \text{ infinitas veces}) = 1$.</b>
+            Definimos los eventos $A_n = \{|Y_n| &gt; 1/2\} = \{Y_n &gt; 1/2\}$ para $n \ge 2$.
+            <ul>
+              <li>Por el cálculo anterior con $\varepsilon = 1/2$, $\P(A_n) = n^{-1/2} = \frac{1}{\sqrt{n}}$.</li>
+              <li>La serie $\sum_{n=2}^\infty \P(A_n) = \sum_{n=2}^\infty \frac{1}{\sqrt{n}} = \infty$ diverge ($p$-serie con $p = 1/2 \le 1$).</li>
+              <li>Dado que $X_2, X_3, \dots$ son independientes y $A_n$ depende únicamente de $X_n$, los eventos $A_2, A_3, \dots$ son independientes.</li>
+            </ul>
+            Por el Segundo Lema de Borel–Cantelli (BC2), concluimos que $\P(A_n \text{ i.v.}) = \P(|Y_n| &gt; 1/2 \text{ infinitas veces}) = 1$.</li>
+          <li><b>Apartado (c): $Y_n$ no converge casi seguramente a $0$.</b>
+            Para que $Y_n \xrightarrow{\text{c.s.}} 0$, es condición necesaria (y suficiente) que $\P(|Y_n| &gt; \varepsilon \text{ i.v.}) = 0$ para todo $\varepsilon &gt; 0$. En el inciso (b) probamos que para $\varepsilon = 1/2$ dicha probabilidad vale $1$: con probabilidad $1$ existen infinitos índices $n$ con $Y_n(\omega) &gt; 1/2$, por lo que $\lim_{n\to\infty} Y_n(\omega) = 0$ falla en casi todo $\Omega$. Luego $Y_n$ no converge casi seguramente a $0$ (ilustrando que $Y_n \pto 0 \not\Rightarrow Y_n \xrightarrow{\text{c.s.}} 0$).</li>
+        </ol>
+        <div class="resultado">$$Y_n \pto 0, \qquad \P(|Y_n| &gt; 1/2 \text{ i.v.}) = 1 \implies Y_n \text{ no converge c.s. a } 0.$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.24* -->
+    <div class="box ejercicio" id="ej-5-24">
+      <span class="box-title">Ejercicio 5.24 (Clase 11) <span class="badge star">★ reto</span></span>
+      <p>Sea $(X_n)_{n\ge 1}$ una sucesión de variables aleatorias tales que
+      $$\P(X_n = n^3) = \frac{1}{n^2}, \qquad \P(X_n = 0) = 1 - \frac{1}{n^2}.$$
+      Demuestra que $X_n \xrightarrow{\text{c.s.}} 0$, pero $\lim_{n\to\infty} \E[X_n] \ne 0$.</p>
+      <p class="tecnica">Técnica: Primer Lema de Borel–Cantelli (BC1, sin requerir independencia) + cálculo directo de $\E[X_n]$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Acota $\P(|X_n| &gt; \varepsilon) \le \P(X_n = n^3) = 1/n^2$ para aplicar el Primer Lema de Borel–Cantelli. Por separado, calcula $\E[X_n]$ directamente a partir de los dos valores del soporte.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Convergencia casi segura $X_n \xrightarrow{\text{c.s.}} 0$ mediante Borel–Cantelli.</b>
+            Sea $\varepsilon &gt; 0$ cualquiera. Como $X_n \in \{0, n^3\}$, el evento $\{|X_n - 0| &gt; \varepsilon\}$ implica $X_n = n^3$ (y de hecho coincide con $\{X_n = n^3\}$ en cuanto $n^3 &gt; \varepsilon$):
+            $$\P(|X_n| &gt; \varepsilon) \le \P(X_n = n^3) = \frac{1}{n^2}.$$
+            Sumando sobre $n \ge 1$:
+            $$\sum_{n=1}^\infty \P(|X_n| &gt; \varepsilon) \le \sum_{n=1}^\infty \frac{1}{n^2} = \frac{\pi^2}{6} &lt; \infty.$$
+            Por el Primer Lema de Borel–Cantelli (que no requiere independencia de las $X_n$), $\P(|X_n| &gt; \varepsilon \text{ i.v.}) = 0$ para todo $\varepsilon &gt; 0$. En consecuencia, $X_n \xrightarrow{\text{c.s.}} 0$.</li>
+          <li><b>Divergencia de las esperanzas $\E[X_n]$.</b>
+            Calculamos directamente la esperanza de $X_n$:
+            $$\E[X_n] = n^3 \cdot \frac{1}{n^2} + 0 \cdot \left(1 - \frac{1}{n^2}\right) = n.$$
+            Por lo tanto,
+            $$\lim_{n\to\infty} \E[X_n] = \lim_{n\to\infty} n = \infty \ne 0.$$
+            <em>(Incluso la convergencia casi segura hacia $0$ no garantiza que $\E[X_n] \to 0$ cuando los valores extremos crecen suficientemente rápido.)</em></li>
+        </ol>
+        <div class="resultado">$$X_n \xrightarrow{\text{c.s.}} 0, \qquad \text{pero} \qquad \lim_{n\to\infty} \E[X_n] = \lim_{n\to\infty} n = \infty \ne 0.$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.25* -->
+    <div class="box ejercicio" id="ej-5-25">
+      <span class="box-title">Ejercicio 5.25 (Clase 11) <span class="badge star">★ reto</span></span>
+      <p>Sean $X_1, X_2, \dots, X$ variables aleatorias en un mismo espacio de probabilidad. Demuestra que $X_n \xrightarrow{\text{c.s.}} X$ si
+      $$\sum_{n=1}^\infty \E\big[|X_n - X|^r\big] &lt; \infty \qquad \text{para algún } r &gt; 0.$$ </p>
+      <p class="tecnica">Técnica: Desigualdad de Markov con $t = r &gt; 0$ + Primer Lema de Borel–Cantelli (criterio suficiente de convergencia casi segura).</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Fija $\varepsilon &gt; 0$ y escribe $\{|X_n - X| &gt; \varepsilon\} = \{|X_n - X|^r &gt; \varepsilon^r\}$. Aplica la Desigualdad de Markov a $|X_n - X|^r$, suma en $n \ge 1$ y aplica el Primer Lema de Borel–Cantelli.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Acotación por Desigualdad de Markov con exponente $r &gt; 0$.</b>
+            Sea $\varepsilon &gt; 0$ arbitrario. Dado que la función $u \mapsto u^r$ es estrictamente creciente en $[0, \infty)$ para $r &gt; 0$, tenemos la igualdad de eventos $\{|X_n - X| &gt; \varepsilon\} = \{|X_n - X|^r &gt; \varepsilon^r\}$. Aplicando la Desigualdad de Markov a la variable aleatoria no negativa $|X_n - X|^r$:
+            $$\P\big(|X_n - X| &gt; \varepsilon\big) = \P\big(|X_n - X|^r &gt; \varepsilon^r\big) \le \frac{\E\big[|X_n - X|^r\big]}{\varepsilon^r}.$$</li>
+          <li><b>Convergencia de la serie de probabilidades y Borel–Cantelli.</b>
+            Sumando para todo $n \ge 1$ y utilizando la hipótesis:
+            $$\sum_{n=1}^\infty \P\big(|X_n - X| &gt; \varepsilon\big) \le \frac{1}{\varepsilon^r} \sum_{n=1}^\infty \E\big[|X_n - X|^r\big] &lt; \infty.$$
+            Por el Primer Lema de Borel–Cantelli, $\P(|X_n - X| &gt; \varepsilon \text{ i.v.}) = 0$.</li>
+          <li><b>Conclusión.</b>
+            Como la relación anterior es válida para todo $\varepsilon &gt; 0$, el criterio del tópico 2.4 garantiza que:</li>
+        </ol>
+        <div class="resultado">$$\sum_{n=1}^\infty \P(|X_n - X| &gt; \varepsilon) \le \varepsilon^{-r}\sum_{n=1}^\infty \E\big[|X_n - X|^r\big] &lt; \infty \quad \forall \varepsilon &gt; 0 \implies X_n \xrightarrow{\text{c.s.}} X.$$</div>
+      </div></details>
+    </div>
   </section>
 
   <!-- ================================================================
-       SECCIÓN 3: BLOQUE II — CONTINUIDAD, SLUTSKY Y MÉTODO DELTA
+       SECCIÓN 4: BLOQUE II — CONTINUIDAD, SLUTSKY Y MÉTODO DELTA
        ================================================================ -->
   <section>
-    <h2 id="cap5-delta">Bloque II · Teorema de la Continuidad, Slutsky y Método Delta (Clase 12: Ej. 26, 28, 29, 32 y 75)</h2>
+    <h2 id="cap5-delta">Bloque II · Teorema de la Continuidad, Slutsky y Método Delta (Clase 12: Ej. 26* al 32 y 75)</h2>
     <p>Este bloque reúne las tres herramientas centrales para deducir límites en distribución sin integrar densidades complicadas: el <b>Teorema de la Continuidad</b> para funciones generadoras de momentos (FGM), el <b>Teorema de Slutsky</b> al combinar convergencia en distribución con convergencia en probabilidad a constantes, y el <b>Método Delta</b> para transformaciones diferenciables de promedios asintóticamente normales.</p>
 
     <!-- Ej. 5.26 -->
@@ -403,6 +1281,54 @@
             <div class="resultado">$$X_n \dto N(\mu, \sigma^2).$$</div>
           </li>
         </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.27* -->
+    <div class="box ejercicio" id="ej-5-27">
+      <span class="box-title">Ejercicio 5.27 (Clase 12) <span class="badge star">★ reto</span></span>
+      <p>Sea $(X_n)_{n\ge 1}$ una sucesión de variables aleatorias i.i.d. con distribución $N(0, \sigma^2)$. Fijado un número real $\alpha$, definimos la sucesión $(Y_n)_{n\ge 1}$ mediante la fórmula
+      $$Y_1 = X_1, \qquad Y_n = \alpha Y_{n-1} + X_n, \quad n \ge 2.$$</p>
+      <ol type="a">
+        <li>Muestra que $Y_n = \sum_{i=0}^{n-1} \alpha^i X_{n-i}$ para todo $n \ge 1$.</li>
+        <li>Obtén la función generadora de momentos de $Y_n$ y su distribución.</li>
+        <li>Calcula $\Cov(Y_m, Y_n)$ para $1 \le m \le n$.</li>
+        <li>Prueba que si $|\alpha| &lt; 1$, entonces $Y_n \dto N\!\left(0, \dfrac{\sigma^2}{1 - \alpha^2}\right)$.</li>
+      </ol>
+      <p class="tecnica">Técnica: inducción matemática + FGM de suma de normales independientes + bilinealidad de la covarianza + Teorema de la Continuidad.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En (a), usa inducción sobre $n$ (con $\alpha^0 = 1$). En (b), aplica la independencia de $X_1, \dots, X_n$ y $M_{X_j}(s) = \exp(\frac{1}{2}\sigma^2 s^2)$. En (c), expresa $Y_n = \alpha^{n-m}Y_m + \sum_{k=m+1}^n \alpha^{n-k} X_k$ y usa que $Y_m$ es independiente de $X_{m+1}, \dots, X_n$. En (d), suma la serie geométrica $\sum_{i=0}^{n-1}\alpha^{2i}$ y aplica el Teorema de la Continuidad.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Apartado (a): representación explícita por inducción sobre $n \ge 1$.</b>
+            Adoptamos el convenio estándar $\alpha^0 = 1$ (incluso si $\alpha = 0$).
+            <ul>
+              <li><em>Caso base ($n = 1$):</em> $\sum_{i=0}^0 \alpha^i X_{1-i} = \alpha^0 X_1 = X_1 = Y_1$.</li>
+              <li><em>Paso inductivo:</em> supongamos válido $Y_n = \sum_{i=0}^{n-1} \alpha^i X_{n-i}$ para algún $n \ge 1$. Entonces:
+                $$Y_{n+1} = \alpha Y_n + X_{n+1} = \alpha\sum_{i=0}^{n-1}\alpha^i X_{n-i} + X_{n+1} = \sum_{i=0}^{n-1}\alpha^{i+1} X_{(n+1)-(i+1)} + \alpha^0 X_{n+1}.$$
+                Con el cambio de índice $k = i + 1$ (e incorporando el término $k = 0$), obtenemos $Y_{n+1} = \sum_{k=0}^n \alpha^k X_{n+1-k}$, completando la inducción.</li>
+            </ul></li>
+          <li><b>Apartado (b): FGM y distribución de $Y_n$.</b>
+            La FGM de cada $X_j \sim N(0, \sigma^2)$ es $M_{X_j}(s) = \exp\big(\frac{1}{2}\sigma^2 s^2\big)$ para todo $s \in \R$. Por independencia de $X_1, \dots, X_n$:
+            $$M_{Y_n}(t) = \E\left[\exp\left(t\sum_{i=0}^{n-1}\alpha^i X_{n-i}\right)\right] = \prod_{i=0}^{n-1} M_{X_{n-i}}(t\alpha^i) = \prod_{i=0}^{n-1} \exp\left(\frac{1}{2}\sigma^2 t^2 \alpha^{2i}\right) = \exp\left(\frac{1}{2}\sigma^2 t^2 \sum_{i=0}^{n-1}\alpha^{2i}\right), \quad t \in \R.$$
+            Comparando con la FGM de una distribución normal centrada $\exp(\frac{1}{2}v_n t^2)$, por unicidad de la FGM:
+            $$Y_n \sim N\!\left(0,\; \sigma^2 \sum_{i=0}^{n-1}\alpha^{2i}\right).$$</li>
+          <li><b>Apartado (c): cálculo de $\Cov(Y_m, Y_n)$ para $1 \le m \le n$.</b>
+            Reordenando $Y_n = \sum_{k=1}^n \alpha^{n-k} X_k$, podemos separar los términos hasta $m$ de los posteriores:
+            $$Y_n = \alpha^{n-m}\sum_{k=1}^{m}\alpha^{m-k}X_k + \sum_{k=m+1}^{n}\alpha^{n-k}X_k = \alpha^{n-m}Y_m + \sum_{k=m+1}^{n}\alpha^{n-k}X_k.$$
+            Como $Y_m$ es función únicamente de $(X_1, \dots, X_m)$ y las variables son independientes, $Y_m$ es independiente de $(X_{m+1}, \dots, X_n)$, por lo que $\Cov(Y_m, X_k) = 0$ para todo $k &gt; m$. Por bilinealidad de la covarianza:
+            $$\Cov(Y_m, Y_n) = \alpha^{n-m}\Cov(Y_m, Y_m) + \sum_{k=m+1}^{n}\alpha^{n-k}\Cov(Y_m, X_k) = \alpha^{n-m}\Var(Y_m) = \sigma^2 \alpha^{n-m}\sum_{i=0}^{m-1}\alpha^{2i}.$$</li>
+          <li><b>Apartado (d): convergencia en distribución cuando $|\alpha| &lt; 1$.</b>
+            Si $|\alpha| &lt; 1$, entonces $\alpha^2 \in [0, 1)$, y la suma geométrica converge:
+            $$\lim_{n\to\infty} \sum_{i=0}^{n-1}\alpha^{2i} = \lim_{n\to\infty} \frac{1 - \alpha^{2n}}{1 - \alpha^2} = \frac{1}{1 - \alpha^2}.$$
+            Por continuidad de la función exponencial, para todo $t \in \R$:
+            $$\lim_{n\to\infty} M_{Y_n}(t) = \exp\left(\frac{\sigma^2 t^2}{2(1 - \alpha^2)}\right),$$
+            que es la FGM de la distribución $N\!\left(0, \frac{\sigma^2}{1 - \alpha^2}\right)$. Aplicando el Teorema de la Continuidad para FGM, $Y_n \dto N\!\left(0, \frac{\sigma^2}{1 - \alpha^2}\right)$.</li>
+        </ol>
+        <div class="resultado">$$M_{Y_n}(t) = \exp\!\left(\frac{1}{2}\sigma^2 t^2 \sum_{i=0}^{n-1}\alpha^{2i}\right),\quad \Cov(Y_m, Y_n) = \sigma^2\alpha^{n-m}\sum_{i=0}^{m-1}\alpha^{2i},\quad Y_n \dto N\!\left(0, \frac{\sigma^2}{1 - \alpha^2}\right)\ (|\alpha| &lt; 1).$$</div>
       </div></details>
     </div>
 
@@ -468,6 +1394,90 @@
             <div class="resultado">$$\frac{S_n}{n} \dto \lambda \qquad (\text{y por ser límite constante, también } \frac{S_n}{n} \pto \lambda).$$</div>
           </li>
         </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.30 -->
+    <div class="box ejercicio" id="ej-5-30">
+      <span class="box-title">Ejercicio 5.30 (Clase 12)</span>
+      <p>Sea $(X_n)_{n\ge 1}$ una sucesión de variables aleatorias tal que $X_n$ tiene función de distribución
+      $$F_n(x) = x - \frac{\sin(2n\pi x)}{2n\pi}, \qquad 0 \le x \le 1$$
+      (con $F_n(x) = 0$ para $x &lt; 0$ y $F_n(x) = 1$ para $x &gt; 1$).</p>
+      <ol type="a">
+        <li>Muestra que $X_n$ tiene densidad y concluye que, en efecto, $F_n$ es una función de distribución.</li>
+        <li>Prueba que $X_n \dto X$ donde $X \sim U[0, 1]$, pero la densidad de $X_n$ no converge a la densidad de $X$ en el intervalo $(0, 1)$.</li>
+      </ol>
+      <p class="tecnica">Técnica: derivación de $F_n$ + convergencia puntual $F_n(x) \to x$ + contraejemplo al recíproco del Teorema de Scheffé.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En (a), deriva $F_n(x)$ en $(0, 1)$ para hallar $f_n(x) = 1 - \cos(2n\pi x)$, verifica que $f_n(x) \ge 0$ e $\int_0^1 f_n(x)\,dx = 1$, y comprueba continuidad y valores en los extremos $F_n(0)=0$ y $F_n(1)=1$. En (b), acota $\left|\frac{\sin(2n\pi x)}{2n\pi}\right| \le \frac{1}{2n\pi} \to 0$ y analiza la oscilación de $\cos(2n\pi x)$ para $x \in (0, 1)$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Apartado (a): existencia de densidad y validez de $F_n$.</b>
+            Derivando $F_n(x)$ en el interior $(0, 1)$:
+            $$f_n(x) = F_n'(x) = 1 - \frac{2n\pi \cos(2n\pi x)}{2n\pi} = 1 - \cos(2n\pi x), \qquad x \in (0, 1)$$
+            (y $f_n(x) = 0$ fuera de $(0, 1)$). Como $|\cos(2n\pi x)| \le 1$, se cumple $f_n(x) \ge 0$ para todo $x \in \R$, y su integral total vale:
+            $$\int_{-\infty}^\infty f_n(x)\,dx = \int_0^1 \big(1 - \cos(2n\pi x)\big)\,dx = \left[x - \frac{\sin(2n\pi x)}{2n\pi}\right]_0^1 = 1 - 0 = 1.$$
+            Además, $F_n(0) = 0 - \frac{\sin(0)}{2n\pi} = 0$ y $F_n(1) = 1 - \frac{\sin(2n\pi)}{2n\pi} = 1$, de modo que $F_n(x) = \int_{-\infty}^x f_n(t)\,dt$ en todo $\R$. Al ser la integral de una función no negativa de masa total $1$, $F_n$ es continua (luego continua por la derecha), no decreciente (pues $F_n'(x) = f_n(x) \ge 0$ en $(0, 1)$), con $\lim_{x\to-\infty} F_n(x) = 0$ y $\lim_{x\to+\infty} F_n(x) = 1$. Por tanto, $F_n$ es una función de distribución válida y $X_n$ tiene densidad $f_n$.</li>
+          <li><b>Apartado (b), parte 1: convergencia en distribución $X_n \dto X \sim U[0, 1]$.</b>
+            Para $x &lt; 0$, $F_n(x) = 0 = F_X(x)$; para $x \ge 1$, $F_n(x) = 1 = F_X(x)$. Para $0 \le x \le 1$, dado que $|\sin(2n\pi x)| \le 1$:
+            $$|F_n(x) - x| = \left|\frac{\sin(2n\pi x)}{2n\pi}\right| \le \frac{1}{2n\pi} \xrightarrow[n\to\infty]{} 0.$$
+            Por tanto, $\lim_{n\to\infty} F_n(x) = F_X(x)$ en todo $\R$, donde $F_X$ es la función de distribución acumulada de $X \sim U[0, 1]$. Esto demuestra que $X_n \dto X$.</li>
+          <li><b>Apartado (b), parte 2: no convergencia de las densidades en $(0, 1)$.</b>
+            La densidad de $X \sim U[0, 1]$ en $(0, 1)$ es $f_X(x) = 1$. Para que $f_n(x) = 1 - \cos(2n\pi x) \to 1$, sería necesario que $\lim_{n\to\infty}\cos(2n\pi x) = 0$.
+            Sin embargo, para ningún $x \in (0, 1)$ ocurre $\cos(2n\pi x) \to 0$: si así fuese, la subsucesión de índices pares $\cos(4n\pi x)$ también tendería a $0$, pero por la identidad del ángulo doble se tendría
+            $$\cos(4n\pi x) = 2\cos^2(2n\pi x) - 1 \xrightarrow[n\to\infty]{} 2\cdot 0^2 - 1 = -1 \ne 0,$$
+            una contradicción (por ejemplo, en $x = 1/2$ se obtiene $f_n(1/2) = 1 - (-1)^n \in \{0, 2\}$). En consecuencia, la densidad $f_n(x)$ no converge a $f_X(x) = 1$ en $(0, 1)$, mostrando que el recíproco del Teorema de Scheffé es falso.</li>
+        </ol>
+        <div class="resultado">$$f_n(x) = \big(1 - \cos(2n\pi x)\big)\1_{(0,1)}(x), \qquad X_n \dto U[0, 1], \qquad \text{pero } f_n(x) \text{ no converge a } 1 \text{ en } (0, 1).$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.31 -->
+    <div class="box ejercicio" id="ej-5-31">
+      <span class="box-title">Ejercicio 5.31 (Clase 12)</span>
+      <p>Considera variables aleatorias definidas en un mismo espacio de probabilidad $(\Omega, \mathcal{F}, \P)$.</p>
+      <ol type="a">
+        <li>Demuestra los ítems (i) y (ii) del tópico 2.8 (p. 141):
+          <br>(i) Si $X_n \xrightarrow{\text{c.s.}} X$ e $Y_n \xrightarrow{\text{c.s.}} Y$, entonces $X_n + Y_n \xrightarrow{\text{c.s.}} X + Y$.
+          <br>(ii) Si $X_n \pto X$ e $Y_n \pto Y$, entonces $X_n + Y_n \pto X + Y$.</li>
+        <li>Proporciona un ejemplo en el cual $X_n \dto X$ e $Y_n \dto Y$, pero la suma $X_n + Y_n$ no converge en distribución a $X + Y$.</li>
+      </ol>
+      <p class="tecnica">Técnica: intersección de eventos de probabilidad $1$ (c.s.) + desigualdad triangular y cota $\varepsilon/2$ (en probabilidad) + contraejemplo por dependencia en distribución.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En (a)(i), intersecta los dos eventos de probabilidad $1$ donde $X_n(\omega) \to X(\omega)$ e $Y_n(\omega) \to Y(\omega)$. En (a)(ii), usa $|(X_n + Y_n) - (X + Y)| \le |X_n - X| + |Y_n - Y|$ para incluir $\{|X_n + Y_n - (X + Y)| &gt; \varepsilon\}$ dentro de $\{|X_n - X| &gt; \varepsilon/2\} \cup \{|Y_n - Y| &gt; \varepsilon/2\}$. En (b), toma una variable simétrica no degenerada $Z$ (por ejemplo $Z \sim N(0,1)$ o $\P(Z = \pm 1) = 1/2$) y define $X_n = Z$, $Y_n = -Z$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Apartado (a)(i): suma de sucesiones convergentes casi seguramente.</b>
+            Definimos los eventos de convergencia puntual:
+            $$A = \big\{\omega \in \Omega : \lim_{n\to\infty} X_n(\omega) = X(\omega)\big\}, \qquad B = \big\{\omega \in \Omega : \lim_{n\to\infty} Y_n(\omega) = Y(\omega)\big\}.$$
+            Por hipótesis $\P(A) = \P(B) = 1$, de modo que $\P(A^c) = \P(B^c) = 0$. Para la intersección $A \cap B$:
+            $$\P\big((A \cap B)^c\big) = \P(A^c \cup B^c) \le \P(A^c) + \P(B^c) = 0 \implies \P(A \cap B) = 1.$$
+            Para todo $\omega \in A \cap B$, el álgebra elemental de límites de sucesiones reales asegura que
+            $$\lim_{n\to\infty}\big(X_n(\omega) + Y_n(\omega)\big) = \lim_{n\to\infty} X_n(\omega) + \lim_{n\to\infty} Y_n(\omega) = X(\omega) + Y(\omega).$$
+            Luego $\{\omega \in \Omega : X_n(\omega) + Y_n(\omega) \to X(\omega) + Y(\omega)\} \supseteq A \cap B$ tiene probabilidad $1$, es decir, $X_n + Y_n \xrightarrow{\text{c.s.}} X + Y$.</li>
+          <li><b>Apartado (a)(ii): suma de sucesiones convergentes en probabilidad.</b>
+            Sea $\varepsilon &gt; 0$ arbitrario. Por la desigualdad triangular:
+            $$\big|(X_n + Y_n) - (X + Y)\big| = \big|(X_n - X) + (Y_n - Y)\big| \le |X_n - X| + |Y_n - Y|.$$
+            Si se cumpliese $|X_n - X| \le \varepsilon/2$ y $|Y_n - Y| \le \varepsilon/2$, entonces $|(X_n + Y_n) - (X + Y)| \le \varepsilon$. Tomando contraposición obtenemos la inclusión:
+            $$\big\{|X_n + Y_n - (X + Y)| &gt; \varepsilon\big\} \subseteq \left\{|X_n - X| &gt; \frac{\varepsilon}{2}\right\} \cup \left\{|Y_n - Y| &gt; \frac{\varepsilon}{2}\right\}.$$
+            Por monotonía y subaditividad finita de $\P$:
+            $$\P\big(|X_n + Y_n - (X + Y)| &gt; \varepsilon\big) \le \P\left(|X_n - X| &gt; \frac{\varepsilon}{2}\right) + \P\left(|Y_n - Y| &gt; \frac{\varepsilon}{2}\right) \xrightarrow[n\to\infty]{} 0 + 0 = 0,$$
+            ya que $X_n \pto X$ e $Y_n \pto Y$ (aplicados con $\varepsilon/2 &gt; 0$). Por tanto, $X_n + Y_n \pto X + Y$.</li>
+          <li><b>Apartado (b): contraejemplo para convergencia en distribución y aclaración sobre dependencia.</b>
+            Sea $X \sim N(0, 1)$ (o bien $\P(X = 1) = \P(X = -1) = 1/2$) y definamos para todo $n \ge 1$:
+            $$X_n = X, \qquad Y_n = -X.$$
+            Como $X$ es simétrica respecto a $0$, tanto $X_n$ como $Y_n$ tienen distribución $N(0, 1)$ para todo $n \ge 1$. Si tomamos $Y$ como otra variable $N(0, 1)$ (ya sea $Y = X$, o bien una copia independiente $Y \sim N(0, 1)$ con $X \ind Y$, que es el marco del tópico 2.8(iii)), entonces:
+            $$X_n \dto X \qquad \text{y} \qquad Y_n \dto Y.$$
+            Sin embargo, $X_n + Y_n = X + (-X) = 0$ para todo $n \ge 1$, luego $X_n + Y_n \dto 0$ (masa degenerada en $0$). Por el contrario, si $X, Y$ son copias independientes $N(0, 1)$ entonces $X + Y \sim N(0, 2)$ (y si $X = Y$, entonces $X + Y = 2X \sim N(0, 4)$), ninguna de las cuales es degenerada en $0$. En consecuencia, $X_n + Y_n$ <b>no converge en distribución a $X + Y$</b>.
+            <br><em>Aclaración importante:</em> no hay contradicción porque la convergencia en distribución $X_n \dto X$ e $Y_n \dto Y$ solo fija las distribuciones marginales límite y no dice nada sobre la dependencia conjunta entre $X_n$ e $Y_n$ (que aquí tienen correlación $-1$) frente a la distribución conjunta de $(X, Y)$ en el límite (copias independientes $X \ind Y$, o $X = Y$; únicamente bajo el acoplamiento específico $Y = -X$ en el mismo espacio coincidirían). Por eso el tópico 2.8(iii) exige además que $X_n \ind Y_n$ para todo $n$ y $X \ind Y$.</li>
+        </ol>
+        <div class="resultado">$$\text{(i) } X_n + Y_n \xrightarrow{\text{c.s.}} X + Y, \qquad \text{(ii) } X_n + Y_n \pto X + Y; \qquad \text{en (b): } X_n = X \dto X,\ Y_n = -X \dto Y,\ X_n + Y_n \equiv 0.$$</div>
       </div></details>
     </div>
 
@@ -538,7 +1548,7 @@
   </section>
 
   <!-- ================================================================
-       SECCIÓN 4: BLOQUE III — LEYES DE LOS GRANDES NÚMEROS
+       SECCIÓN 5: BLOQUE III — LEYES DE LOS GRANDES NÚMEROS
        ================================================================ -->
   <section>
     <h2 id="cap5-lgn">Bloque III · Leyes de los Grandes Números (Clase 13: Ej. 37, 40, 42, 43 y 45)</h2>
@@ -722,11 +1732,288 @@
   </section>
 
   <!-- ================================================================
-       SECCIÓN 5: BLOQUE IV — APLICACIONES DEL TLC
+       SECCIÓN 6: BLOQUE IV — APLICACIONES DEL TLC
        ================================================================ -->
   <section>
-    <h2 id="cap5-tlc">Bloque IV · Aplicaciones del Teorema del Límite Central (Clase 5: Ej. 58, 60, 62 y 63)</h2>
-    <p>Este bloque recoge cuatro aplicaciones clásicas del Teorema del Límite Central vistas en la <a href="../temas/clase-05.html">Clase 5</a>: aproximación normal con y sin corrección por continuidad, probabilidades límite y transformación logarítmica de productos aleatorios. Puedes consultar valores normales en <a href="../herramientas/tablas.html">Tablas</a>.</p>
+    <h2 id="cap5-tlc">Bloque IV · Aplicaciones del Teorema del Límite Central (Clase 5: Ej. 50 al 66)</h2>
+    <p>Este bloque recoge diecisiete aplicaciones clásicas del Teorema del Límite Central vistas en la <a href="../temas/clase-05.html">Clase 5</a>: aproximación normal con y sin corrección por continuidad, probabilidades límite y transformación logarítmica de productos aleatorios. Puedes consultar valores normales en <a href="../herramientas/tablas.html">Tablas</a>.</p>
+
+    <!-- Ej. 5.50 -->
+    <div class="box ejercicio" id="ej-5-50">
+      <span class="box-title">Ejercicio 5.50 · Paquetes de chocolate premiados</span>
+      <p>Una marca de chocolate realiza una promoción: algunos de los paquetes incluyen vales que pueden canjearse por una camiseta. El número de paquetes premiados que se venden al día en una tienda es una variable aleatoria con distribución de Poisson de parámetro $0.3$. Estima la probabilidad de que en $120$ días se vendan en esa tienda más de $30$ paquetes con premio.</p>
+      <p class="tecnica">Técnica: suma de variables $\text{Poisson}(0.3)$ independientes + Teorema del Límite Central (ejemplo resuelto del libro).</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Modela las ventas diarias como $X_1, \dots, X_{120} \iid \text{Poisson}(0.3)$, donde $\mu = 0.3$ y $\sigma^2 = 0.3$. Calcula la media y desviación estándar de $S_{120} = \sum_{i=1}^{120} X_i$ y estandariza $S_{120} &gt; 30$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Modelo probabilístico y momentos.</b>
+            Para $1 \le i \le 120$, sea $X_i$ el número de paquetes premiados vendidos en la tienda durante el día $i$. Suponiendo independencia entre días, $X_1, \dots, X_{120} \iid \text{Poisson}(0.3)$, luego:
+            $$\mu = \E[X_1] = 0.3, \qquad \sigma^2 = \Var(X_1) = 0.3.$$
+            Sea $S_{120} = \sum_{i=1}^{120} X_i$ el total de paquetes premiados vendidos en los $120$ días. Entonces:
+            $$\E[S_{120}] = 120 \cdot 0.3 = 36, \qquad \Var(S_{120}) = 120 \cdot 0.3 = 36 \implies \sigma_{120} = \sqrt{36} = 6.$$</li>
+          <li><b>Aproximación mediante el TLC.</b>
+            Aplicando el Teorema del Límite Central con $Z \sim N(0, 1)$:
+            $$\P(S_{120} &gt; 30) = \P\left(\frac{S_{120} - 36}{6} &gt; \frac{30 - 36}{6}\right) \approx \P(Z &gt; -1) = \Phi(1) \approx 0.8413.$$
+            <em>(Nota: si se aplicara corrección por continuidad a la variable entera $S_{120} &gt; 30 \iff S_{120} \ge 31 \to 30.5$, se obtendría $z = -5.5/6 \approx -0.92$ y $\Phi(0.92) \approx 0.8212$, cercano a la probabilidad exacta de $S_{120} \sim \text{Poisson}(36)$ que es $\approx 0.8194$.)</em>
+            <div class="resultado">$$\P(S_{120} &gt; 30) \approx \Phi(1) \approx 0.8413.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.51 -->
+    <div class="box ejercicio" id="ej-5-51">
+      <span class="box-title">Ejercicio 5.51 · Ventas diarias de bolígrafos y cuadernos</span>
+      <p>El número promedio de bolígrafos que se venden diariamente en una papelería es $30$, con varianza $10$. Estos valores son $20$ y $12$ para el número de cuadernos vendidos. Se sabe además que la covarianza entre las ventas diarias de ambos productos es $9$. Estima la probabilidad de que el número total de ambos productos vendidos durante $90$ días esté comprendido entre $4400$ y $4600$.</p>
+      <p class="tecnica">Técnica: varianza de la suma con covarianza no nula + TLC sobre los totales diarios en $n = 90$ días.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Define el total diario $W_i = X_i + Y_i$ para el día $i$. No olvides el término $2\Cov(X_i, Y_i)$ al calcular $\Var(W_i) = 10 + 12 + 2(9) = 40$. Luego aplica el TLC a $S_{90} = \sum_{i=1}^{90} W_i$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Media y varianza de las ventas diarias conjuntas.</b>
+            Sean $X_i$ e $Y_i$ las cantidades de bolígrafos y cuadernos vendidas en el día $i$ ($1 \le i \le 90$), respectivamente, y sea $W_i = X_i + Y_i$ el total diario de ambos productos. Suponemos que los pares diarios $(X_i, Y_i)$ son independientes e idénticamente distribuidos a lo largo de los $90$ días, por lo que $W_1, \dots, W_{90}$ son i.i.d. con:
+            $$\mu_W = \E[X_i + Y_i] = \E[X_i] + \E[Y_i] = 30 + 20 = 50,$$
+            $$\sigma_W^2 = \Var(X_i + Y_i) = \Var(X_i) + \Var(Y_i) + 2\Cov(X_i, Y_i) = 10 + 12 + 2(9) = 40.$$</li>
+          <li><b>Momentos del total en $90$ días y estandarización.</b>
+            Para $S_{90} = \sum_{i=1}^{90} W_i$:
+            $$\E[S_{90}] = 90 \cdot 50 = 4500, \qquad \Var(S_{90}) = 90 \cdot 40 = 3600 \implies \sigma_{90} = \sqrt{3600} = 60.$$
+            Estandarizando los extremos $4400$ y $4600$:
+            $$z_1 = \frac{4400 - 4500}{60} = -\frac{5}{3} \approx -1.6667, \qquad z_2 = \frac{4600 - 4500}{60} = \frac{5}{3} \approx 1.6667.$$</li>
+          <li><b>Evaluación normal (valor exacto vs. tabla redondeada).</b>
+            Por el TLC:
+            $$\P(4400 \le S_{90} \le 4600) \approx \Phi\left(\frac{5}{3}\right) - \Phi\left(-\frac{5}{3}\right) = 2\Phi\left(\frac{5}{3}\right) - 1.$$
+            <ul>
+              <li>Con el valor continuo exacto $\Phi(5/3) \approx 0.95221$ (o interpolando linealmente en la tabla estándar entre $\Phi(1.66) = 0.9515$ y $\Phi(1.67) = 0.9525$, lo que da $\Phi(1.6667) \approx 0.95217$):
+                $$2\Phi\left(\frac{5}{3}\right) - 1 \approx 2(0.95221) - 1 \approx 0.9044 \approx 0.904.$$</li>
+              <li>Redondeando directamente $z = 5/3 \approx 1.67$ para leer en la tabla de dos decimales ($\Phi(1.67) = 0.9525$):
+                $$2\Phi(1.67) - 1 = 2(0.9525) - 1 = 0.9050.$$</li>
+            </ul>
+            <em>(La diferencia de alrededor de una milésima entre $0.904$ y $0.9050$ proviene únicamente de redondear $z = 5/3$ a $1.67$ antes de entrar en la tabla o conservar $1.667$; con corrección por continuidad $[4399.5, 4600.5]$ se obtiene $z = \pm 1.675 \implies 0.9061$.)</em>
+            <div class="resultado">$$\P(4400 \le S_{90} \le 4600) \approx 0.9044 \quad (0.904 \text{ con tabla interpolada; } 0.9050 \text{ redondeando } z \approx 1.67).$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.52 -->
+    <div class="box ejercicio" id="ej-5-52">
+      <span class="box-title">Ejercicio 5.52 · Tamaño de lote de tornillos</span>
+      <p>Una máquina empaca lotes de tornillos. El dueño de la máquina desea que al menos el $90\%$ de los lotes tengan más de $1000$ tornillos sin defecto. Sabiendo que la probabilidad de que un tornillo sea defectuoso es $0.02$, ¿cuál es el menor número de tornillos que debe colocar por lote?</p>
+      <p class="tecnica">Técnica: conteo binomial $\text{Bin}(n, 0.98)$ + aproximación normal por TLC + ecuación cuadrática en $\sqrt{n}$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Sea $n$ el tamaño del lote y $S_n \sim \text{Bin}(n, 0.98)$ el número de tornillos sin defecto ($\mu = 0.98n$, $\sigma = \sqrt{0.98 \cdot 0.02\,n} = 0.14\sqrt{n}$). Plantea $\frac{0.98n - 1000}{0.14\sqrt{n}} \ge z_{0.90} \approx 1.28$ y despeja $\sqrt{n}$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Planteamiento binomial y aproximación normal.</b>
+            Sea $n$ el número de tornillos por lote y $X_i \iid \text{Bernoulli}(0.98)$ la variable indicadora de que el $i$-ésimo tornillo no es defectuoso ($p = 1 - 0.02 = 0.98$). El número de tornillos sin defecto en el lote es $S_n = \sum_{i=1}^n X_i \sim \text{Bin}(n, 0.98)$, con:
+            $$\E[S_n] = 0.98n, \qquad \Var(S_n) = n(0.98)(0.02) = 0.0196n \implies \text{DE}(S_n) = 0.14\sqrt{n}.$$
+            Buscamos el menor entero $n$ tal que $\P(S_n &gt; 1000) \ge 0.90$. Por el TLC:
+            $$\P(S_n &gt; 1000) \approx \P\left(Z &gt; \frac{1000 - 0.98n}{0.14\sqrt{n}}\right) = \Phi\left(\frac{0.98n - 1000}{0.14\sqrt{n}}\right) \ge 0.90.$$</li>
+          <li><b>Desigualdad cuadrática en $u = \sqrt{n}$.</b>
+            En la tabla normal estándar, el valor más cercano a $0.90$ es $\Phi(1.28) = 0.8997$ (el cuantil exacto es $z_{0.90} = \Phi^{-1}(0.90) \approx 1.2816$). Requerimos:
+            $$\frac{0.98n - 1000}{0.14\sqrt{n}} \ge 1.28 \iff 0.98n - 0.1792\sqrt{n} - 1000 \ge 0.$$
+            Haciendo $u = \sqrt{n} &gt; 0$ y resolviendo $0.98u^2 - 0.1792u - 1000 \ge 0$:
+            $$u \ge \frac{0.1792 + \sqrt{0.1792^2 + 4(0.98)(1000)}}{2(0.98)} = \frac{0.1792 + \sqrt{3920.0321}}{1.96} \approx \frac{0.1792 + 62.61016}{1.96} \approx 32.0354.$$
+            Elevando al cuadrado:
+            $$n \ge (32.0354)^2 \approx 1026.27 \implies n_{\min} = 1027.$$
+            <em>(Nota: tanto si se usa el cuantil exacto $z_{0.90} \approx 1.2816$, que da $n \ge 1026.27$, como si se aplica corrección por continuidad $S_n \ge 1001 \to 1000.5$, que da $n \ge 1026.78$, el menor entero es igualmente $1027$. De hecho, la probabilidad binomial exacta vale $0.8654 &lt; 0.90$ para $n = 1026$ y $0.9043 \ge 0.90$ para $n = 1027$.)</em>
+            <div class="resultado">$$n_{\min} = 1027 \text{ tornillos por lote.}$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.53 -->
+    <div class="box ejercicio" id="ej-5-53">
+      <span class="box-title">Ejercicio 5.53 · Premios millonarios en tres emisoras</span>
+      <p>Tres emisoras de televisión mantienen una ardua competencia para obtener altos niveles de audiencia. El número promedio diario de premios millonarios distribuidos por cada una de esas emisoras es de $5$, $3$ y $4$, siendo $0.5$, $0.4$ y $0.3$ las desviaciones estándar, respectivamente. Estima la probabilidad de que el número total de premios millonarios distribuidos en dos meses sea superior a $730$.</p>
+      <p class="tecnica">Técnica: suma de variables diarias independientes de tres emisoras durante $60$ días + TLC.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Toma dos meses como $60$ días. Suma primero las medias diarias ($5 + 3 + 4 = 12$) y las varianzas diarias ($0.5^2 + 0.4^2 + 0.3^2 = 0.50$), y multiplica ambas por $60$ para obtener $\E[T] = 720$ y $\Var(T) = 30$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Momentos diarios y total en dos meses ($60$ días).</b>
+            Suponiendo independencia entre emisoras y entre días (con un período de $2$ meses $= 60$ días), sea $W_i = A_i + B_i + C_i$ el número total de premios repartidos en el día $i$ ($1 \le i \le 60$). Sus momentos son:
+            $$\mu_W = \E[W_i] = 5 + 3 + 4 = 12,$$
+            $$\sigma_W^2 = \Var(W_i) = 0.5^2 + 0.4^2 + 0.3^2 = 0.25 + 0.16 + 0.09 = 0.50.$$
+            Para el total acumulado $T = \sum_{i=1}^{60} W_i$:
+            $$\E[T] = 60 \cdot 12 = 720, \qquad \Var(T) = 60 \cdot 0.50 = 30 \implies \sigma_T = \sqrt{30} \approx 5.4772.$$</li>
+          <li><b>Estandarización y cálculo de la probabilidad.</b>
+            Estandarizando por el TLC:
+            $$z = \frac{730 - 720}{\sqrt{30}} = \frac{10}{\sqrt{30}} = \sqrt{\frac{10}{3}} \approx 1.8257.$$
+            Evaluando en la normal estándar:
+            <ul>
+              <li>Con el valor continuo exacto $\Phi(1.8257) \approx 0.96606$ (o interpolando linealmente en la tabla entre $\Phi(1.82) = 0.9656$ y $\Phi(1.83) = 0.9664$):
+                $$\P(T &gt; 730) \approx 1 - \Phi(1.8257) \approx 0.0339.$$</li>
+              <li>Si se redondea $z \approx 1.83$ para consultar directamente la tabla de dos decimales ($\Phi(1.83) = 0.9664$): $1 - 0.9664 = 0.0336$.</li>
+            </ul>
+            <div class="resultado">$$\P(T &gt; 730) \approx 0.0339 \quad (0.0336 \text{ redondeando } z \approx 1.83).$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.54 -->
+    <div class="box ejercicio" id="ej-5-54">
+      <span class="box-title">Ejercicio 5.54 · Salario promedio bajo distribución de Pareto</span>
+      <p>El salario (en reales) de los empleados de una empresa tiene distribución de Pareto, con densidad
+      $$f(x) = \frac{5\cdot 700^{5/2}}{2\,x^{7/2}}\1_{\{x \ge 700\}}.$$
+      ¿Cuál es la probabilidad de que el salario promedio de un grupo de $1000$ empleados sea mayor que $1200$ reales?</p>
+      <p class="tecnica">Técnica: cálculo explícito de momentos de la Pareto mediante integrales impropias + TLC para la media muestral $\bar X_{1000}$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Integra $x f(x)$ y $x^2 f(x)$ en $[700, \infty)$ para obtener $\E[X] = \frac{3500}{3}$ y $\E[X^2] = 5(700)^2$, de donde $\Var(X) = \frac{20}{9}(700)^2$. Luego aplica el TLC a $\bar X_{1000}$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Cálculo explícito de $\E[X]$, $\E[X^2]$ y $\Var(X)$.</b>
+            Para $X$ con densidad $f(x) = \frac{5\cdot 700^{5/2}}{2\,x^{7/2}}\1_{\{x \ge 700\}}$, calculamos los dos primeros momentos:
+            $$\E[X] = \int_{700}^\infty x\,\frac{5\cdot 700^{5/2}}{2\,x^{7/2}}\,dx = \frac{5\cdot 700^{5/2}}{2}\int_{700}^\infty x^{-5/2}\,dx = \frac{5\cdot 700^{5/2}}{2}\left[-\frac{2}{3}x^{-3/2}\right]_{700}^\infty = \frac{5}{3}\cdot 700 = \frac{3500}{3},$$
+            $$\E[X^2] = \int_{700}^\infty x^2\,\frac{5\cdot 700^{5/2}}{2\,x^{7/2}}\,dx = \frac{5\cdot 700^{5/2}}{2}\int_{700}^\infty x^{-3/2}\,dx = \frac{5\cdot 700^{5/2}}{2}\left[-2x^{-1/2}\right]_{700}^\infty = 5(700)^2.$$
+            Por consiguiente, la varianza poblacional es:
+            $$\Var(X) = \E[X^2] - \big(\E[X]\big)^2 = 5(700)^2 - \left(\frac{5}{3}\cdot 700\right)^2 = \left(5 - \frac{25}{9}\right)(700)^2 = \frac{20}{9}(700)^2.$$</li>
+          <li><b>Distribución aproximada de $\bar X_{1000}$ por el TLC.</b>
+            Suponiendo que los salarios $X_1, \dots, X_{1000}$ son i.i.d., la media muestral $\bar X_{1000} = \frac{1}{1000}\sum_{i=1}^{1000} X_i$ tiene:
+            $$\E[\bar X_{1000}] = \frac{3500}{3} \approx 1166.67, \qquad \text{DE}(\bar X_{1000}) = \sqrt{\frac{\Var(X)}{1000}} = \sqrt{\frac{20(700)^2}{9\cdot 1000}} = \frac{700}{3\sqrt{50}} = \frac{700}{15\sqrt{2}} \approx 32.9983.$$
+            Estandarizando el umbral $1200$:
+            $$z = \frac{1200 - \frac{3500}{3}}{\frac{700}{15\sqrt{2}}} = \frac{100/3}{700 / (15\sqrt{2})} = \frac{5\sqrt{2}}{7} \approx 1.0102 \approx 1.01.$$
+            Por el TLC:
+            $$\P(\bar X_{1000} &gt; 1200) \approx 1 - \Phi(1.01) = 1 - 0.8438 = 0.1562$$
+            (el valor continuo exacto $1 - \Phi(5\sqrt{2}/7) \approx 0.15621$ coincide a cuatro decimales).
+            <div class="resultado">$$\P(\bar X_{1000} &gt; 1200) \approx 0.1562.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.55 -->
+    <div class="box ejercicio" id="ej-5-55">
+      <span class="box-title">Ejercicio 5.55 · Suma de errores de redondeo</span>
+      <p>Cada uno de $108$ números se redondea al entero más cercano, y se suman los valores redondeados. Supón que los errores de redondeo son variables aleatorias independientes, uniformemente distribuidas en $[-1/2, 1/2]$. Obtén una aproximación para la probabilidad de que la suma obtenida diste de la suma de los números originales:</p>
+      <ol type="a">
+        <li>en más de $3$.</li>
+        <li>en más de $6$.</li>
+      </ol>
+      <p class="tecnica">Técnica: suma de $108$ uniformes $U[-1/2, 1/2]$ + probabilidad bilateral por TLC.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Para $E_i \sim U[-1/2, 1/2]$, $\E[E_i] = 0$ y $\Var(E_i) = 1/12$. Así, la desviación estándar de $S_{108} = \sum_{i=1}^{108} E_i$ es exactamente $\sqrt{108/12} = 3$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Media y varianza del error total $S_{108}$.</b>
+            Sean $E_1, \dots, E_{108} \iid U[-1/2, 1/2]$ los errores individuales de redondeo. Cada término cumple:
+            $$\mu = \E[E_i] = 0, \qquad \sigma^2 = \Var(E_i) = \frac{\big(1/2 - (-1/2)\big)^2}{12} = \frac{1}{12}.$$
+            El error acumulado en la suma es $S_{108} = \sum_{i=1}^{108} E_i$, con:
+            $$\E[S_{108}] = 0, \qquad \Var(S_{108}) = 108 \cdot \frac{1}{12} = 9 \implies \sigma_{108} = \sqrt{9} = 3.$$
+            Por el TLC, $S_{108}/3 \approx Z \sim N(0, 1)$.</li>
+          <li><b>Apartado (a): $\P(|S_{108}| &gt; 3)$.</b>
+            $$\P(|S_{108}| &gt; 3) = \P\left(\left|\frac{S_{108}}{3}\right| &gt; 1\right) \approx \P(|Z| &gt; 1) = 2\big(1 - \Phi(1)\big) = 2(1 - 0.8413) = 0.3174$$
+            (con el valor continuo exacto $2(1 - 0.84134) \approx 0.3173$).</li>
+          <li><b>Apartado (b): $\P(|S_{108}| &gt; 6)$.</b>
+            $$\P(|S_{108}| &gt; 6) = \P\left(\left|\frac{S_{108}}{3}\right| &gt; 2\right) \approx \P(|Z| &gt; 2) = 2\big(1 - \Phi(2)\big) = 2(1 - 0.9772) = 0.0456$$
+            (con el valor continuo exacto $2(1 - 0.97725) \approx 0.0455$).
+            <div class="resultado">$$\text{(a) } \P(|S_{108}| &gt; 3) \approx 0.3174; \qquad \text{(b) } \P(|S_{108}| &gt; 6) \approx 0.0456.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.56 -->
+    <div class="box ejercicio" id="ej-5-56">
+      <span class="box-title">Ejercicio 5.56 · Tiempo total para resolver un examen</span>
+      <p>Un estudiante tiene como máximo una hora para hacer una prueba con $116$ preguntas. Decide no gastar más de un minuto por pregunta. Supón que los tiempos invertidos en distintas preguntas son variables aleatorias independientes, con densidad
+      $$f(x) = 6x(1 - x), \qquad 0 \le x \le 1$$
+      (en minutos). ¿Cuál es la probabilidad de que el estudiante logre hacer la prueba completa?</p>
+      <p class="tecnica">Técnica: momentos de $f(x) = 6x(1-x)$ ($\text{Beta}(2,2)$) + TLC para la suma de $116$ tiempos.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Calcula $\E[X_1] = \int_0^1 6x^2(1-x)\,dx = 1/2$ y $\Var(X_1) = 1/20$. Luego aproxima $\P(S_{116} \le 60)$ mediante el TLC.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Momentos del tiempo por pregunta.</b>
+            Sea $X_i$ el tiempo (en minutos) empleado en la pregunta $i$ ($1 \le i \le 116$). Su densidad corresponde a $\text{Beta}(2, 2)$:
+            $$\mu = \E[X_1] = \int_0^1 x\cdot 6x(1-x)\,dx = 6\left(\frac{1}{3} - \frac{1}{4}\right) = \frac{1}{2},$$
+            $$\E[X_1^2] = \int_0^1 x^2\cdot 6x(1-x)\,dx = 6\left(\frac{1}{4} - \frac{1}{5}\right) = \frac{3}{10},$$
+            $$\sigma^2 = \Var(X_1) = \frac{3}{10} - \left(\frac{1}{2}\right)^2 = \frac{1}{20} = 0.05.$$</li>
+          <li><b>Tiempo total y aplicación del TLC.</b>
+            Dado que cada $X_i \le 1$ minuto casi seguramente, el estudiante completa la prueba en el plazo de una hora ($60$ minutos) si $S_{116} = \sum_{i=1}^{116} X_i \le 60$. Sus momentos son:
+            $$\E[S_{116}] = 116 \cdot \frac{1}{2} = 58, \qquad \Var(S_{116}) = 116 \cdot \frac{1}{20} = 5.8 \implies \sigma_{116} = \sqrt{5.8} \approx 2.4083.$$
+            Estandarizando:
+            $$z = \frac{60 - 58}{\sqrt{5.8}} \approx 0.8305 \approx 0.83.$$
+            Por el TLC y leyendo en la tabla normal estándar ($\Phi(0.83) = 0.7967$):
+            $$\P(S_{116} \le 60) \approx \Phi(0.83) = 0.7967$$
+            (el valor continuo exacto $\Phi(2/\sqrt{5.8})$ es $\approx 0.7969$).
+            <div class="resultado">$$\P(S_{116} \le 60) \approx 0.7967.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.57 -->
+    <div class="box ejercicio" id="ej-5-57">
+      <span class="box-title">Ejercicio 5.57 · Impurezas en muestras de agua</span>
+      <p>La proporción de impurezas en muestras de agua recolectadas en un tramo de un río tiene distribución $\text{Beta}(3, 2)$. Se recolectan $36$ muestras de forma independiente. Encuentra una aproximación para las siguientes probabilidades:</p>
+      <ol type="a">
+        <li>de que la proporción promedio de impurezas de las muestras sea mayor que $0.58$;</li>
+        <li>de que el número de muestras en que la proporción de impurezas excede $0.58$ sea como máximo $24$.</li>
+      </ol>
+      <p class="tecnica">Técnica: momentos de $\text{Beta}(3, 2)$ + TLC para $\bar X_{36}$ en (a) y para el conteo binomial $\text{Bin}(36, p)$ en (b).</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Para $\text{Beta}(3, 2)$, la densidad es $f(x) = 12x^2(1-x)$ en $(0,1)$, con $\mu = 0.6$ y $\sigma^2 = 0.04$. En (b), calcula primero $p = \P(X_1 &gt; 0.58) = \int_{0.58}^1 12x^2(1-x)\,dx$ y aplica el TLC a $K \sim \text{Bin}(36, p)$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Densidad y momentos de $\text{Beta}(3, 2)$.</b>
+            Para $X_i \iid \text{Beta}(\alpha = 3, \beta = 2)$, la densidad es $f(x) = \frac{\Gamma(5)}{\Gamma(3)\Gamma(2)}x^{3-1}(1-x)^{2-1} = 12x^2(1-x)$ para $0 &lt; x &lt; 1$. Su media y varianza valen:
+            $$\mu = \frac{\alpha}{\alpha + \beta} = \frac{3}{5} = 0.6, \qquad \sigma^2 = \frac{\alpha\beta}{(\alpha + \beta)^2(\alpha + \beta + 1)} = \frac{3\cdot 2}{25\cdot 6} = \frac{1}{25} = 0.04 \implies \sigma = 0.2.$$</li>
+        </ol>
+
+        <p class="sol-inciso">(a) Probabilidad de que la media muestral supere $0.58$</p>
+        <ol class="pasos">
+          <li><b>Estandarización de $\bar X_{36}$.</b>
+            Para $n = 36$, $\E[\bar X_{36}] = 0.6$ y $\text{DE}(\bar X_{36}) = \frac{0.2}{\sqrt{36}} = \frac{1}{30}$. Por el TLC:
+            $$z = \frac{0.58 - 0.60}{1/30} = -0.60 \implies \P(\bar X_{36} &gt; 0.58) \approx 1 - \Phi(-0.60) = \Phi(0.60) = 0.7257.$$</li>
+        </ol>
+
+        <p class="sol-inciso">(b) Conteo de muestras que exceden $0.58$</p>
+        <ol class="pasos">
+          <li><b>Probabilidad de éxito individual $p$.</b>
+            Sea $K = \sum_{i=1}^{36} \1_{\{X_i &gt; 0.58\}} \sim \text{Bin}(36, p)$, donde:
+            $$p = \P(X_1 &gt; 0.58) = \int_{0.58}^1 12x^2(1-x)\,dx = \big[4x^3 - 3x^4\big]_{0.58}^1 = 1 - \big(4(0.58)^3 - 3(0.58)^4\big) = 1 - 0.440953 = 0.559047 \approx 0.5590$$
+            <em>(redondeando cada término a cuatro decimales, $1 - (0.7804 - 0.3395) = 0.5591$).</em></li>
+          <li><b>Aproximación normal para $K \le 24$.</b>
+            <ul>
+              <li>Con el valor preciso $p \approx 0.55905$ (o $0.5591$): $\E[K] = 36p \approx 20.1257$ y $\sigma_K = \sqrt{36p(1-p)} \approx 2.9790$, luego:
+                $$z = \frac{24 - 20.1257}{2.9790} \approx 1.3005 \approx 1.30 \implies \P(K \le 24) \approx \Phi(1.30) = 0.9032 \quad (\approx 0.903).$$</li>
+              <li>Redondeando $p \approx 0.56$ a dos decimales (criterio usado en la respuesta del libro): $\E[K] = 36(0.56) = 20.16$ y $\sigma_K = \sqrt{36(0.56)(0.44)} \approx 2.9783$, de donde:
+                $$z = \frac{24 - 20.16}{2.9783} \approx 1.2893 \approx 1.29 \implies \P(K \le 24) \approx \Phi(1.29) = 0.9015.$$</li>
+            </ul>
+            <em>(Nota: aplicando corrección por continuidad $K \le 24.5$ con $p = 0.55905$, se obtiene $z \approx 1.468 \implies \Phi(1.47) \approx 0.9292$, muy próximo a la probabilidad binomial exacta $0.9306$.)</em>
+            <div class="resultado">$$\text{(a) } \P(\bar X_{36} &gt; 0.58) \approx 0.7257; \qquad \text{(b) } \P(K \le 24) \approx 0.9032 \quad (0.9015 \text{ con } p \approx 0.56).$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
 
     <!-- Ej. 5.58 -->
     <div class="box ejercicio" id="ej-5-58">
@@ -777,6 +2064,32 @@
       </div></details>
     </div>
 
+    <!-- Ej. 5.59 -->
+    <div class="box ejercicio" id="ej-5-59">
+      <span class="box-title">Ejercicio 5.59 · Tamaño muestral para la media uniforme</span>
+      <p>Considera la media $\bar X_n = n^{-1}\sum_{i=1}^n X_i$ de $n$ variables aleatorias i.i.d. con distribución uniforme en $[0, 1]$. Encuentra $n$ tal que $\P(\bar X_n &lt; 0.51)$ sea aproximadamente $90\%$.</p>
+      <p class="tecnica">Técnica: TLC para $\bar X_n$ de variables $U[0, 1]$ + inversión de la tabla normal estándar en $0.90$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Usa $\mu = 0.5$ y $\sigma^2 = 1/12$. Estandariza $\P(\bar X_n &lt; 0.51) \approx \Phi(0.01\sqrt{12n})$ e iguala el argumento al cuantil $z_{0.90} = 1.28$ de la tabla estándar.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Estandarización mediante el TLC.</b>
+            Para $X_i \iid U[0, 1]$, tenemos $\mu = \frac{1}{2} = 0.5$ y $\sigma^2 = \frac{1}{12}$, por lo que $\text{DE}(\bar X_n) = \frac{1}{\sqrt{12n}}$. Aplicando el TLC:
+            $$\P(\bar X_n &lt; 0.51) = \P\left(\frac{\bar X_n - 0.5}{1/\sqrt{12n}} &lt; \frac{0.51 - 0.5}{1/\sqrt{12n}}\right) \approx \Phi\big(0.01\sqrt{12n}\big).$$</li>
+          <li><b>Determinación de $n$.</b>
+            En la tabla normal estándar, el valor tabulado más próximo a $0.90$ es $\Phi(1.28) = 0.8997$ (frente a $\Phi(1.29) = 0.9015$). Igualando:
+            $$0.01\sqrt{12n} = 1.28 \implies \sqrt{12n} = 128 \implies n = \frac{128^2}{12} = \frac{16384}{12} = 1365.33\ldots$$
+            Tomando el menor entero que alcanza el umbral resulta $n = 1366$.
+            <em>(Nota: con el cuantil continuo exacto $\Phi^{-1}(0.90) \approx 1.28155$ se obtiene $n \approx 1368.65 \implies 1369$; en $n = 1366$, el TLC da $\Phi(1.2803) \approx 0.8998 \approx 90\%$.)</em>
+            <div class="resultado">$$n = 1366.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
     <!-- Ej. 5.60 -->
     <div class="box ejercicio" id="ej-5-60">
       <span class="box-title">Ejercicio 5.60 · Dado honesto (Clase 5)</span>
@@ -813,6 +2126,48 @@
             $$z = \frac{320 - 350}{17.0783} \approx -1.7566 \approx -1.76 \implies \P(S_{100} &gt; 320) \approx 1 - \Phi(-1.76) = \Phi(1.76) \approx 0.9608.$$
             <em>(Nota: aplicando corrección por continuidad a la suma entera $S_{100} &gt; 320 \iff S_{100} \ge 321 \to S_{100} \ge 320.5$, se obtiene $z = -29.5/17.0783 \approx -1.7273$, que da $0.9580$.)</em>
             <div class="resultado">$$\text{(a) } 1, \qquad \text{(b) } \frac{1}{2}, \qquad \text{(c) } \P(S_{100} &gt; 320) \approx 0.9608 \quad (\text{con c.c.: } 0.9580).$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.61 -->
+    <div class="box ejercicio" id="ej-5-61">
+      <span class="box-title">Ejercicio 5.61 · Lanzamientos hasta obtener 450 caras</span>
+      <p>Una moneda honesta se lanza independientemente hasta obtener $450$ caras. Estima la probabilidad de que se realicen como máximo $960$ lanzamientos.</p>
+      <p><em>Sugerencia del libro:</em> Sea $N$ el número de lanzamientos necesarios para obtener $450$ caras. Hay dos enfoques: (i) escribir $N$ como la suma de $450$ variables aleatorias independientes con distribución geométrica de parámetro $1/2$; (ii) suponer que la secuencia de lanzamientos de la moneda es infinita y usar que $\{N \le 960\} = \left\{\sum_{i=1}^{960} X_i \ge 450\right\}$, donde $X_i$ es la función indicadora de que ocurre cara en el $i$-ésimo lanzamiento.</p>
+      <p class="tecnica">Técnica: doble formulación equivalente — suma de $450$ geométricas ($\text{Binomial Negativa}$) frente a conteo binomial en $960$ ensayos.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En (i), $T_k \sim \text{Geom}(1/2)$ en $\{1,2,\dots\}$ tiene $\mu = 2$ y $\sigma^2 = 2$, lo que da $\E[N] = 900$ y $\sigma_N = 30$. En (ii), $B = \sum_{i=1}^{960} X_i \sim \text{Bin}(960, 1/2)$ tiene $\E[B] = 480$ y $\sigma_B = \sqrt{240}$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <p class="sol-inciso">(i) Enfoque mediante suma de variables geométricas</p>
+        <ol class="pasos">
+          <li><b>Momentos de $N = \sum_{k=1}^{450} T_k$.</b>
+            Cada nueva cara requiere un número de lanzamientos $T_k \iid \text{Geom}(1/2)$ (sobre $\{1, 2, \dots\}$), con:
+            $$\E[T_k] = \frac{1}{1/2} = 2, \qquad \Var(T_k) = \frac{1 - 1/2}{(1/2)^2} = 2.$$
+            Por tanto, para $N = \sum_{k=1}^{450} T_k$:
+            $$\E[N] = 450 \cdot 2 = 900, \qquad \Var(N) = 450 \cdot 2 = 900 \implies \sigma_N = \sqrt{900} = 30.$$
+            Aplicando el TLC directamente:
+            $$z = \frac{960 - 900}{30} = 2.00 \implies \P(N \le 960) \approx \Phi(2) = 0.9772$$
+            <em>(con corrección por continuidad $N \le 960.5$: $z = 60.5/30 \approx 2.02 \implies \Phi(2.02) \approx 0.9783$).</em></li>
+        </ol>
+
+        <p class="sol-inciso">(ii) Enfoque mediante conteo binomial en $960$ lanzamientos</p>
+        <ol class="pasos">
+          <li><b>Equivalencia de eventos y aplicación del TLC.</b>
+            Si $X_i \iid \text{Bernoulli}(1/2)$ indica si sale cara en el $i$-ésimo lanzamiento, completar $450$ caras en a lo sumo $960$ lanzamientos equivale a obtener al menos $450$ caras entre los primeros $960$ ensayos:
+            $$\{N \le 960\} = \left\{B = \sum_{i=1}^{960} X_i \ge 450\right\}, \qquad B \sim \text{Bin}\left(960, \frac{1}{2}\right).$$
+            Aquí $\E[B] = 960 \cdot \frac{1}{2} = 480$ y $\Var(B) = 960 \cdot \frac{1}{4} = 240 \implies \sigma_B = \sqrt{240} = 4\sqrt{15} \approx 15.4919$.
+            <ul>
+              <li>Aplicando el TLC directamente:
+                $$z = \frac{450 - 480}{\sqrt{240}} = -\frac{\sqrt{15}}{2} \approx -1.9365 \approx -1.94 \implies \P(B \ge 450) \approx 1 - \Phi(-1.94) = \Phi(1.94) = 0.9738 \approx 0.97$$
+                (valor continuo exacto $\Phi(\sqrt{15}/2) \approx 0.9736$; ambos redondean a $0.97$, coincidiendo con la respuesta del libro).</li>
+              <li>Con corrección por continuidad ($B \ge 449.5$): $z = -30.5/\sqrt{240} \approx -1.9688 \approx -1.97 \implies \Phi(1.97) = 0.9756$, muy cercano a la probabilidad binomial exacta $0.9755$.</li>
+            </ul>
+            <div class="resultado">$$\text{Enfoque (i): } \Phi(2) \approx 0.9772; \qquad \text{Enfoque (ii): } \Phi(1.94) \approx 0.9738 \approx 0.97 \quad (\text{con c.c.: } 0.9756).$$</div>
           </li>
         </ol>
       </div></details>
@@ -883,13 +2238,101 @@
         </ol>
       </div></details>
     </div>
+
+    <!-- Ej. 5.64 -->
+    <div class="box ejercicio" id="ej-5-64">
+      <span class="box-title">Ejercicio 5.64 · Duración de pilas en un reproductor</span>
+      <p>La duración en meses de una pila usada por Juan en su reproductor de MP3 tiene distribución uniforme en $(1, 2)$. Supón que Juan cambia la pila por una nueva inmediatamente después de que se agota. Estima la probabilidad de que use más de $27$ pilas en un período de $42$ meses.</p>
+      <p class="tecnica">Técnica: proceso de renovación $\{N(42) &gt; 27\} \iff \{S_{27} &lt; 42\}$ + TLC para $U(1, 2)$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Si la duración combinada de las primeras $27$ pilas es menor que $42$ meses ($S_{27} &lt; 42$), entonces necesitará al menos una pila adicional ($28$ o más). Calcula $\E[S_{27}] = 40.5$ y $\sigma_{27} = 1.5$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Equivalencia de eventos y momentos de $S_{27}$.</b>
+            Sean $X_1, X_2, \dots \iid U(1, 2)$ las duraciones (en meses) de las pilas sucesivas, con:
+            $$\mu = \E[X_1] = \frac{1 + 2}{2} = 1.5, \qquad \sigma^2 = \Var(X_1) = \frac{(2 - 1)^2}{12} = \frac{1}{12}.$$
+            Que Juan utilice más de $27$ pilas durante los $42$ meses significa que la duración acumulada $S_{27} = \sum_{i=1}^{27} X_i$ de las primeras $27$ pilas es estrictamente menor que $42$ meses:
+            $$\{N &gt; 27\} \iff \{S_{27} &lt; 42\}.$$
+            Los momentos de $S_{27}$ son:
+            $$\E[S_{27}] = 27 \cdot 1.5 = 40.5, \qquad \Var(S_{27}) = 27 \cdot \frac{1}{12} = \frac{9}{4} = 2.25 \implies \sigma_{27} = \sqrt{2.25} = 1.5.$$</li>
+          <li><b>Aproximación mediante el TLC.</b>
+            Estandarizando:
+            $$\P(S_{27} &lt; 42) = \P\left(\frac{S_{27} - 40.5}{1.5} &lt; \frac{42 - 40.5}{1.5}\right) \approx \P(Z &lt; 1) = \Phi(1) \approx 0.8413.$$
+            <div class="resultado">$$\P(\text{más de } 27 \text{ pilas}) \approx \Phi(1) \approx 0.8413.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.65 -->
+    <div class="box ejercicio" id="ej-5-65">
+      <span class="box-title">Ejercicio 5.65 · Límite de cola de Poisson mediante el TLC</span>
+      <p>Usando el Teorema del Límite Central para variables aleatorias con distribución de Poisson, demuestra que
+      $$\lim_{n\to\infty} e^{-n}\left(1 + \frac{n}{1!} + \frac{n^2}{2!} + \cdots + \frac{n^n}{n!}\right) = \frac{1}{2}.$$ </p>
+      <p class="tecnica">Técnica: interpretación probabilística como $\P(S_n \le n)$ con $S_n = \sum_{i=1}^n X_i \sim \text{Poisson}(n)$ + TLC en $z = 0$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Considera $X_1, X_2, \dots \iid \text{Poisson}(1)$ y observa que $S_n = \sum_{i=1}^n X_i \sim \text{Poisson}(n)$, de modo que la expresión del límite es exactamente $\P(S_n \le n)$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Representación probabilística de la suma finita.</b>
+            Sean $X_1, X_2, \dots$ variables aleatorias i.i.d. con distribución $\text{Poisson}(1)$, para las cuales $\mu = \E[X_1] = 1$ y $\sigma^2 = \Var(X_1) = 1$. Por la propiedad aditiva de la distribución de Poisson, la suma $S_n = \sum_{i=1}^n X_i$ sigue distribución $\text{Poisson}(n)$, y por tanto:
+            $$\P(S_n \le n) = \sum_{k=0}^n e^{-n}\frac{n^k}{k!} = e^{-n}\left(1 + \frac{n}{1!} + \frac{n^2}{2!} + \cdots + \frac{n^n}{n!}\right).$$</li>
+          <li><b>Paso al límite mediante el TLC.</b>
+            Estandarizando $S_n$, el Teorema del Límite Central garantiza que:
+            $$Z_n = \frac{S_n - n}{\sqrt{n}} \dto Z \sim N(0, 1).$$
+            Como $\{S_n \le n\} = \{Z_n \le 0\}$ y la función de distribución acumulada $\Phi$ de $Z \sim N(0, 1)$ es continua en todo $\R$ (en particular en $0$):
+            $$\lim_{n\to\infty} e^{-n}\left(1 + \frac{n}{1!} + \frac{n^2}{2!} + \cdots + \frac{n^n}{n!}\right) = \lim_{n\to\infty} \P(Z_n \le 0) = \Phi(0) = \frac{1}{2}.$$
+            <div class="resultado">$$\lim_{n\to\infty} e^{-n}\left(1 + \frac{n}{1!} + \frac{n^2}{2!} + \cdots + \frac{n^n}{n!}\right) = \frac{1}{2}.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.66 -->
+    <div class="box ejercicio" id="ej-5-66">
+      <span class="box-title">Ejercicio 5.66 · Varianza muestral en ensayos Bernoulli</span>
+      <p>Sean $X_1, X_2, \dots$ variables aleatorias i.i.d. con distribución $\text{Bernoulli}(p)$, $p \in (0, 1)$, y consideremos $\bar X_n = S_n / n = \sum_{i=1}^n X_i / n$. Prueba que
+      $$\sqrt{n}\,\big[\bar X_n(1 - \bar X_n) - p(1 - p)\big] \dto N\big(0, p(1 - p)(1 - 2p)^2\big).$$ </p>
+      <p class="tecnica">Técnica: TLC de De Moivre–Laplace para $\bar X_n$ + Método Delta unidimensional con $g(x) = x(1 - x)$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Separa claramente el TLC $\sqrt{n}(\bar X_n - p) \dto N(0, p(1 - p))$ del Método Delta aplicado a $g(x) = x(1 - x)$ ($g'(p) = 1 - 2p$). Analiza aparte el caso degenerado $p = 1/2$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Etapa 1 — Teorema del Límite Central para $\bar X_n$.</b>
+            Para $X_i \iid \text{Bernoulli}(p)$ con $p \in (0, 1)$, tenemos $\mu = \E[X_1] = p$ y $\sigma^2 = \Var(X_1) = p(1 - p) &gt; 0$. Por el TLC de De Moivre–Laplace:
+            $$\frac{\sqrt{n}(\bar X_n - p)}{\sqrt{p(1 - p)}} = \frac{S_n - np}{\sqrt{np(1 - p)}} \dto Z \sim N(0, 1),$$
+            y multiplicando por la constante $\sqrt{p(1 - p)}$ (por el Teorema de Slutsky o mapeo continuo):
+            $$\sqrt{n}(\bar X_n - p) \dto N\big(0, p(1 - p)\big).$$</li>
+          <li><b>Etapa 2 — Método Delta unidimensional con $g(x) = x(1 - x)$.</b>
+            Consideramos la función $g(x) = x(1 - x) = x - x^2$, derivable en todo $\R$ con derivada $g'(x) = 1 - 2x$.
+            <ul>
+              <li><em>Caso $p \ne 1/2$:</em> Como $g'(p) = 1 - 2p \ne 0$, el Método Delta unidimensional produce directamente:
+                $$\sqrt{n}\,\big[\bar X_n(1 - \bar X_n) - p(1 - p)\big] = \sqrt{n}\,\big[g(\bar X_n) - g(p)\big] \dto N\Big(0,\ \big[g'(p)\big]^2 p(1 - p)\Big) = N\big(0, p(1 - p)(1 - 2p)^2\big).$$</li>
+              <li><em>Caso $p = 1/2$:</em> Aquí $g'(1/2) = 0$. Usando la identidad $x(1 - x) - \frac{1}{4} = -\big(x - \frac{1}{2}\big)^2$, escribimos:
+                $$\sqrt{n}\,\left[\bar X_n(1 - \bar X_n) - \frac{1}{4}\right] = -\frac{1}{\sqrt{n}}\left(\sqrt{n}\left(\bar X_n - \frac{1}{2}\right)\right)^2 \pto 0,$$
+                por el Teorema de Slutsky (pues $1/\sqrt{n} \to 0$ y $\sqrt{n}(\bar X_n - 1/2) \dto N(0, 1/4)$). Este límite corresponde a la masa puntual en $0$, que coincide con la convención $N(0, 0)$ de la fórmula general al sustituir $p = 1/2$.</li>
+            </ul>
+            <div class="resultado">$$\sqrt{n}\,\big[\bar X_n(1 - \bar X_n) - p(1 - p)\big] \dto N\big(0, p(1 - p)(1 - 2p)^2\big).$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
   </section>
 
   <!-- ================================================================
-       SECCIÓN 6: BLOQUE V — MISCELÁNEA DE TEOREMAS LÍMITES
+       SECCIÓN 7: BLOQUE V — MISCELÁNEA DE TEOREMAS LÍMITES
        ================================================================ -->
   <section>
-    <h2 id="cap5-misc">Bloque V · Miscelánea de Teoremas Límites (Clase 14: Ej. 67–71, 73, 76 y 77)</h2>
+    <h2 id="cap5-misc">Bloque V · Miscelánea de Teoremas Límites (Clase 14: Ej. 67 al 77*, exc. 75)</h2>
     <p>Este bloque integra todas las herramientas del capítulo en problemas de examen y demostraciones: combinación de LFGN, TLC y Slutsky, Método Delta sobre medias y medias armónicas, y el Teorema del Límite Central para variables independientes acotadas no idénticamente distribuidas.</p>
 
     <!-- Ej. 5.67 -->
@@ -1053,6 +2496,33 @@
       </div></details>
     </div>
 
+    <!-- Ej. 5.72 -->
+    <div class="box ejercicio" id="ej-5-72">
+      <span class="box-title">Ejercicio 5.72 · Logaritmo de la media en U[0, 2θ]</span>
+      <p>Sea $(X_n)_{n\ge 1}$ una sucesión de variables aleatorias i.i.d. con distribución uniforme en $[0, 2\theta]$, donde $\theta &gt; 0$. Definimos $\bar X_n = n^{-1}\sum_{i=1}^n X_i$. Demuestra que
+      $$\sqrt{n}\,\big(\log \bar X_n - \log \theta\big) \dto N\left(0, \frac{1}{3}\right).$$ </p>
+      <p class="tecnica">Técnica: TLC para $\bar X_n$ en $U[0, 2\theta]$ + Método Delta unidimensional con $g(u) = \log u$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Calcula $\mu = \theta$ y $\sigma^2 = (2\theta)^2/12 = \theta^2/3$ para obtener $\sqrt{n}(\bar X_n - \theta) \dto N(0, \theta^2/3)$ por el TLC. Luego aplica el Método Delta con $g(u) = \log u$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Etapa 1 — Momentos y Teorema del Límite Central para $\bar X_n$.</b>
+            Para $X_1 \sim U[0, 2\theta]$ con $\theta &gt; 0$, la media y la varianza son:
+            $$\mu = \E[X_1] = \frac{0 + 2\theta}{2} = \theta, \qquad \sigma^2 = \Var(X_1) = \frac{(2\theta - 0)^2}{12} = \frac{4\theta^2}{12} = \frac{\theta^2}{3} \in (0, \infty).$$
+            Por el TLC aplicado a $\{X_i\}_{i\ge 1}$:
+            $$\sqrt{n}(\bar X_n - \theta) \dto N\left(0, \frac{\theta^2}{3}\right).$$</li>
+          <li><b>Etapa 2 — Método Delta unidimensional con $g(u) = \log u$.</b>
+            Como $\P(X_i &gt; 0) = 1$, se tiene $\P(\bar X_n &gt; 0) = 1$ (y $\bar X_n \pto \theta &gt; 0$), por lo que $\log \bar X_n$ está bien definido casi seguramente. Tomamos $g(u) = \log u$ en $(0, \infty)$, cuya derivada es $g'(u) = \frac{1}{u}$, con $g'(\theta) = \frac{1}{\theta} \ne 0$. Aplicando el Método Delta unidimensional:
+            $$\sqrt{n}\,\big(\log \bar X_n - \log \theta\big) = \sqrt{n}\,\big(g(\bar X_n) - g(\theta)\big) \dto N\left(0,\ \big[g'(\theta)\big]^2 \sigma^2\right) = N\left(0,\ \left(\frac{1}{\theta}\right)^2 \cdot \frac{\theta^2}{3}\right) = N\left(0, \frac{1}{3}\right).$$
+            <div class="resultado">$$\sqrt{n}\,\big(\log \bar X_n - \log \theta\big) \dto N\left(0, \frac{1}{3}\right).$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
     <!-- Ej. 5.73 -->
     <div class="box ejercicio" id="ej-5-73">
       <span class="box-title">Ejercicio 5.73 (Clase 14)</span>
@@ -1092,6 +2562,60 @@
             Por el Método Delta:
             $$\sqrt{n}\left(H_n - \frac{2}{3}\right) = \sqrt{n}\left(g(\bar U_n) - g\left(\frac{3}{2}\right)\right) \dto N\left(0,\ \left(-\frac{4}{9}\right)^2 \cdot \frac{3}{4}\right) = N\left(0, \frac{16}{81}\cdot\frac{3}{4}\right) = N\left(0, \frac{4}{27}\right).$$
             <div class="resultado">$$\text{(a) } H_n \xrightarrow{\text{c.s.}} \frac{2}{3}; \qquad \text{(b) } \sqrt{n}\left(H_n - \frac{2}{3}\right) \dto N\left(0, \frac{4}{27}\right) \quad \left(\frac{4}{27} \approx 0.1481\right).$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 5.74 -->
+    <div class="box ejercicio" id="ej-5-74">
+      <span class="box-title">Ejercicio 5.74 · Dos estimadores del parámetro exponencial</span>
+      <p>Sea $(X_n)_{n\ge 1}$ una sucesión de variables aleatorias i.i.d. con distribución exponencial de parámetro $\theta &gt; 0$. Definimos
+      $$\bar X_n = \frac{\sum_{i=1}^n X_i}{n}, \qquad U_n = \frac{1}{\bar X_n}, \qquad Y_n = \frac{|\{i \le n : X_i \ge 1\}|}{n} \qquad \text{y} \qquad V_n = -\log Y_n.$$ </p>
+      <ol type="a">
+        <li>Muestra que $U_n \xrightarrow{\text{c.s.}} \theta$ y $V_n \xrightarrow{\text{c.s.}} \theta$ cuando $n \to \infty$.</li>
+        <li>Demuestra que $\sqrt{n}(U_n - \theta)$ y $\sqrt{n}(V_n - \theta)$ convergen en distribución, determinando las distribuciones límite.</li>
+      </ol>
+      <p class="tecnica">Técnica: convención de tasa $\text{Exp}(\theta)$ + LFGN y mapeo continuo en (a) + TLC y Método Delta unidimensional con $g_1(x) = 1/x$ y $g_2(y) = -\log y$ en (b).</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Recuerda que $\text{Exp}(\theta)$ en el libro usa parámetro de tasa $\theta$ ($\E[X_1] = 1/\theta$, $\Var(X_1) = 1/\theta^2$). Expresa $Y_n = \frac{1}{n}\sum_{i=1}^n I_i$ con $I_i = \1_{\{X_i \ge 1\}} \iid \text{Bernoulli}(e^{-\theta})$ y aplica LFGN + TLC + Método Delta a cada sucesión.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Convención de tasa en $\text{Exp}(\theta)$ y representación de $Y_n$.</b>
+            En la convención de parámetro de <b>tasa</b> $\theta &gt; 0$, $X_1 \sim \text{Exp}(\theta)$ tiene densidad $f(x) = \theta e^{-\theta x}\1_{\{x \ge 0\}}$, de modo que:
+            $$\E[X_1] = \frac{1}{\theta}, \qquad \Var(X_1) = \frac{1}{\theta^2}.$$
+            Para estudiar $Y_n$, definimos los indicadores $I_i = \1_{\{X_i \ge 1\}}$ para $i \ge 1$. Como las $X_i$ son i.i.d., los indicadores $\{I_i\}_{i\ge 1}$ son i.i.d. $\text{Bernoulli}(p)$ con probabilidad de éxito:
+            $$p = \P(X_1 \ge 1) = \int_1^\infty \theta e^{-\theta x}\,dx = e^{-\theta} \in (0, 1),$$
+            de suerte que $Y_n = \bar I_n = \frac{1}{n}\sum_{i=1}^n I_i$, con $\E[I_1] = e^{-\theta}$ y $\Var(I_1) = e^{-\theta}(1 - e^{-\theta})$.</li>
+        </ol>
+
+        <p class="sol-inciso">(a) Convergencia casi segura de $U_n$ y $V_n$</p>
+        <ol class="pasos">
+          <li><b>LFGN + mapeo continuo para $U_n$.</b>
+            Como $\E[|X_1|] = 1/\theta &lt; \infty$, la LFGN de Kolmogorov da $\bar X_n \xrightarrow{\text{c.s.}} \frac{1}{\theta}$. Como $\P(\bar X_n &gt; 0) = 1$ y $g_1(x) = \frac{1}{x}$ es continua en $x = \frac{1}{\theta} &gt; 0$, el mapeo continuo para convergencia casi segura implica:
+            $$U_n = g_1(\bar X_n) \xrightarrow{\text{c.s.}} g_1\left(\frac{1}{\theta}\right) = \theta.$$</li>
+          <li><b>LFGN + mapeo continuo para $V_n$.</b>
+            Por la LFGN de Kolmogorov aplicada a $\{I_i\}_{i\ge 1}$, $Y_n = \bar I_n \xrightarrow{\text{c.s.}} e^{-\theta} &gt; 0$ (en particular, con probabilidad $1$, $Y_n &gt; 0$ para todo $n$ suficientemente grande). Como $g_2(y) = -\log y$ es continua en $(0, \infty)$, el mapeo continuo da:
+            $$V_n = g_2(Y_n) \xrightarrow{\text{c.s.}} g_2(e^{-\theta}) = -\log(e^{-\theta}) = \theta.$$</li>
+        </ol>
+
+        <p class="sol-inciso">(b) Distribuciones límite mediante TLC y Método Delta unidimensional</p>
+        <ol class="pasos">
+          <li><b>Normalidad asintótica de $\sqrt{n}(U_n - \theta)$.</b>
+            Por el TLC aplicado a $\{X_i\}_{i\ge 1}$:
+            $$\sqrt{n}\left(\bar X_n - \frac{1}{\theta}\right) \dto N\left(0, \frac{1}{\theta^2}\right).$$
+            Derivando $g_1(x) = x^{-1}$, obtenemos $g_1'(x) = -x^{-2}$, luego $g_1'\left(\frac{1}{\theta}\right) = -\theta^2 \ne 0$. Aplicando el Método Delta unidimensional:
+            $$\sqrt{n}(U_n - \theta) = \sqrt{n}\left(g_1(\bar X_n) - g_1\left(\frac{1}{\theta}\right)\right) \dto N\left(0,\ (-\theta^2)^2 \cdot \frac{1}{\theta^2}\right) = N(0, \theta^2).$$</li>
+          <li><b>Normalidad asintótica de $\sqrt{n}(V_n - \theta)$.</b>
+            Por el TLC aplicado a $\{I_i\}_{i\ge 1}$:
+            $$\sqrt{n}(Y_n - e^{-\theta}) \dto N\big(0,\ e^{-\theta}(1 - e^{-\theta})\big).$$
+            Derivando $g_2(y) = -\log y$ en $(0, \infty)$, obtenemos $g_2'(y) = -\frac{1}{y}$, luego $g_2'(e^{-\theta}) = -e^\theta \ne 0$. Aplicando el Método Delta unidimensional:
+            $$\sqrt{n}(V_n - \theta) = \sqrt{n}\big(g_2(Y_n) - g_2(e^{-\theta})\big) \dto N\left(0,\ (-e^\theta)^2 \cdot e^{-\theta}(1 - e^{-\theta})\right) = N\big(0,\ e^{2\theta}e^{-\theta}(1 - e^{-\theta})\big) = N(0, e^\theta - 1).$$
+            <em>(Observación: como $e^\theta - 1 &gt; \theta^2$ para todo $\theta &gt; 0$, el estimador $U_n = 1/\bar X_n$ posee varianza asintótica estrictamente menor que $V_n$.)</em>
+            <div class="resultado">$$\text{(a) } U_n \xrightarrow{\text{c.s.}} \theta,\ \ V_n \xrightarrow{\text{c.s.}} \theta; \qquad \text{(b) } \sqrt{n}(U_n - \theta) \dto N(0, \theta^2),\ \ \sqrt{n}(V_n - \theta) \dto N(0, e^\theta - 1).$$</div>
           </li>
         </ol>
       </div></details>
@@ -1182,7 +2706,7 @@
   </section>
 
   <!-- ================================================================
-       SECCIÓN 7: SIMULADOR INTERACTIVO
+       SECCIÓN 8: SIMULADOR INTERACTIVO
        ================================================================ -->
   <section>
     <h2 id="sim-libro">Verificación interactiva de ejercicios seleccionados</h2>
@@ -1203,7 +2727,7 @@
   </section>
 
   <!-- ================================================================
-       SECCIÓN 8: AUTOEVALUACIÓN — COMPROBADORES NUMÉRICOS
+       SECCIÓN 9: AUTOEVALUACIÓN — COMPROBADORES NUMÉRICOS
        ================================================================ -->
   <section>
     <h2 id="autoevaluacion">Autoevaluación · Comprobadores numéricos</h2>

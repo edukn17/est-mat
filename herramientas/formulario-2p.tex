@@ -9,7 +9,7 @@
 \usepackage[T1]{fontenc}
 \usepackage[spanish,es-noshorthands]{babel}
 \usepackage{amsmath,amssymb,amsfonts}
-\usepackage[a4paper,margin=0.95cm,top=0.85cm,bottom=0.85cm,footskip=10pt]{geometry}
+\usepackage[a4paper,margin=0.92cm,top=0.8cm,bottom=0.8cm,footskip=10pt]{geometry}
 \usepackage{booktabs}
 \usepackage{enumitem}
 \usepackage{xcolor}
@@ -42,7 +42,7 @@
 \newcommand{\dcs}{\xrightarrow{\mathrm{c.s.}}}
 
 \definecolor{seccolor}{RGB}{24,54,96}
-\newcommand{\fh}[1]{\par\vspace{2pt}\penalty-100{\color{seccolor}\bfseries #1}\par\nobreak\vspace{0.4pt}\hrule height 0.6pt\relax\par\nobreak\vspace{1.2pt}\nobreak}
+\newcommand{\fh}[1]{\par\vspace{1.5pt}\penalty-100{\color{seccolor}\bfseries #1}\par\nobreak\vspace{0.3pt}\hrule height 0.6pt\relax\par\nobreak\vspace{1.0pt}\nobreak}
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -279,7 +279,12 @@ Para el EMV: $\sqrt{n}[g(\hat\theta_{\text{MV}})-g(\theta)]\dto N\big(0,\frac{[g
 \end{itemize}
 
 % =====================================================================
-\fh{17. Tablas y valores críticos}
+\fh{17. Suficiencia y Fisher--Neyman (Clase 15)}
+\textbf{Suficiencia:} $\Prob(\mathbf{X}=\mathbf{x}\mid T=t)$ no depende de $\theta$ ($T=\psi(U)$ sufic.\ $\Rightarrow U$ sufic.). \textbf{Fisher--Neyman:} $T$ sufic.\ $\iff L(\theta\mid\mathbf{x}) = g(T(\mathbf{x}),\theta)\,h(\mathbf{x})$ ($h\ge 0$ libre de $\theta$; indicadoras con $\theta$ en $g$; todo EMV único es función de $T$).
+\textbf{Casos:} Ber/Pois/Exp/Gamma($\alpha$ con.)/Normal($\sigma^2$ con.): $\sum X_i$ o $\bar X$;\ $N(0,\sigma^2)$ ($\mu=0$): $\sum X_i^2$;\ $U(0,\theta)$: $X_{(n)}$.
+
+% =====================================================================
+\fh{18. Tablas y valores críticos}
 Tablas ESPOL: área izquierda $q$: $\Prob(X\le x)=q$. \textbf{Crítico cola der.\ $\alpha$ = col.\ $1-\alpha$.} Percentil $100p$ es $x_p$; crítico al $5\%$ = perc.\ 95.\\
 $\bullet$ $Z$: $\Phi(z_\alpha)=1-\alpha$, $\Phi(-z)=1-\Phi(z)$.\quad
 $\bullet$ $\chi^2_{(\nu),\alpha}$ y $t_{(\nu),\alpha}$: col.\ $1-\alpha$; $\Prob(|T|\le c)=2\Prob(T\le c)-1$ (simetría).\\

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Formulario completo · Estadística I + Est Mat</title>
-<meta name="description" content="Formulario de la guía: definiciones, modelos, FGM, transformaciones, estadísticos de orden, χ², t, F, TLC, estimación, modos de convergencia, Borel–Cantelli, leyes de los grandes números, Método Delta ampliado y valores extremos, con la notación de Estadística I y de Estadística Matemática.">
+<meta name="description" content="Formulario de la guía: definiciones, modelos, FGM, transformaciones, estadísticos de orden, χ², t, F, TLC, estimación, suficiencia, modos de convergencia, Borel–Cantelli, leyes de los grandes números, Método Delta ampliado y valores extremos, con la notación de Estadística I y de Estadística Matemática.">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <link rel="stylesheet" href="../assets/css/style.css">
 <script src="../assets/js/theme.js"></script>
@@ -849,7 +849,41 @@
 
   <!-- ================================================================ -->
   <section>
-    <h2 id="tablas">22. Cómo leer las tablas y los valores críticos</h2>
+    <h2 id="suficiencia">22. Estadísticos suficientes y Factorización de Fisher–Neyman <span class="formula-tag">(Clase 15)</span></h2>
+
+    <div class="box definicion"><span class="box-title">Definición · Estadístico suficiente</span>
+      <p>Sea $X_1, \dots, X_n$ una muestra aleatoria de una población con parámetro desconocido $\theta$. El estadístico $T = T(X_1, \dots, X_n)$ es <b>suficiente para $\theta$</b> si la distribución condicional de $\mathbf{X} = (X_1, \dots, X_n)$ dado $T = t$,</p>
+      $$\P(\mathbf{X} = \mathbf{x} \mid T = t) = \P(X_1 = x_1, \dots, X_n = x_n \mid T = t),$$
+      <p><b>no depende de $\theta$</b> (en discretas, el cociente $L(\theta \mid \mathbf{x}) / p_T(t;\theta)$ evaluado en $T(\mathbf{x}) = t$ es libre de $\theta$).</p>
+      <p>Además, si $T$ es suficiente para $\theta$ y $T = \psi(U)$ para alguna función $\psi$ (en particular, si $U$ es una transformación biyectiva de $T$), entonces $U$ también es suficiente para $\theta$ (ej. $\sum_{i=1}^n X_i \iff \bar X$).</p>
+    </div>
+
+    <div class="box teorema"><span class="box-title">Teorema de Factorización de Fisher–Neyman</span>
+      <p>Un estadístico $T = T(X_1, \dots, X_n)$ es suficiente para $\theta$ si y solo si existen funciones no negativas $g\big(T(\mathbf{x}),\,\theta\big) \ge 0$ (que depende de $\mathbf{x}$ únicamente a través de $T(\mathbf{x})$) y $h(\mathbf{x}) \ge 0$ (independiente de $\theta$) tales que:</p>
+      $$L(\theta \mid \mathbf{x}) = g\big(T(\mathbf{x}),\,\theta\big) \times h(\mathbf{x}).$$
+      <ul>
+        <li><b>Soporte dependiente de $\theta$:</b> toda función indicadora que involucre a $\theta$ debe quedar absorbida dentro de $g\big(T(\mathbf{x}),\theta\big)$.</li>
+        <li><b>Conexión con el EMV:</b> si existe un EMV único $\hat\theta_{\text{MV}}$, maximizar $L(\theta \mid \mathbf{x}) = g(T(\mathbf{x}),\theta)\,h(\mathbf{x})$ respecto a $\theta$ equivale a maximizar $g(T(\mathbf{x}),\theta)$, por lo que $\hat\theta_{\text{MV}}$ es necesariamente función de cualquier estadístico suficiente $T(\mathbf{X})$.</li>
+      </ul>
+    </div>
+
+    <div class="table-wrap"><table class="tabla compact">
+      <thead><tr><th class="f">Modelo</th><th class="f">Parámetro desc.</th><th class="f">Estadístico suficiente $T$</th><th class="f">Factorización clave</th></tr></thead>
+      <tbody>
+        <tr><td class="f">$\text{Ber}(p)$</td><td class="f">$p$</td><td class="f">$T = \sum_{i=1}^n X_i$ (o $\bar X$)</td><td class="f">$g(t,p) = p^t(1-p)^{n-t}$, $h(\mathbf{x}) = 1$</td></tr>
+        <tr><td class="f">$\text{Pois}(\lambda)$</td><td class="f">$\lambda$</td><td class="f">$T = \sum_{i=1}^n X_i$ (o $\bar X$)</td><td class="f">$g(t,\lambda) = e^{-n\lambda}\lambda^t$, $h(\mathbf{x}) = \big(\prod_{i=1}^n x_i!\big)^{-1}$</td></tr>
+        <tr><td class="f">$\text{Exp}(\beta)$</td><td class="f">$\beta$ (escala)</td><td class="f">$T = \sum_{i=1}^n X_i$ (o $\bar X$)</td><td class="f">$g(t,\beta) = \beta^{-n}e^{-t/\beta}$, $h(\mathbf{x}) = \1_{\{x_{(1)} &gt; 0\}}$</td></tr>
+        <tr><td class="f">$\text{Gamma}(\alpha, \beta)$ ($\alpha$ con.)</td><td class="f">$\beta$</td><td class="f">$T = \bar X$ (o $\sum_{i=1}^n X_i$)</td><td class="f">$g(\bar x,\beta) = \beta^{-n\alpha}e^{-n\bar x/\beta}$, $h(\mathbf{x}) \propto \prod_{i=1}^n x_i^{\alpha-1}$</td></tr>
+        <tr><td class="f">$\text{Unif}(0, \theta)$</td><td class="f">$\theta$ (soporte dep.)</td><td class="f">$T = X_{(n)} = \max_i X_i$</td><td class="f">$g(x_{(n)},\theta) = \theta^{-n}\1_{\{x_{(n)} \le \theta\}}$, $h(\mathbf{x}) = \1_{\{x_{(1)} \ge 0\}}$</td></tr>
+        <tr><td class="f">$N(\mu, \sigma^2)$ ($\sigma^2$ con.)</td><td class="f">$\mu$</td><td class="f">$T = \sum_{i=1}^n X_i$ (o $\bar X$)</td><td class="f">$g(\bar x,\mu) = \exp\!\big(\frac{n\mu\bar x}{\sigma^2} - \frac{n\mu^2}{2\sigma^2}\big)$</td></tr>
+        <tr><td class="f">$N(0, \sigma^2)$ ($\mu=0$ con.)</td><td class="f">$\sigma^2$</td><td class="f">$T = \sum_{i=1}^n X_i^2$</td><td class="f">$g(t,\sigma^2) = (\sigma^2)^{-n/2}e^{-t/(2\sigma^2)}$, $h(\mathbf{x}) = (2\pi)^{-n/2}$</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="tablas">23. Cómo leer las tablas y los valores críticos</h2>
     <div class="box idea"><span class="box-title">La regla que evita todos los líos de colas</span>
       <p>Las tablas ESPOL dan el valor con <b>área a la IZQUIERDA</b> $q$: $\P(X\le x)=q$. En clase se escribe el valor crítico con <b>área $\alpha$ a la DERECHA</b>. Entonces:</p>
       $$\text{valor crítico con cola derecha }\alpha \;=\; \text{valor de la tabla en la columna } q=1-\alpha .$$
@@ -874,7 +908,7 @@
 
   <!-- ================================================================ -->
   <section>
-    <h2 id="mapa">23. Mapa rápido: qué usar en cada caso</h2>
+    <h2 id="mapa">24. Mapa rápido: qué usar en cada caso</h2>
     <div class="table-wrap"><table class="tabla compact text-left">
       <thead><tr><th>Si te piden…</th><th>Usa</th><th>Fórmula clave</th></tr></thead>
       <tbody>
@@ -917,6 +951,8 @@
         <tr><td>Probar convergencia c.s. (i.i.d. o independientes no i.d.)</td><td>LFGN Kolmogorov (§20)</td><td>i.i.d. $\E|X_1| &lt; \infty$; o indep. $\sum \Var(X_n)/n^2 &lt; \infty$</td></tr>
         <tr><td>Suma estandarizada de v.a. independientes no i.d.</td><td>TLC Liapunov–Lindeberg (§21)</td><td>$|X_i| \le M$ y $s_n^2 \to \infty \implies (S_n - \E[S_n])/s_n \dto N(0,1)$</td></tr>
         <tr><td>Distribución límite del máximo normalizado $(X_{(n)} - a_n)/b_n$</td><td>Valor Extremo (TVE) (§21)</td><td>Gumbel $e^{-e^{-(z-a)/b}}$, Fréchet, Weibull</td></tr>
+        <tr><td>Verificar suficiencia de un candidato $T$ por ley condicional</td><td>Definición de suficiencia (§22)</td><td>$\P(\mathbf{X}=\mathbf{x}\mid T=t)$ no depende de $\theta$</td></tr>
+        <tr><td>Hallar un estadístico suficiente $T$ a partir de la muestra</td><td>Factorización de Fisher–Neyman (§22)</td><td>$L(\theta\mid\mathbf{x}) = g(T(\mathbf{x}),\theta)\,h(\mathbf{x})$</td></tr>
       </tbody>
     </table></div>
     <p class="small muted">¿Falta algún resultado? Aparecerá aquí a medida que avancen las clases. Los temas en detalle están en el <a href="distribuciones.html">laboratorio de distribuciones</a>, en <a href="tablas.html">cómo leer las tablas</a> y en el <a href="../temas/repaso.html">repaso de Estadística I</a>.</p>

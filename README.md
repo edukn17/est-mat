@@ -26,13 +26,14 @@ traen pistas graduales, solución completa paso a paso y verificación numérica
 | `temas/clase-12.html` | Teorema de continuidad (FGM), Scheffé, Slutsky y Método Delta |
 | `temas/clase-13.html` | Leyes Débiles y Fuertes de los Grandes Números (LDGN y LFGN) |
 | `temas/clase-14.html` | TLC generalizado, pivotes asintóticos y Teoría del Valor Extremo |
+| `temas/clase-15.html` | Suficiencia, definición condicional y Criterio de Factorización de Fisher–Neyman |
 | `herramientas/formulario.html` | Formulario (Est. I + Est Mat): versión completa y de examen (2 págs.), en PDF/LaTeX |
 | `herramientas/distribuciones.html` | Laboratorio de distribuciones |
 | `herramientas/tablas.html` | Tablas χ², t, F, normal estándar y K-S, transcritas e interactivas |
 | `deberes/lista-1-1.html` | Lista 1.1 resuelta (transformaciones y estadísticos de orden) |
 | `deberes/lista-1-2.html` | Lista 1.2 resuelta (teorema del límite central) |
 | `deberes/deber-estimacion-puntual.html` | Deber resuelto de estimación puntual (Unidad II, 5 problemas completos) |
-| `deberes/lebensztayn.html` | Solucionario progresivo de Lebensztayn (Cap. 5: 28 ejercicios citados en el curso) |
+| `deberes/lebensztayn.html` | Solucionario progresivo de Lebensztayn (Cap. 5: 65 de 84 ejercicios resueltos) |
 
 ## Uso local
 
@@ -61,7 +62,7 @@ intermedios quedan en `scripts/build/` (no versionado).
 
 ## Formulario
 
-`herramientas/formulario.html` resume Estadística I y las clases 01–14, y se ofrece
+`herramientas/formulario.html` resume Estadística I y las clases 01–15, y se ofrece
 en dos versiones descargables, cada una con su fuente LaTeX:
 
 - **Completa** (20 págs.): `herramientas/formulario.pdf` / `formulario.tex`.
@@ -86,7 +87,7 @@ est-mat/
 ├── assets/
 │   ├── css/style.css
 │   └── js/{theme,stats,plot,site,ui}.js
-├── temas/                  repaso + clases 01–14
+├── temas/                  repaso + clases 01–15
 ├── herramientas/           distribuciones.html, tablas.html, formulario.html
 │                           formulario.tex/.pdf y formulario-2p.tex/.pdf
 ├── deberes/                lista-1-1.html, lista-1-2.html, deber-estimacion-puntual.html,

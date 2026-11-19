@@ -1,0 +1,922 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clase 15 · Suficiencia y Criterio de Factorización de Fisher–Neyman</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/theme.js"></script>
+<style>
+  .sim .plot-cap {
+    font: 600 12.5px var(--font-ui);
+    color: var(--muted);
+    margin: 6px 0 -4px;
+  }
+  .slider.is-dim {
+    opacity: 0.45;
+  }
+</style>
+</head>
+<body data-page="clase-15" data-root="../">
+<main id="contenido">
+
+  <header class="page-head">
+    <p class="kicker">Clase 15 · Unidad 4 — Suficiencia e Inferencia</p>
+    <h1>Suficiencia y Criterio de Factorización de Fisher–Neyman</h1>
+    <p class="lead">Qué significa que un estadístico capture toda la información que una muestra contiene sobre un parámetro desconocido $\theta$, cómo comprobar la suficiencia por definición mediante la distribución condicional y cómo hallar estadísticos suficientes de forma sistemática con el Teorema de Factorización de Fisher–Neyman.</p>
+  </header>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="idea-suficiencia">1. ¿Qué es un estadístico suficiente?</h2>
+    <p>En unidades anteriores hemos evaluado la calidad de los estimadores mediante criterios como el <strong>sesgo</strong>, la <strong>varianza mínima (eficiencia)</strong> y la <strong>consistencia</strong>. Ahora damos un paso conceptual distinto: antes incluso de decidir qué fórmula concreta usarás para estimar $\theta$, conviene preguntarte <em>cómo puedes resumir o comprimir los datos sin perder información</em>.</p>
+    <p>Imagina que observas una muestra aleatoria $X_1, X_2, \dots, X_n$ proveniente de un modelo probabilístico con un parámetro desconocido $\theta$. Si logramos construir un estadístico $T = T(X_1, \dots, X_n)$ capaz de extraer <strong>toda la información</strong> que la muestra $(X_1, \dots, X_n)$ contiene acerca de $\theta$, decimos que $T$ es un <strong>estadístico suficiente</strong> para $\theta$.</p>
+
+    <div class="box idea">
+      <span class="box-title">Intuición clave · Compresión sin pérdida sobre $\theta$</span>
+      <p>Una vez que conoces el valor de un estadístico suficiente $T = t$, conservar el vector completo de datos $(X_1, \dots, X_n)$ <strong>no aporta ninguna información adicional</strong> sobre el parámetro $\theta$.</p>
+      <p>Dicho de otro modo: ningún otro estadístico que puedas calcular a partir de la muestra añade evidencia nueva sobre $\theta$ que no esté ya contenida en $T$. Incluso si conocieras $T = t$ y quisieras saber cómo se repartieron los valores individuales $X_1, \dots, X_n$, la incertidumbre restante sería puro azar estructural que ya no depende de $\theta$.</p>
+    </div>
+
+    <div class="box definicion" id="def-suficiencia">
+      <span class="box-title">Definición · Estadístico suficiente</span>
+      <p>Sea $X_1, X_2, \dots, X_n$ una muestra aleatoria de una distribución de probabilidad con parámetro desconocido $\theta$. Se dice que el estadístico $T = T(X_1, \dots, X_n)$ es <strong>suficiente para $\theta$</strong> si la distribución condicional de $(X_1, X_2, \dots, X_n)$ dado $T = t$,</p>
+      $$\P(\mathbf{X} = \mathbf{x} \mid T = t) = \P(X_1 = x_1, \dots, X_n = x_n \mid T = t),$$
+      <p><strong>no depende de $\theta$</strong>.</p>
+      <p><em>Nota para el caso continuo:</em> Cuando las observaciones son variables aleatorias continuas, la definición exige de manera análoga que la distribución condicional (o función de densidad condicional) de $\mathbf{X} = (X_1, \dots, X_n)$ dado $T = t$ sea independiente de $\theta$.</p>
+    </div>
+
+    <h3>Fórmula operativa para distribuciones discretas</h3>
+    <p>Para aplicar directamente la definición en modelos discretos, recuerda la regla elemental de probabilidad condicional:</p>
+    $$\P(\mathbf{X} = \mathbf{x} \mid T = t) = \frac{\P_\theta\big(\mathbf{X} = \mathbf{x},\, T(\mathbf{X}) = t\big)}{\P_\theta(T(\mathbf{X}) = t)}.$$
+    <p>Observa un detalle decisivo: cuando fijas el vector completo $\mathbf{X} = \mathbf{x}$, el valor del estadístico $T(\mathbf{X})$ queda automáticamente determinado en $T(\mathbf{x})$. Por ello ocurren exactamente dos casos:</p>
+    <ul>
+      <li>Si $t \ne T(\mathbf{x})$, los eventos $\{\mathbf{X} = \mathbf{x}\}$ y $\{T(\mathbf{X}) = t\}$ son incompatibles (imposibles simultáneamente), de modo que $\P(\mathbf{X} = \mathbf{x} \mid T = t) = 0$.</li>
+      <li>Si $t = T(\mathbf{x})$, se cumple la inclusión $\{\mathbf{X} = \mathbf{x}\} \subseteq \{T(\mathbf{X}) = t\}$, por lo que $\{\mathbf{X} = \mathbf{x},\, T(\mathbf{X}) = t\} = \{\mathbf{X} = \mathbf{x}\}$, y la expresión se reduce al cociente entre la función de verosimilitud conjunta y la función de probabilidad marginal de $T$:
+        $$\P(\mathbf{X} = \mathbf{x} \mid T = t) = \frac{\P_\theta(\mathbf{X} = \mathbf{x})}{\P_\theta(T = t)} = \frac{L(\theta \mid \mathbf{x})}{p_T(t;\, \theta)}, \qquad \text{si } p_T(t;\, \theta) &gt; 0.$$</li>
+    </ul>
+    <p>Si en este cociente todas las apariciones de $\theta$ se cancelan entre numerador y denominador, habrás demostrado por definición que $T$ es suficiente para $\theta$.</p>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="ejemplos-definicion">2. Verificación por definición y propiedades</h2>
+    <p>Veamos cómo funciona la definición paso a paso en dos distribuciones discretas fundamentales: Bernoulli y Poisson.</p>
+
+    <!-- EJEMPLO 1 -->
+    <div class="box ejercicio" id="ej-1">
+      <span class="box-title">Ejemplo 1 · Muestra Bernoulli $\text{Ber}(p)$ verificada por definición</span>
+      <p>Sean $X_1, X_2, \dots, X_n$ variables aleatorias $\iid \text{Ber}(p)$, donde se desconoce el parámetro $p \in (0, 1)$. Demuestra por definición que $T = \sum_{i=1}^n X_i$ es un estadístico suficiente para $p$.</p>
+
+      <details class="pista"><summary>Pista 1 · Caso pequeño ($n = 3$, $t = 2$)</summary><div>
+        <p>Antes de pasar al caso general, supón que $n = 3$ y observas $T = \sum_{i=1}^3 X_i = 2$. ¿Qué vectores binarios $(x_1, x_2, x_3) \in \{0, 1\}^3$ son compatibles con esa suma y qué probabilidad tiene cada uno dado $T = 2$?</p>
+      </div></details>
+
+      <details class="pista"><summary>Pista 2 · Caso general</summary><div>
+        <p>Recuerda que la suma de $n$ ensayos independientes $\text{Ber}(p)$ sigue una distribución $\text{Bin}(n, p)$. Escribe la probabilidad conjunta $\P_p(\mathbf{X} = \mathbf{x})$ y divídela entre $p_T(t;\, p) = \binom{n}{t}p^t(1-p)^{n-t}$ cuando $\sum_{i=1}^n x_i = t$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <p>Por definición, debemos probar que la probabilidad condicional $\P(\mathbf{X} = \mathbf{x} \mid T = t)$ es una expresión que no depende del parámetro $p$.</p>
+        <ol class="pasos">
+          <li><strong>Exploración con un caso concreto ($n = 3$ y $t = 2$):</strong> Si sabemos que $T = \sum_{i=1}^3 X_i = 2$, es inmediato ver que vectores con suma distinta de $2$ son eventos imposibles bajo esa condición; por ejemplo:
+            $$\P(X_1 = 0, X_2 = 1, X_3 = 0 \mid T = 2) = 0, \qquad \P(X_1 = 1, X_2 = 0, X_3 = 0 \mid T = 2) = 0,$$
+            y también:
+            $$\P(X_1 = 1, X_2 = 1, X_3 = 1 \mid T = 2) = 0.$$
+            En cambio, existen $\binom{3}{2} = 3$ combinaciones de $n = 3$ números binarios que suman exactamente $t = 2$:
+            $$\mathbf{x}_1 = (1, 1, 0), \qquad \mathbf{x}_2 = (1, 0, 1), \qquad \mathbf{x}_3 = (0, 1, 1).$$
+            Cada una de ellas tiene la misma probabilidad conjunta $\P_p(\mathbf{X} = \mathbf{x}_k) = p^2(1-p)^1$, por lo que son <strong>equiprobables</strong> dado $T = 2$. Dado que $T \sim \text{Bin}(3, p)$ y $\P_p(T = 2) = \binom{3}{2}p^2(1-p)$, resulta:
+            $$\P(\mathbf{X} = \mathbf{x} \mid T = 2) = \begin{cases} 0, &amp; \text{para } \sum_{i=1}^3 x_i \ne 2, \\[4pt] \dfrac{1}{\binom{3}{2}} = \dfrac{1}{3}, &amp; \text{para } \sum_{i=1}^3 x_i = 2 \text{ con } x_i \in \{0, 1\}. \end{cases}$$</li>
+          <li><strong>Caso general ($n \ge 1$ arbitrario):</strong> Sea $\mathbf{x} = (x_1, \dots, x_n) \in \{0, 1\}^n$ y $t \in \{0, 1, \dots, n\}$. Si $t \ne \sum_{i=1}^n x_i$, el suceso $\{\mathbf{X} = \mathbf{x}\} \cap \{T = t\}$ es vacío, así que $\P(\mathbf{X} = \mathbf{x} \mid T = t) = 0$.</li>
+          <li><strong>Cálculo del cociente cuando $t = \sum_{i=1}^n x_i$:</strong> Por independencia, la probabilidad conjunta de la muestra es:
+            $$\P_p(\mathbf{X} = \mathbf{x}) = \prod_{i=1}^n p^{x_i}(1-p)^{1-x_i} = p^{\sum_{i=1}^n x_i}(1-p)^{n - \sum_{i=1}^n x_i} = p^t(1-p)^{n-t}.$$
+            Por otro lado, $T = \sum_{i=1}^n X_i \sim \text{Bin}(n, p)$, luego $\P_p(T = t) = \binom{n}{t}p^t(1-p)^{n-t}$. Al dividir:
+            $$\P(\mathbf{X} = \mathbf{x} \mid T = t) = \frac{p^t(1-p)^{n-t}}{\binom{n}{t}p^t(1-p)^{n-t}} = \frac{1}{\binom{n}{t}}.$$</li>
+          <li><strong>Conclusión:</strong> Para todo $\mathbf{x} \in \{0,1\}^n$,
+            $$\P(\mathbf{X} = \mathbf{x} \mid T = t) = \begin{cases} 0, &amp; \text{para } t \ne \sum_{i=1}^n x_i, \\[4pt] \dfrac{1}{\binom{n}{t}}, &amp; \text{para } t = \sum_{i=1}^n x_i, \end{cases}$$
+            expresión que <strong>no depende de $p$</strong>. En consecuencia, $T = \sum_{i=1}^n X_i$ es un estadístico suficiente para $p$.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJEMPLO 2 -->
+    <div class="box ejercicio" id="ej-2">
+      <span class="box-title">Ejemplo 2 · Muestra Poisson $\text{Pois}(\lambda)$ verificada por definición</span>
+      <p>Sean $X_1, X_2, \dots, X_n$ variables aleatorias $\iid \text{Pois}(\lambda)$, con $\lambda &gt; 0$ desconocido. Demuestra por definición que $T = \sum_{i=1}^n X_i$ es un estadístico suficiente para $\lambda$.</p>
+
+      <details class="pista"><summary>Pista 1 · Distribución de la suma $T$</summary><div>
+        <p>Como las variables $X_1, \dots, X_n$ son independientes e idénticamente distribuidas $\text{Pois}(\lambda)$, utiliza la propiedad aditiva de la distribución de Poisson (mediante FGM o convolución) para determinar la distribución exacta de $T = \sum_{i=1}^n X_i$.</p>
+      </div></details>
+
+      <details class="pista"><summary>Pista 2 · Cociente condicional</summary><div>
+        <p>Cuando $t = \sum_{i=1}^n x_i$, calcula $\P_\lambda(\mathbf{X} = \mathbf{x}) / \P_\lambda(T = t)$ y verifica que tanto $e^{-n\lambda}$ como $\lambda^t$ se cancelan completamente, dejando una distribución Multinomial independiente de $\lambda$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><strong>Probabilidad conjunta de la muestra:</strong> Para enteros no negativos $x_1, \dots, x_n \in \{0, 1, 2, \dots\}$, por independencia se tiene:
+            $$\P_\lambda(\mathbf{X} = \mathbf{x}) = \prod_{i=1}^n \frac{e^{-\lambda}\lambda^{x_i}}{x_i!} = \frac{e^{-n\lambda}\,\lambda^{\sum_{i=1}^n x_i}}{x_1!\,x_2!\cdots x_n!}.$$</li>
+          <li><strong>Distribución marginal de $T = \sum_{i=1}^n X_i$:</strong> Recordando que la función generadora de momentos de cada $X_i \sim \text{Pois}(\lambda)$ es $M_{X_i}(s) = \exp\big(\lambda(e^s - 1)\big)$, la FGM de la suma independiente $T$ es:
+            $$M_T(s) = \prod_{i=1}^n M_{X_i}(s) = \exp\big(n\lambda(e^s - 1)\big),$$
+            de modo que $T \sim \text{Pois}(n\lambda)$. Por tanto, para todo entero $t \ge 0$:
+            $$\P_\lambda(T = t) = \frac{e^{-n\lambda}(n\lambda)^t}{t!}.$$</li>
+          <li><strong>Cálculo de la probabilidad condicional $\P(\mathbf{X} = \mathbf{x} \mid T = t)$:</strong> Si $t \ne \sum_{i=1}^n x_i$ (o si algún $x_i \notin \{0, 1, 2, \dots\}$), la probabilidad condicional vale $0$. Cuando $t = \sum_{i=1}^n x_i$, sustituimos en la fórmula operativa:
+            $$\P(\mathbf{X} = \mathbf{x} \mid T = t) = \frac{\P_\lambda(\mathbf{X} = \mathbf{x})}{\P_\lambda(T = t)} = \frac{\dfrac{e^{-n\lambda}\lambda^t}{x_1!\,x_2!\cdots x_n!}}{\dfrac{e^{-n\lambda}n^t\lambda^t}{t!}} = \frac{t!}{x_1!\,x_2!\cdots x_n!}\left(\frac{1}{n}\right)^t.$$</li>
+          <li><strong>Interpretación y conclusión:</strong> Todos los factores con $\lambda$ ($e^{-n\lambda}$ y $\lambda^t$) se cancelaron. En resumen:
+            $$\P(\mathbf{X} = \mathbf{x} \mid T = t) = \begin{cases} 0, &amp; \text{para } t \ne \sum_{i=1}^n x_i, \\[6pt] \dfrac{t!}{x_1!\,x_2!\cdots x_n!}\left(\dfrac{1}{n}\right)^t, &amp; \text{para } t = \sum_{i=1}^n x_i, \end{cases}$$
+            que corresponde a una distribución $\text{Multinomial}\big(t;\, \frac{1}{n}, \dots, \frac{1}{n}\big)$ completamente <strong>libre de $\lambda$</strong>. Por lo tanto, $T = \sum_{i=1}^n X_i$ es un estadístico suficiente para $\lambda$.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <div class="box nota" id="obs-suficiencia">
+      <span class="box-title">Observaciones fundamentales sobre la definición</span>
+      <ol>
+        <li><strong>Dificultades algebraicas en modelos más ricos:</strong> Las variables aleatorias de los dos ejemplos anteriores pertenecen a las distribuciones discretas más simples. En muchas otras situaciones (sobre todo en distribuciones continuas o cuando la suma o el estadístico no tienen una distribución marginal elemental), verificar la suficiencia por definición conlleva dificultades algebraicas considerables.</li>
+        <li><strong>Verificar frente a encontrar:</strong> La definición proporciona un método riguroso para <em>comprobar</em> si un estadístico candidato $T$ es suficiente o no para el parámetro objetivo. Sin embargo, <strong>no resulta útil para encontrar</strong> desde cero un estadístico suficiente cuando aún no tienes un candidato.</li>
+        <li><strong>Preservación bajo funciones recuperables:</strong> Si $T$ es suficiente para $\theta$, y $T$ puede expresarse como función de otro estadístico $U$ —es decir, $T = \psi(U)$, lo que incluye en particular toda transformación biyectiva (uno a uno) $U = \phi(T)$—, entonces <strong>$U$ también es suficiente para $\theta$</strong>.
+          <br><em>Ejemplo:</em> Como $S_n = \sum_{i=1}^n X_i$ es suficiente y podemos recuperarlo a partir de la media muestral mediante $S_n = n\bar X$, entonces $\bar X$ también es suficiente. De manera análoga, el vector completo $(X_1, \dots, X_n)$ es siempre trivialmente suficiente (porque cualquier estadístico es función de la muestra entera), pero nuestro objetivo práctico es encontrar la mayor reducción posible de los datos sin perder información sobre $\theta$.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="factorizacion">3. Criterio de Factorización de Fisher–Neyman</h2>
+    <p>Para resolver de golpe las dos limitaciones prácticas de la definición —evitar el cálculo explícito de distribuciones condicionales y darnos una regla constructiva para descubrir el estadístico suficiente— contamos con uno de los resultados más célebres de la estadística matemática.</p>
+
+    <div class="box teorema" id="thm-factorizacion">
+      <span class="box-title">Teorema · Criterio de Factorización de Fisher–Neyman</span>
+      <p>Sea $T = T(X_1, \dots, X_n)$ un estadístico basado en la muestra aleatoria $X_1, \dots, X_n$ de $X \sim F$. Entonces $T$ es un <strong>estadístico suficiente para la estimación de un parámetro $\theta$</strong> si y solo si la función de verosimilitud $L(\theta \mid \mathbf{x}) = L(x_1, x_2, \dots, x_n \mid \theta)$ puede factorizarse en el producto de dos funciones no negativas:</p>
+      $$L(\theta \mid \mathbf{x}) = g\big(T(\mathbf{x}),\, \theta\big) \times h(\mathbf{x}),$$
+      <p>donde $g\big(T(\mathbf{x}), \theta\big)$ es una función que depende de la muestra $\mathbf{x}$ únicamente a través de $T(\mathbf{x})$ (y de $\theta$), y $h(\mathbf{x})$ no depende de $\theta$.</p>
+    </div>
+
+    <details class="prueba"><summary>Esquema de demostración en el caso discreto (¿por qué funciona?)</summary><div>
+      <p>Supongamos que $X_1, \dots, X_n$ son discretas con verosimilitud $L(\theta \mid \mathbf{x}) = \P_\theta(\mathbf{X} = \mathbf{x})$:</p>
+      <ul>
+        <li><strong>($\Rightarrow$) Si $T$ es suficiente:</strong> Sea $t = T(\mathbf{x})$. Por la definición de probabilidad condicional y el hecho de que $\{\mathbf{X} = \mathbf{x}\} \subseteq \{T(\mathbf{X}) = T(\mathbf{x})\}$, podemos escribir:
+          $$L(\theta \mid \mathbf{x}) = \P_\theta\big(T(\mathbf{X}) = T(\mathbf{x})\big) \cdot \P\big(\mathbf{X} = \mathbf{x} \mid T(\mathbf{X}) = T(\mathbf{x})\big).$$
+          Como $T$ es suficiente, el segundo factor no depende de $\theta$. Basta definir $g(T(\mathbf{x}), \theta) = \P_\theta(T = T(\mathbf{x})) \ge 0$ y $h(\mathbf{x}) = \P(\mathbf{X} = \mathbf{x} \mid T = T(\mathbf{x})) \ge 0$.</li>
+        <li><strong>($\Leftarrow$) Si $L(\theta \mid \mathbf{x}) = g(T(\mathbf{x}), \theta)\,h(\mathbf{x})$:</strong> Fija un valor $t$ tal que $\P_\theta(T = t) &gt; 0$. Para $\mathbf{x}$ con $T(\mathbf{x}) \ne t$, $\P(\mathbf{X} = \mathbf{x} \mid T = t) = 0$. Para $\mathbf{x}$ con $T(\mathbf{x}) = t$, sumamos la verosimilitud sobre todas las muestras $\mathbf{y}$ que producen $T(\mathbf{y}) = t$:
+          $$\P_\theta(T = t) = \sum_{\mathbf{y}\,:\,T(\mathbf{y}) = t} g\big(T(\mathbf{y}), \theta\big)\,h(\mathbf{y}) = g(t, \theta)\sum_{\mathbf{y}\,:\,T(\mathbf{y}) = t} h(\mathbf{y}).$$
+          Al tomar el cociente condicional, el factor $g(t, \theta)$ aparece idéntico en numerador y denominador y se cancela:
+          $$\P(\mathbf{X} = \mathbf{x} \mid T = t) = \frac{g(t, \theta)\,h(\mathbf{x})}{g(t, \theta)\sum_{\mathbf{y}\,:\,T(\mathbf{y}) = t} h(\mathbf{y})} = \frac{h(\mathbf{x})}{\sum_{\mathbf{y}\,:\,T(\mathbf{y}) = t} h(\mathbf{y})},$$
+          expresión completamente independiente de $\theta$. Luego $T$ es suficiente.</li>
+      </ul>
+    </div></details>
+
+    <div class="box idea">
+      <span class="box-title">Cómo leer $T(\mathbf{x})$ directamente desde la verosimilitud</span>
+      <p>En la práctica, no necesitas adivinar primero $T$: simplemente escribe el producto completo $L(\theta \mid \mathbf{x}) = \prod_{i=1}^n f(x_i \mid \theta)$ (incluyendo el soporte de las observaciones), simplifica exponentes y productos, y agrupa de un lado <strong>todo lo que interactúa con $\theta$</strong> y del otro todo lo que depende solo de $\mathbf{x}$. La expresión de los datos que queda atrapada dentro del bloque con $\theta$ es tu estadístico suficiente $T(\mathbf{x})$.</p>
+    </div>
+
+    <div class="box cuidado" id="cuidado-soporte-emv">
+      <span class="box-title">¡Cuidado! Soporte dependiente de $\theta$ y relación con el EMV</span>
+      <ul>
+        <li><strong>No olvides las indicadoras del soporte:</strong> Al escribir $L(\theta \mid \mathbf{x})$, incluye siempre las funciones indicadoras $\1_{\{x_i \in S(\theta)\}}$. Cuando el soporte $S(\theta)$ depende de $\theta$ (por ejemplo en $\text{Unif}(0, \theta)$), el producto $\prod_{i=1}^n \1_{\{x_i \in S(\theta)\}}$ <strong>depende de $\theta$</strong> y debe reescribirse usando los estadísticos de orden ($X_{(1)} = \min_i X_i$, $X_{(n)} = \max_i X_i$) para incorporarlo dentro de $g(T(\mathbf{x}), \theta)$. En cambio, cualquier indicadora de restricciones que no involucran a $\theta$ (como $x_{(1)} \ge 0$ o $x_i \in \{0, 1\}$) puede separarse en $h(\mathbf{x})$.</li>
+        <li><strong>Conexión con el Estimador de Máxima Verosimilitud (EMV):</strong> Si $L(\theta \mid \mathbf{x}) = g(T(\mathbf{x}), \theta)\,h(\mathbf{x})$ con $h(\mathbf{x}) &gt; 0$, entonces maximizar $L(\theta \mid \mathbf{x})$ respecto a $\theta$ es equivalente a maximizar $g(T(\mathbf{x}), \theta)$ respecto a $\theta$ (porque $h(\mathbf{x})$ es una constante positiva frente a $\theta$). En consecuencia, si el EMV $\hat\theta_{\text{EMV}}$ es único, <strong>siempre es una función de cualquier estadístico suficiente $T$</strong>.</li>
+        <li><strong>No unicidad:</strong> El estadístico suficiente nunca es único: si $T$ es suficiente, también lo son $T/n$, $2T + 5$ o $(T, X_1)$. Siempre preferimos la forma más compacta posible.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="ejemplos-factorizacion">4. Ejemplos resueltos con Fisher–Neyman</h2>
+    <p>Aplica ahora el criterio de factorización paso a paso en seis familias clásicas de la estadística matemática (Ejemplos 3 al 8).</p>
+
+    <!-- EJEMPLO 3 -->
+    <div class="box ejercicio" id="ej-3">
+      <span class="box-title">Ejemplo 3 · Bernoulli $\text{Ber}(p)$ por factorización</span>
+      <p>Sean $X_1, X_2, \dots, X_n$ variables aleatorias $\iid \text{Ber}(p)$, donde se desconoce $p \in (0, 1)$. Usa el criterio de factorización para encontrar un estadístico suficiente para $p$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Escribe $f(x_i \mid p) = p^{x_i}(1-p)^{1-x_i}\1_{\{x_i \in \{0,1\}\}}$, multiplica desde $i=1$ hasta $n$ sumando los exponentes de $p$ y de $1-p$, y separa la indicadora del soporte en $h(\mathbf{x})$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><strong>Función de verosimilitud conjunta:</strong> Para cada observación $x_i$, la función de probabilidad es $f(x_i \mid p) = p^{x_i}(1-p)^{1-x_i}\1_{\{x_i \in \{0,1\}\}}$. Multiplicando para toda la muestra $\mathbf{x} = (x_1, \dots, x_n)$:
+            $$L(p \mid \mathbf{x}) = \prod_{i=1}^n p^{x_i}(1-p)^{1-x_i}\1_{\{x_i \in \{0, 1\}\}} = p^{\sum_{i=1}^n x_i}(1-p)^{n - \sum_{i=1}^n x_i} \prod_{i=1}^n \1_{\{x_i \in \{0, 1\}\}}.$$</li>
+          <li><strong>Identificación de $g$ y $h$:</strong> Observa que $\mathbf{x}$ aparece junto con $p$ únicamente a través de $T(\mathbf{x}) = \sum_{i=1}^n x_i$:
+            $$L(p \mid \mathbf{x}) = \underbrace{p^{T(\mathbf{x})}(1-p)^{n - T(\mathbf{x})}}_{g\big(T(\mathbf{x}),\, p\big)} \times \underbrace{\prod_{i=1}^n \1_{\{x_i \in \{0, 1\}\}}}_{h(\mathbf{x})}.$$</li>
+          <li><strong>Conclusión:</strong> Tanto $g \ge 0$ como $h \ge 0$ cumplen las hipótesis del Teorema de Factorización de Fisher–Neyman (y $h(\mathbf{x})$ no depende de $p$). Por lo tanto, $T = \sum_{i=1}^n X_i$ (y de forma equivalente $\bar X = \frac{1}{n}\sum_{i=1}^n X_i$) es un estadístico suficiente para $p$.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJEMPLO 4 -->
+    <div class="box ejercicio" id="ej-4">
+      <span class="box-title">Ejemplo 4 · Exponencial $\text{Exp}(\beta)$ con media $\beta$</span>
+      <p>Sean $X_1, X_2, \dots, X_n$ variables aleatorias $\iid \text{Exp}(\beta)$, con media $\beta &gt; 0$. Encuentra un estadístico suficiente para $\beta$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En la convención de escala (media $\beta$), la densidad exponencial es $f(x \mid \beta) = \frac{1}{\beta}e^{-x/\beta}\1_{\{x \ge 0\}}$. Al multiplicar $n$ densidades, escribe $\prod_{i=1}^n \1_{\{x_i \ge 0\}} = \1_{\{x_{(1)} \ge 0\}}$ y comprueba que esa indicadora no depende de $\beta$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><strong>Verosimilitud de la muestra exponencial:</strong> Bajo la parametrización con media $\beta &gt; 0$, cada densidad es $f(x_i \mid \beta) = \frac{1}{\beta}e^{-x_i/\beta}\1_{\{x_i \ge 0\}}$. Luego:
+            $$L(\beta \mid \mathbf{x}) = \prod_{i=1}^n \left(\frac{1}{\beta} e^{-x_i/\beta}\1_{\{x_i \ge 0\}}\right) = \frac{1}{\beta^n}\exp\left(-\frac{1}{\beta}\sum_{i=1}^n x_i\right) \prod_{i=1}^n \1_{\{x_i \ge 0\}}.$$</li>
+          <li><strong>Reescritura del soporte y factorización:</strong> Todas las observaciones cumplen $x_i \ge 0$ si y solo si su mínimo cumple $x_{(1)} \ge 0$. De este modo:
+            $$L(\beta \mid \mathbf{x}) = \underbrace{\frac{1}{\beta^n}\exp\left(-\frac{1}{\beta}\sum_{i=1}^n x_i\right)}_{g\big(T(\mathbf{x}),\, \beta\big)} \times \underbrace{\1_{\{x_{(1)} \ge 0\}}}_{h(\mathbf{x})}.$$</li>
+          <li><strong>Conclusión:</strong> La función $h(\mathbf{x}) = \1_{\{x_{(1)} \ge 0\}}$ es no negativa y no depende de $\beta$, mientras que $g$ depende de la muestra solo mediante $T(\mathbf{x}) = \sum_{i=1}^n x_i$. Por Fisher–Neyman, $T = \sum_{i=1}^n X_i$ (o equivalentemente $\bar X$) es suficiente para $\beta$. <em>(Si se parametrizara mediante la tasa $\lambda = 1/\beta$, el estadístico suficiente sigue siendo exactamente el mismo).</em></li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJEMPLO 5 -->
+    <div class="box ejercicio" id="ej-5">
+      <span class="box-title">Ejemplo 5 · Poisson $\text{Pois}(\lambda)$ por factorización</span>
+      <p>Sean $X_1, X_2, \dots, X_n$ variables aleatorias $\iid \text{Pois}(\lambda)$, con $\lambda &gt; 0$. Encuentra un estadístico suficiente para $\lambda$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Compara este procedimiento con el Ejemplo 2: escribe $L(\lambda \mid \mathbf{x}) = \prod_{i=1}^n \frac{e^{-\lambda}\lambda^{x_i}}{x_i!}\1_{\{x_i \in \{0,1,2,\dots\}\}}$ y observa que el denominador $\prod_{i=1}^n x_i!$ no contiene a $\lambda$, por lo que pasa directo a $h(\mathbf{x})$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><strong>Verosimilitud conjunta:</strong> Multiplicando las funciones de masa individuales para $x_1, \dots, x_n \in \{0, 1, 2, \dots\}$:
+            $$L(\lambda \mid \mathbf{x}) = \prod_{i=1}^n \left(\frac{e^{-\lambda}\lambda^{x_i}}{x_i!}\,\1_{\{x_i \in \{0,1,2,\dots\}\}}\right) = e^{-n\lambda}\,\lambda^{\sum_{i=1}^n x_i} \cdot \frac{1}{\prod_{i=1}^n x_i!}\prod_{i=1}^n \1_{\{x_i \in \{0,1,2,\dots\}\}}.$$</li>
+          <li><strong>Factorización de Fisher–Neyman:</strong> Definimos $T(\mathbf{x}) = \sum_{i=1}^n x_i$ y separamos:
+            $$g\big(T(\mathbf{x}),\, \lambda\big) = e^{-n\lambda}\,\lambda^{\sum_{i=1}^n x_i}, \qquad h(\mathbf{x}) = \frac{1}{\prod_{i=1}^n x_i!}\prod_{i=1}^n \1_{\{x_i \in \{0,1,2,\dots\}\}}.$$</li>
+          <li><strong>Conclusión:</strong> Como $g \ge 0$, $h \ge 0$ y $h(\mathbf{x})$ no depende de $\lambda$, el Teorema de Factorización confirma en dos líneas —sin necesidad de calcular la distribución marginal de la suma— que $T = \sum_{i=1}^n X_i$ (y también $\bar X$) es suficiente para $\lambda$.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJEMPLO 6 -->
+    <div class="box ejercicio" id="ej-6">
+      <span class="box-title">Ejemplo 6 · Gamma $\text{Gamma}(\alpha, \beta)$ con media $\alpha\beta$</span>
+      <p>Sean $X_1, \dots, X_n$ variables aleatorias $\iid \text{Gamma}(\alpha, \beta)$, con media $\alpha\beta$ ($\alpha &gt; 0, \beta &gt; 0$). Demuestra que $\bar X$ es suficiente para $\beta$ cuando se conoce $\alpha$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Usa la densidad $f(x \mid \alpha, \beta) = \frac{1}{\Gamma(\alpha)\beta^\alpha}x^{\alpha - 1}e^{-x/\beta}\1_{\{x &gt; 0\}}$. Recuerda que $\alpha$ es una constante <em>conocida</em>, de modo que todo término con $x_i^{\alpha - 1}$ y $\Gamma(\alpha)$ que no involucre a $\beta$ puede colocarse en $h(\mathbf{x})$. Además sustituye $\sum_{i=1}^n x_i = n\bar x$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><strong>Verosimilitud cuando $\alpha$ es conocido y $\beta$ desconocido:</strong> Con la parametrización de escala $\beta$ (media $\alpha\beta$):
+            $$L(\beta \mid \mathbf{x}) = \prod_{i=1}^n \left[\frac{1}{\Gamma(\alpha)\beta^\alpha} x_i^{\alpha - 1} e^{-x_i/\beta} \1_{\{x_i &gt; 0\}}\right] = \frac{1}{[\Gamma(\alpha)]^n\,\beta^{n\alpha}} \left(\prod_{i=1}^n x_i\right)^{\alpha - 1} \exp\left(-\frac{1}{\beta}\sum_{i=1}^n x_i\right) \1_{\{x_{(1)} &gt; 0\}}.$$</li>
+          <li><strong>Expresión en términos de $\bar x$ y separación:</strong> Puesto que $\sum_{i=1}^n x_i = n\bar x$, agrupamos todos los factores que contienen a $\beta$ por un lado y el resto por el otro:
+            $$L(\beta \mid \mathbf{x}) = \underbrace{\frac{1}{\beta^{n\alpha}}\exp\left(-\frac{n\bar x}{\beta}\right)}_{g(\bar x,\, \beta)} \times \underbrace{\frac{\left(\prod_{i=1}^n x_i\right)^{\alpha - 1}}{[\Gamma(\alpha)]^n}\,\1_{\{x_{(1)} &gt; 0\}}}_{h(\mathbf{x})}.$$</li>
+          <li><strong>Conclusión para $\beta$ con $\alpha$ conocido:</strong> Dado que $\alpha$ es conocido, $h(\mathbf{x})$ no depende del parámetro desconocido $\beta$ y ambas funciones son no negativas. Por Fisher–Neyman, $T = \bar X$ es un estadístico suficiente para $\beta$.</li>
+        </ol>
+        <p><strong>Comentario adicional (¿y si $\beta$ fuera conocido y $\alpha$ desconocido?):</strong> Si intercambiamos papeles —$\beta$ conocido y $\alpha$ desconocido—, entonces el término $\left(\prod_{i=1}^n x_i\right)^{\alpha - 1}$ sí contiene al parámetro desconocido $\alpha$, mientras que $\exp\big(-\frac{1}{\beta}\sum_{i=1}^n x_i\big)$ pasa a formar parte de $h(\mathbf{x})$. En ese escenario, el estadístico suficiente para $\alpha$ es $T = \prod_{i=1}^n X_i$ (o equivalentemente $\sum_{i=1}^n \ln X_i$). Y si ambos $(\alpha, \beta)$ son desconocidos, el par $\big(\sum_{i=1}^n X_i,\; \prod_{i=1}^n X_i\big)$ es conjuntamente suficiente.</p>
+      </div></details>
+    </div>
+
+    <!-- EJEMPLO 7 -->
+    <div class="box ejercicio" id="ej-7">
+      <span class="box-title">Ejemplo 7 · Uniforme $\text{Unif}(0, \theta)$ con soporte dependiente del parámetro</span>
+      <p>Sean $X_1, X_2, \dots, X_n$ variables aleatorias $\iid \text{Unif}(0, \theta)$, con $\theta &gt; 0$ desconocido. Encuentra un estadístico suficiente para $\theta$.</p>
+
+      <details class="pista"><summary>Pista 1 · Escribe la indicadora explícita</summary><div>
+        <p>La densidad uniforme en $(0, \theta)$ es $f(x_i \mid \theta) = \frac{1}{\theta}\1_{\{0 \le x_i \le \theta\}}$. No omitas la función indicadora al construir $L(\theta \mid \mathbf{x})$.</p>
+      </div></details>
+
+      <details class="pista"><summary>Pista 2 · Traduce la condición conjunta a estadísticos de orden</summary><div>
+        <p>Que todas las observaciones $x_1, \dots, x_n$ cumplan simultáneamente $0 \le x_i \le \theta$ equivale a dos condiciones sobre los extremos de la muestra: $x_{(1)} = \min_i x_i \ge 0$ y $x_{(n)} = \max_i x_i \le \theta$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><strong>Verosimilitud con el soporte completo:</strong> Cada observación tiene densidad $f(x_i \mid \theta) = \frac{1}{\theta}\1_{\{0 \le x_i \le \theta\}}$. Al multiplicar las $n$ densidades:
+            $$L(\theta \mid \mathbf{x}) = \prod_{i=1}^n \left(\frac{1}{\theta}\,\1_{\{0 \le x_i \le \theta\}}\right) = \frac{1}{\theta^n}\prod_{i=1}^n \1_{\{0 \le x_i \le \theta\}}.$$</li>
+          <li><strong>Reducción del producto de indicadoras mediante estadísticos de orden:</strong> Todos los números $x_1, \dots, x_n$ se encuentran en el intervalo $[0, \theta]$ si y solo si el menor de todos es mayor o igual a $0$ y el mayor de todos es menor o igual a $\theta$:
+            $$\prod_{i=1}^n \1_{\{0 \le x_i \le \theta\}} = \1_{\{x_{(1)} \ge 0\}}\,\1_{\{x_{(n)} \le \theta\}},$$
+            donde $x_{(1)} = \min\{x_1, \dots, x_n\}$ y $x_{(n)} = \max\{x_1, \dots, x_n\}$.</li>
+          <li><strong>Factorización:</strong> Ahora separamos la parte que depende de $\theta$ de la que solo restringe la positividad de los datos:
+            $$L(\theta \mid \mathbf{x}) = \underbrace{\frac{1}{\theta^n}\,\1_{\{x_{(n)} \le \theta\}}}_{g\big(x_{(n)},\, \theta\big)} \times \underbrace{\1_{\{x_{(1)} \ge 0\}}}_{h(\mathbf{x})}.$$</li>
+          <li><strong>Conclusión:</strong> Aquí $h(\mathbf{x}) = \1_{\{x_{(1)} \ge 0\}}$ no depende de $\theta$, y $g$ involucra a $\mathbf{x}$ exclusivamente mediante $T(\mathbf{x}) = x_{(n)}$. Por el criterio de Fisher–Neyman, $T = X_{(n)} = \max\{X_1, \dots, X_n\}$ es un estadístico suficiente para $\theta$.
+            <br><em>Nota crítica:</em> A diferencia de los ejemplos anteriores, la media muestral $\bar X$ <strong>no</strong> es suficiente para $\theta$ en $\text{Unif}(0, \theta)$, porque conocer el promedio no basta para saber si el dato más grande $X_{(n)}$ supera o no un valor candidato de $\theta$.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJEMPLO 8 -->
+    <div class="box ejercicio" id="ej-8">
+      <span class="box-title">Ejemplo 8 · Distribución Normal $N(\mu, \sigma^2)$ en dos escenarios</span>
+      <p>Sean $X_1, X_2, \dots, X_n$ variables aleatorias $\iid N(\mu, \sigma^2)$.</p>
+      <ol>
+        <li>Con $\sigma^2 &gt; 0$ conocido, encuentra un estadístico suficiente para $\mu$.</li>
+        <li>Considerando $\mu = 0$ conocido, encuentra un estadístico suficiente para $\sigma^2$.</li>
+      </ol>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En la parte (a), expande $(x_i - \mu)^2 = x_i^2 - 2\mu x_i + \mu^2$ dentro de la exponencial para separar el término en $\sum x_i^2$ (libre de $\mu$) del término cruzado $2\mu \sum x_i$. En la parte (b), sustituye $\mu = 0$ directamente en $L(\sigma^2 \mid \mathbf{x})$ y observa qué función de los datos acompaña a $\sigma^2$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <h4>Parte (a): $\sigma^2$ conocido y $\mu \in \R$ desconocido</h4>
+        <ol class="pasos">
+          <li><strong>Verosimilitud para $\mu$:</strong>
+            $$L(\mu \mid \mathbf{x}) = \prod_{i=1}^n \frac{1}{\sqrt{2\pi\sigma^2}}\exp\left(-\frac{(x_i - \mu)^2}{2\sigma^2}\right) = (2\pi\sigma^2)^{-n/2}\exp\left(-\frac{1}{2\sigma^2}\sum_{i=1}^n (x_i - \mu)^2\right).$$</li>
+          <li><strong>Expansión de la suma de cuadrados y factorización:</strong> Desarrollando $(x_i - \mu)^2 = x_i^2 - 2\mu x_i + \mu^2$ obtenemos $\sum_{i=1}^n (x_i - \mu)^2 = \sum_{i=1}^n x_i^2 - 2\mu\sum_{i=1}^n x_i + n\mu^2$. Al sustituir en el exponente:
+            $$L(\mu \mid \mathbf{x}) = \underbrace{\exp\left(\frac{\mu \sum_{i=1}^n x_i}{\sigma^2} - \frac{n\mu^2}{2\sigma^2}\right)}_{g\big(T(\mathbf{x}),\, \mu\big)} \times \underbrace{(2\pi\sigma^2)^{-n/2}\exp\left(-\frac{1}{2\sigma^2}\sum_{i=1}^n x_i^2\right)}_{h(\mathbf{x})}.$$
+            <em>(También podías usar $\sum_{i=1}^n (x_i - \mu)^2 = \sum_{i=1}^n (x_i - \bar x)^2 + n(\bar x - \mu)^2$, obteniendo directamente $g(\bar x, \mu) = \exp\big(-\frac{n(\bar x - \mu)^2}{2\sigma^2}\big)$).</em></li>
+          <li><strong>Conclusión (a):</strong> Como $\sigma^2$ es conocido, $h(\mathbf{x})$ no depende de $\mu$. Por Fisher–Neyman, $T = \sum_{i=1}^n X_i$ (o equivalentemente $\bar X$) es un estadístico suficiente para $\mu$.</li>
+        </ol>
+
+        <h4>Parte (b): $\mu = 0$ conocido y $\sigma^2 &gt; 0$ desconocido</h4>
+        <ol class="pasos">
+          <li><strong>Verosimilitud para $\sigma^2$ fijando $\mu = 0$:</strong>
+            $$L(\sigma^2 \mid \mathbf{x}) = \prod_{i=1}^n \frac{1}{\sqrt{2\pi\sigma^2}}\exp\left(-\frac{x_i^2}{2\sigma^2}\right) = \underbrace{(2\pi\sigma^2)^{-n/2}\exp\left(-\frac{1}{2\sigma^2}\sum_{i=1}^n x_i^2\right)}_{g\big(T(\mathbf{x}),\, \sigma^2\big)} \times \underbrace{1}_{h(\mathbf{x})}.$$</li>
+          <li><strong>Conclusión (b):</strong> Aquí $h(\mathbf{x}) = 1$ no depende de $\sigma^2$ y $g$ usa los datos únicamente mediante $\sum_{i=1}^n x_i^2$. Luego $T = \sum_{i=1}^n X_i^2$ (o $\frac{1}{n}\sum_{i=1}^n X_i^2$) es un estadístico suficiente para $\sigma^2$.</li>
+        </ol>
+        <p><strong>¿Por qué $T = \sum_{i=1}^n X_i^2$ y no únicamente la varianza muestral $S^2$?</strong> Porque sabemos con certeza que la media verdadera es $\mu = 0$, así que cada desviación respecto a cero $X_i - 0 = X_i$ aporta información genuina sobre la dispersión $\sigma^2$. Si usáramos solo $S^2 = \frac{1}{n-1}\sum_{i=1}^n (X_i - \bar X)^2$, estaríamos centrando en $\bar X$ y descartando la información contenida en $n\bar X^2$ (recuerda que $\sum_{i=1}^n X_i^2 = (n-1)S^2 + n\bar X^2$). En cambio, cuando <em>tanto $\mu$ como $\sigma^2$</em> son desconocidos, el par $(\bar X, S^2)$ —equivalentemente $\big(\sum X_i,\, \sum X_i^2\big)$— sí es conjuntamente suficiente para $(\mu, \sigma^2)$.</p>
+      </div></details>
+    </div>
+
+    <h3>Resumen de estadísticos suficientes en los modelos de la clase</h3>
+    <div class="table-wrap">
+      <table class="tabla text-left">
+        <thead>
+          <tr>
+            <th>Distribución ($X_1, \dots, X_n \iid$)</th>
+            <th>Parámetro(s) desconocido(s)</th>
+            <th>Parámetro(s) conocido(s)</th>
+            <th>Estadístico suficiente $T$</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>$\text{Ber}(p)$</td>
+            <td>$p \in (0, 1)$</td>
+            <td>—</td>
+            <td>$\sum_{i=1}^n X_i$ (o $\bar X$)</td>
+          </tr>
+          <tr>
+            <td>$\text{Pois}(\lambda)$</td>
+            <td>$\lambda &gt; 0$</td>
+            <td>—</td>
+            <td>$\sum_{i=1}^n X_i$ (o $\bar X$)</td>
+          </tr>
+          <tr>
+            <td>$\text{Exp}(\beta)$ (media $\beta$)</td>
+            <td>$\beta &gt; 0$</td>
+            <td>—</td>
+            <td>$\sum_{i=1}^n X_i$ (o $\bar X$)</td>
+          </tr>
+          <tr>
+            <td>$\text{Gamma}(\alpha, \beta)$ (media $\alpha\beta$)</td>
+            <td>$\beta &gt; 0$</td>
+            <td>$\alpha &gt; 0$</td>
+            <td>$\sum_{i=1}^n X_i$ (o $\bar X$)</td>
+          </tr>
+          <tr>
+            <td>$\text{Gamma}(\alpha, \beta)$ (media $\alpha\beta$)</td>
+            <td>$\alpha &gt; 0$</td>
+            <td>$\beta &gt; 0$</td>
+            <td>$\prod_{i=1}^n X_i$ (o $\sum_{i=1}^n \ln X_i$)</td>
+          </tr>
+          <tr>
+            <td>$\text{Unif}(0, \theta)$</td>
+            <td>$\theta &gt; 0$</td>
+            <td>—</td>
+            <td>$X_{(n)} = \max\{X_1, \dots, X_n\}$</td>
+          </tr>
+          <tr>
+            <td>$N(\mu, \sigma^2)$</td>
+            <td>$\mu \in \R$</td>
+            <td>$\sigma^2 &gt; 0$</td>
+            <td>$\sum_{i=1}^n X_i$ (o $\bar X$)</td>
+          </tr>
+          <tr>
+            <td>$N(0, \sigma^2)$</td>
+            <td>$\sigma^2 &gt; 0$</td>
+            <td>$\mu = 0$</td>
+            <td>$\sum_{i=1}^n X_i^2$ (o $\frac{1}{n}\sum_{i=1}^n X_i^2$)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="simulaciones">5. Laboratorios interactivos</h2>
+    <p>Explora visualmente las dos caras de la suficiencia: la <strong>invarianza de la distribución condicional</strong> al mover el parámetro (definición) y la <strong>proporcionalidad de verosimilitudes</strong> entre muestras distintas con el mismo estadístico suficiente (Fisher–Neyman).</p>
+
+    <div class="sim" id="sim-condicional">
+      <p class="sim-title">Laboratorio 1 · Invarianza condicional en $\text{Ber}(p)$ y $\text{Pois}(\lambda)$</p>
+      <p class="sim-desc">Mueve el parámetro ($p$ o $\lambda$) y observa todas las muestras $\mathbf{x}$ compatibles con $T(\mathbf{x}) = \sum X_i = t$. A la izquierda verás cómo la probabilidad conjunta $\P_\theta(\mathbf{X} = \mathbf{x})$ cambia sensiblemente con el parámetro; a la derecha, al dividir entre $\P_\theta(T = t)$, la distribución condicional $\P(\mathbf{X} = \mathbf{x} \mid T = t)$ permanece <strong>idéntica e inmóvil</strong>.</p>
+      <div class="controls"></div>
+      <div class="grid-2">
+        <div>
+          <p class="plot-cap">Probabilidad conjunta $\P_\theta(\mathbf{X} = \mathbf{x})$ (depende del parámetro)</p>
+          <div class="plot plot-joint"></div>
+        </div>
+        <div>
+          <p class="plot-cap">Probabilidad condicional $\P(\mathbf{X} = \mathbf{x} \mid T = t)$ (invariante)</p>
+          <div class="plot plot-cond"></div>
+        </div>
+      </div>
+      <div class="out"></div>
+    </div>
+
+    <div class="sim" id="sim-factorizacion">
+      <p class="sim-title">Laboratorio 2 · Factorización de Fisher–Neyman: muestras distintas con el mismo $T$</p>
+      <p class="sim-desc">Compara dos muestras diferentes $\mathbf{x}^{(1)}$ y $\mathbf{x}^{(2)}$ de tamaño $n = 3$ que producen el <strong>mismo valor</strong> del estadístico suficiente $T$. Sus verosimilitudes brutas $L(\theta \mid \mathbf{x}^{(1)})$ y $L(\theta \mid \mathbf{x}^{(2)})$ difieren en altura por el factor $h(\mathbf{x})$, pero su cociente permanece constante y al normalizarlas colapsan exactamente sobre la misma curva $g(t,\theta)/\max_\theta g(t,\theta)$.</p>
+      <div class="controls"></div>
+      <div class="grid-2">
+        <div>
+          <p class="plot-cap">Verosimilitudes brutas $L(\theta \mid \mathbf{x}^{(1)})$ vs. $L(\theta \mid \mathbf{x}^{(2)})$</p>
+          <div class="plot plot-raw"></div>
+        </div>
+        <div>
+          <p class="plot-cap">Verosimilitudes normalizadas $L(\theta \mid \mathbf{x}) / \max_\theta L$ (colapsan a $g$)</p>
+          <div class="plot plot-norm"></div>
+        </div>
+      </div>
+      <div class="out"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="autoevaluacion">6. Autoevaluación</h2>
+    <div id="quiz-1"></div>
+    <div id="quiz-2"></div>
+    <div id="quiz-3"></div>
+
+    <h3>Comprueba tus cálculos numéricos</h3>
+    <div id="nc-1"></div>
+    <div id="nc-2"></div>
+
+    <details class="solucion"><summary>Desarrollo de los dos cálculos numéricos</summary><div>
+      <ol class="pasos">
+        <li>Por el Ejemplo 2, para $X_1, X_2, X_3 \iid \text{Pois}(\lambda)$ dado $T = X_1 + X_2 + X_3 = 3$, la distribución condicional es $\text{Multinomial}(3;\, 1/3, 1/3, 1/3)$:
+          $$\P(X_1 = 2, X_2 = 1, X_3 = 0 \mid T = 3) = \frac{3!}{2!\,1!\,0!}\left(\frac{1}{3}\right)^3 = \frac{6}{2}\cdot\frac{1}{27} = \frac{3}{27} = \frac{1}{9} \approx 0.1111.$$</li>
+        <li>Para $\mathbf{x}^{(1)} = (1, 2, 3)$ y $\mathbf{x}^{(2)} = (0, 1, 5)$ de $\text{Pois}(\lambda)$, ambas tienen $T = \sum_{i=1}^3 x_i = 6$. Por Fisher–Neyman, $L(\lambda \mid \mathbf{x}) = e^{-3\lambda}\lambda^6 \cdot h(\mathbf{x})$ con $h(\mathbf{x}) = (\prod_{i=1}^3 x_i!)^{-1}$. Así, el factor $g(6, \lambda)$ se cancela en el cociente:
+          $$\frac{L(\lambda \mid \mathbf{x}^{(1)})}{L(\lambda \mid \mathbf{x}^{(2)})} = \frac{h(\mathbf{x}^{(1)})}{h(\mathbf{x}^{(2)})} = \frac{0!\,1!\,5!}{1!\,2!\,3!} = \frac{1 \cdot 1 \cdot 120}{1 \cdot 2 \cdot 6} = \frac{120}{12} = 10.$$</li>
+      </ol>
+    </div></details>
+
+    <div class="box nota">
+      <span class="box-title">Resumen esencial de la Clase 15</span>
+      <ul>
+        <li><strong>Definición de suficiencia:</strong> $T(\mathbf{X})$ es suficiente para $\theta$ si la distribución condicional de $\mathbf{X}$ dado $T = t$ no depende de $\theta$. Sirve para verificar un candidato $T$, aunque puede ser algebraicamente laboriosa.</li>
+        <li><strong>Transformaciones recuperables:</strong> Si $T$ es suficiente para $\theta$ y $T = \psi(U)$ (por ejemplo, toda función biyectiva de $T$), entonces $U$ también es suficiente para $\theta$.</li>
+        <li><strong>Criterio de Factorización de Fisher–Neyman:</strong> $T$ es suficiente para $\theta$ si y solo si $L(\theta \mid \mathbf{x}) = g(T(\mathbf{x}), \theta)\,h(\mathbf{x})$ con $g, h \ge 0$ y $h(\mathbf{x})$ libre de $\theta$. Nunca omitas las indicadoras del soporte cuando dependan de $\theta$ (como en $\text{Unif}(0, \theta)$, donde $T = X_{(n)}$).</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../assets/js/stats.js"></script>
+<script src="../assets/js/plot.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+(function () {
+  'use strict';
+  const S = EM.stats, fmt = S.fmt, ui = EM.ui;
+
+  /* ============================================================
+     SIMULACIÓN 1: Invarianza condicional en Ber(p) y Pois(lambda)
+     ============================================================ */
+  (function () {
+    const root = document.getElementById('sim-condicional');
+    if (!root) return;
+
+    let model = 'ber';
+    let p = 0.30;
+    let lam = 1.40;
+    let tVal = 2;
+
+    const ctr = root.querySelector('.controls');
+    ui.select(ctr, {
+      label: 'Modelo',
+      value: model,
+      options: [
+        { value: 'ber', label: 'Ber(p), n = 4' },
+        { value: 'pois', label: 'Pois(λ), n = 2' }
+      ],
+      onChange: v => { model = v; syncControls(); update(); }
+    });
+    const slP = ui.slider(ctr, {
+      tex: 'p', min: 0.10, max: 0.90, step: 0.05, value: p,
+      fmt: v => v.toFixed(2),
+      onInput: v => { p = v; update(); }
+    });
+    const slLam = ui.slider(ctr, {
+      tex: '\\lambda', min: 0.4, max: 4.0, step: 0.2, value: lam,
+      fmt: v => v.toFixed(1),
+      onInput: v => { lam = v; update(); }
+    });
+    ui.slider(ctr, {
+      tex: 't', min: 0, max: 4, step: 1, value: tVal,
+      onInput: v => { tVal = Math.round(v); update(); }
+    });
+
+    const pWrap = slP.input.closest('.slider');
+    const lamWrap = slLam.input.closest('.slider');
+    function syncControls() {
+      pWrap.classList.toggle('is-dim', model !== 'ber');
+      lamWrap.classList.toggle('is-dim', model !== 'pois');
+    }
+
+    const plotJoint = EM.plot.create(root.querySelector('.plot-joint'), {
+      xmin: 0.2, xmax: 6.8, ymin: 0, ymax: 0.3,
+      height: 270, xlabel: 'índice de muestra', ylabel: 'P_θ(X=x)', legendPos: 'tr'
+    });
+    const plotCond = EM.plot.create(root.querySelector('.plot-cond'), {
+      xmin: 0.2, xmax: 6.8, ymin: 0, ymax: 0.5,
+      height: 270, xlabel: 'índice de muestra', ylabel: 'P(X=x | T=t)', legendPos: 'tr'
+    });
+    const out = ui.readout(root.querySelector('.out'));
+
+    function berSamples(n, t) {
+      const res = [];
+      const total = 1 << n;
+      for (let mask = total - 1; mask >= 0; mask--) {
+        const vec = [];
+        let s = 0;
+        for (let i = n - 1; i >= 0; i--) {
+          const b = (mask >> i) & 1;
+          vec.push(b);
+          s += b;
+        }
+        if (s === t) res.push(vec);
+      }
+      return res;
+    }
+
+    function poisPairs(t) {
+      const res = [];
+      for (let x1 = 0; x1 <= t; x1++) res.push([x1, t - x1]);
+      return res;
+    }
+
+    function update() {
+      let labels = [];
+      let joint = [];
+      let cond = [];
+      let marginalT = 0;
+      let formulaTxt = '';
+
+      if (model === 'ber') {
+        const n = 4;
+        const vecs = berSamples(n, tVal);
+        const m = vecs.length;
+        const pEach = Math.pow(p, tVal) * Math.pow(1 - p, n - tVal);
+        marginalT = S.choose(n, tVal) * pEach;
+        const cEach = 1 / m;
+        labels = vecs.map(v => '(' + v.join(',') + ')');
+        joint = vecs.map(() => pEach);
+        cond = vecs.map(() => cEach);
+        formulaTxt = `En $\\text{Ber}(p=${p.toFixed(2)})$ con $n=4, t=${tVal}$, hay $\\binom{4}{${tVal}} = ${m}$ vectores compatibles; cada uno tiene $\\P_p(\\mathbf{X}=\\mathbf{x}) = ${fmt(pEach, 5)}$ y $\\P_p(T=${tVal}) = ${fmt(marginalT, 5)}$, pero su cociente condicional es siempre $1/${m} = ${fmt(cEach, 4)}$ (libre de $p$).`;
+      } else {
+        const vecs = poisPairs(tVal);
+        const e2l = Math.exp(-2 * lam);
+        const lamT = Math.pow(lam, tVal);
+        for (const [x1, x2] of vecs) {
+          labels.push(`(${x1},${x2})`);
+          const pj = e2l * lamT / (S.factorial(x1) * S.factorial(x2));
+          joint.push(pj);
+          const pc = S.choose(tVal, x1) * Math.pow(0.5, tVal);
+          cond.push(pc);
+        }
+        marginalT = e2l * Math.pow(2 * lam, tVal) / S.factorial(tVal);
+        formulaTxt = `En $\\text{Pois}(\\lambda=${lam.toFixed(1)})$ con $n=2, t=${tVal}$, la suma tiene distribución $\\text{Pois}(2\\lambda)$ con $\\P_\\lambda(T=${tVal}) = ${fmt(marginalT, 5)}$. Al dividir $\\P_\\lambda(\\mathbf{X}=\\mathbf{x})$ entre $\\P_\\lambda(T=${tVal})$, resulta $\\text{Multinomial}(${tVal};\\,1/2,1/2) \\equiv \\text{Bin}(${tVal}, 1/2)$, totalmente independiente de $\\lambda$.`;
+      }
+
+      const m = labels.length;
+      const xs = Array.from({ length: m }, (_, i) => i + 1);
+      const xmin = 0.2, xmax = Math.max(2.8, m + 0.8);
+      const maxJ = Math.max(...joint);
+      const maxC = Math.max(...cond);
+      const yMaxJ = Math.max(0.01, maxJ * 1.38);
+      const yMaxC = Math.max(0.30, maxC * 1.32);
+      const bw = m <= 2 ? 0.45 : 0.62;
+
+      plotJoint.setRange({ xmin, xmax, ymin: 0, ymax: yMaxJ, xticks: Math.min(8, m + 1) });
+      plotJoint.draw(g => {
+        g.bars(xs, joint, { width: bw, color: 'c2', alpha: 0.82, label: 'P_θ(X = x)' });
+        for (let i = 0; i < m; i++) {
+          g.text(labels[i], xs[i], joint[i], { align: 'center', baseline: 'bottom', dy: -16, size: 10.5, bold: true });
+          g.text(fmt(joint[i], 4), xs[i], joint[i], { align: 'center', baseline: 'bottom', dy: -3, size: 10, color: 'muted' });
+        }
+      });
+
+      plotCond.setRange({ xmin, xmax, ymin: 0, ymax: yMaxC, xticks: Math.min(8, m + 1) });
+      plotCond.draw(g => {
+        g.bars(xs, cond, { width: bw, color: 'c1', alpha: 0.82, label: 'P(X = x | T = t)' });
+        for (let i = 0; i < m; i++) {
+          g.text(labels[i], xs[i], cond[i], { align: 'center', baseline: 'bottom', dy: -16, size: 10.5, bold: true });
+          g.text(fmt(cond[i], 4), xs[i], cond[i], { align: 'center', baseline: 'bottom', dy: -3, size: 10, color: 'muted' });
+        }
+      });
+
+      const listHtml = labels.map((lb, i) => `<code>${lb}</code>: conj. <b>${fmt(joint[i], 4)}</b> / cond. <b>${fmt(cond[i], 4)}</b>`).join(' &nbsp;·&nbsp; ');
+      out.set(`${formulaTxt}<br><small style="color:var(--muted)">${listHtml}</small>`);
+    }
+
+    syncControls();
+    update();
+  })();
+
+  /* ============================================================
+     SIMULACIÓN 2: Factorización de Fisher-Neyman (L1 vs L2)
+     ============================================================ */
+  (function () {
+    const root = document.getElementById('sim-factorizacion');
+    if (!root) return;
+
+    let model = 'pois';
+    let tVal = 6;
+    let contrast = 0.70;
+    let customPair = null;
+    let seed = 424242;
+
+    const ctr = root.querySelector('.controls');
+    ui.select(ctr, {
+      label: 'Modelo',
+      value: model,
+      options: [
+        { value: 'pois', label: 'Pois(λ) · T = ΣXᵢ' },
+        { value: 'gamma', label: 'Gamma(α=2, β) · T = ΣXᵢ' },
+        { value: 'norm', label: 'N(μ, σ²=1) · T = ΣXᵢ' },
+        { value: 'unif', label: 'Unif(0, θ) · T = X₍ₙ₎' }
+      ],
+      onChange: v => { model = v; customPair = null; update(); }
+    });
+    ui.slider(ctr, {
+      tex: 't', min: 3, max: 7, step: 1, value: tVal,
+      onInput: v => { tVal = Math.round(v); customPair = null; update(); }
+    });
+    ui.slider(ctr, {
+      label: 'Contraste h(x)', min: 0.1, max: 1.0, step: 0.05, value: contrast,
+      fmt: v => v.toFixed(2),
+      onInput: v => { contrast = v; customPair = null; update(); }
+    });
+    ui.button(ctr, 'Sortear par con mismo T', () => {
+      seed = (seed + 7919) >>> 0;
+      const rng = S.mulberry32(seed);
+      customPair = drawRandomPair(model, tVal, rng);
+      update();
+    }, { primary: true });
+
+    const plotRaw = EM.plot.create(root.querySelector('.plot-raw'), {
+      xmin: 0.2, xmax: 5.0, ymin: 0, ymax: 0.1,
+      height: 270, xlabel: 'θ', ylabel: 'L(θ | x)', legendPos: 'tr'
+    });
+    const plotNorm = EM.plot.create(root.querySelector('.plot-norm'), {
+      xmin: 0.2, xmax: 5.0, ymin: 0, ymax: 1.18,
+      height: 270, xlabel: 'θ', ylabel: 'L(θ | x) / máx', legendPos: 'tr'
+    });
+    const out = ui.readout(root.querySelector('.out'));
+
+    function drawRandomPair(mod, t, rng) {
+      if (mod === 'pois') {
+        const makePois = () => {
+          const x = [0, 0, 0];
+          for (let k = 0; k < t; k++) x[Math.floor(rng() * 3)]++;
+          return x;
+        };
+        return [makePois(), makePois()];
+      }
+      if (mod === 'gamma') {
+        const makeGam = () => {
+          const w = [0.15 + rng(), 0.15 + rng(), 0.15 + rng()];
+          const s = w[0] + w[1] + w[2];
+          return w.map(v => +(t * v / s).toFixed(3));
+        };
+        return [makeGam(), makeGam()];
+      }
+      if (mod === 'norm') {
+        const makeNorm = () => {
+          const z = [(rng() - 0.5) * 2.4, (rng() - 0.5) * 2.4, (rng() - 0.5) * 2.4];
+          const adj = (t - (z[0] + z[1] + z[2])) / 3;
+          return z.map(v => +(v + adj).toFixed(3));
+        };
+        return [makeNorm(), makeNorm()];
+      }
+      const makeUnif = () => [+(t * (0.08 + 0.78 * rng())).toFixed(2), +(t * (0.08 + 0.78 * rng())).toFixed(2), t];
+      return [makeUnif(), makeUnif()];
+    }
+
+    function getSamples() {
+      if (customPair) return { x1: customPair[0], x2: customPair[1] };
+      if (model === 'pois') {
+        const q = Math.floor(tVal / 3), r = tVal % 3;
+        const x1 = [q + (r >= 1 ? 1 : 0), q + (r >= 2 ? 1 : 0), q];
+        const top = Math.min(tVal, Math.max(x1[0], Math.round(x1[0] + contrast * (tVal - x1[0]))));
+        const rem = tVal - top;
+        const a = Math.floor(rem / 2), b = rem - a;
+        return { x1, x2: [a, b, top] };
+      }
+      if (model === 'gamma') {
+        const base = tVal / 3;
+        const d = 0.65 * contrast;
+        return {
+          x1: [base, base, base],
+          x2: [base * (1 - d), base * (1 - d), base * (1 + 2 * d)]
+        };
+      }
+      if (model === 'norm') {
+        const base = tVal / 3;
+        const d = 0.55 * contrast;
+        return {
+          x1: [base, base, base],
+          x2: [base - 2 * d, base + d, base + d]
+        };
+      }
+      return {
+        x1: [+(0.10 * tVal).toFixed(2), +(0.45 * tVal).toFixed(2), tVal],
+        x2: [+((0.90 - 0.70 * contrast) * tVal).toFixed(2), +((0.96 - 0.40 * contrast) * tVal).toFixed(2), tVal]
+      };
+    }
+
+    function modelSpec(x1, x2) {
+      if (model === 'pois') {
+        const h1 = 1 / (S.factorial(x1[0]) * S.factorial(x1[1]) * S.factorial(x1[2]));
+        const h2 = 1 / (S.factorial(x2[0]) * S.factorial(x2[1]) * S.factorial(x2[2]));
+        const g = lam => Math.exp(-3 * lam) * Math.pow(lam, tVal);
+        const mle = tVal / 3;
+        return {
+          paramTex: '\\lambda', xlabel: 'λ', xmin: 0.2, xmax: 5.0,
+          h1, h2, g, mle, gMax: g(mle),
+          summary: `g(t,\\lambda) = e^{-3\\lambda}\\lambda^{${tVal}},\\; h(\\mathbf{x}) = (\\prod x_i!)^{-1}`
+        };
+      }
+      if (model === 'gamma') {
+        const h1 = x1[0] * x1[1] * x1[2];
+        const h2 = x2[0] * x2[1] * x2[2];
+        const g = b => Math.pow(b, -6) * Math.exp(-tVal / b);
+        const mle = tVal / 6;
+        return {
+          paramTex: '\\beta', xlabel: 'β', xmin: 0.2, xmax: 3.5,
+          h1, h2, g, mle, gMax: g(mle),
+          summary: `g(t,\\beta) = \\beta^{-6}e^{-${tVal}/\\beta},\\; h(\\mathbf{x}) = x_1 x_2 x_3`
+        };
+      }
+      if (model === 'norm') {
+        const normC = Math.pow(2 * Math.PI, -1.5);
+        const ssq1 = x1[0] * x1[0] + x1[1] * x1[1] + x1[2] * x1[2];
+        const ssq2 = x2[0] * x2[0] + x2[1] * x2[1] + x2[2] * x2[2];
+        const h1 = normC * Math.exp(-0.5 * ssq1);
+        const h2 = normC * Math.exp(-0.5 * ssq2);
+        const g = mu => Math.exp(mu * tVal - 1.5 * mu * mu);
+        const mle = tVal / 3;
+        return {
+          paramTex: '\\mu', xlabel: 'μ', xmin: -1.0, xmax: 4.5,
+          h1, h2, g, mle, gMax: g(mle),
+          summary: `g(t,\\mu) = \\exp(${tVal}\\mu - \\tfrac{3}{2}\\mu^2),\\; h(\\mathbf{x}) = (2\\pi)^{-3/2}\\exp(-\\tfrac{1}{2}\\sum x_i^2)`
+        };
+      }
+      const g = th => th >= tVal ? Math.pow(th, -3) : 0;
+      const mle = tVal;
+      return {
+        paramTex: '\\theta', xlabel: 'θ', xmin: 0.8, xmax: 9.0,
+        h1: 1, h2: 1, g, mle, gMax: Math.pow(tVal, -3),
+        summary: `g(x_{(3)},\\theta) = \\theta^{-3}\\1_{\\{${tVal} \\le \\theta\\}},\\; h(\\mathbf{x}) = \\1_{\\{x_{(1)} \\ge 0\\}} = 1`
+      };
+    }
+
+    function update() {
+      const { x1, x2 } = getSamples();
+      const sp = modelSpec(x1, x2);
+      const L1 = th => sp.h1 * sp.g(th);
+      const L2 = th => sp.h2 * sp.g(th);
+      const rawMax = Math.max(sp.h1 * sp.gMax, sp.h2 * sp.gMax);
+      const yMaxRaw = Math.max(1e-6, rawMax * 1.18);
+
+      plotRaw.setRange({ xmin: sp.xmin, xmax: sp.xmax, ymin: 0, ymax: yMaxRaw, xlabel: sp.xlabel });
+      plotNorm.setRange({ xmin: sp.xmin, xmax: sp.xmax, ymin: 0, ymax: 1.18, xlabel: sp.xlabel });
+
+      if (model === 'unif') {
+        const x3 = [+(0.50 * tVal).toFixed(2), +(0.50 * tVal).toFixed(2), +(0.55 * tVal).toFixed(2)];
+        const t3 = x3[2];
+        const g3 = th => th >= t3 ? Math.pow(th, -3) : 0;
+        const yMaxUnif = Math.max(1e-6, Math.pow(t3, -3) * 1.18);
+
+        plotRaw.setRange({ xmin: sp.xmin, xmax: sp.xmax, ymin: 0, ymax: yMaxUnif, xlabel: sp.xlabel });
+        plotRaw.draw(g => {
+          g.line(sp.xmin, 0, tVal, 0, { color: 'c1', width: 2.6 });
+          g.line(tVal, 0, tVal, sp.gMax, { color: 'c1', width: 1.4, dash: [3, 3] });
+          g.curve(sp.g, { from: tVal, to: sp.xmax, color: 'c1', width: 2.8, label: 'L(θ | x⁽¹⁾) = L(θ | x⁽²⁾)' });
+          g.line(t3, 0, t3, Math.pow(t3, -3), { color: 'c4', width: 1.3, dash: [3, 3] });
+          g.curve(g3, { from: t3, to: sp.xmax, color: 'c4', width: 2.0, dash: [6, 4], label: 'x⁽³⁾ misma media, X₍₃₎≠t' });
+          g.vline(sp.mle, { color: 'c3', dash: [4, 4], label: 'EMV = ' + fmt(sp.mle, 2) });
+        });
+
+        const n1 = th => L1(th) / (sp.h1 * sp.gMax);
+        const n3 = th => g3(th) / Math.pow(t3, -3);
+        plotNorm.draw(g => {
+          g.line(sp.xmin, 0, tVal, 0, { color: 'c1', width: 2.6 });
+          g.line(tVal, 0, tVal, 1, { color: 'c1', width: 1.3, dash: [3, 3] });
+          g.curve(n1, { from: tVal, to: sp.xmax, color: 'c1', width: 3.0, label: 'x⁽¹⁾ y x⁽²⁾ (coinciden)' });
+          g.line(t3, 0, t3, 1, { color: 'c4', width: 1.2, dash: [3, 3] });
+          g.curve(n3, { from: t3, to: sp.xmax, color: 'c4', width: 2.0, dash: [6, 4], label: 'x⁽³⁾ (misma X̄, distinta L)' });
+          g.vline(sp.mle, { color: 'c3', dash: [4, 4] });
+        });
+
+        const fmtVec = v => '(' + v.map(z => fmt(z, 2)).join(', ') + ')';
+        const mean1 = (x1[0] + x1[1] + x1[2]) / 3;
+        out.set(`
+          <b>Modelo $\\text{Unif}(0, \\theta)$ ($n=3$):</b> $${sp.summary}$.<br>
+          • $\\mathbf{x}^{(1)} = ${fmtVec(x1)}$ y $\\mathbf{x}^{(2)} = ${fmtVec(x2)}$ tienen el mismo máximo $X_{(3)} = ${tVal}$ $\\implies$ <b>sus verosimilitudes son idénticas</b> (cociente $= 1$, EMV común $\\hat\\theta = ${tVal}$).<br>
+          • Contraste: $\\mathbf{x}^{(3)} = ${fmtVec(x3)}$ tiene la <b>misma media</b> $\\bar x = ${fmt(mean1, 3)}$ que $\\mathbf{x}^{(1)}$, pero $X_{(3)} = ${fmt(t3, 2)} \\ne ${tVal}$ $\\implies$ su curva se separa, mostrando que $\\bar X$ <em>no</em> es suficiente.
+        `);
+        return;
+      }
+
+      plotRaw.draw(g => {
+        g.curve(L1, { color: 'c1', width: 2.6, label: 'L(θ | x⁽¹⁾)' });
+        g.curve(L2, { color: 'c2', width: 2.5, label: 'L(θ | x⁽²⁾)' });
+        g.vline(sp.mle, { color: 'c3', dash: [4, 4], label: 'EMV = ' + fmt(sp.mle, 2) });
+      });
+
+      const n1 = th => L1(th) / (sp.h1 * sp.gMax);
+      const n2 = th => L2(th) / (sp.h2 * sp.gMax);
+      plotNorm.draw(g => {
+        g.curve(n1, { color: 'c1', width: 3.4, label: 'L₁ / máx L₁' });
+        g.curve(n2, { color: 'c2', width: 2.2, dash: [6, 4], label: 'L₂ / máx L₂ (superpuesta)' });
+        g.vline(sp.mle, { color: 'c3', dash: [4, 4], label: 'g(t,θ)/máx g' });
+      });
+
+      const ratioH = sp.h1 / sp.h2;
+      const testPts = [sp.xmin + 0.35 * (sp.xmax - sp.xmin), sp.mle, sp.xmin + 0.78 * (sp.xmax - sp.xmin)];
+      let maxDiff = 0;
+      for (const th of testPts) {
+        const r = L1(th) / L2(th);
+        const d = Math.abs(r - ratioH);
+        if (d > maxDiff) maxDiff = d;
+      }
+      const fmtVec = v => '(' + v.map(z => fmt(z, 2)).join(', ') + ')';
+      out.set(`
+        <b>Factorización:</b> $${sp.summary}$.<br>
+        • $\\mathbf{x}^{(1)} = ${fmtVec(x1)}$ con $T = ${tVal}$ y $h(\\mathbf{x}^{(1)}) =$ <b>${fmt(sp.h1, 5)}</b><br>
+        • $\\mathbf{x}^{(2)} = ${fmtVec(x2)}$ con $T = ${tVal}$ y $h(\\mathbf{x}^{(2)}) =$ <b>${fmt(sp.h2, 5)}</b><br>
+        • <b>Cociente constante en ${sp.xlabel}:</b> $L(${sp.paramTex}\\mid\\mathbf{x}^{(1)}) / L(${sp.paramTex}\\mid\\mathbf{x}^{(2)}) = h(\\mathbf{x}^{(1)})/h(\\mathbf{x}^{(2)}) =$ <b>${fmt(ratioH, 4)}</b> (variación numérica a lo largo de ${sp.xlabel}: <b>${fmt(maxDiff, 6)}</b>); ambas alcanzan el mismo EMV en $${sp.paramTex} = ${fmt(sp.mle, 3)}$.
+      `);
+    }
+
+    update();
+  })();
+
+  /* ============================================================
+     AUTOEVALUACIÓN: 3 Quizzes y 2 Comprobadores Numéricos
+     ============================================================ */
+  ui.quiz('#quiz-1', {
+    question: '1. Si $T = \\sum_{i=1}^n X_i$ es un estadístico suficiente para $\\theta$, ¿cuál de las siguientes afirmaciones es necesariamente verdadera?',
+    options: [
+      'Cualquier estadístico $U$ a partir del cual pueda recuperarse $T$ (como $\\bar X = T/n$ o una transformación biyectiva de $T$) también es suficiente para $\\theta$.',
+      'Solo el estadístico $T = \\sum_{i=1}^n X_i$ es suficiente; dividirlo entre $n$ destruye la suficiencia.',
+      'La media muestral $\\bar X$ es siempre suficiente para $\\theta$ en cualquier distribución continua, incluida $\\text{Unif}(0, \\theta)$.',
+      'La distribución condicional $\\P(\\mathbf{X} = \\mathbf{x} \\mid T = t)$ debe ser siempre igual a $1/n$ sin importar el modelo.'
+    ],
+    answer: 0,
+    explain: 'Por la Observación 3, si $T$ es suficiente para $\\theta$ y $T = \\psi(U)$ (como $S_n = n\\bar X$), entonces $U$ contiene al menos la misma información que $T$ y también es suficiente para $\\theta$. En cambio, en $\\text{Unif}(0, \\theta)$ el estadístico suficiente es $X_{(n)}$ y $\\bar X$ no basta.'
+  });
+
+  ui.quiz('#quiz-2', {
+    question: '2. Al aplicar el Criterio de Factorización de Fisher–Neyman a $X_1, \\dots, X_n \\iid N(0, \\sigma^2)$ (con media $\\mu = 0$ conocida) y a $Y_1, \\dots, Y_n \\iid \\text{Unif}(0, \\theta)$, ¿qué par de estadísticos suficientes se obtiene respectivamente?',
+    options: [
+      '$S^2 = \\frac{1}{n-1}\\sum (X_i - \\bar X)^2$ para $\\sigma^2$, y $\\bar Y$ para $\\theta$.',
+      '$\\sum_{i=1}^n X_i^2$ para $\\sigma^2$, y $Y_{(n)} = \\max_i Y_i$ para $\\theta$.',
+      '$\\sum_{i=1}^n X_i$ para $\\sigma^2$, y $Y_{(1)} = \\min_i Y_i$ para $\\theta$.',
+      '$\\sum_{i=1}^n X_i^2$ para $\\sigma^2$, y $Y_{(n)} - Y_{(1)}$ para $\\theta$.'
+    ],
+    answer: 1,
+    explain: 'En $N(0, \\sigma^2)$ con $\\mu = 0$ conocido, $L(\\sigma^2 \\mid \\mathbf{x}) = (2\\pi\\sigma^2)^{-n/2}\\exp(-\\frac{1}{2\\sigma^2}\\sum X_i^2)$, de modo que $T = \\sum X_i^2$ (no solo $S^2$, que pierde $n\\bar X^2$). En $\\text{Unif}(0,\\theta)$, el producto de indicadoras $\\prod \\1_{\\{0 \\le y_i \\le \\theta\\}} = \\1_{\\{y_{(1)} \\ge 0\\}}\\1_{\\{y_{(n)} \\le \\theta\\}}$ deja a $Y_{(n)}$ ligado a $\\theta$.'
+  });
+
+  ui.quiz('#quiz-3', {
+    question: '3. En una muestra $X_1, \\dots, X_n \\iid \\text{Gamma}(\\alpha, \\beta)$ con densidad $f(x\\mid\\alpha,\\beta) = \\frac{1}{\\Gamma(\\alpha)\\beta^\\alpha}x^{\\alpha-1}e^{-x/\\beta}\\1_{\\{x &gt; 0\\}}$, ¿cómo cambia el estadístico suficiente según qué parámetro se considere conocido?',
+    options: [
+      'En ambos casos basta con $\\bar X$, porque $\\text{Gamma}(\\alpha, \\beta)$ tiene esperanza $\\alpha\\beta$.',
+      'Si $\\alpha$ es conocido y $\\beta$ es desconocido, $\\bar X$ es suficiente para $\\beta$; si $\\beta$ es conocido y $\\alpha$ es desconocido, el término $(\\prod X_i)^{\\alpha-1}$ hace que $T = \\prod_{i=1}^n X_i$ sea suficiente para $\\alpha$.',
+      'Si $\\alpha$ es conocido y $\\beta$ es desconocido, $T = \\prod_{i=1}^n X_i$ es suficiente para $\\beta$.',
+      'Ningún estadístico de dimensión menor que $n$ es suficiente cuando $\\alpha$ es conocido.'
+    ],
+    answer: 1,
+    explain: 'Al escribir $L = [\\Gamma(\\alpha)]^{-n}\\beta^{-n\\alpha}(\\prod x_i)^{\\alpha-1}e^{-n\\bar x / \\beta}\\1_{\\{x_{(1)} &gt; 0\\}}$, si $\\alpha$ es conocido entonces $(\\prod x_i)^{\\alpha-1}$ pasa a $h(\\mathbf{x})$ y queda $\\bar X$ para $\\beta$. Si $\\beta$ es conocido y $\\alpha$ es desconocido, $e^{-n\\bar x/\\beta}$ pasa a $h(\\mathbf{x})$ y la parte ligada a $\\alpha$ depende de $\\prod X_i$.'
+  });
+
+  ui.numcheck('#nc-1', {
+    prompt: '1) Sea $X_1, X_2, X_3 \\iid \\text{Pois}(\\lambda)$ ($n = 3$) y observa que $T = X_1 + X_2 + X_3 = 3$. Calcula $\\P(X_1 = 2, X_2 = 1, X_3 = 0 \\mid T = 3)$:',
+    answer: 1 / 9,
+    tol: 0.002,
+    placeholder: 'ej. 0.1111',
+    hint: 'Por el Ejemplo 2, la distribución condicional es $\\text{Multinomial}(3; 1/3, 1/3, 1/3)$: $\\frac{3!}{2!1!0!}(1/3)^3 = 3/27 = 1/9 \\approx 0.1111$.'
+  });
+
+  ui.numcheck('#nc-2', {
+    prompt: '2) Para $X_1, X_2, X_3 \\iid \\text{Pois}(\\lambda)$, compara $\\mathbf{x}^{(1)} = (1, 2, 3)$ y $\\mathbf{x}^{(2)} = (0, 1, 5)$ (ambas con $T = 6$). Calcula el cociente constante $L(\\lambda \\mid \\mathbf{x}^{(1)}) / L(\\lambda \\mid \\mathbf{x}^{(2)})$:',
+    answer: 10,
+    tol: 0.01,
+    placeholder: 'ej. 10',
+    hint: 'Como $g(6, \\lambda) = e^{-3\\lambda}\\lambda^6$ se cancela, el cociente es $h(\\mathbf{x}^{(1)}) / h(\\mathbf{x}^{(2)}) = \\frac{0!\\,1!\\,5!}{1!\\,2!\\,3!} = \\frac{120}{12} = 10$.'
+  });
+
+})();
+</script>
+</body>
+</html>
