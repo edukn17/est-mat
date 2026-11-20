@@ -1,0 +1,2774 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Libro de Lebensztayn · Ejercicios resueltos (Cap. 1)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/theme.js"></script>
+<style>
+  /* Estilos locales de esta guía (complementan ../assets/css/style.css) */
+  .tecnica { font-family: var(--font-ui); font-size: 14px; color: var(--muted); margin: 10px 0 4px; }
+  .tecnica a { font-weight: 600; }
+  .resultado { border: 2px solid var(--good); border-radius: var(--radius); padding: 10px 16px; margin: 12px 0; background: var(--surface); }
+  .indice-partes { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; margin: 14px 0; }
+  .indice-partes > div { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 16px; }
+  .indice-partes h3 { margin: 2px 0 8px; font-size: 15px; }
+  .indice-partes ul { margin: 0; padding-left: 1.3em; font-size: 14.5px; }
+  .chk { border: 1px dashed var(--line); border-radius: var(--radius); padding: 8px 14px; margin: 12px 0; background: var(--surface); }
+  .chk-title { font: 600 13px var(--font-ui); color: var(--muted); margin: 4px 0 6px; }
+  .sol-inciso { font-family: var(--font-ui); font-size: 16.5px; font-weight: 600; margin: 20px 0 8px; padding-top: 8px; border-top: 1px dashed var(--line); color: var(--ink); }
+  .ctl-n { display: inline-flex; align-items: center; flex: 1 1 220px; }
+  .sim-badge { font: 600 13px var(--font-ui); padding: 5px 11px; border-radius: var(--radius-pill); background: var(--accent-soft); color: var(--accent); display: none; }
+</style>
+</head>
+<body data-page="lebensztayn-cap1" data-root="../">
+<main id="contenido">
+
+  <header class="page-head">
+    <p class="kicker">Libro de referencia · Élcio Lebensztayn · Capítulo 1</p>
+    <h1>Capítulo 1 · Análisis Combinatorio (Ej. 1.1 – 1.80)</h1>
+    <p class="lead">Traducción fiel y solucionario completo paso a paso de los 80 ejercicios del Capítulo 1 de <em>Exercícios de Probabilidade</em> (Élcio Lebensztayn): principios de conteo, permutaciones, arreglos, combinaciones, particiones, inclusión–exclusión e identidades combinatorias.</p>
+    <p><span class="badge">FCNM · ESPOL</span> <span class="badge">Capítulo 1 · 80 de 80 ejercicios resueltos (100 %)</span></p>
+    <div class="controls" style="gap: 8px; margin: 14px 0 0;">
+      <a class="btn" href="lebensztayn.html">Mapa del Libro y Cap. 5 (84/84)</a>
+      <span class="btn primary" aria-current="page">Cap. 1 · Análisis Combinatorio (80/80)</span>
+      <a class="btn" href="lebensztayn-cap2.html">Capítulo 2 · Probabilidad (80/80)</a>
+      <a class="btn" href="lebensztayn-cap3.html">Capítulo 3 · Variables Aleatorias (128/128)</a>
+    </div>
+  </header>
+
+  <!-- ================================================================
+       SECCIÓN 1: RESUMEN TEÓRICO DEL CAPÍTULO 1
+       ================================================================ -->
+  <section>
+    <h2 id="teoria-cap1">1. Resumen teórico del Capítulo 1</h2>
+    <p>Antes de abordar los problemas, se reúnen las definiciones, fórmulas y criterios numerados <strong>1.1–1.14</strong> del Capítulo 1 del libro de referencia.</p>
+
+    <div class="box teorema">
+      <span class="box-title">Principios básicos de conteo e Inclusión–Exclusión (1.1 – 1.3)</span>
+      <ul>
+        <li><b>1.1 Principio multiplicativo:</b> Si una tarea consta de $r$ etapas sucesivas, con $n_1$ maneras de realizar la primera etapa, $n_2$ maneras de realizar la segunda (para cada elección de la primera), $\dots$, y $n_r$ maneras de realizar la $r$-ésima, el número total de maneras de completar la tarea es $n_1 n_2 \cdots n_r$. <em>(Observación: el número de opciones en una etapa no debe verse afectado por las elecciones específicas de etapas anteriores.)</em></li>
+        <li><b>1.2 Principio aditivo e Inclusión–Exclusión:</b> Si $A_1, \dots, A_n$ son conjuntos disjuntos dos a dos, entonces
+          $$\left|\bigcup_{i=1}^n A_i\right| = \sum_{i=1}^n |A_i|.$$
+          En general, el <b>Principio de Inclusión–Exclusión</b> establece que
+          $$\left|\bigcup_{i=1}^n A_i\right| = \sum_{i=1}^n |A_i| - \sum_{1 \le i &lt; j \le n} |A_i \cap A_j| + \sum_{1 \le i &lt; j &lt; k \le n} |A_i \cap A_j \cap A_k| - \dots + (-1)^{n+1} |A_1 \cap \dots \cap A_n|.$$</li>
+        <li><b>1.3 Técnica del complemento (descuento de restricciones):</b> En muchos problemas conviene ignorar primero una restricción —contando de más— y luego restar los casos contados indebidamente.</li>
+      </ul>
+    </div>
+
+    <div class="box definicion">
+      <span class="box-title">Subconjuntos, permutaciones, palabras y arreglos (1.4 – 1.8)</span>
+      <ul>
+        <li><b>1.4 Subconjuntos:</b> Un conjunto de $n$ elementos tiene exactamente $2^n$ subconjuntos.</li>
+        <li><b>1.5 Permutaciones y fórmula de Stirling:</b> El número de ordenaciones de $n$ objetos distintos es $n! = n(n-1)\cdots 2 \cdot 1$, con la convención $0! = 1$. Para valores grandes de $n$, la fórmula de Stirling (1730) da la equivalencia asintótica
+          $$n! \sim n^n e^{-n}\sqrt{2\pi n} \qquad \left(\lim_{n\to\infty} \frac{n!}{n^n e^{-n}\sqrt{2\pi n}} = 1\right).$$</li>
+        <li><b>1.6 Permutaciones circulares:</b> El número de formas de disponer $n$ objetos distintos alrededor de un círculo (considerando indistinguibles dos disposiciones que coinciden tras una rotación) es $(n-1)!$.</li>
+        <li><b>1.7 Palabras con reposición:</b> El número de palabras de longitud $k$ formadas con $n$ símbolos dados (pudiendo repetir) es $n^k$.</li>
+        <li><b>1.8 Arreglos (variaciones sin repetición):</b> El número de $k$-subconjuntos ordenados de un conjunto de $n$ elementos ($0 \le k \le n$) es
+          $$(n)_k = n(n-1)\cdots(n-k+1) = \frac{n!}{(n-k)!}.$$</li>
+      </ul>
+    </div>
+
+    <div class="box teorema">
+      <span class="box-title">Combinaciones, Teorema del Binomio y coeficientes multinomiales (1.9 – 1.11)</span>
+      <ul>
+        <li><b>1.9 Combinaciones:</b> El número de $k$-subconjuntos (o $r$-subconjuntos, sin orden) de un conjunto de $n$ elementos es el coeficiente binomial
+          $$\binom{n}{r} = \frac{n!}{r!\,(n-r)!} \qquad (0 \le r \le n),$$
+          cuya disposición triangular forma el Triángulo de Pascal.</li>
+        <li><b>1.10 Teorema del Binomio:</b> Para todo entero $n \ge 0$ y cualesquiera $x, y \in \R$,
+          $$(x + y)^n = \sum_{k=0}^n \binom{n}{k} x^k y^{n-k}.$$</li>
+        <li><b>1.11 Particiones ordenadas y permutaciones con repetición:</b> El número de divisiones de $n$ objetos distintos en $k$ grupos etiquetados de tamaños respectivos $n_1, n_2, \dots, n_k$ (con $n_1 + n_2 + \dots + n_k = n$) —que coincide con el número de anagramas de una palabra de $n$ letras con $n_1$ repeticiones de la letra $\ell_1$, $\dots$, $n_k$ de $\ell_k$— es el coeficiente multinomial
+          $$\binom{n}{n_1, n_2, \dots, n_k} = \frac{n!}{n_1!\,n_2!\cdots n_k!}.$$</li>
+      </ul>
+    </div>
+
+    <div class="box definicion">
+      <span class="box-title">Combinaciones con repetición y ecuaciones enteras (1.12 – 1.13)</span>
+      <ul>
+        <li><b>1.12 Soluciones enteras no negativas:</b> Para un entero $p &gt; 0$ dado, el número de vectores enteros $(x_1, \dots, x_n)$ con $x_i \ge 0$ que satisfacen $x_1 + \dots + x_n = p$ —equivalente al número de combinaciones con repetición de $p$ objetos elegidos entre $n$ tipos distintos, o al de repartir $p$ monedas idénticas entre $n$ niños— es $\binom{p+n-1}{n-1} = \binom{p+n-1}{p}$. En notación usual con $r$ objetos elegidos entre $n$ tipos ($x_1 + \dots + x_n = r$, $x_i \ge 0$):
+          $$CR_n^r = \binom{n + r - 1}{r} = \binom{n + r - 1}{n - 1}.$$</li>
+        <li><b>1.13 Soluciones enteras positivas:</b> El número de vectores enteros $(x_1, \dots, x_r)$ con $x_i \ge 1$ para todo $i$ que satisfacen $x_1 + \dots + x_r = n$ (repartir $n$ monedas idénticas entre $r$ niños de modo que cada niño reciba al menos una moneda) es
+          $$\binom{n - 1}{r - 1}$$
+          (en la notación $(p, n)$ del texto original, para $x_1 + \dots + x_n = p$ con $x_i \ge 1$, resulta $\binom{p-1}{n-1}$).</li>
+      </ul>
+    </div>
+
+    <div class="box nota">
+      <span class="box-title">1.14 Cuadro resumen de muestreo de tamaño $k$ en una población de $n$ elementos distintos</span>
+      <div class="table-wrap">
+        <table class="tabla">
+          <thead>
+            <tr>
+              <th>Tipo de muestreo</th>
+              <th>Muestra ordenada</th>
+              <th>Muestra no ordenada</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Con reposición</b></td>
+              <td>$n^k$</td>
+              <td>$\dbinom{k + n - 1}{n - 1} = \dbinom{n + k - 1}{k}$</td>
+            </tr>
+            <tr>
+              <td><b>Sin reposición</b></td>
+              <td>$(n)_k = \dfrac{n!}{(n-k)!}$</td>
+              <td>$\dbinom{n}{k}$</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       SECCIÓN 2: ÍNDICE RÁPIDO DEL CAPÍTULO 1
+       ================================================================ -->
+  <section>
+    <h2 id="indice-cap1">2. Índice rápido del Capítulo 1 (80 ejercicios)</h2>
+    <p>El capítulo se organiza en dos bloques de 40 problemas cada uno para facilitar el estudio progresivo.</p>
+
+    <div class="indice-partes">
+      <div>
+        <h3><a href="#cap1-basico">Bloque I · Conteo, Permutaciones y Combinaciones</a></h3>
+        <p class="small muted" style="margin:0 0 6px">Ej. 1.1 – 1.40 · 40 ejercicios</p>
+        <ul>
+          <li><a href="#ej-1-1">Ej. 1.1</a> · Permutaciones de letras A–F</li>
+          <li><a href="#ej-1-2">Ej. 1.2</a> · Elección de preguntas de examen</li>
+          <li><a href="#ej-1-3">Ej. 1.3</a> · Reparto de 7 regalos</li>
+          <li><a href="#ej-1-4">Ej. 1.4</a> · Anagramas de “COMBINATORIA”</li>
+          <li><a href="#ej-1-5">Ej. 1.5</a> · Números con dígitos 1,2,4,6,7</li>
+          <li><a href="#ej-1-6">Ej. 1.6</a> · Anagramas de “PARAGUAIO”</li>
+          <li><a href="#ej-1-7">Ej. 1.7</a> · Coprimos menores que 360</li>
+          <li><a href="#ej-1-8">Ej. 1.8</a> · Extracción de 6 monedas</li>
+          <li><a href="#ej-1-9">Ej. 1.9</a> · Claves de prueba V/F</li>
+          <li><a href="#ej-1-10">Ej. 1.10</a> · Sentar 4 personas en fila</li>
+          <li><a href="#ej-1-11">Ej. 1.11</a> · Funciones e inyectivas $A\to B$</li>
+          <li><a href="#ej-1-12">Ej. 1.12</a> · Dos reyes no adyacentes</li>
+          <li><a href="#ej-1-13">Ej. 1.13</a> · Divisores positivos de 1800</li>
+          <li><a href="#ej-1-14">Ej. 1.14</a> · Pares de subconjuntos $S, T$</li>
+          <li><a href="#ej-1-15">Ej. 1.15</a> · Pares de dos cifras</li>
+          <li><a href="#ej-1-16">Ej. 1.16</a> · Impares de 3 cifras distintas</li>
+          <li><a href="#ej-1-17">Ej. 1.17</a> · Mayores que 53000 sin repetir</li>
+          <li><a href="#ej-1-18">Ej. 1.18</a> · Permutaciones con $a_k &lt; k+4$</li>
+          <li><a href="#ej-1-19">Ej. 1.19</a> · Libros agrupados por materia</li>
+          <li><a href="#ej-1-20">Ej. 1.20</a> · Podio de cuatro caballos</li>
+          <li><a href="#ej-1-21">Ej. 1.21</a> · Partidos de liga (20 clubes)</li>
+          <li><a href="#ej-1-22">Ej. 1.22</a> · Mujeres y hombres por altura</li>
+          <li><a href="#ej-1-23">Ej. 1.23</a> · Subconjuntos con $a_1$ o $a_2$</li>
+          <li><a href="#ej-1-24">Ej. 1.24</a> · Subconjuntos de tamaño $k$</li>
+          <li><a href="#ej-1-25">Ej. 1.25</a> · Palabras alternadas consonante-vocal</li>
+          <li><a href="#ej-1-26">Ej. 1.26</a> · Visita a 5 de 9 capitales</li>
+          <li><a href="#ej-1-27">Ej. 1.27</a> · Votos de 5 examinadores</li>
+          <li><a href="#ej-1-28">Ej. 1.28</a> · Elección de 4 frutas</li>
+          <li><a href="#ej-1-29">Ej. 1.29</a> · Funciones crecientes y no decrecientes</li>
+          <li><a href="#ej-1-30">Ej. 1.30</a> · Funciones biyectivas en $A$</li>
+          <li><a href="#ej-1-31">Ej. 1.31</a> · Arreglos de dígitos 1 al 9</li>
+          <li><a href="#ej-1-32">Ej. 1.32</a> · Anagramas de “URUGUAIO” con vocal</li>
+          <li><a href="#ej-1-33">Ej. 1.33</a> · Números de 5 cifras (1,1,1,1,2,3)</li>
+          <li><a href="#ej-1-34">Ej. 1.34</a> · Foto en cinco escalones</li>
+          <li><a href="#ej-1-35">Ej. 1.35</a> · Ronda infantil de 10 niños</li>
+          <li><a href="#ej-1-36">Ej. 1.36</a> · Cuatro parejas en mesa redonda</li>
+          <li><a href="#ej-1-37">Ej. 1.37</a> · Comisiones de Matemática y Física</li>
+          <li><a href="#ej-1-38">Ej. 1.38</a> · Tarjeta de lotería deportiva</li>
+          <li><a href="#ej-1-39">Ej. 1.39</a> · Señales luminosas en hexágono</li>
+          <li><a href="#ej-1-40">Ej. 1.40</a> · Parejas posibles en reunión</li>
+        </ul>
+      </div>
+      <div>
+        <h3><a href="#cap1-avanzado">Bloque II · Particiones, Inclusión–Exclusión e Identidades</a></h3>
+        <p class="small muted" style="margin:0 0 6px">Ej. 1.41 – 1.80 · 40 ejercicios</p>
+        <ul>
+          <li><a href="#ej-1-41">Ej. 1.41</a> · Horarios semanales de tienda</li>
+          <li><a href="#ej-1-42">Ej. 1.42</a> · Invitados de matrimonio (6+6)</li>
+          <li><a href="#ej-1-43">Ej. 1.43</a> · Autos en estacionamiento contiguo</li>
+          <li><a href="#ej-1-44">Ej. 1.44</a> · División de 15 atletas</li>
+          <li><a href="#ej-1-45">Ej. 1.45</a> · Grupos de 12 profesores</li>
+          <li><a href="#ej-1-46">Ej. 1.46</a> · Anagramas de “ARARAQUARA”</li>
+          <li><a href="#ej-1-47">Ej. 1.47</a> · Anagramas de “CONTADORIA”</li>
+          <li><a href="#ej-1-48">Ej. 1.48</a> · Fila de letras A, B, C</li>
+          <li><a href="#ej-1-49">Ej. 1.49</a> · Parejas en butacas de cine</li>
+          <li><a href="#ej-1-50">Ej. 1.50</a> · Caminos en retícula 3D</li>
+          <li><a href="#ej-1-51">Ej. 1.51</a> · Secuencias con alguna vocal</li>
+          <li><a href="#ej-1-52">Ej. 1.52</a> · Números de 7 cifras (tres 9)</li>
+          <li><a href="#ej-1-53">Ej. 1.53</a> · Permutaciones con extremos acotados</li>
+          <li><a href="#ej-1-54">Ej. 1.54</a> · Fila de diez países</li>
+          <li><a href="#ej-1-55">Ej. 1.55</a> · Invitados de Teresa a cenar</li>
+          <li><a href="#ej-1-56">Ej. 1.56</a> · Reparto de 27 libros distintos</li>
+          <li><a href="#ej-1-57">Ej. 1.57</a> · Orden de visitas a 4 ciudades</li>
+          <li><a href="#ej-1-58">Ej. 1.58</a> · Números de 6 cifras por pares</li>
+          <li><a href="#ej-1-59">Ej. 1.59</a> · Cajas de 30 bombones surtidos</li>
+          <li><a href="#ej-1-60">Ej. 1.60</a> · Pintar seis esferas iguales</li>
+          <li><a href="#ej-1-61">Ej. 1.61</a> · Reparto de 30 naranjas ($\ge 2$)</li>
+          <li><a href="#ej-1-62">Ej. 1.62</a> · Soluciones de $x_1+\dots+x_n \le p$</li>
+          <li><a href="#ej-1-63">Ej. 1.63</a> · Ecuación con cotas $x_i \ge a_i$</li>
+          <li><a href="#ej-1-64">Ej. 1.64</a> · Dígitos no decrecientes (1–100000)</li>
+          <li><a href="#ej-1-65">Ej. 1.65</a> · Permutaciones sin tres A juntas</li>
+          <li><a href="#ej-1-66">Ej. 1.66</a> · Permutaciones sin 4 ni 6 fijos</li>
+          <li><a href="#ej-1-67">Ej. 1.67</a> · Secuencias de ADN (longitud 8)</li>
+          <li><a href="#ej-1-68">Ej. 1.68</a> · Desarreglos en amigo secreto (4)</li>
+          <li><a href="#ej-1-69">Ej. 1.69</a> · Impares fuera de su lugar</li>
+          <li><a href="#ej-1-70">Ej. 1.70</a> · Fila sin nacionalidad agrupada</li>
+          <li><a href="#ej-1-71">Ej. 1.71</a> · Pintar bolas y cubos iguales</li>
+          <li><a href="#ej-1-72">Ej. 1.72</a> · No divisibles por 3, 5 ni 11</li>
+          <li><a href="#ej-1-73">Ej. 1.73</a> · Sin cuadrados, cubos ni cuartas</li>
+          <li><a href="#ej-1-74">Ej. 1.74</a> · Números de $n$ cifras con 1,2,3</li>
+          <li><a href="#ej-1-75">Ej. 1.75</a> · Suma de dígitos igual a 23</li>
+          <li><a href="#ej-1-76">Ej. 1.76</a> · Ascensor y tres pisos</li>
+          <li><a href="#ej-1-77">Ej. 1.77</a> · Monedas distintas entre dos niños</li>
+          <li><a href="#ej-1-78">Ej. 1.78</a> · Frutas en cuatro cajas ($\ge 1$)</li>
+          <li><a href="#ej-1-79">Ej. 1.79</a> · Divisibilidad de $p$ consecutivos</li>
+          <li><a href="#ej-1-80">Ej. 1.80</a> · Identidades combinatorias y divisibilidad</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       SECCIÓN 3: BLOQUE I — EJERCICIOS 1.1 AL 1.40
+       ================================================================ -->
+  <section>
+    <h2 id="cap1-basico">Bloque I · Conteo, Permutaciones y Combinaciones (Ej. 1.1 al 1.40)</h2>
+
+    <!-- Ej. 1.1 -->
+    <div class="box ejercicio" id="ej-1-1">
+      <span class="box-title">Ejercicio 1.1</span>
+      <p>¿Cuántas permutaciones diferentes existen de las letras A, B, C, D, E, F</p>
+      <ol type="a">
+        <li>que tienen las letras A y B juntas en cualquier orden?</li>
+        <li>que tienen la letra A en primer lugar o la letra F en último lugar?</li>
+        <li>en que la letra A aparece antes que la letra B?</li>
+        <li>en que la letra E no es la última?</li>
+      </ol>
+      <p class="tecnica">Técnica: agrupación en bloque, Principio de Inclusión–Exclusión, simetría y conteo por complemento.</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En (a), une A y B en un solo bloque (dos órdenes posibles: AB o BA). En (b), aplica $|A \cup F| = |A| + |F| - |A \cap F|$. En (c), aprovecha la simetría entre A antes que B y B antes que A. En (d), resta del total las permutaciones que terminan en E.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Apartado (a): A y B juntas.</b>
+            Consideramos las letras A y B pegadas como un único bloque. En el orden AB, quedan 5 elementos para permutar (el bloque AB y las letras C, D, E, F), lo que produce $5! = 120$ permutaciones. Como también hay $5! = 120$ permutaciones en el orden BA, el total es $2 \cdot 5! = 240$.</li>
+          <li><b>Apartado (b): A al inicio o F al final.</b>
+            Sean $A$ el conjunto de permutaciones que comienzan con A y $F$ el de las que terminan en F. Se tiene $|A| = 5! = 120$, $|F| = 5! = 120$ y $|A \cap F| = 4! = 24$ (fijadas ambas extremas, permutan las 4 letras centrales). Por Inclusión–Exclusión:
+            $$|A \cup F| = |A| + |F| - |A \cap F| = 5! + 5! - 4! = 120 + 120 - 24 = 216.$$</li>
+          <li><b>Apartado (c): A antes que B.</b>
+            De las $6! = 720$ permutaciones totales, por simetría (intercambiar A y B establece una biyección) exactamente la mitad tiene a A antes que B y la otra mitad a B antes que A. Luego hay $6!/2 = 360$ permutaciones.</li>
+          <li><b>Apartado (d): E no es la última.</b>
+            Hay $5! = 120$ permutaciones en las que E ocupa la última posición. Restando del total de $6! = 720$ permutaciones, obtenemos $6! - 5! = 720 - 120 = 600$ (equivalentemente, $5$ opciones para la última posición por $5!$ para las anteriores).</li>
+        </ol>
+        <div class="resultado">$$\text{(a) } 240, \qquad \text{(b) } 216, \qquad \text{(c) } 360, \qquad \text{(d) } 600.$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.2 -->
+    <div class="box ejercicio" id="ej-1-2">
+      <span class="box-title">Ejercicio 1.2</span>
+      <p>En un examen, un estudiante debe responder exactamente 7 preguntas de un total de 10 preguntas. ¿Cuántas elecciones tiene? ¿Cuántas elecciones tiene si entre las 7 preguntas debe responder al menos 3 de las primeras 5 preguntas?</p>
+      <p class="tecnica">Técnica: combinaciones simples y partición en casos disjuntos (o complemento).</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>El orden de elección no importa, así que el total sin restricciones es $\binom{10}{7}$. Para la segunda pregunta, separa según cuántas de las 5 primeras preguntas elige el estudiante ($3$, $4$ o $5$), o bien resta el único caso prohibido (elegir $2$ de las 5 primeras y las $5$ últimas).</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Sin restricciones.</b>
+            El estudiante debe escoger un subconjunto de $7$ preguntas entre $10$ disponibles:
+            $$\binom{10}{7} = \binom{10}{3} = \frac{10 \cdot 9 \cdot 8}{3 \cdot 2 \cdot 1} = 120 \text{ elecciones}.$$</li>
+          <li><b>Al menos 3 de las primeras 5 preguntas (por casos disjuntos).</b>
+            Al dividir el examen en las 5 primeras preguntas y las 5 últimas, hay tres opciones mutuamente excluyentes:
+            <ul>
+              <li>Elegir $3$ de las 5 primeras y $4$ de las 5 últimas: $\binom{5}{3}\binom{5}{4} = 10 \cdot 5 = 50$.</li>
+              <li>Elegir $4$ de las 5 primeras y $3$ de las 5 últimas: $\binom{5}{4}\binom{5}{3} = 5 \cdot 10 = 50$.</li>
+              <li>Elegir las $5$ primeras y $2$ de las 5 últimas: $\binom{5}{5}\binom{5}{2} = 1 \cdot 10 = 10$.</li>
+            </ul>
+            Sumando los tres casos: $50 + 50 + 10 = 110$. <em>(Por complemento, como mínimo debe tomar 2 de las primeras 5 porque solo hay 5 últimas, el único caso inválido es 2 de las primeras y 5 de las últimas: $120 - \binom{5}{2}\binom{5}{5} = 120 - 10 = 110$.)</em></li>
+        </ol>
+        <div class="resultado">$$\text{Sin restricciones: } 120 \text{ elecciones;} \qquad \text{Con al menos 3 de las primeras 5: } 110 \text{ elecciones.}$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.3 -->
+    <div class="box ejercicio" id="ej-1-3">
+      <span class="box-title">Ejercicio 1.3</span>
+      <p>Un padre compra 7 regalos diferentes (entre los cuales hay un videojuego y un reloj) para dárselos a sus tres hijos.</p>
+      <ol type="a">
+        <li>¿De cuántas maneras puede dividir los 7 regalos entre los hijos, si decide dar 2 regalos al hijo mayor, 2 regalos al hijo del medio y 3 regalos al menor?</li>
+        <li>¿De cuántas maneras puede dividir los 7 regalos, si además de la división 2 al mayor, 2 al del medio y 3 al menor, decide dar al menos uno entre el videojuego y el reloj al hijo mayor?</li>
+        <li>¿De cuántas maneras puede dividir los 7 regalos, si además de la división 2 al mayor, 2 al del medio y 3 al menor, decide dar exactamente uno entre el videojuego y el reloj al hijo mayor?</li>
+      </ol>
+      <p class="tecnica">Técnica: coeficiente multinomial y Principio de Inclusión–Exclusión.</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En (a), aplica la fórmula multinomial para particionar 7 objetos distintos en grupos etiquetados de tamaños 2, 2 y 3. En (b), define $n_v$ (mayor recibe el videojuego), $n_r$ (mayor recibe el reloj) y $n_{vr}$ (mayor recibe ambos), y calcula $n_v + n_r - n_{vr}$. En (c), descuenta $n_{vr}$ o construye el regalo del mayor directamente.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Apartado (a): reparto $(2, 2, 3)$ sin restricciones.</b>
+            El número de particiones ordenadas de $7$ objetos distintos en grupos de tamaños $2$, $2$ y $3$ es
+            $$\binom{7}{2, 2, 3} = \frac{7!}{2!\,2!\,3!} = \frac{5040}{2 \cdot 2 \cdot 6} = 210.$$
+            <em>(Equivalentemente: $\binom{7}{2}\binom{5}{2}\binom{3}{3} = 21 \cdot 10 \cdot 1 = 210$.)</em></li>
+          <li><b>Apartado (b): al menos uno entre videojuego y reloj para el mayor.</b>
+            Sea $n_v$ el número de repartos en que el hijo mayor recibe el videojuego (faltan elegir $1$ regalo para el mayor, $2$ para el del medio y $3$ para el menor entre los $6$ restantes), $n_r$ el número análogo cuando recibe el reloj, y $n_{vr}$ cuando recibe ambos:
+            $$n_v = n_r = \frac{6!}{1!\,2!\,3!} = 60, \qquad n_{vr} = \frac{5!}{2!\,3!} = 10.$$
+            Por Inclusión–Exclusión: $n_v + n_r - n_{vr} = 60 + 60 - 10 = 110$. <em>(Por complemento: si el mayor no recibe ninguno de los dos, elige sus $2$ regalos entre los otros $5$ en $\binom{5}{2} = 10$ formas y el del medio elige $2$ de los $5$ restantes en $\binom{5}{2} = 10$ formas, dando $210 - 10 \cdot 10 = 110$.)</em></li>
+          <li><b>Apartado (c): exactamente uno entre videojuego y reloj para el mayor.</b>
+            Si el mayor recibe el videojuego pero no el reloj, elegimos su otro regalo entre los $5$ restantes ($\binom{5}{1}=5$ formas) y repartimos los $5$ regalos sobrantes ($2$ al del medio y $3$ al menor) en $\binom{5}{2}=10$ formas, dando $N_1 = 5 \cdot 10 = 50$. Análogamente, si recibe el reloj pero no el videojuego hay $N_2 = 50$ formas. Como son disjuntos, $N_1 + N_2 = 100$ (o $110 - n_{vr} = 110 - 10 = 100$).</li>
+        </ol>
+        <div class="resultado">$$\text{(a) } 210, \qquad \text{(b) } 110, \qquad \text{(c) } 100.$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.4 -->
+    <div class="box ejercicio" id="ej-1-4">
+      <span class="box-title">Ejercicio 1.4</span>
+      <p>¿Cuántos son los anagramas de la palabra “COMBINATORIA”? (Considere la O sin tilde). ¿Cuántos de ellos comienzan por vocal o terminan en consonante?</p>
+      <p class="tecnica">Técnica: permutaciones con repetición (coeficiente multinomial) + Inclusión–Exclusión.</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Cuenta las multiplicidades de las 12 letras: 2A, 2I, 2O y 6 consonantes distintas (B, C, M, N, R, T). Para la segunda pregunta, llama $V$ al conjunto que empieza por vocal (3 opciones: A, I, O) y $C$ al que termina en consonante (6 opciones), teniendo cuidado con cuántas repeticiones quedan al fijar cada extremo.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Total de anagramas.</b>
+            La palabra “COMBINATORIA” tiene $12$ letras: $2$ A, $2$ I, $2$ O, y una de cada una de B, C, M, N, R, T. El número de permutaciones con repetición es
+            $$\frac{12!}{2!\,2!\,2!} = \frac{479\,001\,600}{8} = 59\,875\,200.$$</li>
+          <li><b>Conteo de $|V|$, $|C|$ y $|V \cap C|$.</b>
+            Sean $V$ los anagramas que comienzan por vocal y $C$ los que terminan en consonante.
+            <ul>
+              <li><b>$|V|$:</b> Hay $3$ opciones para la vocal inicial (A, I u O). En cualquiera de los tres casos, una vocal de multiplicidad $2$ pasa a tener multiplicidad $1$ entre las $11$ letras restantes, luego quedan dos pares repetidos:
+                $$|V| = 3 \cdot \frac{11!}{2!\,2!} = 3 \cdot 9\,979\,200 = 29\,937\,600.$$</li>
+              <li><b>$|C|$:</b> Hay $6$ opciones para la consonante final (todas aparecen una sola vez), quedando $11$ letras con 2A, 2I y 2O:
+                $$|C| = 6 \cdot \frac{11!}{2!\,2!\,2!} = 6 \cdot 4\,989\,600 = 29\,937\,600.$$</li>
+              <li><b>$|V \cap C|$:</b> Elegimos la vocal inicial ($3$ formas) y la consonante final ($6$ formas), permutando las $10$ letras intermedias con dos pares repetidos:
+                $$|V \cap C| = 3 \cdot 6 \cdot \frac{10!}{2!\,2!} = 18 \cdot 907\,200 = 16\,329\,600.$$</li>
+            </ul></li>
+          <li><b>Inclusión–Exclusión.</b>
+            $$|V \cup C| = |V| + |C| - |V \cap C| = 29\,937\,600 + 29\,937\,600 - 16\,329\,600 = 43\,545\,600.$$</li>
+        </ol>
+        <div class="resultado">$$\text{Total: } 59\,875\,200; \qquad \text{Comienzan por vocal o terminan en consonante: } 43\,545\,600.$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.5 -->
+    <div class="box ejercicio" id="ej-1-5">
+      <span class="box-title">Ejercicio 1.5</span>
+      <p>Se permutan de todas las formas posibles los dígitos $1, 2, 4, 6, 7$ y se escriben los números formados en orden creciente. Determine:</p>
+      <ol type="a">
+        <li>qué lugar ocupa el número $62\,417$;</li>
+        <li>qué número ocupa el $66.^\circ$ lugar;</li>
+        <li>cuál es el $166.^\circ$ dígito escrito;</li>
+        <li>la suma de los números así formados.</li>
+      </ol>
+      <p class="tecnica">Técnica: conteo lexicográfico por prefijos y simetría posicional de dígitos.</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Hay $5! = 120$ números de $5$ dígitos. Para (a) y (b), cuenta por bloques según el prefijo ($4! = 24$ para el primer dígito, $3! = 6$ para los dos primeros). Para (c), divide $166$ entre $5$ para ubicar el número y la posición del dígito. Para (d), determina cuántas veces aparece cada dígito en cada orden decimal.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Apartado (a): posición de $62\,417$.</b>
+            Contamos cuántos números son estrictamente menores que $62\,417$:
+            <ul>
+              <li>Comenzados en $1$, $2$ o $4$: $3 \cdot 4! = 3 \cdot 24 = 72$.</li>
+              <li>Comenzados en $61$: $3! = 6$.</li>
+              <li>Comenzados en $621$: $2! = 2$.</li>
+            </ul>
+            El siguiente es $62\,417$ (el primero que comienza por $624$). Lo anteceden $72 + 6 + 2 = 80$ números, luego ocupa el <b>$81.^\circ$ lugar</b>.</li>
+          <li><b>Apartado (b): número en el $66.^\circ$ lugar.</b>
+            Acumulamos por prefijos: empezados en $1$ ($24$, acum. $24$); en $2$ ($24$, acum. $48$); en $41$ ($3!=6$, acum. $54$); en $42$ ($3!=6$, acum. $60$); en $46$ ($3!=6$, acum. $66$). Por tanto, el $66.^\circ$ número es el mayor de los que comienzan por $46$, es decir, $46\,721$.</li>
+          <li><b>Apartado (c): $166.^\circ$ dígito escrito.</b>
+            Cada número aporta $5$ dígitos. Como $166 = 5 \cdot 33 + 1$, el $166.^\circ$ dígito es el primer dígito del $34.^\circ$ número. Los primeros $24$ comienzan con $1$, y del $25.^\circ$ al $48.^\circ$ comienzan con $2$. Luego, el $166.^\circ$ dígito es $2$.</li>
+          <li><b>Apartado (d): suma de los $120$ números.</b>
+            En cada posición (unidades, decenas, centenas, unidades de mil y decenas de mil), cada uno de los cinco dígitos aparece exactamente $4! = 24$ veces. La suma de los dígitos en una posición fija es
+            $$24 \cdot (1 + 2 + 4 + 6 + 7) = 24 \cdot 20 = 480.$$
+            Sumando por valor posicional:
+            $$480 \cdot (1 + 10 + 100 + 1000 + 10\,000) = 480 \cdot 11\,111 = 5\,333\,280.$$</li>
+        </ol>
+        <div class="resultado">$$\text{(a) } 81.^\circ \text{ lugar,} \quad \text{(b) } 46\,721, \quad \text{(c) } 2, \quad \text{(d) } 5\,333\,280.$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.6 -->
+    <div class="box ejercicio" id="ej-1-6">
+      <span class="box-title">Ejercicio 1.6</span>
+      <p>¿Cuántos son los anagramas de la palabra “PARAGUAIO” que no poseen consonantes adyacentes?</p>
+      <p class="tecnica">Técnica: método de inserción en huecos (espacios entre vocales).</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Separa las $6$ vocales (3 A, I, O, U) y las $3$ consonantes distintas (P, R, G). Ordena primero las vocales (anagrama con repetición) y luego ubica cada consonante en uno de los $7$ huecos posibles (antes, entre o después de las vocales) sin poner dos en el mismo hueco.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Permutación de las vocales.</b>
+            La palabra “PARAGUAIO” tiene $6$ vocales (3 A, 1 I, 1 O, 1 U) y $3$ consonantes distintas (P, R, G). El número de formas de ordenar las $6$ vocales es
+            $$\frac{6!}{3!} = 120.$$</li>
+          <li><b>Inserción de las consonantes sin adyacencia.</b>
+            Fijada una ordenación de las $6$ vocales (por ejemplo, $\_A\_A\_U\_A\_I\_O\_$), se generan $7$ espacios disponibles (extremos e intersticios) donde las consonantes pueden colocarse. Para que no haya consonantes juntas, cada consonante debe ir en un espacio distinto: hay $7$ elecciones para la P, $6$ para la R y $5$ para la G.</li>
+          <li><b>Total por principio multiplicativo.</b>
+            $$120 \cdot 7 \cdot 6 \cdot 5 = 120 \cdot 210 = 25\,200.$$
+            <em>(Alternativamente: permutando las consonantes en $3!$, eligiendo $\binom{7}{3}=35$ distribuciones de vocales con al menos 1 vocal en los dos huecos interiores entre consonantes, y permutando las vocales en $6!/3!$: $3! \cdot \binom{7}{3} \cdot \frac{6!}{3!} = 6 \cdot 35 \cdot 120 = 25\,200$.)</em></li>
+        </ol>
+        <div class="resultado">$$25\,200 \text{ anagramas.}$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.7 -->
+    <div class="box ejercicio" id="ej-1-7">
+      <span class="box-title">Ejercicio 1.7</span>
+      <p>¿Cuántos son los números enteros positivos menores que $360$ y primos relativos con $360$?</p>
+      <p class="tecnica">Técnica: factorización prima y Principio de Inclusión–Exclusión (función $\varphi$ de Euler).</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Descompón $360 = 2^3 \cdot 3^2 \cdot 5$. Un entero en $A = \{1, \dots, 360\}$ es coprimo con $360$ si y solo si no es múltiplo de $2$, ni de $3$, ni de $5$ (el propio $360$ es múltiplo de los tres, así que queda excluido automáticamente). Aplica Inclusión–Exclusión a los múltiplos de $2$, $3$ y $5$.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Factorización y definición de conjuntos.</b>
+            Como $360 = 2^3 \cdot 3^2 \cdot 5$, en $A = \{1, 2, \dots, 360\}$ definimos $A_1 = \{x \in A : 2 \mid x\}$, $A_2 = \{x \in A : 3 \mid x\}$ y $A_3 = \{x \in A : 5 \mid x\}$. Buscamos $|A \setminus (A_1 \cup A_2 \cup A_3)|$ (nótese que $360 \in A_1 \cap A_2 \cap A_3$, por lo que queda descartado).</li>
+          <li><b>Cardinalidades e intersecciones.</b>
+            $$|A_1| = \frac{360}{2} = 180, \quad |A_2| = \frac{360}{3} = 120, \quad |A_3| = \frac{360}{5} = 72,$$
+            $$|A_1 \cap A_2| = \frac{360}{6} = 60, \quad |A_1 \cap A_3| = \frac{360}{10} = 36, \quad |A_2 \cap A_3| = \frac{360}{15} = 24,$$
+            $$|A_1 \cap A_2 \cap A_3| = \frac{360}{30} = 12.$$</li>
+          <li><b>Inclusión–Exclusión y resta final.</b>
+            $$|A_1 \cup A_2 \cup A_3| = 180 + 120 + 72 - 60 - 36 - 24 + 12 = 264.$$
+            Luego la cantidad de enteros positivos menores que $360$ y coprimos con $360$ es $360 - 264 = 96$. <em>(Equivalentemente, $\varphi(360) = 360\bigl(1-\frac{1}{2}\bigr)\bigl(1-\frac{1}{3}\bigr)\bigl(1-\frac{1}{5}\bigr) = 96$.)</em></li>
+        </ol>
+        <div class="resultado">$$96 \text{ números.}$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.8 -->
+    <div class="box ejercicio" id="ej-1-8">
+      <span class="box-title">Ejercicio 1.8</span>
+      <p>Una bolsa contiene $8$ monedas de $1$ real, $7$ monedas de $50$ centavos, $4$ monedas de $25$ centavos y $3$ monedas de $10$ centavos. ¿De cuántas maneras diferentes podemos retirar $6$ monedas de esa bolsa?</p>
+      <p class="tecnica">Técnica: combinaciones con repetición (ecuación diofántica lineal) con cotas superiores vía Inclusión–Exclusión.</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Plantea $x_1 + x_2 + x_3 + x_4 = 6$ en enteros no negativos con $x_1 \le 8$, $x_2 \le 7$, $x_3 \le 4$, $x_4 \le 3$. Solo las restricciones $x_3 \le 4$ y $x_4 \le 3$ pueden violarse porque $8, 7 \ge 6$. Calcula el total $\binom{6+4-1}{3}$ y resta los casos $x_3 \ge 5$ y $x_4 \ge 4$ (que además no pueden ocurrir simultáneamente).</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Planteamiento como ecuación entera.</b>
+            Sean $x_1, x_2, x_3, x_4$ las cantidades retiradas de monedas de $1$ real, $50$, $25$ y $10$ centavos respectivamente. Buscamos el número de soluciones enteras no negativas de
+            $$x_1 + x_2 + x_3 + x_4 = 6, \qquad x_1 \le 8,\ x_2 \le 7,\ x_3 \le 4,\ x_4 \le 3.$$</li>
+          <li><b>Total sin cotas superiores y eventos de violación.</b>
+            Sea $A = \{(x_1,x_2,x_3,x_4) \in \mathbb{N}_0^4 : x_1+x_2+x_3+x_4 = 6\}$, cuya cardinalidad es
+            $$|A| = \binom{6 + 4 - 1}{4 - 1} = \binom{9}{3} = 84.$$
+            Definimos $A_1 = \{x_1 \ge 9\}$, $A_2 = \{x_2 \ge 8\}$, $A_3 = \{x_3 \ge 5\}$ y $A_4 = \{x_4 \ge 4\}$ dentro de $A$. Claramente $|A_1| = |A_2| = 0$. Para $A_3$, hacemos $x_3' = x_3 - 5 \ge 0$, dando $x_1+x_2+x_3'+x_4 = 1$, con $|A_3| = \binom{1+4-1}{3} = \binom{4}{3} = 4$. Para $A_4$, con $x_4' = x_4 - 4 \ge 0$, queda $x_1+x_2+x_3+x_4' = 2$, con $|A_4| = \binom{2+4-1}{3} = \binom{5}{3} = 10$.</li>
+          <li><b>Intersecciones y resultado final.</b>
+            Como $5 + 4 = 9 &gt; 6$, ninguna solución en $A$ puede satisfacer simultáneamente $x_3 \ge 5$ y $x_4 \ge 4$, de modo que $|A_i \cap A_j| = 0$ para todo $i &lt; j$ (y lo mismo para intersecciones triples o cuádruples). Por Inclusión–Exclusión:
+            $$|A \setminus (A_1 \cup A_2 \cup A_3 \cup A_4)| = 84 - (4 + 10) = 70.$$</li>
+        </ol>
+        <div class="resultado">$$70 \text{ maneras diferentes.}$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.9 -->
+    <div class="box ejercicio" id="ej-1-9">
+      <span class="box-title">Ejercicio 1.9</span>
+      <p>¿Cuántas son las claves de respuestas posibles de un examen con $10$ preguntas de verdadero o falso?</p>
+      <p class="tecnica">Técnica: palabras de longitud $k$ con $n$ símbolos (principio multiplicativo).</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Cada una de las $10$ preguntas admite $2$ posibles respuestas (V o F), de manera independiente.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Conteo por etapas.</b>
+            Para cada una de las $10$ preguntas hay $2$ opciones posibles (verdadero o falso). Por la fórmula 1.7 (o el principio multiplicativo), el número total de claves posibles es $2^{10} = 1024$.</li>
+        </ol>
+        <div class="resultado">$$2^{10} = 1024 \text{ claves posibles.}$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.10 -->
+    <div class="box ejercicio" id="ej-1-10">
+      <span class="box-title">Ejercicio 1.10</span>
+      <p>¿De cuántas maneras pueden sentarse $4$ personas en $10$ sillas en fila?</p>
+      <p class="tecnica">Técnica: arreglos (variaciones sin repetición) $(n)_k$.</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>La primera persona tiene $10$ sillas disponibles, la segunda $9$, la tercera $8$ y la cuarta $7$.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Asignación secuencial de asientos.</b>
+            Dado que las personas y las sillas son distinguibles (importa qué silla ocupa cada persona), buscamos el número de $4$-arreglos de $10$ elementos:
+            $$(10)_4 = 10 \cdot 9 \cdot 8 \cdot 7 = 5040.$$</li>
+        </ol>
+        <div class="resultado">$$5040 \text{ maneras.}$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.11 -->
+    <div class="box ejercicio" id="ej-1-11">
+      <span class="box-title">Ejercicio 1.11</span>
+      <p>El conjunto $A$ posee $3$ elementos y el conjunto $B$, $10$ elementos. ¿Cuántas funciones $f: A \to B$ existen? ¿Cuántas de ellas son inyectivas?</p>
+      <p class="tecnica">Técnica: principio multiplicativo para funciones (palabras y arreglos).</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Para cada uno de los $3$ elementos de $A$ debes elegir una imagen en $B$ ($10$ elementos). Si no hay restricción, se permite repetir imágenes; si $f$ es inyectiva, los elementos distintos de $A$ deben recibir imágenes distintas en $B$.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Total de funciones $f: A \to B$.</b>
+            Cada uno de los $3$ elementos del dominio $A$ puede enviarse a cualquiera de los $10$ elementos de $B$:
+            $$10^3 = 1000 \text{ funciones}.$$</li>
+          <li><b>Funciones inyectivas.</b>
+            El primer elemento de $A$ tiene $10$ imágenes posibles, el segundo tiene $9$ (distinta de la anterior) y el tercero $8$:
+            $$(10)_3 = 10 \cdot 9 \cdot 8 = 720 \text{ funciones inyectivas}.$$</li>
+        </ol>
+        <div class="resultado">$$1000 \text{ funciones en total,} \qquad 720 \text{ funciones inyectivas.}$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.12 -->
+    <div class="box ejercicio" id="ej-1-12">
+      <span class="box-title">Ejercicio 1.12</span>
+      <p>¿De cuántos modos podemos colocar dos reyes diferentes en casillas no adyacentes de un tablero $6 \times 6$? ¿Y si los reyes fueran iguales?</p>
+      <p class="tecnica">Técnica: partición de casillas por tipo (esquinas, bordes e interior) + división por simetría.</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En ajedrez, un rey ataca (es adyacente a) las casillas vecinas horizontal, vertical y diagonalmente. Clasifica la posición del primer rey en el tablero $6\times 6$: $4$ esquinas, $16$ casillas de borde no esquinas y $16$ casillas interiores, y cuenta cuántas casillas válidas deja al segundo rey en cada caso. Si los reyes son idénticos, divide entre $2$.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Clasificación de las $36$ casillas para el primer rey (reyes distintos).</b>
+            Al colocar el primer rey en una casilla, quedan prohibidas esa misma casilla y todas sus vecinas (ortogonales y diagonales):
+            <ul>
+              <li><b>Esquinas ($4$ casillas):</b> cada esquina tiene $3$ vecinas, bloqueando $4$ casillas y dejando $36 - 4 = 32$ opciones para el segundo rey.</li>
+              <li><b>Bordes que no son esquinas ($4 \cdot 4 = 16$ casillas):</b> cada una tiene $5$ vecinas, bloqueando $6$ casillas y dejando $36 - 6 = 30$ opciones.</li>
+              <li><b>Interior ($4 \cdot 4 = 16$ casillas):</b> cada una tiene $8$ vecinas, bloqueando $9$ casillas y dejando $36 - 9 = 27$ opciones.</li>
+            </ul></li>
+          <li><b>Suma para reyes diferentes y ajuste para reyes iguales.</b>
+            Para reyes diferentes (pares ordenados de casillas no adyacentes):
+            $$4 \cdot 32 + 16 \cdot 30 + 16 \cdot 27 = 128 + 480 + 432 = 1040.$$
+            Si los dos reyes son idénticos, intercambiar sus posiciones produce la misma configuración, luego dividimos por $2! = 2$:
+            $$\frac{1040}{2} = 520.$$</li>
+        </ol>
+        <div class="resultado">$$\text{Reyes diferentes: } 1040; \qquad \text{Reyes iguales: } 520.$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.13 -->
+    <div class="box ejercicio" id="ej-1-13">
+      <span class="box-title">Ejercicio 1.13</span>
+      <ol type="a">
+        <li>¿Cuántos divisores enteros positivos posee el número $1800$?</li>
+        <li>¿Cuántos de esos divisores son pares?</li>
+        <li>¿Cuántos son cuadrados perfectos?</li>
+      </ol>
+      <p class="tecnica">Técnica: descomposición prima y principio multiplicativo sobre exponentes.</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Factoriza $1800 = 2^3 \cdot 3^2 \cdot 5^2$. Todo divisor positivo tiene la forma $2^a 3^b 5^c$ con $0 \le a \le 3$, $0 \le b \le 2$, $0 \le c \le 2$. Para que sea par, exige $a \ge 1$; para que sea cuadrado perfecto, exige que $a, b, c$ sean pares.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Factorización prima y apartado (a).</b>
+            Escribimos $1800 = 18 \cdot 100 = (2 \cdot 3^2)(2^2 \cdot 5^2) = 2^3 \cdot 3^2 \cdot 5^2$. Un entero positivo $d$ divide a $1800$ si y solo si $d = 2^a 3^b 5^c$ con $a \in \{0,1,2,3\}$ ($4$ opciones), $b \in \{0,1,2\}$ ($3$ opciones) y $c \in \{0,1,2\}$ ($3$ opciones). Por tanto, el total de divisores positivos es
+            $$4 \cdot 3 \cdot 3 = 36.$$</li>
+          <li><b>Apartado (b): divisores pares.</b>
+            Para que $d$ sea par debe tener factor $2$, es decir, $a \in \{1, 2, 3\}$ ($3$ opciones), manteniendo $3$ opciones para $b$ y $3$ para $c$:
+            $$3 \cdot 3 \cdot 3 = 27.$$</li>
+          <li><b>Apartado (c): cuadrados perfectos.</b>
+            $d = 2^a 3^b 5^c$ es un cuadrado perfecto si y solo si todos sus exponentes son pares: $a \in \{0, 2\}$ ($2$ opciones), $b \in \{0, 2\}$ ($2$ opciones) y $c \in \{0, 2\}$ ($2$ opciones), lo que da
+            $$2 \cdot 2 \cdot 2 = 8.$$</li>
+        </ol>
+        <div class="resultado">$$\text{(a) } 36, \qquad \text{(b) } 27, \qquad \text{(c) } 8.$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.14 -->
+    <div class="box ejercicio" id="ej-1-14">
+      <span class="box-title">Ejercicio 1.14</span>
+      <p>¿De cuántas maneras diferentes podemos elegir subconjuntos $S$ y $T$ del conjunto $\{1, \dots, n\}$</p>
+      <ol type="a">
+        <li>sin restricciones?</li>
+        <li>de forma que $S$ contenga a $T$ ($T \subseteq S$)?</li>
+        <li>con $S$ y $T$ disjuntos ($S \cap T = \emptyset$)?</li>
+      </ol>
+      <p class="tecnica">Técnica: conteo elemento a elemento (codificación por estados de pertenencia).</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En lugar de elegir $S$ y $T$ globalmente, decide independientemente para cada elemento $i \in \{1, \dots, n\}$ a cuáles de los dos conjuntos pertenece. En (a) cada elemento tiene $4$ estados posibles; en (b) y (c) se excluye exactamente $1$ de esos $4$ estados.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Apartado (a): sin restricciones.</b>
+            Por la propiedad 1.4, hay $2^n$ elecciones para $S$ y $2^n$ elecciones independientes para $T$, luego el total de pares $(S, T)$ es $2^n \cdot 2^n = 4^n$. (Equivalentemente, cada $i \in \{1,\dots,n\}$ tiene $4$ posibilidades: $i \in S \cap T$, $i \in S \setminus T$, $i \in T \setminus S$, o $i \notin S \cup T$.)</li>
+          <li><b>Apartado (b): $S$ contiene a $T$ ($T \subseteq S$).</b>
+            La condición $T \subseteq S$ equivale a prohibir $i \in T \setminus S$. Así, para cada $i \in \{1,\dots,n\}$ quedan $3$ opciones independientes: $i \in T$ (luego también $i \in S$), $i \in S \setminus T$, o $i \notin S$. Por el principio multiplicativo, hay $3^n$ pares. <em>(Alternativamente: $\sum_{k=0}^n \binom{n}{k} 2^k = (1+2)^n = 3^n$.)</em></li>
+          <li><b>Apartado (c): $S$ y $T$ disjuntos ($S \cap T = \emptyset$).</b>
+            Ahora se prohíbe $i \in S \cap T$. Para cada elemento $i \in \{1,\dots,n\}$ hay $3$ opciones independientes: $i \in S$, $i \in T$, o $i \notin S \cup T$. Luego hay $3^n$ pares.</li>
+        </ol>
+        <div class="resultado">$$\text{(a) } 4^n, \qquad \text{(b) } 3^n, \qquad \text{(c) } 3^n.$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.15 -->
+    <div class="box ejercicio" id="ej-1-15">
+      <span class="box-title">Ejercicio 1.15</span>
+      <p>¿Cuántos números pares de dos cifras pueden formarse en el sistema decimal</p>
+      <ol type="a">
+        <li>pudiendo repetir dígitos?</li>
+        <li>sin repetir dígitos?</li>
+      </ol>
+      <p class="tecnica">Técnica: principio multiplicativo con restricción en el primer dígito (distinto de cero) y partición según el dígito de las unidades.</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Un número de dos cifras está entre $10$ y $99$ (las decenas no pueden ser $0$). Para ser par, la cifra de las unidades pertenece a $\{0,2,4,6,8\}$. En (b), separa el caso en que las unidades valen $0$ del caso en que valen $2, 4, 6$ u $8$ (o simplemente resta a (a) los números pares de dos dígitos iguales).</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Apartado (a): con repetición permitida.</b>
+            La cifra de las decenas admite $9$ opciones ($1, 2, \dots, 9$, pues no puede ser $0$) y la cifra de las unidades admite $5$ opciones pares ($0, 2, 4, 6, 8$). Por el principio multiplicativo:
+            $$9 \cdot 5 = 45.$$</li>
+          <li><b>Apartado (b): sin repetir dígitos.</b>
+            Dividimos según el dígito de las unidades:
+            <ul>
+              <li>Si las unidades son $0$ ($1$ opción), las decenas pueden tomar cualquier valor en $\{1, \dots, 9\}$ ($9$ opciones): $9 \cdot 1 = 9$ números.</li>
+              <li>Si las unidades pertenecen a $\{2, 4, 6, 8\}$ ($4$ opciones), las decenas no pueden ser $0$ ni coincidir con las unidades, quedando $8$ opciones: $8 \cdot 4 = 32$ números.</li>
+            </ul>
+            Total: $9 + 32 = 41$. <em>(Más rápido: de los $45$ de (a), solo hay $4$ con cifras repetidas —$22, 44, 66, 88$—, luego $45 - 4 = 41$.)</em></li>
+        </ol>
+        <div class="resultado">$$\text{(a) } 45, \qquad \text{(b) } 41.$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.16 -->
+    <div class="box ejercicio" id="ej-1-16">
+      <span class="box-title">Ejercicio 1.16</span>
+      <p>¿Cuántos números enteros entre $100$ y $999$ son impares y poseen tres cifras distintas?</p>
+      <p class="tecnica">Técnica: principio multiplicativo comenzando por las posiciones más restringidas (unidades y centenas).</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Fija primero la cifra de las unidades (debe ser impar: $1, 3, 5, 7, 9$), luego la de las centenas (no puede ser $0$ ni igual a las unidades) y finalmente la de las decenas (distinta de las dos ya elegidas).</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Selección en orden de restricción.</b>
+            <ul>
+              <li><b>Unidades:</b> para que el número sea impar, hay $5$ opciones ($\{1, 3, 5, 7, 9\}$).</li>
+              <li><b>Centenas:</b> no puede ser $0$ ni igual al dígito elegido en las unidades (que nunca es $0$), luego quedan $10 - 2 = 8$ opciones.</li>
+              <li><b>Decenas:</b> puede ser cualquier dígito distinto de los dos anteriores, dando $10 - 2 = 8$ opciones.</li>
+            </ul></li>
+          <li><b>Producto final.</b>
+            Por el principio multiplicativo:
+            $$5 \cdot 8 \cdot 8 = 320 \text{ números.}$$</li>
+        </ol>
+        <div class="resultado">$$320 \text{ números.}$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.17 -->
+    <div class="box ejercicio" id="ej-1-17">
+      <span class="box-title">Ejercicio 1.17</span>
+      <p>¿Cuántos números enteros mayores que $53\,000$ y de cinco cifras distintas pueden formarse con los dígitos $0, 1, 2, 3, 4, 5, 6$ y $7$?</p>
+      <p class="tecnica">Técnica: partición por prefijo (decenas de mil) y conteo mediante arreglos $(n)_k$.</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Separa según la primera cifra: (i) empieza con $6$ o $7$ (todos superan $53\,000$); (ii) empieza con $5$, en cuyo caso la segunda cifra debe ser $\ge 3$ (distinta de $5$: o sea $3, 4, 6$ o $7$). Observa que $53\,000$ repite ceros y no puede aparecer con cifras distintas.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Caso 1: el número comienza por $6$ o $7$.</b>
+            Hay $2$ opciones para la primera cifra. Como ya supera $60\,000 &gt; 53\,000$, las $4$ cifras restantes se eligen sin repetición entre los $7$ dígitos disponibles:
+            $$2 \cdot (7)_4 = 2 \cdot (7 \cdot 6 \cdot 5 \cdot 4) = 2 \cdot 840 = 1680.$$</li>
+          <li><b>Caso 2: el número comienza por $5$.</b>
+            Como no se repiten dígitos, el número $53\,000$ no puede formarse; por tanto, basta que el segundo dígito sea $\ge 3$ y distinto de $5$, es decir, $\{3, 4, 6, 7\}$ ($4$ opciones). Los $3$ dígitos restantes se eligen entre los $6$ disponibles:
+            $$4 \cdot (6)_3 = 4 \cdot (6 \cdot 5 \cdot 4) = 4 \cdot 120 = 480.$$</li>
+          <li><b>Suma de casos disjuntos.</b>
+            $$1680 + 480 = 2160 \text{ números.}$$</li>
+        </ol>
+        <div class="resultado">$$2160 \text{ números.}$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.18 -->
+    <div class="box ejercicio" id="ej-1-18">
+      <span class="box-title">Ejercicio 1.18</span>
+      <p>¿Cuántas son las permutaciones de los números $1, 2, \dots, n$ en las cuales el elemento que ocupa la $k$-ésima posición es menor que $k + 4$, para todo $k$?</p>
+      <p class="tecnica">Técnica: principio multiplicativo paso a paso de izquierda a derecha.</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Supón $n \ge 3$ y elige los elementos de izquierda a derecha: para $k=1$, el valor debe estar en $\{1,2,3,4\}$ ($4$ opciones); para $k=2$, en $\{1,2,3,4,5\}$ excepto el ya usado en $k=1$ (otra vez $4$ opciones); continúa hasta $k=n-3$, y nota que para las últimas $3$ posiciones la condición se cumple automáticamente.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Elección secuencial para las primeras $n - 3$ posiciones (caso $n \ge 3$).</b>
+            Sea $(a_1, \dots, a_n)$ una permutación válida de $\{1, \dots, n\}$.
+            <ul>
+              <li>Para $k = 1$, $a_1 &lt; 5$, así que $a_1 \in \{1, 2, 3, 4\}$: hay $4$ elecciones.</li>
+              <li>Para $k = 2$, $a_2 &lt; 6$, luego $a_2 \in \{1, 2, 3, 4, 5\} \setminus \{a_1\}$: quedan $5 - 1 = 4$ elecciones.</li>
+              <li>En general, para cada $k \in \{1, \dots, n - 3\}$, el conjunto $\{1, \dots, k+3\}$ contiene $k+3$ elementos, de los cuales exactamente $k-1$ ya fueron asignados a las posiciones $1, \dots, k-1$ (pues todos los anteriores fueron menores que $(k-1)+4 = k+3$). Así, siempre hay $(k+3) - (k-1) = 4$ elecciones válidas para $a_k$.</li>
+            </ul></li>
+          <li><b>Últimas tres posiciones y total.</b>
+            Para $k \in \{n-2, n-1, n\}$, se tiene $k + 4 \ge n + 2 &gt; n$, de modo que cualquiera de los $3$ números aún no utilizados es menor que $k+4$. Estos $3$ elementos pueden ordenarse en $3! = 6$ formas. Por el principio multiplicativo (para $n \ge 3$):
+            $$\underbrace{4 \cdot 4 \cdots 4}_{n - 3 \text{ veces}} \cdot 3! = 6 \cdot 4^{n-3}.$$
+            <em>(Nota: si $n = 1$ o $n = 2$, toda permutación cumple la condición, dando $n!$.)</em></li>
+        </ol>
+        <div class="resultado">$$6 \cdot 4^{n-3} \quad (n \ge 3).$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.19 -->
+    <div class="box ejercicio" id="ej-1-19">
+      <span class="box-title">Ejercicio 1.19</span>
+      <p>Un estudiante posee $5$ libros de Cálculo, $4$ libros de Álgebra Lineal y $3$ libros de Ecuaciones Diferenciales, todos diferentes. ¿De cuántas maneras puede acomodarlos en un estante si desea que los libros de cada materia queden juntos?</p>
+      <p class="tecnica">Técnica: permutación por bloques (orden externo de bloques $\times$ orden interno).</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Primero decide en qué orden se colocan los $3$ bloques temáticos ($3!$ formas) y luego permuta los libros dentro de cada bloque ($5!$, $4!$ y $3!$).</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Orden de los bloques y orden interno.</b>
+            Consideramos cada materia como un bloque: hay $3! = 6$ maneras de ordenar los tres bloques (Cálculo, Álgebra Lineal, Ecuaciones Diferenciales) en el estante.</li>
+          <li><b>Permutaciones dentro de cada bloque.</b>
+            Dentro del bloque de Cálculo hay $5! = 120$ ordenaciones; dentro de Álgebra Lineal, $4! = 24$; y dentro de Ecuaciones Diferenciales, $3! = 6$.</li>
+          <li><b>Total por principio multiplicativo.</b>
+            $$3! \cdot 5! \cdot 4! \cdot 3! = 6 \cdot 120 \cdot 24 \cdot 6 = 103\,680.$$</li>
+        </ol>
+        <div class="resultado">$$103\,680 \text{ maneras.}$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.20 -->
+    <div class="box ejercicio" id="ej-1-20">
+      <span class="box-title">Ejercicio 1.20</span>
+      <p>En una carrera con diez caballos, ¿cuántos son los resultados posibles para los cuatro primeros lugares?</p>
+      <p class="tecnica">Técnica: arreglos sin repetición $(n)_k$.</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Asumiendo que no hay empates, se selecciona una lista ordenada de $4$ caballos distintos entre los $10$ participantes.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Cálculo del arreglo $(10)_4$.</b>
+            Hay $10$ candidatos para el primer lugar, $9$ para el segundo, $8$ para el tercero y $7$ para el cuarto:
+            $$(10)_4 = 10 \cdot 9 \cdot 8 \cdot 7 = 5040.$$</li>
+        </ol>
+        <div class="resultado">$$5040 \text{ resultados posibles.}$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.21 -->
+    <div class="box ejercicio" id="ej-1-21">
+      <span class="box-title">Ejercicio 1.21</span>
+      <p>¿Cuántos son los partidos de un campeonato de fútbol disputado por $20$ clubes, en el cual todos se enfrentan una única vez?</p>
+      <p class="tecnica">Técnica: combinaciones simples $\binom{n}{2}$.</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Cada partido queda determinado de manera única por el par no ordenado de dos clubes que se enfrentan.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Elección de pares de equipos.</b>
+            Como cada pareja de equipos se enfrenta exactamente una vez, el número total de partidos es el número de subconjuntos de tamaño $2$ de un conjunto de $20$ clubes:
+            $$\binom{20}{2} = \frac{20 \cdot 19}{2} = 190 \text{ partidos.}$$</li>
+        </ol>
+        <div class="resultado">$$190 \text{ partidos.}$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.22 -->
+    <div class="box ejercicio" id="ej-1-22">
+      <span class="box-title">Ejercicio 1.22</span>
+      <p>¿De cuántas maneras es posible colocar en fila a $m$ mujeres y $h$ hombres, todos con estaturas diferentes, de forma que las mujeres entre sí y los hombres entre sí queden en orden creciente de estatura?</p>
+      <p class="tecnica">Técnica: combinaciones (elección de posiciones cuando el orden relativo está fijado).</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Una vez que decides cuáles de los $m+h$ lugares de la fila ocuparán las mujeres, el orden de las mujeres queda unívocamente determinado por sus estaturas (de menor a mayor), y lo mismo ocurre con los hombres en los $h$ lugares restantes.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Determinación unívoca a partir de las posiciones.</b>
+            Disponemos de $m + h$ posiciones en fila. Si elegimos los $m$ lugares que ocuparán las mujeres, entonces la mujer más baja debe ocupar el primero de esos $m$ lugares, la segunda más baja el segundo, y así sucesivamente hasta la más alta. Del mismo modo, en los $h$ lugares restantes los hombres quedan automáticamente ordenados de menor a mayor estatura.</li>
+          <li><b>Conteo final.</b>
+            El número de configuraciones válidas coincide exactamente con el número de formas de elegir $m$ lugares entre $m + h$:
+            $$\binom{m + h}{m} = \frac{(m + h)!}{m!\,h!}.$$</li>
+        </ol>
+        <div class="resultado">$$\frac{(m + h)!}{m!\,h!}.$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.23 -->
+    <div class="box ejercicio" id="ej-1-23">
+      <span class="box-title">Ejercicio 1.23</span>
+      <p>¿Cuántos son los subconjuntos de $\{a_1, a_2, \dots, a_n\}$ en los cuales:</p>
+      <ol type="a">
+        <li>$a_1$ figura?</li>
+        <li>$a_1$ no figura?</li>
+        <li>$a_1$ y $a_2$ figuran?</li>
+        <li>al menos uno de $a_1$ y $a_2$ figura?</li>
+        <li>exactamente uno de $a_1$ y $a_2$ figura?</li>
+      </ol>
+      <p class="tecnica">Técnica: biyección con subconjuntos de los elementos libres ($2^k$) e Inclusión–Exclusión.</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Fija primero las decisiones sobre $a_1$ (y $a_2$ en (c)–(e)), y luego decide libremente si cada uno de los elementos restantes entra o no en el subconjunto.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Apartados (a) y (b):</b> Si $a_1$ pertenece al subconjunto, basta escoger un subconjunto arbitrario de $\{a_2, \dots, a_n\}$ ($n-1$ elementos), lo que da $2^{n-1}$ subconjuntos. Si $a_1$ no pertenece, igualmente se escoge un subconjunto de $\{a_2, \dots, a_n\}$, dando $2^{n-1}$.</li>
+          <li><b>Apartado (c): $a_1$ y $a_2$ figuran ($n \ge 2$).</b>
+            Al incluir obligatoriamente a $a_1$ y $a_2$, quedan $n - 2$ elementos libres $\{a_3, \dots, a_n\}$, generando $2^{n-2}$ subconjuntos.</li>
+          <li><b>Apartado (d): al menos uno de $a_1, a_2$ figura.</b>
+            Por Inclusión–Exclusión (o restando del total $2^n$ los $2^{n-2}$ subconjuntos que no contienen ni a $a_1$ ni a $a_2$):
+            $$2^{n-1} + 2^{n-1} - 2^{n-2} = 2^n - 2^{n-2} = (4 - 1)2^{n-2} = 3 \cdot 2^{n-2}.$$</li>
+          <li><b>Apartado (e): exactamente uno de $a_1, a_2$ figura.</b>
+            Hay $2$ opciones sobre cuál de $\{a_1, a_2\}$ entra (el otro queda fuera) y $2^{n-2}$ opciones para los demás elementos: $2 \cdot 2^{n-2} = 2^{n-1}$ (o bien $3 \cdot 2^{n-2} - 2^{n-2} = 2^{n-1}$).</li>
+        </ol>
+        <div class="resultado">$$\text{(a) } 2^{n-1}, \quad \text{(b) } 2^{n-1}, \quad \text{(c) } 2^{n-2}, \quad \text{(d) } 3 \cdot 2^{n-2}, \quad \text{(e) } 2^{n-1}.$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.24 -->
+    <div class="box ejercicio" id="ej-1-24">
+      <span class="box-title">Ejercicio 1.24</span>
+      <p>¿Cuántos son los subconjuntos de $\{a_1, a_2, \dots, a_n\}$, con $k$ elementos, en los cuales:</p>
+      <ol type="a">
+        <li>$a_1$ figura?</li>
+        <li>$a_1$ no figura?</li>
+        <li>$a_1$ y $a_2$ figuran?</li>
+        <li>al menos uno de $a_1$ y $a_2$ figura?</li>
+        <li>exactamente uno de $a_1$ y $a_2$ figura?</li>
+      </ol>
+      <p class="tecnica">Técnica: combinaciones condicionadas por inclusión/exclusión de elementos fijos.</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Es el análogo de tamaño fijo $k$ del Ejercicio 1.23: cada elemento que obligas a entrar reduce en $1$ tanto la bolsa disponible como las plazas por llenar; cada elemento que excluyes reduce en $1$ la bolsa disponible pero mantiene las plazas.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Apartados (a) y (b):</b> Si $a_1$ figura, faltan $k - 1$ elementos por elegir entre los $n - 1$ restantes: $\binom{n-1}{k-1}$. Si $a_1$ no figura, se eligen los $k$ elementos entre los $n - 1$ restantes: $\binom{n-1}{k}$. <em>(Nótese que la suma recupera la identidad de Pascal: $\binom{n-1}{k-1} + \binom{n-1}{k} = \binom{n}{k}$.)</em></li>
+          <li><b>Apartado (c): $a_1$ y $a_2$ figuran.</b>
+            Faltan $k - 2$ elementos por elegir entre $\{a_3, \dots, a_n\}$: $\binom{n-2}{k-2}$.</li>
+          <li><b>Apartado (d): al menos uno de $a_1, a_2$ figura.</b>
+            Por Inclusión–Exclusión usando (a) y (c), o por complemento restando del total $\binom{n}{k}$ los subconjuntos sin $a_1$ ni $a_2$:
+            $$2\binom{n-1}{k-1} - \binom{n-2}{k-2} = \binom{n}{k} - \binom{n-2}{k}.$$</li>
+          <li><b>Apartado (e): exactamente uno de $a_1, a_2$ figura.</b>
+            Elegimos cuál de $\{a_1, a_2\}$ entra ($2$ formas; el otro se excluye) y completamos con $k - 1$ elementos de los $n - 2$ restantes:
+            $$2\binom{n-2}{k-1}.$$</li>
+        </ol>
+        <div class="resultado">$$\text{(a) } \binom{n-1}{k-1}, \quad \text{(b) } \binom{n-1}{k}, \quad \text{(c) } \binom{n-2}{k-2}, \quad \text{(d) } 2\binom{n-1}{k-1} - \binom{n-2}{k-2} = \binom{n}{k} - \binom{n-2}{k}, \quad \text{(e) } 2\binom{n-2}{k-1}.$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.25 -->
+    <div class="box ejercicio" id="ej-1-25">
+      <span class="box-title">Ejercicio 1.25</span>
+      <p>Calcule el número de palabras de seis letras, sin consonantes ni vocales adyacentes, que se pueden formar empleando diez consonantes y cinco vocales,</p>
+      <ol type="a">
+        <li>si se permite repetir letras;</li>
+        <li>si no se permiten repeticiones.</li>
+      </ol>
+      <p class="tecnica">Técnica: alternancia estricta de clases (CVCVCV o VCVCVC) + principio multiplicativo.</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Como no puede haber dos vocales juntas ni dos consonantes juntas, los únicos dos patrones posibles son <code>CVCVCV</code> y <code>VCVCVC</code>, cada uno con $3$ consonantes y $3$ vocales.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Estructura de las palabras.</b>
+            Para que no haya dos consonantes adyacentes ni dos vocales adyacentes, las letras deben alternarse estrictamente. Hay exactamente $2$ configuraciones posibles: <code>CVCVCV</code> y <code>VCVCVC</code>, ambas con $3$ lugares de consonante y $3$ de vocal.</li>
+          <li><b>Apartado (a): con repetición.</b>
+            Para cada patrón, hay $10^3$ formas de elegir las $3$ consonantes y $5^3$ formas de elegir las $3$ vocales:
+            $$2 \cdot 10^3 \cdot 5^3 = 2 \cdot 1000 \cdot 125 = 250\,000.$$</li>
+          <li><b>Apartado (b): sin repetición.</b>
+            Para cada patrón, se eligen $3$ consonantes distintas en orden ($(10)_3 = 10 \cdot 9 \cdot 8 = 720$) y $3$ vocales distintas en orden ($(5)_3 = 5 \cdot 4 \cdot 3 = 60$):
+            $$2 \cdot (10)_3 \cdot (5)_3 = 2 \cdot 720 \cdot 60 = 86\,400.$$</li>
+        </ol>
+        <div class="resultado">$$\text{(a) } 250\,000, \qquad \text{(b) } 86\,400.$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.26 -->
+    <div class="box ejercicio" id="ej-1-26">
+      <span class="box-title">Ejercicio 1.26</span>
+      <p>Un turista desea conocer cinco de las nueve capitales del Nordeste de Brasil. ¿De cuántos modos puede hacerlo si el orden de las visitas</p>
+      <ol type="a">
+        <li>importa?</li>
+        <li>no importa?</li>
+      </ol>
+      <p class="tecnica">Técnica: comparación directa entre arreglos $(9)_5$ y combinaciones $\binom{9}{5}$.</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Sin repetición de ciudades: cuando el orden importa es un arreglo $(9)_5$; cuando el orden no importa es una combinación $\binom{9}{5}$.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Apartado (a): el orden importa.</b>
+            Se trata de un $5$-arreglo sin reposición de $9$ capitales:
+            $$(9)_5 = 9 \cdot 8 \cdot 7 \cdot 6 \cdot 5 = 15\,120.$$</li>
+          <li><b>Apartado (b): el orden no importa.</b>
+            Se elige un subconjunto de $5$ capitales entre $9$:
+            $$\binom{9}{5} = \binom{9}{4} = \frac{9 \cdot 8 \cdot 7 \cdot 6}{4 \cdot 3 \cdot 2 \cdot 1} = 126.$$</li>
+        </ol>
+        <div class="resultado">$$\text{(a) } 15\,120, \qquad \text{(b) } 126.$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.27 -->
+    <div class="box ejercicio" id="ej-1-27">
+      <span class="box-title">Ejercicio 1.27</span>
+      <p>En un concurso hay tres candidatos y cinco examinadores, debiendo cada examinador votar por un candidato. Determine de cuántos modos pueden distribuirse los votos,</p>
+      <ol type="a">
+        <li>teniendo en cuenta la secuencia de votación de los examinadores;</li>
+        <li>si solo importa la cantidad de votos que recibe cada candidato.</li>
+      </ol>
+      <p class="tecnica">Técnica: muestreo ordenado con reposición ($n^k$) vs. combinaciones con repetición (fórmula 1.12).</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En (a), cada uno de los $5$ examinadores elige independientemente uno de los $3$ candidatos. En (b), interesan las soluciones enteras no negativas de $x_1 + x_2 + x_3 = 5$.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Apartado (a): votos etiquetados por examinador.</b>
+            Cada uno de los $5$ examinadores puede votar por cualquiera de los $3$ candidatos, generando una lista ordenada con repetición de longitud $5$ sobre $3$ símbolos:
+            $$3^5 = 243.$$</li>
+          <li><b>Apartado (b): solo cuenta el total por candidato.</b>
+            Sean $x_1, x_2, x_3 \ge 0$ los votos obtenidos por los tres candidatos, con $x_1 + x_2 + x_3 = 5$. Por la fórmula 1.12, el número de soluciones enteras no negativas es
+            $$\binom{5 + 3 - 1}{3 - 1} = \binom{7}{2} = \frac{7 \cdot 6}{2} = 21.$$</li>
+        </ol>
+        <div class="resultado">$$\text{(a) } 243, \qquad \text{(b) } 21.$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.28 -->
+    <div class="box ejercicio" id="ej-1-28">
+      <span class="box-title">Ejercicio 1.28</span>
+      <p>Un restaurante ofrece $8$ variedades de frutas en la carta de postres. ¿De cuántas maneras es posible elegir $4$ frutas</p>
+      <ol type="a">
+        <li>pudiendo repetir una fruta?</li>
+        <li>sin repetir?</li>
+      </ol>
+      <p>Responde nuevamente a los puntos anteriores suponiendo que cada una de las $4$ frutas será destinada a un niño distinto (llamaremos (c) y (d) a estos casos).</p>
+      <p class="tecnica">Técnica: cuadro completo de muestreo 1.14 (combinaciones y arreglos con y sin reposición).</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Aplica directamente las cuatro entradas de la tabla 1.14 con $n = 8$ y $k = 4$: cuando no se asignan a niños distintos la muestra es no ordenada; cuando cada fruta va a un niño distinto, la muestra es ordenada.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Apartados (a) y (b): selección no ordenada ($n = 8$, $k = 4$).</b>
+            <ul>
+              <li><b>(a) Con repetición:</b> soluciones enteras no negativas de $x_1 + \dots + x_8 = 4$:
+                $$\binom{4 + 8 - 1}{8 - 1} = \binom{11}{7} = \binom{11}{4} = \frac{11 \cdot 10 \cdot 9 \cdot 8}{24} = 330.$$</li>
+              <li><b>(b) Sin repetición:</b> subconjuntos de $4$ frutas entre $8$:
+                $$\binom{8}{4} = \frac{8 \cdot 7 \cdot 6 \cdot 5}{24} = 70.$$</li>
+            </ul></li>
+          <li><b>Apartados (c) y (d): cada fruta destinada a uno de $4$ niños distintos (muestra ordenada).</b>
+            <ul>
+              <li><b>(c) Con repetición:</b> cada niño elige independientemente una de las $8$ variedades: $8^4 = 4096$.</li>
+              <li><b>(d) Sin repetición:</b> los $4$ niños reciben variedades distintas entre las $8$:
+                $$(8)_4 = 8 \cdot 7 \cdot 6 \cdot 5 = 1680.$$</li>
+            </ul></li>
+        </ol>
+        <div class="resultado">$$\text{(a) } 330, \qquad \text{(b) } 70, \qquad \text{(c) } 4096, \qquad \text{(d) } 1680.$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.29 -->
+    <div class="box ejercicio" id="ej-1-29">
+      <span class="box-title">Ejercicio 1.29</span>
+      <p>Sean $A$ y $B$ conjuntos de números naturales con $|A| = p$ y $|B| = n$.</p>
+      <ol type="a">
+        <li>¿Cuántas son las funciones $f: A \to B$?</li>
+        <li>¿Cuántas son las funciones $f: A \to B$ inyectivas?</li>
+        <li>¿Cuántas son las funciones $f: A \to B$ crecientes?</li>
+        <li>¿Cuántas son las funciones $f: A \to B$ no decrecientes?</li>
+      </ol>
+      <p class="tecnica">Técnica: correspondencia entre funciones monótonas, subconjuntos y combinaciones con repetición (tabla 1.14).</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Ordena $A = \{a_1 &lt; \dots &lt; a_p\}$ y $B = \{b_1 &lt; \dots &lt; b_n\}$. En (c), una función estrictamente creciente queda fijada al elegir su imagen (un subconjunto de $p$ elementos de $B$). En (d), una función no decreciente queda fijada por cuántas veces aparece cada $b_j$ como imagen (ecuación $x_1 + \dots + x_n = p$ con $x_j \ge 0$).</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Apartado (a): funciones arbitrarias.</b>
+            Cada uno de los $p$ elementos de $A$ puede tomar cualquiera de los $n$ valores de $B$ de forma independiente, lo que da $n^p$ funciones.</li>
+          <li><b>Apartado (b): funciones inyectivas.</b>
+            Los $p$ elementos de $A$ deben asignarse a $p$ valores distintos de $B$ en orden, lo cual es un arreglo sin reposición: $(n)_p$ (con $(n)_p = 0$ si $p &gt; n$).</li>
+          <li><b>Apartado (c): funciones estrictamente crecientes.</b>
+            Escribamos $A = \{a_1 &lt; a_2 &lt; \dots &lt; a_p\}$. Para una función creciente ($a_i &lt; a_j \implies f(a_i) &lt; f(a_j)$), los $p$ valores $f(a_1) &lt; f(a_2) &lt; \dots &lt; f(a_p)$ forman un subconjunto de tamaño $p$ de $B$, y recíprocamente cualquier $p$-subconjunto de $B$ ordenado de menor a mayor define una única función creciente. Por tanto, hay $\binom{n}{p}$ funciones crecientes ($0$ si $p &gt; n$).</li>
+          <li><b>Apartado (d): funciones no decrecientes.</b>
+            Escribamos $B = \{b_1 &lt; \dots &lt; b_n\}$. Una función no decreciente ($f(a_1) \le \dots \le f(a_p)$) queda unívocamente determinada por las multiplicidades $x_j = |f^{-1}(\{b_j\})| \ge 0$ con que cada $b_j$ es tomado como imagen, ya que $b_1$ se asigna a los primeros $x_1$ elementos de $A$, $b_2$ a los siguientes $x_2$, etc. Esto equivale a contar las soluciones enteras no negativas de $x_1 + \dots + x_n = p$:
+            $$\binom{p + n - 1}{n - 1}.$$</li>
+        </ol>
+        <div class="resultado">$$\text{(a) } n^p, \qquad \text{(b) } (n)_p, \qquad \text{(c) } \binom{n}{p}, \qquad \text{(d) } \binom{p + n - 1}{n - 1}.$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.30 -->
+    <div class="box ejercicio" id="ej-1-30">
+      <span class="box-title">Ejercicio 1.30</span>
+      <p>Sea $A$ un conjunto con $|A| = n$. ¿Cuántas son las funciones $f: A \to A$ biyectivas?</p>
+      <p class="tecnica">Técnica: permutaciones de un conjunto finito.</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Como $A$ es finito y $f$ va de $A$ en $A$, una función es biyectiva si y solo si reordena (permuta) los $n$ elementos de $A$.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Identificación con permutaciones.</b>
+            Al listar los elementos de $A = \{a_1, \dots, a_n\}$, la imagen $(f(a_1), \dots, f(a_n))$ de una biyección es exactamente una permutación de los $n$ elementos de $A$ (el primero tiene $n$ imágenes posibles, el segundo $n-1$, $\dots$, el último $1$). Por la fórmula 1.5, existen $n!$ biyecciones.</li>
+        </ol>
+        <div class="resultado">$$n! \text{ funciones biyectivas.}$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.31 -->
+    <div class="box ejercicio" id="ej-1-31">
+      <span class="box-title">Ejercicio 1.31</span>
+      <p>¿De cuántos modos pueden ordenarse los números del $1$ al $9$ de forma que</p>
+      <ol type="a">
+        <li>todos los números pares precedan a todos los impares?</li>
+        <li>todos los números pares queden adyacentes?</li>
+        <li>la secuencia comience con dos pares y termine con dos pares también?</li>
+        <li>los números pares aparezcan en orden creciente o decreciente?</li>
+      </ol>
+      <p class="tecnica">Técnica: partición en pares e impares, agrupación en bloque y fijación de orden relativo.</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En $\{1, \dots, 9\}$ hay $4$ pares ($\{2,4,6,8\}$) y $5$ impares ($\{1,3,5,7,9\}$). En (b), agrupa los $4$ pares en un bloque junto con los $5$ impares ($6$ objetos). En (d), elige primero las $4$ posiciones para los pares (o divide $9!$ entre $4!$) y multiplica por $2$ (creciente o decreciente).</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Apartado (a): pares antes que impares.</b>
+            Los $4$ números pares ocupan las $4$ primeras posiciones ($4! = 24$ formas) y los $5$ impares ocupan las $5$ últimas ($5! = 120$ formas):
+            $$4! \cdot 5! = 24 \cdot 120 = 2880.$$</li>
+          <li><b>Apartado (b): todos los pares juntos.</b>
+            Considerando los $4$ pares como un único bloque, permutamos $6$ objetos (ese bloque y los $5$ impares) en $6! = 720$ formas, y ordenamos internamente los $4$ pares en $4! = 24$ formas:
+            $$6! \cdot 4! = 720 \cdot 24 = 17\,280.$$</li>
+          <li><b>Apartado (c): dos pares al inicio y dos pares al final.</b>
+            Los $4$ números pares se reparten entre las $2$ primeras y las $2$ últimas posiciones ($4! = 24$ formas) y los $5$ impares ocupan las $5$ posiciones centrales ($5! = 120$ formas):
+            $$4! \cdot 5! = 24 \cdot 120 = 2880.$$</li>
+          <li><b>Apartado (d): pares en orden creciente o decreciente.</b>
+            Para orden creciente: elegimos las $4$ posiciones de los pares ($\binom{9}{4} = 126$ formas, lo que fija automáticamente su orden) y permutamos los $5$ impares en los $5$ lugares restantes ($5! = 120$), dando $\binom{9}{4}\cdot 5! = \frac{9!}{4!} = 15\,120$. Como el orden decreciente aporta otros $15\,120$ casos disjuntos, el total es
+            $$2 \cdot \frac{9!}{4!} = 2 \cdot 15\,120 = 30\,240.$$</li>
+        </ol>
+        <div class="resultado">$$\text{(a) } 2880, \qquad \text{(b) } 17\,280, \qquad \text{(c) } 2880, \qquad \text{(d) } 30\,240.$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.32 -->
+    <div class="box ejercicio" id="ej-1-32">
+      <span class="box-title">Ejercicio 1.32</span>
+      <p>¿Cuántos son los anagramas de la palabra “URUGUAIO” que comienzan por vocal?</p>
+      <p class="tecnica">Técnica: permutaciones con repetición condicionadas por casos (o proporción por simetría).</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>“URUGUAIO” tiene $8$ letras: $3$ U, $1$ A, $1$ I, $1$ O, $1$ R, $1$ G ($6$ vocales y $2$ consonantes). Separa si empieza por U (quedan dos U) o si empieza por A, I u O (quedan tres U); también puedes observar que $\frac{6}{8}$ del total $\frac{8!}{3!}$ comienzan por vocal.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Descomposición según la vocal inicial.</b>
+            La palabra “URUGUAIO” posee $8$ letras: $6$ vocales ($3$ U, $1$ A, $1$ I, $1$ O) y $2$ consonantes ($1$ R, $1$ G).
+            <ul>
+              <li>Si comienza con <b>U</b>: quedan $7$ letras con $2$ U repetidas, produciendo $\frac{7!}{2!} = 2520$ anagramas.</li>
+              <li>Si comienza con <b>A, I u O</b> ($3$ opciones): quedan $7$ letras con $3$ U repetidas, produciendo $3 \cdot \frac{7!}{3!} = 3 \cdot 840 = 2520$ anagramas.</li>
+            </ul></li>
+          <li><b>Total.</b>
+            Sumando ambos casos disjuntos: $2520 + 2520 = 5040$. <em>(Equivalentemente, por simetría, $\frac{6}{8}$ de los $\frac{8!}{3!} = 6720$ anagramas totales empiezan por vocal: $\frac{3}{4} \cdot 6720 = 5040$.)</em></li>
+        </ol>
+        <div class="resultado">$$5040 \text{ anagramas.}$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.33 -->
+    <div class="box ejercicio" id="ej-1-33">
+      <span class="box-title">Ejercicio 1.33</span>
+      <p>¿Cuántos números de $5$ cifras pueden formarse usando solamente los dígitos $1, 1, 1, 1, 2$ y $3$?</p>
+      <p class="tecnica">Técnica: selección de multiconjuntos de tamaño $5$ + permutaciones con repetición.</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>De los $6$ dígitos disponibles (cuatro <code>1</code>, un <code>2</code> y un <code>3</code>), debemos dejar fuera $1$ dígito: o bien excluimos el <code>2</code> o el <code>3</code> (quedan cuatro <code>1</code> y otro dígito), o excluimos un <code>1</code> (quedan tres <code>1</code>, un <code>2</code> y un <code>3</code>).</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Casos según el dígito descartado.</b>
+            Al formar un número de $5$ cifras a partir de la bolsa $\{1, 1, 1, 1, 2, 3\}$ de $6$ dígitos, se omite exactamente un dígito:
+            <ul>
+              <li><b>Caso 1 (se omite el $2$ o el $3$):</b> quedan $\{1,1,1,1,3\}$ o $\{1,1,1,1,2\}$. Cada multiconjunto admite $\frac{5!}{4!\,1!} = 5$ números, aportando $2 \cdot 5 = 10$ números.</li>
+              <li><b>Caso 2 (se omite un $1$):</b> quedan $\{1,1,1,2,3\}$, lo que admite $\frac{5!}{3!\,1!\,1!} = 20$ números.</li>
+            </ul></li>
+          <li><b>Suma total.</b>
+            $$10 + 20 = 30 \text{ números.}$$</li>
+        </ol>
+        <div class="resultado">$$30 \text{ números.}$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.34 -->
+    <div class="box ejercicio" id="ej-1-34">
+      <span class="box-title">Ejercicio 1.34</span>
+      <p>Cinco chicas y cinco chicos van a posar para una fotografía ocupando cinco escalones de una escalera, de forma que en cada escalón queden una chica y un chico. ¿De cuántas maneras podemos acomodar a este grupo?</p>
+      <p class="tecnica">Técnica: principio multiplicativo (asignación a escalones + orden izquierda/derecha en cada escalón).</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Distribuye las $5$ chicas en los $5$ escalones ($5!$ formas), distribuye los $5$ chicos en los $5$ escalones ($5!$ formas), y en cada uno de los $5$ escalones decide si la chica va a la izquierda o a la derecha ($2^5$ formas).</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Asignación por escalón y orden lateral.</b>
+            <ul>
+              <li>Elegimos el escalón de cada una de las $5$ chicas: $5! = 120$ maneras.</li>
+              <li>Elegimos el escalón de cada uno de los $5$ chicos: $5! = 120$ maneras.</li>
+              <li>En cada uno de los $5$ escalones hay $2$ posiciones (izquierda o derecha) para el par (chica, chico), generando $2^5 = 32$ opciones.</li>
+            </ul></li>
+          <li><b>Total por principio multiplicativo.</b>
+            $$5! \cdot 5! \cdot 2^5 = 120 \cdot 120 \cdot 32 = 460\,800.$$</li>
+        </ol>
+        <div class="resultado">$$460\,800 \text{ maneras.}$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.35 -->
+    <div class="box ejercicio" id="ej-1-35">
+      <span class="box-title">Ejercicio 1.35</span>
+      <p>¿De cuántas maneras $10$ niños pueden formar una ronda, si para cada uno de ellos importan únicamente los dos niños a los que da la mano, sin tener en cuenta si es la mano derecha o la izquierda?</p>
+      <p class="tecnica">Técnica: permutaciones circulares sin orientación (simetría axial / collares).</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Las permutaciones circulares usuales dan $(10 - 1)! = 9!$ formas, pero distinguen el sentido horario del antihorario (mano derecha vs. mano izquierda). Como aquí invertir el sentido deja exactamente los mismos dos vecinos para cada niño, divide entre $2$.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Permutación circular con simetría de reflexión.</b>
+            Si importara qué niño queda a la derecha y cuál a la izquierda, habría $(10 - 1)! = 9! = 362\,880$ rondas distintas (fórmula 1.6). Sin embargo, al reflejar cualquier ronda (invertir el sentido horario a antihorario), cada niño sigue tomando de la mano exactamente a los mismos dos compañeros. Dado que $10 \ge 3$, cada configuración sin orientación corresponde exactamente a $2$ rondas orientadas (una y su inversa):
+            $$\frac{9!}{2} = \frac{362\,880}{2} = 181\,440.$$</li>
+        </ol>
+        <div class="resultado">$$181\,440 \text{ maneras.}$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.36 -->
+    <div class="box ejercicio" id="ej-1-36">
+      <span class="box-title">Ejercicio 1.36</span>
+      <p>¿De cuántos modos cuatro parejas pueden sentarse alrededor de una mesa redonda</p>
+      <ol type="a">
+        <li>sin que se sienten juntos dos hombres?</li>
+        <li>sin que se sienten juntos dos hombres y sin que ningún hombre quede junto a su esposa?</li>
+      </ol>
+      <p class="tecnica">Técnica: permutaciones circulares alternadas e intercalación con restricción de pareja.</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En (a), sienta primero a las $4$ mujeres en círculo ($(4-1)! = 6$ formas) y luego ubica a los $4$ hombres en los $4$ espacios entre ellas ($4!$). En (b), fijado el orden circular de las mujeres $(M_1, M_2, M_3, M_4)$, el hombre $H_1$ no puede sentarse a ninguno de los dos lados de $M_1$: solo le quedan $2$ espacios válidos, y una vez elegido uno, las posiciones de $H_2, H_3, H_4$ quedan forzadas o determinadas.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Apartado (a): ningún par de hombres juntos.</b>
+            Para que no haya dos hombres adyacentes entre $4$ parejas ($4$ mujeres y $4$ hombres), deben alternarse hombre y mujer. Sentamos primero a las $4$ mujeres alrededor de la mesa circular en $(4 - 1)! = 3! = 6$ maneras. Esto define $4$ asientos intercalados entre ellas, donde ubicamos a los $4$ hombres en $4! = 24$ formas:
+            $$3! \cdot 4! = 6 \cdot 24 = 144.$$</li>
+          <li><b>Apartado (b): sin hombres juntos y ningún hombre junto a su esposa.</b>
+            Sentadas las $4$ mujeres en círculo ($3! = 6$ formas), etiquetemos el sentido horario a partir de ellas como $M_1, M_2, M_3, M_4$, y sean los $4$ espacios intercalados $E_1$ (entre $M_1$ y $M_2$), $E_2$ (entre $M_2$ y $M_3$), $E_3$ (entre $M_3$ y $M_4$) y $E_4$ (entre $M_4$ y $M_1$). El esposo $H_i$ de $M_i$ no puede sentarse junto a $M_i$:
+            <ul>
+              <li>$H_1$ tiene prohibidos $E_1$ y $E_4$, luego solo puede ir en $E_2$ o en $E_3$ ($2$ opciones).</li>
+              <li>Si $H_1$ va en $E_2$: $H_2$ tiene prohibidos $E_1, E_2$, luego puede ir en $E_3$ o $E_4$. Pero si $H_2$ fuese a $E_4$, quedarían $E_1$ y $E_3$ para $H_3$ y $H_4$, y ninguno podría ir a $E_3$ porque $E_3$ es adyacente tanto a $M_3$ como a $M_4$; así que $H_2$ debe ir a $E_3$, $H_3$ a $E_4$ (no puede a $E_2$ ni $E_3$), y $H_4$ a $E_1$.</li>
+              <li>Simétricamente, si $H_1$ va en $E_3$, queda la única asignación $(H_1, H_2, H_3, H_4)$ en $(E_3, E_4, E_1, E_2)$.</li>
+            </ul>
+            Por tanto, para cada una de las $6$ disposiciones de las mujeres hay exactamente $2$ ubicaciones válidas para los hombres:
+            $$6 \cdot 2 = 12.$$</li>
+        </ol>
+        <div class="resultado">$$\text{(a) } 144, \qquad \text{(b) } 12.$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.37 -->
+    <div class="box ejercicio" id="ej-1-37">
+      <span class="box-title">Ejercicio 1.37</span>
+      <p>Participan en un congreso $15$ profesores de Matemática y $15$ profesores de Física. ¿Cuántas comisiones de $8$ profesores pueden formarse</p>
+      <ol type="a">
+        <li>sin restricciones?</li>
+        <li>con al menos un profesor de Matemática?</li>
+        <li>con al menos $4$ profesores de Matemática y al menos $2$ profesores de Física?</li>
+      </ol>
+      <p class="tecnica">Técnica: combinaciones simples, complemento y suma de casos disjuntos.</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En (a), elige $8$ de $30$. En (b), resta al total las comisiones formadas exclusivamente por profesores de Física ($\binom{15}{8}$). En (c), si hay $m$ de Matemática y $8-m$ de Física con $m \ge 4$ y $8-m \ge 2$, entonces $m \in \{4, 5, 6\}$.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Apartado (a): sin restricciones.</b>
+            Elegimos $8$ profesores entre los $30$ participantes:
+            $$\binom{30}{8} = 5\,852\,925.$$</li>
+          <li><b>Apartado (b): al menos un profesor de Matemática.</b>
+            Restamos del total las comisiones integradas solo por profesores de Física ($\binom{15}{8} = 6435$):
+            $$\binom{30}{8} - \binom{15}{8} = 5\,852\,925 - 6435 = 5\,846\,490.$$</li>
+          <li><b>Apartado (c): al menos $4$ de Matemática y al menos $2$ de Física.</b>
+            Sea $m$ el número de profesores de Matemática; el de Física es $8 - m$. Como $m \ge 4$ y $8 - m \ge 2$, se tiene $4 \le m \le 6$:
+            <ul>
+              <li>$m = 4$ (y $4$ de Física): $\binom{15}{4}\binom{15}{4} = 1365^2 = 1\,863\,225$.</li>
+              <li>$m = 5$ (y $3$ de Física): $\binom{15}{5}\binom{15}{3} = 3003 \cdot 455 = 1\,366\,365$.</li>
+              <li>$m = 6$ (y $2$ de Física): $\binom{15}{6}\binom{15}{2} = 5005 \cdot 105 = 525\,525$.</li>
+            </ul>
+            Sumando: $1\,863\,225 + 1\,366\,365 + 525\,525 = 3\,755\,115$.</li>
+        </ol>
+        <div class="resultado">$$\text{(a) } 5\,852\,925, \qquad \text{(b) } 5\,846\,490, \qquad \text{(c) } 3\,755\,115.$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.38 -->
+    <div class="box ejercicio" id="ej-1-38">
+      <span class="box-title">Ejercicio 1.38</span>
+      <p>¿De cuántas maneras se puede llenar una tarjeta de lotería deportiva (con $13$ partidos) con tres pronósticos dobles y dos triples?</p>
+      <p class="tecnica">Técnica: combinaciones para seleccionar partidos + principio multiplicativo para marcar columnas.</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En la lotería deportiva cada uno de los $13$ partidos tiene $3$ columnas posibles (local, empate, visitante). Un pronóstico doble marca $2$ columnas ($\binom{3}{2}=3$ opciones), uno triple marca las $3$ columnas ($\binom{3}{3}=1$ opción), y los $8$ partidos restantes son simples y marcan $1$ columna ($\binom{3}{1}=3$ opciones).</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Selección de qué partidos llevan pronóstico doble, triple o simple.</b>
+            De los $13$ partidos, elegimos $3$ para pronósticos dobles ($\binom{13}{3} = 286$), luego $2$ de los $10$ restantes para pronósticos triples ($\binom{10}{2} = 45$), y los $8$ restantes quedan con pronóstico simple:
+            $$\binom{13}{3}\binom{10}{2} = 286 \cdot 45 = 12\,870 \text{ formas}.$$</li>
+          <li><b>Elección de columnas marcadas en cada partido.</b>
+            Cada partido tiene $3$ columnas posibles (local, empate, visitante):
+            <ul>
+              <li>En cada uno de los $3$ partidos dobles se marcan $2$ de las $3$ columnas: $\binom{3}{2}^3 = 3^3 = 27$ formas.</li>
+              <li>En cada uno de los $2$ partidos triples se marcan las $3$ columnas: $\binom{3}{3}^2 = 1^2 = 1$ forma.</li>
+              <li>En cada uno de los $8$ partidos simples se marca $1$ de las $3$ columnas: $\binom{3}{1}^8 = 3^8 = 6561$ formas.</li>
+            </ul></li>
+          <li><b>Producto total.</b>
+            $$12\,870 \cdot 3^3 \cdot 1^2 \cdot 3^8 = 12\,870 \cdot 3^{11} = 12\,870 \cdot 177\,147 = 2\,279\,881\,890.$$</li>
+        </ol>
+        <div class="resultado">$$2\,279\,881\,890 \text{ tarjetas.}$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.39 -->
+    <div class="box ejercicio" id="ej-1-39">
+      <span class="box-title">Ejercicio 1.39</span>
+      <p>Se transmiten señales luminosas desde una isla hacia la costa mediante seis lámparas blancas y seis lámparas rojas, colocadas en los vértices de un hexágono regular, de tal modo que</p>
+      <ol type="i">
+        <li>en cada vértice hay dos lámparas de colores diferentes;</li>
+        <li>en cada vértice no hay más de una lámpara encendida;</li>
+        <li>el número mínimo de vértices iluminados es tres.</li>
+      </ol>
+      <p>Determine el número total de señales que pueden transmitirse.</p>
+      <p class="tecnica">Técnica: suma de casos según número de vértices activos $k \in \{3,4,5,6\}$ (o complemento desde $3^6$).</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Cada vértice tiene $3$ estados posibles: apagado, blanco encendido o rojo encendido. Si exactamente $k$ vértices están iluminados ($k \in \{3, 4, 5, 6\}$), hay $\binom{6}{k}$ formas de elegir los vértices y $2^k$ formas de asignar el color encendido en cada uno.</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Conteo según el número $k$ de vértices iluminados ($3 \le k \le 6$).</b>
+            Si se iluminan exactamente $k$ vértices, elegimos cuáles $k$ de los $6$ vértices se encienden en $\binom{6}{k}$ maneras, y en cada vértice elegido decidimos si se enciende la lámpara blanca o la roja ($2$ opciones por vértice, es decir, $2^k$ en total):
+            <ul>
+              <li>$k = 3$: $\binom{6}{3} \cdot 2^3 = 20 \cdot 8 = 160$.</li>
+              <li>$k = 4$: $\binom{6}{4} \cdot 2^4 = 15 \cdot 16 = 240$.</li>
+              <li>$k = 5$: $\binom{6}{5} \cdot 2^5 = 6 \cdot 32 = 192$.</li>
+              <li>$k = 6$: $\binom{6}{6} \cdot 2^6 = 1 \cdot 64 = 64$.</li>
+            </ul></li>
+          <li><b>Suma total.</b>
+            $$\sum_{k=3}^6 \binom{6}{k} 2^k = 160 + 240 + 192 + 64 = 656.$$
+            <em>(Por complemento, cada uno de los $6$ vértices tiene $3$ estados: apagado, blanco o rojo, dando $3^6 = 729$ estados totales; restando $k=0, 1, 2$: $729 - (1 + \binom{6}{1}\cdot 2 + \binom{6}{2}\cdot 4) = 729 - (1 + 12 + 60) = 656$.)</em></li>
+        </ol>
+        <div class="resultado">$$656 \text{ señales luminosas.}$$</div>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.40 -->
+    <div class="box ejercicio" id="ej-1-40">
+      <span class="box-title">Ejercicio 1.40</span>
+      <p>Suponga que Juan va a participar en una reunión en la cual habrá otros $4$ hombres y $6$ mujeres. Él sabe que hay $4$ parejas, pero no conoce a nadie.</p>
+      <ol type="a">
+        <li>¿De cuántas formas podría Juan imaginar que están formadas las parejas?</li>
+        <li>¿Y si sabe que hay exactamente $3$ parejas?</li>
+      </ol>
+      <p class="tecnica">Técnica: elección de subconjuntos emparejados y arreglos inyectivos $(n)_k$.</p>
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Como Juan conoce su propia situación (las parejas se forman entre los otros $4$ hombres y las $6$ mujeres), en (a) los $4$ hombres están emparejados con $4$ mujeres distintas de las $6$ ($6 \cdot 5 \cdot 4 \cdot 3$ formas). En (b), primero elige qué $3$ de los $4$ hombres forman pareja ($\binom{4}{3}$), y luego asígnales $3$ mujeres distintas de entre las $6$ ($(6)_3$).</p>
+      </div></details>
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Apartado (a): $4$ parejas entre los otros $4$ hombres y $6$ mujeres.</b>
+            Cada uno de los $4$ hombres debe estar emparejado con una mujer distinta de entre las $6$ presentes. El primer hombre tiene $6$ posibles esposas, el segundo $5$, el tercero $4$ y el cuarto $3$:
+            $$(6)_4 = 6 \cdot 5 \cdot 4 \cdot 3 = 360 \text{ formas}.$$</li>
+          <li><b>Apartado (b): exactamente $3$ parejas.</b>
+            Primero elegimos cuáles $3$ de los $4$ hombres forman parte de una pareja, en $\binom{4}{3} = 4$ maneras. A continuación, asignamos a cada uno de esos $3$ hombres una esposa distinta de entre las $6$ mujeres, en $(6)_3 = 6 \cdot 5 \cdot 4 = 120$ maneras:
+            $$\binom{4}{3} \cdot (6)_3 = 4 \cdot 120 = 480 \text{ formas}.$$</li>
+        </ol>
+        <div class="resultado">$$\text{(a) } 360, \qquad \text{(b) } 480.$$</div>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       SECCIÓN 4: BLOQUE II — PARTICIONES, INCLUSIÓN-EXCLUSIÓN E IDENTIDADES
+       ================================================================ -->
+  <section>
+    <h2 id="cap1-avanzado">Bloque II · Particiones, Inclusión–Exclusión e Identidades (Ej. 1.41 al 1.80)</h2>
+    <p>En esta segunda parte del Capítulo 1 practicamos distribuciones de objetos en urnas, coeficientes multinomiales, ecuaciones diofánticas enteras ($x_1+\cdots+x_n=r$), principio de inclusión–exclusión, conteo doble e inducción combinatoria.</p>
+
+    <!-- Ej. 1.41 -->
+    <div class="box ejercicio" id="ej-1-41">
+      <span class="box-title">Ejercicio 1.41</span>
+      <p>Una tienda exige que un empleado recién contratado trabaje $4$ o $5$ días por semana, siendo al menos un día de fin de semana. Calcula el número de cronogramas de trabajo posibles para este trabajador.</p>
+      <p class="tecnica">Técnica: principio aditivo por tamaño del subconjunto + conteo por complemento.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>La semana tiene $7$ días: $5$ días hábiles y $2$ días de fin de semana (sábado y domingo). Para $4$ días de trabajo, descuenta del total $\binom{7}{4}$ aquellos horarios formados únicamente por días hábiles $\binom{5}{4}$; haz lo mismo para $5$ días.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Horarios de $4$ días de trabajo.</b>
+            Hay $\binom{7}{4} = 35$ maneras de elegir $4$ días cualesquiera entre los $7$ días de la semana. De ellas, $\binom{5}{4} = 5$ utilizan únicamente los $5$ días hábiles (sin fin de semana). Por complemento, los horarios válidos de $4$ días son
+            $$35 - 5 = 30.$$
+            <em>(Equivalentemente, $\binom{2}{1}\binom{5}{3} + \binom{2}{2}\binom{5}{2} = 2\cdot 10 + 1\cdot 10 = 30$.)</em></li>
+          <li><b>Horarios de $5$ días de trabajo.</b>
+            Hay $\binom{7}{5} = 21$ maneras de elegir $5$ días cualesquiera, de las cuales exactamente $\binom{5}{5} = 1$ excluye el fin de semana (trabajar de lunes a viernes). Luego, los horarios válidos de $5$ días son
+            $$21 - 1 = 20.$$</li>
+          <li><b>Total por el principio aditivo.</b>
+            Como ambos casos son disjuntos, sumamos los conteos: $30 + 20 = 50$.
+            <div class="resultado">$$50.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.42 -->
+    <div class="box ejercicio" id="ej-1-42">
+      <span class="box-title">Ejercicio 1.42</span>
+      <p>Un hombre tiene $5$ amigas y $7$ amigos, y su esposa tiene $7$ amigas y $5$ amigos. ¿De cuántos modos pueden invitar a $6$ amigas y $6$ amigos a una fiesta, si cada uno debe invitar a $6$ personas?</p>
+      <p class="tecnica">Técnica: partición por el número $k$ de amigas invitadas por el esposo + suma de productos binomiales.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Suponiendo que los conjuntos de amistades de ambos son disjuntos, si el hombre invita a $k$ amigas (entonces invita a $6 - k$ amigos), la esposa debe completar las $6$ mujeres invitando a $6 - k$ amigas (y por tanto a $k$ amigos, completando los $6$ hombres). Varía $k$ entre $0$ y $5$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Parametrización mediante $k$.</b>
+            Supongamos que las amistades del hombre y las de la esposa no se superponen. Sea $k$ el número de amigas que invita el hombre. Como él invita a $6$ personas en total y solo tiene $5$ amigas, debe cumplirse $0 \le k \le 5$, e invitará a $6 - k$ de sus $7$ amigos.</li>
+          <li><b>Elección obligada de la esposa.</b>
+            Para que en la fiesta haya exactamente $6$ amigas y $6$ amigos, y la esposa invite también a $6$ personas, ella deberá invitar a $6 - k$ de sus $7$ amigas y a $k$ de sus $5$ amigos (ambas cantidades válidas para $0 \le k \le 5$). Para un $k$ fijo, el número de invitaciones posibles es:
+            $$N_k = \binom{5}{k}\binom{7}{6-k}\binom{7}{6-k}\binom{5}{k} = \binom{5}{k}^2 \binom{7}{6-k}^2.$$</li>
+          <li><b>Evaluación término a término y suma total.</b>
+            Calculamos $N_k$ para $k = 0, 1, 2, 3, 4, 5$:
+            <ul>
+              <li>$k = 0$: $1^2 \cdot 7^2 = 49$.</li>
+              <li>$k = 1$: $5^2 \cdot 21^2 = 25 \cdot 441 = 11\,025$.</li>
+              <li>$k = 2$: $10^2 \cdot 35^2 = 100 \cdot 1\,225 = 122\,500$.</li>
+              <li>$k = 3$: $10^2 \cdot 35^2 = 100 \cdot 1\,225 = 122\,500$.</li>
+              <li>$k = 4$: $5^2 \cdot 21^2 = 25 \cdot 441 = 11\,025$.</li>
+              <li>$k = 5$: $1^2 \cdot 7^2 = 49$.</li>
+            </ul>
+            Sumando los seis casos disjuntos: $2\,(49 + 11\,025 + 122\,500) = 2 \cdot 133\,574 = 267\,148$.
+            <div class="resultado">$$267\,148.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.43 -->
+    <div class="box ejercicio" id="ej-1-43">
+      <span class="box-title">Ejercicio 1.43</span>
+      <p>Supón que $n$ autos están en fila para entrar en un estacionamiento que tiene $n$ plazas, una al lado de la otra. Si el primer auto puede elegir cualquier plaza y cada uno de los demás autos al estacionar debe ubicarse junto a un auto ya estacionado, ¿cuántas son las maneras posibles en que los autos ocupen las $n$ plazas?</p>
+      <p class="tecnica">Técnica: estructura de bloque contiguo + suma binomial $\sum_{k=1}^n \binom{n-1}{k-1} = 2^{n-1}$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Si el primer auto elige la plaza $k \in \{1, \dots, n\}$, los otros $n - 1$ autos se reparten entre los $k - 1$ lugares a la izquierda y los $n - k$ lugares a la derecha; como cada lado debe llenarse en orden desde el centro hacia afuera, basta elegir cuáles $k - 1$ de los $n - 1$ autos irán a la izquierda.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Condición sobre la plaza inicial $k$.</b>
+            Numeremos las plazas de izquierda a derecha como $1, 2, \dots, n$. En todo instante los autos estacionados forman un bloque contiguo. Supongamos que el primer auto ocupa la plaza $k$ ($1 \le k \le n$).</li>
+          <li><b>Asignación de los $n - 1$ autos restantes.</b>
+            Para llenar las $n$ plazas, exactamente $k - 1$ autos deberán estacionar a la izquierda (en el orden estricto $k-1, k-2, \dots, 1$) y $n - k$ autos deberán estacionar a la derecha (en el orden estricto $k+1, k+2, \dots, n$). En cuanto se decide cuáles $k - 1$ de los restantes $n - 1$ autos toman plazas a la izquierda, las posiciones exactas de todos los autos quedan unívocamente determinadas. Esto da $\binom{n-1}{k-1}$ maneras para la elección inicial $k$.</li>
+          <li><b>Suma sobre todas las elecciones iniciales $k = 1, \dots, n$.</b>
+            $$\sum_{k=1}^n \binom{n-1}{k-1} = \sum_{j=0}^{n-1} \binom{n-1}{j} = 2^{n-1}.$$
+            <em>(Lectura inversa equivalente: retirando los autos desde el $n$-ésimo hasta el $2$-do, cada uno debe salir de uno de los dos extremos del bloque ocupado, dando $2$ opciones en cada uno de los $n-1$ pasos, y el primer auto ocupa la última plaza restante.)</em>
+            <div class="resultado">$$2^{n-1}.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.44 -->
+    <div class="box ejercicio" id="ej-1-44">
+      <span class="box-title">Ejercicio 1.44</span>
+      <ol type="a">
+        <li>¿De cuántos modos es posible dividir $15$ atletas en tres equipos de $5$ atletas, denominados Esporte, Tupi y Minas?</li>
+        <li>¿De cuántos modos es posible dividir $15$ atletas en tres equipos de $5$ atletas?</li>
+      </ol>
+      <p class="tecnica">Técnica: coeficientes multinomiales para grupos etiquetados vs. grupos indistinguibles.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En (a) los tres equipos tienen nombres distintos, por lo que importa el orden de los grupos; en (b) los equipos son anónimos de igual tamaño, de modo que cada partición de (b) origina $3!$ asignaciones de nombres en (a).</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <p class="sol-inciso">(a) Equipos con nombre propio (Esporte, Tupi, Minas)</p>
+        <ol class="pasos">
+          <li><b>Partición ordenada en tamaños $(5, 5, 5)$.</b>
+            Al estar identificados los tres equipos, el número de maneras de asignar $5$ atletas a Esporte, $5$ a Tupi y $5$ a Minas es el coeficiente multinomial:
+            $$\binom{15}{5, 5, 5} = \frac{15!}{5!\,5!\,5!} = \frac{1\,307\,674\,368\,000}{120^3} = 756\,756.$$</li>
+        </ol>
+
+        <p class="sol-inciso">(b) Equipos sin etiqueta</p>
+        <ol class="pasos">
+          <li><b>División por las permutaciones de los $3$ grupos iguales.</b>
+            Si los equipos no están nombrados, intercambiar los tres conjuntos entre sí produce la misma división en tres grupos de $5$. Dividiendo el conteo anterior por $3! = 6$:
+            $$\frac{1}{3!}\cdot\frac{15!}{5!\,5!\,5!} = \frac{756\,756}{6} = 126\,126.$$
+            <div class="resultado">$$\text{(a) } 756\,756; \qquad \text{(b) } 126\,126.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.45 -->
+    <div class="box ejercicio" id="ej-1-45">
+      <span class="box-title">Ejercicio 1.45</span>
+      <p>Doce profesores serán separados en $3$ grupos de $4$ personas. Calcula de cuántas maneras puede hacerse si:</p>
+      <ol type="a">
+        <li>los grupos van a discutir el mismo tema.</li>
+        <li>corresponderá un tema de discusión diferente a cada grupo.</li>
+        <li>cada grupo designará un presidente y tratará un tema diferente.</li>
+      </ol>
+      <p class="tecnica">Técnica: partición en grupos iguales (sin/con etiqueta) + principio multiplicativo para elegir presidentes.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En (a) los $3$ grupos son indistinguibles; en (b) los $3$ temas distintos distinguen a los grupos (multiplica por $3!$); en (c), una vez formados los $3$ grupos con tema asignado, cada grupo tiene $4$ opciones para su presidente.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <p class="sol-inciso">(a) Grupos con el mismo tema (no etiquetados)</p>
+        <ol class="pasos">
+          <li><b>Partición en $3$ grupos indistinguibles de tamaño $4$.</b>
+            Como todos tratan el mismo tema, los grupos no se diferencian entre sí:
+            $$\frac{12!}{3!\,(4!)^3} = \frac{479\,001\,600}{6 \cdot 24^3} = \frac{479\,001\,600}{82\,944} = 5\,775.$$</li>
+        </ol>
+
+        <p class="sol-inciso">(b) Grupos con temas diferentes (etiquetados)</p>
+        <ol class="pasos">
+          <li><b>Asignación de $3$ temas distintos.</b>
+            Cada partición del inciso (a) admite $3! = 6$ asignaciones de los tres temas diferentes (equivalentemente, el coeficiente multinomial directo):
+            $$\frac{12!}{(4!)^3} = 5\,775 \cdot 6 = 34\,650.$$</li>
+        </ol>
+
+        <p class="sol-inciso">(c) Temas diferentes y un presidente por grupo</p>
+        <ol class="pasos">
+          <li><b>Elección de los $3$ presidentes.</b>
+            Formados los $3$ grupos temáticos de $4$ profesores ($34\,650$ modos), cada grupo elige a su presidente de $4$ maneras independientes:
+            $$34\,650 \cdot 4^3 = 34\,650 \cdot 64 = 2\,217\,600.$$
+            <div class="resultado">$$\text{(a) } 5\,775; \qquad \text{(b) } 34\,650; \qquad \text{(c) } 2\,217\,600.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.46 -->
+    <div class="box ejercicio" id="ej-1-46">
+      <span class="box-title">Ejercicio 1.46</span>
+      <p>¿Cuántos son los anagramas de la palabra «ARARAQUARA» que no poseen dos letras A juntas?</p>
+      <p class="tecnica">Técnica: método de inserción en huecos tras permutar las letras no-A con repetición.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>La palabra tiene $5$ letras A y $5$ letras distintas de A ($3$ R, $1$ Q, $1$ U). Ordena primero las $5$ letras no-A y observa cuántos espacios quedan disponibles entre ellas y en los extremos para colocar las $5$ letras A sin que queden adyacentes.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Descomposición de las letras.</b>
+            La palabra «ARARAQUARA» tiene $10$ letras en total: cinco A, tres R, una Q y una U.</li>
+          <li><b>Permutación de las letras distintas de A.</b>
+            Primero ordenamos las $5$ letras $\{\text{R, R, R, Q, U}\}$, lo que puede hacerse de
+            $$\frac{5!}{3!\,1!\,1!} = \frac{120}{6} = 20 \text{ maneras}.$$</li>
+          <li><b>Inserción de las $5$ letras A en huecos separados.</b>
+            Cualquier arreglo de las $5$ letras no-A genera $5 + 1 = 6$ posiciones separadoras (antes de la primera, entre letras y después de la última):
+            $$\_\;\text{X}\;\_\;\text{X}\;\_\;\text{X}\;\_\;\text{X}\;\_\;\text{X}\;\_$$
+            Para evitar que dos letras A queden juntas, debemos escoger $5$ de esos $6$ espacios (uno por A), lo cual ofrece $\binom{6}{5} = 6$ opciones.</li>
+          <li><b>Total por el principio multiplicativo.</b>
+            $$20 \cdot 6 = 120.$$
+            <div class="resultado">$$120.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.47 -->
+    <div class="box ejercicio" id="ej-1-47">
+      <span class="box-title">Ejercicio 1.47</span>
+      <p>¿Cuántos son los anagramas de la palabra «CONTADORIA»</p>
+      <ol type="a">
+        <li>en los que aparecen juntas, en ese orden, las letras de la palabra CONTO?</li>
+        <li>en los que aparecen juntas, en cualquier orden, las letras de la palabra CONTO?</li>
+        <li>en los que las letras de la palabra CONTO aparecen en ese orden?</li>
+      </ol>
+      <p class="tecnica">Técnica: agrupación en bloque rígido, permutación interna con repetición y simetría de órdenes relativos.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Las letras de «CONTADORIA» son $\{\text{C, O, O, N, T}\}$ junto con $\{\text{A, A, D, R, I}\}$ (nota que las dos O pertenecen a CONTO). En (a) trata $[\text{CONTO}]$ como un único símbolo; en (b) permite que las letras de CONTO permuten dentro del bloque; en (c) escoge $5$ posiciones de $10$ para colocar C-O-N-T-O en ese orden.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <p class="sol-inciso">(a) Bloque rígido «CONTO»</p>
+        <ol class="pasos">
+          <li><b>Conteo de las letras restantes.</b>
+            «CONTADORIA» tiene $10$ letras: $1$ C, $2$ O, $1$ N, $1$ T, $2$ A, $1$ D, $1$ R, $1$ I. Al agrupar $[\text{CONTO}]$ como un solo bloque, quedan $6$ símbolos por permutar: el bloque $[\text{CONTO}]$ más las letras A, A, D, R, I (con A repetida $2$ veces):
+            $$\frac{6!}{2!} = \frac{720}{2} = 360.$$</li>
+        </ol>
+
+        <p class="sol-inciso">(b) Letras de «CONTO» juntas en cualquier orden</p>
+        <ol class="pasos">
+          <li><b>Permutaciones internas del bloque.</b>
+            Las $5$ letras $\{\text{C, O, O, N, T}\}$ del bloque (con dos letras O iguales) pueden ordenarse internamente de $\frac{5!}{2!} = 60$ maneras. Multiplicando por las $360$ ubicaciones del bloque respecto a las demás letras:
+            $$360 \cdot 60 = 21\,600.$$</li>
+        </ol>
+
+        <p class="sol-inciso">(c) Letras de «CONTO» en ese orden relativo (no necesariamente juntas)</p>
+        <ol class="pasos">
+          <li><b>Elección de posiciones y permutación del resto.</b>
+            Elegimos $5$ de las $10$ posiciones para ubicar C, O, N, T, O, lo cual puede hacerse de $\binom{10}{5} = 252$ modos. En esas $5$ posiciones solo hay $1$ forma de escribirlas en el orden exacto C–O–N–T–O. Las $5$ posiciones restantes se llenan con $\{\text{A, A, D, R, I}\}$ de $\frac{5!}{2!} = 60$ modos:
+            $$\binom{10}{5} \cdot \frac{5!}{2!} = 252 \cdot 60 = 15\,120.$$
+            <em>(Por simetría: de los $\frac{10!}{2!2!}$ anagramas totales, los $60$ órdenes internos posibles de $\{\text{C, O, O, N, T}\}$ ocurren con igual frecuencia, dando $\frac{10!/(2!2!)}{60} = 15\,120$.)</em>
+            <div class="resultado">$$\text{(a) } 360; \qquad \text{(b) } 21\,600; \qquad \text{(c) } 15\,120.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.48 -->
+    <div class="box ejercicio" id="ej-1-48">
+      <span class="box-title">Ejercicio 1.48</span>
+      <p>¿De cuántos modos podemos colocar en fila $7$ letras A, $6$ letras B y $5$ letras C, de forma que no haya dos letras B juntas?</p>
+      <p class="tecnica">Técnica: permutación de los símbolos restantes + elección de huecos para las letras B.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Coloca primero las $7$ letras A y las $5$ letras C (son $12$ letras en total, permutables de $\binom{12}{7}$ modos) y luego elige $6$ de los $13$ espacios intermedios y extremos para ubicar las $6$ letras B.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Disposición de las letras A y C.</b>
+            Las $7$ letras A y $5$ letras C forman una secuencia de $12$ posiciones cuyo número de arreglos posibles es
+            $$\frac{12!}{7!\,5!} = \binom{12}{7} = 792.$$</li>
+          <li><b>Ubicación de las $6$ letras B sin adyacencia.</b>
+            Las $12$ letras ya colocadas definen $12 + 1 = 13$ huecos disponibles (incluidos los extremos). Para que nunca haya dos B contiguas, escogemos $6$ huecos distintos entre los $13$, lo cual da
+            $$\binom{13}{6} = \frac{13 \cdot 12 \cdot 11 \cdot 10 \cdot 9 \cdot 8}{720} = 1\,716.$$</li>
+          <li><b>Producto final.</b>
+            $$792 \cdot 1\,716 = 1\,359\,072.$$
+            <div class="resultado">$$1\,359\,072.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.49 -->
+    <div class="box ejercicio" id="ej-1-49">
+      <span class="box-title">Ejercicio 1.49</span>
+      <p>Una fila de asientos en un cine tiene $18$ butacas. ¿De cuántas maneras pueden sentarse $4$ parejas en esas butacas, de forma que ningún marido se siente separado de su esposa?</p>
+      <p class="tecnica">Técnica: contracción de cada pareja en un bloque doble + permutación con butacas vacías idénticas.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Cada una de las $4$ parejas ocupa $2$ butacas contiguas ($8$ butacas en total), dejando $10$ butacas vacías. Modela la fila como $4$ bloques distintos de parejas y $10$ asientos vacíos idénticos ($14$ objetos en fila), y luego multiplica por las $2^4$ orientaciones internas de las parejas.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Contracción a bloques y butacas libres.</b>
+            Como los miembros de cada una de las $4$ parejas deben quedar adyacentes, consideramos cada pareja como un bloque de $2$ butacas. Al haber $18$ butacas en total y $8$ ocupadas, quedan $18 - 8 = 10$ butacas vacías.</li>
+          <li><b>Ordenación de los $4$ bloques y los $10$ lugares vacíos.</b>
+            Tenemos $4 + 10 = 14$ posiciones abstractas: $4$ corresponden a las $4$ parejas (distinguibles entre sí) y $10$ corresponden a butacas vacías (indistinguibles). El número de arreglos es:
+            $$\frac{14!}{10!} = 14 \cdot 13 \cdot 12 \cdot 11 = 24\,024.$$
+            <em>(Equivalentemente, se eligen $4$ de las $14$ posiciones para las parejas y se permutan: $\binom{14}{4}\cdot 4! = 24\,024$.)</em></li>
+          <li><b>Orden interno dentro de cada pareja.</b>
+            En cada una de las $4$ parejas, el esposo puede ir a la izquierda o a la derecha de su esposa ($2$ opciones por pareja), aportando $2^4 = 16$ variantes. Por tanto:
+            $$24\,024 \cdot 16 = 384\,384.$$
+            <div class="resultado">$$384\,384.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.50 -->
+    <div class="box ejercicio" id="ej-1-50">
+      <span class="box-title">Ejercicio 1.50</span>
+      <p>Una partícula parte del punto $(0, 0, 0)$ y, estando en un punto $(x, y, z) \in \mathbb{N}^3$ (donde $\mathbb{N} = \{0, 1, 2, \dots\}$), puede moverse a uno de los puntos $(x + 1, y, z)$, $(x, y + 1, z)$ o $(x, y, z + 1)$. ¿Cuántos son los caminos posibles para que la partícula llegue al punto $(a, b, c) \in \mathbb{N}^3$?</p>
+      <p class="tecnica">Técnica: biyección entre caminos reticulares en 3D y permutaciones con repetición (coeficiente multinomial).</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Todo camino desde $(0,0,0)$ hasta $(a,b,c)$ consta exactamente de $a$ pasos de tipo $X$, $b$ pasos de tipo $Y$ y $c$ pasos de tipo $Z$, sin importar en qué orden se ejecuten.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Codificación de cada camino como palabra de pasos.</b>
+            Cada movimiento incrementa una de las tres coordenadas en $+1$ y deja las otras dos fijas. Denotemos por $X$, $Y$ y $Z$ un paso unitario en la dirección respectiva. Para ir de $(0,0,0)$ a $(a,b,c)$, la partícula debe efectuar exactamente $a$ pasos $X$, $b$ pasos $Y$ y $c$ pasos $Z$, completando $a + b + c$ pasos en total.</li>
+          <li><b>Conteo de secuencias de longitud $a+b+c$.</b>
+            Cada secuencia ordenada de $a$ letras $X$, $b$ letras $Y$ y $c$ letras $Z$ determina un único camino válido, y viceversa. El número de tales permutaciones con repetición es el coeficiente multinomial:
+            $$\binom{a+b+c}{a, b, c} = \frac{(a + b + c)!}{a!\,b!\,c!}.$$
+            <div class="resultado">$$\frac{(a + b + c)!}{a!\,b!\,c!}.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.51 -->
+    <div class="box ejercicio" id="ej-1-51">
+      <span class="box-title">Ejercicio 1.51</span>
+      <p>Considerando el alfabeto con $26$ letras, ¿cuántas secuencias de $4$ letras distintas existen con al menos una vocal?</p>
+      <p class="tecnica">Técnica: conteo por complemento sobre variaciones sin repetición (arreglos).</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En el alfabeto de $26$ letras hay $5$ vocales y $21$ consonantes. Calcula todas las secuencias de $4$ letras distintas $(26)_4$ y resta aquellas formadas únicamente por consonantes $(21)_4$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Total de secuencias de $4$ letras distintas.</b>
+            Sin restricción sobre las vocales, elegimos $4$ letras distintas en orden entre las $26$:
+            $$(26)_4 = 26 \cdot 25 \cdot 24 \cdot 23 = 358\,800.$$</li>
+          <li><b>Secuencias sin ninguna vocal (solo consonantes).</b>
+            Al excluir las $5$ vocales quedan $26 - 5 = 21$ consonantes. El número de secuencias de $4$ letras distintas usando únicamente consonantes es:
+            $$(21)_4 = 21 \cdot 20 \cdot 19 \cdot 18 = 143\,640.$$</li>
+          <li><b>Diferencia por complemento.</b>
+            Las secuencias con al menos una vocal son:
+            $$358\,800 - 143\,640 = 215\,160.$$
+            <div class="resultado">$$215\,160.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.52 -->
+    <div class="box ejercicio" id="ej-1-52">
+      <span class="box-title">Ejercicio 1.52</span>
+      <p>De todos los números de $7$ cifras, ¿cuántos poseen exactamente tres cifras $9$ y las cuatro cifras restantes todas diferentes?</p>
+      <p class="tecnica">Técnica: partición de casos según el primer dígito (prohibición de cero inicial) o conteo por complemento.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Recuerda que un número de $7$ cifras no puede comenzar por $0$. Puedes calcular todas las cadenas de $7$ dígitos con tres $9$ y cuatro dígitos distintos en $\{0,\dots,8\}$, que son $\binom{7}{3}(9)_4$, y restar las que empiezan en $0$, que son $\binom{6}{3}(8)_3$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Cadenas de $7$ dígitos sin restricción de cero inicial.</b>
+            Elegimos $3$ de las $7$ posiciones para colocar los tres dígitos $9$ ($\binom{7}{3} = 35$ modos). En las $4$ posiciones restantes debemos ubicar $4$ dígitos distintos entre sí tomados de $\{0, 1, \dots, 8\}$ (hay $9$ opciones disponibles), lo que da $(9)_4 = 9 \cdot 8 \cdot 7 \cdot 6 = 3\,024$ posibilidades. En total habría:
+            $$35 \cdot 3\,024 = 105\,840 \text{ cadenas}.$$</li>
+          <li><b>Descuento de las cadenas que comienzan con $0$.</b>
+            Si el primer dígito es $0$, quedan $6$ posiciones para ubicar los tres $9$ ($\binom{6}{3} = 20$ modos) y $3$ posiciones para elegir $3$ dígitos distintos de $\{1, 2, \dots, 8\}$ ($(8)_3 = 8 \cdot 7 \cdot 6 = 336$ modos):
+            $$20 \cdot 336 = 6\,720 \text{ cadenas inválidas}.$$</li>
+          <li><b>Resultado final.</b>
+            $$105\,840 - 6\,720 = 99\,120.$$
+            <em>(Verificación por casos del primer dígito: si inicia con $9$ hay $\binom{6}{2}(9)_4 = 15\cdot 3\,024 = 45\,360$; si inicia con $d \in \{1,\dots,8\}$ hay $8\binom{6}{3}(8)_3 = 8\cdot 20\cdot 336 = 53\,760$; suma $= 99\,120$.)</em>
+            <div class="resultado">$$99\,120.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.53 -->
+    <div class="box ejercicio" id="ej-1-53">
+      <span class="box-title">Ejercicio 1.53</span>
+      <p>¿Cuántas son las permutaciones de los $10$ números $0, 1, \dots, 9$ en las que el primer dígito es mayor que $1$ y el último dígito es menor que $7$?</p>
+      <p class="tecnica">Técnica: división según pertenencia al intervalo de solapamiento $\{2,3,4,5,6\}$ (o inclusión–exclusión).</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>El primer dígito debe estar en $\{2, \dots, 9\}$ ($8$ opciones) y el último en $\{0, \dots, 6\}$ ($7$ opciones), pero como no pueden repetirse, separa si el primer dígito está en $\{7, 8, 9\}$ o en $\{2, 3, 4, 5, 6\}$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Caso 1: el primer dígito pertenece a $\{7, 8, 9\}$.</b>
+            Hay $3$ elecciones para el primer dígito. Ninguna de ellas está en $\{0, 1, \dots, 6\}$, así que quedan las $7$ opciones intactas para el último dígito. Los $8$ dígitos centrales se permutan en $8!$ formas:
+            $$3 \cdot 7 \cdot 8! = 21 \cdot 8!.$$</li>
+          <li><b>Caso 2: el primer dígito pertenece a $\{2, 3, 4, 5, 6\}$.</b>
+            Hay $5$ elecciones para el primer dígito. Como ese dígito también es menor que $7$, quedan $7 - 1 = 6$ opciones para el último dígito, y $8!$ permutaciones para el centro:
+            $$5 \cdot 6 \cdot 8! = 30 \cdot 8!.$$</li>
+          <li><b>Total por principio aditivo.</b>
+            $$(21 + 30) \cdot 8! = 51 \cdot 40\,320 = 2\,056\,320.$$
+            <div class="resultado">$$2\,056\,320.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.54 -->
+    <div class="box ejercicio" id="ej-1-54">
+      <span class="box-title">Ejercicio 1.54</span>
+      <p>Representantes de diez países, incluidos Rusia, Francia, Inglaterra y Estados Unidos, serán dispuestos en una fila. ¿De cuántas maneras puede hacerse esto, si los representantes de Francia e Inglaterra deben quedar uno al lado del otro, y el estadounidense y el ruso no deben?</p>
+      <p class="tecnica">Técnica: bloque unido (Francia–Inglaterra) menos intersección con bloque prohibido (EE. UU.–Rusia).</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Cuenta primero cuántas filas tienen juntos a Francia e Inglaterra ($2 \cdot 9!$). Luego resta aquellas en las que además el estadounidense y el ruso también quedan juntos ($2 \cdot 2 \cdot 8!$).</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Arreglos donde Francia e Inglaterra quedan juntos.</b>
+            Agrupamos a Francia e Inglaterra en un solo bloque (con $2$ órdenes internos: FI o IF). Ese bloque y los $8$ países restantes forman $9$ elementos que se permutan de $9!$ maneras, dando:
+            $$2 \cdot 9! = 725\,760.$$</li>
+          <li><b>Arreglos donde además EE. UU. y Rusia quedan juntos.</b>
+            Si simultáneamente EE. UU. y Rusia forman otro bloque de $2$ países (con $2$ órdenes internos), ahora hay $2$ bloques dobles y $6$ países individuales, es decir, $8$ elementos por permutar:
+            $$2 \cdot 2 \cdot 8! = 4 \cdot 8! = 161\,280.$$</li>
+          <li><b>Resta de casos prohibidos.</b>
+            $$2 \cdot 9! - 4 \cdot 8! = (18 - 4) \cdot 8! = 14 \cdot 40\,320 = 564\,480.$$
+            <div class="resultado">$$564\,480.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.55 -->
+    <div class="box ejercicio" id="ej-1-55">
+      <span class="box-title">Ejercicio 1.55</span>
+      <p>Teresa pretende invitar a $5$ de $11$ amigos para una cena en su casa.</p>
+      <ol type="a">
+        <li>¿Cuántas elecciones tiene Teresa si $2$ de los $11$ amigos están enemistados y no aceptan estar juntos?</li>
+        <li>¿Cuántas elecciones tiene Teresa si $3$ de los $11$ amigos no aceptan participar en la cena a menos que sea juntos?</li>
+      </ol>
+      <p class="tecnica">Técnica: complemento de combinaciones en (a) y partición en casos disjuntos en (b).</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En (a), resta del total $\binom{11}{5}$ las invitaciones donde asisten ambos enemistados $\binom{9}{3}$. En (b), o bien van los $3$ juntos (faltan elegir $2$ entre $8$), o bien no va ninguno de los $3$ (se eligen $5$ entre $8$).</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <p class="sol-inciso">(a) Dos amigos enemistados no pueden coincidir</p>
+        <ol class="pasos">
+          <li><b>Total menos listas que incluyen a ambos.</b>
+            Hay $\binom{11}{5} = 462$ listas de $5$ invitados sin restricciones. Si ambos enemistados son invitados, quedan por elegir $3$ invitados entre los $9$ restantes ($\binom{9}{3} = 84$). Por tanto:
+            $$\binom{11}{5} - \binom{9}{3} = 462 - 84 = 378.$$</li>
+        </ol>
+
+        <p class="sol-inciso">(b) Tres amigos asisten todos o ninguno</p>
+        <ol class="pasos">
+          <li><b>Dos casos mutuamente excluyentes.</b>
+            <ul>
+              <li><em>Asisten los $3$:</em> hay que elegir $5 - 3 = 2$ invitados más entre los otros $8$, es decir, $\binom{8}{2} = 28$ formas.</li>
+              <li><em>No asiste ninguno de los $3$:</em> hay que elegir los $5$ invitados entre los otros $8$, es decir, $\binom{8}{5} = 56$ formas.</li>
+            </ul>
+            Sumando ambos casos: $28 + 56 = 84$.
+            <div class="resultado">$$\text{(a) } 378; \qquad \text{(b) } 84.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.56 -->
+    <div class="box ejercicio" id="ej-1-56">
+      <span class="box-title">Ejercicio 1.56</span>
+      <p>¿De cuántos modos se pueden repartir $27$ libros diferentes entre Ana, Beto y Carla, de forma que Ana y Beto juntos reciban el doble de libros que Carla y que nadie se quede sin libro?</p>
+      <p class="tecnica">Técnica: determinación de la cuota de Carla + distribución sobreyectiva de los libros restantes entre Ana y Beto.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Si Carla recibe $c$ libros, Ana y Beto juntos reciben $2c$, así que $c + 2c = 27 \implies c = 9$. Elige primero los $9$ libros para Carla y reparte los $18$ restantes entre Ana y Beto sin dejar a ninguno vacío ($2^{18} - 2$).</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Ecuación para las cantidades de libros.</b>
+            Sean $a, b, c \ge 1$ las cantidades de libros que reciben Ana, Beto y Carla, respectivamente. De $a + b = 2c$ y $a + b + c = 27$ resulta $3c = 27$, de modo que necesariamente $c = 9$ y $a + b = 18$.</li>
+          <li><b>Elección para Carla y reparto entre Ana y Beto.</b>
+            Primero elegimos los $9$ libros distintos que van para Carla de $\binom{27}{9} = 4\,686\,825$ modos. Los $18$ libros restantes pueden asignarse libremente a Ana o Beto de $2^{18} = 262\,144$ modos, pero hay que excluir los $2$ casos extremos en que todos los $18$ libros van a Ana ($b=0$) o todos a Beto ($a=0$), quedando $2^{18} - 2 = 262\,142$ repartos válidos.</li>
+          <li><b>Producto exacto y aproximación científica.</b>
+            $$\binom{27}{9}\big(2^{18} - 2\big) = 4\,686\,825 \cdot 262\,142 = 1\,228\,613\,679\,150 \approx 1.23 \cdot 10^{12}.$$
+            <div class="resultado">$$\binom{27}{9}(2^{18} - 2) = 1\,228\,613\,679\,150 \approx 1.23 \cdot 10^{12}.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.57 -->
+    <div class="box ejercicio" id="ej-1-57">
+      <span class="box-title">Ejercicio 1.57</span>
+      <p>En los próximos meses, un agente turístico debe viajar a cuatro ciudades $A, B, C$ y $D$, a cada una de ellas tres veces. Calcula de cuántas maneras puede elegir el orden de los viajes</p>
+      <ol type="a">
+        <li>si no desea hacer dos visitas seguidas a la ciudad $B$.</li>
+        <li>si no quiere que la primera y la última ciudad sean la misma.</li>
+      </ol>
+      <p class="tecnica">Técnica: separación por huecos en (a) y conteo por complemento (o probabilidad simétrica) en (b).</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Son $12$ viajes en total ($3$A, $3$B, $3$C, $3$D). En (a), ordena los $9$ viajes a A, C y D y coloca las $3$ visitas a B en $3$ de los $10$ huecos. En (b), del total $\frac{12!}{(3!)^4}$ resta los casos donde inicio y fin coinciden en una misma ciudad (o nota que, fijada la primera ciudad, $9$ de las $11$ opciones finales son diferentes).</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <p class="sol-inciso">(a) Sin dos visitas consecutivas a B</p>
+        <ol class="pasos">
+          <li><b>Ordenación de las $9$ visitas a A, C y D e inserción de las $3$ visitas a B.</b>
+            Las $9$ visitas a $\{A,A,A,C,C,C,D,D,D\}$ se ordenan de
+            $$\frac{9!}{3!\,3!\,3!} = \frac{362\,880}{216} = 1\,680 \text{ maneras}.$$
+            Estas $9$ visitas dejan $10$ huecos disponibles donde ubicar las $3$ visitas a $B$ sin que queden juntas: $\binom{10}{3} = 120$. El total es $1\,680 \cdot 120 = 201\,600$.</li>
+        </ol>
+
+        <p class="sol-inciso">(b) Primera y última ciudad distintas</p>
+        <ol class="pasos">
+          <li><b>Conteo directo por complemento.</b>
+            El total de itinerarios sin restricciones es $\frac{12!}{(3!)^4} = \frac{479\,001\,600}{1\,296} = 369\,600$.
+            Si la primera y la última ciudad coinciden, hay $4$ opciones para dicha ciudad; las $10$ posiciones centrales contendrán $1$ visita a esa ciudad y $3$ visitas a cada una de las otras tres, lo que ocurre de $4 \cdot \frac{10!}{1!\,(3!)^3} = 4 \cdot 16\,800 = 67\,200$ maneras.
+            Restando: $369\,600 - 67\,200 = 302\,400$.
+            <em>(Atajo por simetría: fijado el primer viaje, quedan $11$ viajes restantes de los cuales $9$ son a una ciudad diferente, luego la fracción válida es $\frac{9}{11}\cdot 369\,600 = 302\,400$.)</em>
+            <div class="resultado">$$\text{(a) } 201\,600; \qquad \text{(b) } 302\,400.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.58 -->
+    <div class="box ejercicio" id="ej-1-58">
+      <span class="box-title">Ejercicio 1.58</span>
+      <p>¿Cuántos números de $6$ cifras podemos formar con $3$ pares distintos de cifras iguales?</p>
+      <p class="tecnica">Técnica: elección de los $3$ dígitos + partición de casos según si el $0$ está incluido o no.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Cada número válido usa $3$ dígitos distintos de $\{0, \dots, 9\}$, cada uno repetido $2$ veces. Si ninguno de los $3$ dígitos es $0$ ($\binom{9}{3}$ elecciones), todas las $\frac{6!}{2!2!2!}$ permutaciones sirven; si uno de los $3$ es $0$ ($\binom{9}{2}$ elecciones), hay que descartar los que empiezan en $0$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Caso 1: el dígito $0$ no aparece.</b>
+            Elegimos $3$ dígitos distintos entre $\{1, 2, \dots, 9\}$ de $\binom{9}{3} = 84$ maneras. Con esos $3$ pares de dígitos formamos $\frac{6!}{2!\,2!\,2!} = 90$ números válidos (ninguno inicia en $0$). Subtotal:
+            $$84 \cdot 90 = 7\,560.$$</li>
+          <li><b>Caso 2: el dígito $0$ es uno de los tres elegidos.</b>
+            Elegimos los otros $2$ dígitos distintos entre $\{1, \dots, 9\}$ de $\binom{9}{2} = 36$ maneras. De las $90$ permutaciones totales del multiconjunto $\{0,0,a,a,b,b\}$, exactamente $\frac{2}{6} = \frac{1}{3}$ (o sea $30$) comienzan en $0$ y son inválidas, quedando $90 - 30 = 60$ números válidos (equivalentemente, $2$ opciones para el primer dígito no nulo por $\frac{5!}{2!\,2!\,1!} = 30$). Subtotal:
+            $$36 \cdot 60 = 2\,160.$$</li>
+          <li><b>Total.</b>
+            $$7\,560 + 2\,160 = 9\,720.$$
+            <div class="resultado">$$9\,720.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.59 -->
+    <div class="box ejercicio" id="ej-1-59">
+      <span class="box-title">Ejercicio 1.59</span>
+      <p>Una fábrica produce $8$ tipos de bombones, que se venden en cajas de $30$ bombones, de un mismo tipo o surtidos. ¿Cuántas cajas diferentes pueden formarse?</p>
+      <p class="tecnica">Técnica: combinaciones con repetición (soluciones enteras no negativas de $x_1 + \cdots + x_8 = 30$).</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Como el orden de los bombones dentro de la caja no importa y se permite repetir sabores, si $x_i \ge 0$ es la cantidad de bombones del tipo $i$ ($i=1,\dots,8$), necesitas contar las soluciones de $x_1 + \cdots + x_8 = 30$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Modelo diofántico.</b>
+            Sea $x_i \ge 0$ la cantidad de bombones del tipo $i$ en la caja, para $i = 1, \dots, 8$. Como cada caja contiene $30$ bombones y los tipos pueden faltar o repetirse, buscamos el número de soluciones enteras no negativas de
+            $$x_1 + x_2 + \cdots + x_8 = 30.$$</li>
+          <li><b>Evaluación del coeficiente binomial.</b>
+            Aplicando la fórmula de combinaciones con repetición $\binom{p+n-1}{n-1}$ con $p = 30$ y $n = 8$:
+            $$\binom{30 + 8 - 1}{8 - 1} = \binom{37}{7} = \frac{37 \cdot 36 \cdot 35 \cdot 34 \cdot 33 \cdot 32 \cdot 31}{7!} = 10\,295\,472.$$
+            <div class="resultado">$$10\,295\,472.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.60 -->
+    <div class="box ejercicio" id="ej-1-60">
+      <span class="box-title">Ejercicio 1.60</span>
+      <p>¿De cuántas maneras se pueden pintar seis esferas iguales, usando solo tres colores diferentes?</p>
+      <p class="tecnica">Técnica: combinaciones con repetición ($x_1 + x_2 + x_3 = 6$ con $x_i \ge 0$).</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Al ser las $6$ esferas idénticas, solo importa cuántas esferas reciben cada uno de los $3$ colores disponibles: $x_1 + x_2 + x_3 = 6$. En la convención del libro, «usando solo tres colores» indica la paleta fija de $3$ colores (permitiendo que alguno tenga $0$ esferas).</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Interpretación del conteo con objetos idénticos.</b>
+            Como las $6$ esferas son indistinguibles entre sí, una coloración queda totalmente determinada por la terna $(x_1, x_2, x_3)$ de cantidades de esferas pintadas de cada uno de los $3$ colores disponibles, satisfaciendo
+            $$x_1 + x_2 + x_3 = 6, \qquad x_1, x_2, x_3 \ge 0.$$
+            <em>(Nota sobre el enunciado: aquí se permite que alguno de los tres colores de la paleta quede sin utilizar, lo que corresponde a la respuesta oficial del texto; si se exigiera usar los tres colores al menos una vez sería $x_i \ge 1$, que daría $\binom{5}{2} = 10$.)</em></li>
+          <li><b>Cálculo binomial.</b>
+            $$\binom{6 + 3 - 1}{3 - 1} = \binom{8}{2} = \frac{8 \cdot 7}{2} = 28.$$
+            <div class="resultado">$$28.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.61 -->
+    <div class="box ejercicio" id="ej-1-61">
+      <span class="box-title">Ejercicio 1.61</span>
+      <p>¿De cuántas maneras podemos distribuir $30$ naranjas entre $4$ niños de forma que cada uno reciba al menos dos naranjas?</p>
+      <p class="tecnica">Técnica: cambio de variable $y_i = x_i - 2 \ge 0$ para reducir a combinaciones con repetición.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Entrega primero $2$ naranjas a cada uno de los $4$ niños ($8$ naranjas repartidas) y distribuye las $30 - 8 = 22$ naranjas restantes libremente entre los $4$ niños.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Reducción de la cota inferior.</b>
+            Si $x_i$ es el número de naranjas que recibe el niño $i$ ($i=1,2,3,4$), buscamos las soluciones enteras de
+            $$x_1 + x_2 + x_3 + x_4 = 30, \qquad x_i \ge 2.$$
+            Haciendo $y_i = x_i - 2 \ge 0$, la ecuación equivale a
+            $$y_1 + y_2 + y_3 + y_4 = 30 - 4 \cdot 2 = 22, \qquad y_i \ge 0.$$</li>
+          <li><b>Evaluación binomial.</b>
+            $$\binom{22 + 4 - 1}{4 - 1} = \binom{25}{3} = \frac{25 \cdot 24 \cdot 23}{6} = 2\,300.$$
+            <div class="resultado">$$2\,300.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.62 -->
+    <div class="box ejercicio" id="ej-1-62">
+      <span class="box-title">Ejercicio 1.62</span>
+      <p>Obtén una fórmula para el número de soluciones enteras no negativas de la inecuación
+      $$x_1 + \cdots + x_n \le p \qquad (p &gt; 0 \text{ entero dado}).$$</p>
+      <p class="tecnica">Técnica: variable de holgura $x_{n+1} = p - (x_1 + \cdots + x_n) \ge 0$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Define $x_{n+1} = p - (x_1 + \cdots + x_n)$. Como $x_{n+1}$ es un entero no negativo, contar las soluciones de la inecuación en $n$ variables equivale a contar las soluciones no negativas de $x_1 + \cdots + x_n + x_{n+1} = p$ en $n + 1$ variables.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Transformación en igualdad mediante variable de holgura.</b>
+            Para cada tupla $(x_1, \dots, x_n) \in \mathbb{N}^n$ con $x_1 + \cdots + x_n \le p$, existe un único entero no negativo $x_{n+1} = p - (x_1 + \cdots + x_n) \ge 0$ tal que
+            $$x_1 + \cdots + x_n + x_{n+1} = p.$$
+            Recíprocamente, toda solución entera no negativa de esa ecuación en $n + 1$ variables determina una solución única de $x_1 + \cdots + x_n \le p$ al omitir $x_{n+1}$.</li>
+          <li><b>Fórmula cerrada.</b>
+            El número de soluciones no negativas con $n + 1$ variables y suma $p$ es:
+            $$\binom{p + (n + 1) - 1}{(n + 1) - 1} = \binom{p + n}{n}.$$
+            <em>(Comprobación equivalente: $\sum_{k=0}^p \binom{k+n-1}{n-1} = \binom{p+n}{n}$ por la identidad del palo de hockey.)</em>
+            <div class="resultado">$$\binom{p + n}{n}.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.63 -->
+    <div class="box ejercicio" id="ej-1-63">
+      <span class="box-title">Ejercicio 1.63</span>
+      <p>Obtén una fórmula para el número de soluciones enteras no negativas de la ecuación
+      $$x_1 + \cdots + x_n = p \qquad (p &gt; 0 \text{ entero dado})$$
+      que satisfacen $x_i \ge a_i$ para todo $i = 1, \dots, n$, donde $a_1, \dots, a_n$ son enteros no negativos tales que $a_1 + \cdots + a_n \le p$.</p>
+      <p class="tecnica">Técnica: traslación de variables $y_i = x_i - a_i \ge 0$ y combinaciones con repetición.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Sustituye $y_i = x_i - a_i$ para cada $i = 1, \dots, n$. Nota que $y_i \ge 0$ y la nueva suma total es $p - a_1 - \cdots - a_n \ge 0$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Biyección mediante cambio de variables.</b>
+            Definimos $y_i = x_i - a_i$ para $i = 1, \dots, n$. La condición $x_i \ge a_i$ equivale a $y_i \ge 0$ entero, y la suma se convierte en
+            $$y_1 + \cdots + y_n = p - a_1 - \cdots - a_n.$$
+            Como $a_1 + \cdots + a_n \le p$, el lado derecho es un entero $\ge 0$.</li>
+          <li><b>Fórmula resultante.</b>
+            Si $p - \sum_{i=1}^n a_i = 0$, existe exactamente $1 = \binom{n-1}{n-1}$ solución; en general, por la fórmula de combinaciones con repetición:
+            $$\binom{p - a_1 - \cdots - a_n + n - 1}{n - 1}.$$
+            <div class="resultado">$$\binom{p - a_1 - \cdots - a_n + n - 1}{n - 1}.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.64 -->
+    <div class="box ejercicio" id="ej-1-64">
+      <span class="box-title">Ejercicio 1.64</span>
+      <p>¿Cuántos enteros entre $1$ y $100\,000$ tienen la propiedad de que cada dígito es menor o igual a su sucesor?</p>
+      <p class="tecnica">Técnica: relleno con ceros a la izquierda + biyección con selecciones con repetición (o ecuación de frecuencias de dígitos).</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>El número $100\,000$ no cumple la propiedad ($1 &gt; 0$). Todo entero en $\{1, \dots, 99\,999\}$ se escribe con $5$ dígitos $d_1 d_2 d_3 d_4 d_5$ completando con ceros iniciales; su sucesión de dígitos originales es no decreciente si y solo si $0 \le d_1 \le d_2 \le d_3 \le d_4 \le d_5 \le 9$ (excluyendo $00000$).</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Descarte de $100\,000$ y representación de $5$ dígitos.</b>
+            El número $100\,000$ tiene $1 &gt; 0$, por lo que no cumple la condición. Cualquier entero entre $1$ y $99\,999$ puede escribirse como una cadena de $5$ cifras $(d_1, d_2, d_3, d_4, d_5) \in \{0, 1, \dots, 9\}^5$ agregando ceros a la izquierda (los números de $1$ cifra cumplen la condición vacuamente y corresponden a $0000d_5$).</li>
+          <li><b>Biyección con combinaciones con repetición.</b>
+            Como los ceros iniciales valen $0 \le d_k$, los dígitos del entero son no decrecientes si y solo si
+            $$0 \le d_1 \le d_2 \le d_3 \le d_4 \le d_5 \le 9.$$
+            Cada tupla no decreciente de $5$ dígitos de $\{0, \dots, 9\}$ queda unívocamente determinada al elegir con repetición $5$ elementos entre los $10$ dígitos (si $x_j$ es cuántas veces aparece el dígito $j \in \{0,\dots,9\}$, tenemos $x_0 + \cdots + x_9 = 5$). Esto produce
+            $$\binom{5 + 10 - 1}{10 - 1} = \binom{14}{9} = \binom{14}{5} = \frac{14 \cdot 13 \cdot 12 \cdot 11 \cdot 10}{120} = 2\,002 \text{ tuplas}.$$</li>
+          <li><b>Exclusión de $00000$.</b>
+            La tupla $(0,0,0,0,0)$ representa al $0$, que no está entre $1$ y $100\,000$. Restando ese caso:
+            $$2\,002 - 1 = 2\,001.$$
+            <div class="resultado">$$2\,001.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.65 -->
+    <div class="box ejercicio" id="ej-1-65">
+      <span class="box-title">Ejercicio 1.65</span>
+      <p>¿Cuántas permutaciones de $7$ letras A y $7$ letras B existen, en las cuales no hay $3$ letras A adyacentes?</p>
+      <p class="tecnica">Técnica: distribución en $8$ huecos con cota superior $x_i \le 2$ + principio de inclusión–exclusión.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Las $7$ letras B separan la fila en $8$ compartimentos. Si $x_i$ ($i=1,\dots,8$) es la cantidad de letras A en el compartimento $i$, contamos las soluciones enteras de $x_1 + \cdots + x_8 = 7$ con $0 \le x_i \le 2$ aplicando inclusión–exclusión sobre los eventos $x_i \ge 3$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Traducción a ecuación entera acotada.</b>
+            Colocamos las $7$ letras B, lo que crea $8$ espacios (antes, entre y después de las B). Sea $x_i \ge 0$ el número de letras A ubicadas en el espacio $i$ ($1 \le i \le 8$). No habrá $3$ letras A adyacentes si y solo si
+            $$x_1 + x_2 + \cdots + x_8 = 7 \qquad \text{con } 0 \le x_i \le 2 \text{ para todo } i.$$</li>
+          <li><b>Aplicación del Principio de Inclusión–Exclusión.</b>
+            Sea $U$ el conjunto de todas las soluciones no negativas ($|U| = \binom{7+8-1}{8-1} = \binom{14}{7} = 3\,432$) y sea $E_i = \{x \in U : x_i \ge 3\}$ para $i = 1, \dots, 8$:
+            <ul>
+              <li><em>Un espacio viola la cota ($x_i \ge 3$):</em> tomando $y_i = x_i - 3 \ge 0$, queda suma $7 - 3 = 4$ en $8$ variables, dando $|E_i| = \binom{4+8-1}{7} = \binom{11}{7} = 330$. Hay $\binom{8}{1} = 8$ elecciones de $i$.</li>
+              <li><em>Dos espacios violan la cota ($x_i \ge 3, x_j \ge 3$):</em> queda suma $7 - 6 = 1$ en $8$ variables, dando $|E_i \cap E_j| = \binom{1+8-1}{7} = \binom{8}{7} = 8$. Hay $\binom{8}{2} = 28$ pares.</li>
+              <li><em>Tres o más espacios violan la cota:</em> imposible porque $3 \cdot 3 = 9 &gt; 7$.</li>
+            </ul></li>
+          <li><b>Cálculo final.</b>
+            $$|U| - \sum_i |E_i| + \sum_{i &lt; j} |E_i \cap E_j| = 3\,432 - 8 \cdot 330 + 28 \cdot 8 = 3\,432 - 2\,640 + 224 = 1\,016.$$
+            <div class="resultado">$$1\,016.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.66 -->
+    <div class="box ejercicio" id="ej-1-66">
+      <span class="box-title">Ejercicio 1.66</span>
+      <p>Determina el número de permutaciones de $(1, 2, \dots, 8)$ en las que los números $4$ y $6$ no ocupan sus lugares originales.</p>
+      <p class="tecnica">Técnica: Principio de Inclusión–Exclusión para dos eventos prohibidos.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Define $A$ como el conjunto de permutaciones donde el $4$ está en la 4.ª posición y $B$ donde el $6$ está en la 6.ª posición. Buscas el tamaño de $(A \cup B)^c$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Definición de eventos prohibidos.</b>
+            Hay $8! = 40\,320$ permutaciones totales. Sea $A$ el conjunto de permutaciones con el $4$ en la posición $4$, y $B$ el conjunto con el $6$ en la posición $6$.</li>
+          <li><b>Inclusión–Exclusión.</b>
+            Se tiene $|A| = 7!$, $|B| = 7!$ y $|A \cap B| = 6!$. Por el Principio de Inclusión–Exclusión:
+            $$|(A \cup B)^c| = 8! - |A| - |B| + |A \cap B| = 8! - 2 \cdot 7! + 6! = (56 - 14 + 1) \cdot 6! = 43 \cdot 720 = 30\,960.$$
+            <div class="resultado">$$30\,960.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.67 -->
+    <div class="box ejercicio" id="ej-1-67">
+      <span class="box-title">Ejercicio 1.67</span>
+      <p>Una secuencia de ADN es una sucesión de bases nitrogenadas, las cuales pueden ser de cuatro tipos: adenina, citosina, guanina o timina. Obtén el número de secuencias de ADN posibles, de longitud $8$:</p>
+      <ol type="a">
+        <li>que tienen al menos una base citosina.</li>
+        <li>que tienen exactamente tres adeninas o exactamente tres guaninas.</li>
+      </ol>
+      <p class="tecnica">Técnica: complemento de palabras $4^8 - 3^8$ en (a) e inclusión–exclusión de dos eventos en (b).</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En (a), resta del total $4^8$ las secuencias formadas solo con $\{A, G, T\}$. En (b), llama $E_A$ al evento «exactamente $3$ adeninas» y $E_G$ a «exactamente $3$ guaninas»; para $|E_A \cap E_G|$, elige $3$ posiciones para A, $3$ para G y llena las $2$ restantes con $\{C, T\}$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <p class="sol-inciso">(a) Al menos una citosina</p>
+        <ol class="pasos">
+          <li><b>Complemento respecto a $\{A, G, T\}$.</b>
+            Hay $4^8 = 65\,536$ secuencias de longitud $8$. Las que no contienen ninguna citosina usan solo $3$ bases en cada posición ($3^8 = 6\,561$):
+            $$4^8 - 3^8 = 65\,536 - 6\,561 = 58\,975.$$</li>
+        </ol>
+
+        <p class="sol-inciso">(b) Exactamente $3$ adeninas o exactamente $3$ guaninas</p>
+        <ol class="pasos">
+          <li><b>Cálculo de $|E_A|$, $|E_G|$ y $|E_A \cap E_G|$.</b>
+            <ul>
+              <li>$|E_A| = \binom{8}{3} \cdot 3^5 = 56 \cdot 243 = 13\,608$ (se eligen $3$ sitios para A y $5$ sitios entre $\{C, G, T\}$).</li>
+              <li>Por simetría, $|E_G| = \binom{8}{3} \cdot 3^5 = 13\,608$.</li>
+              <li>Para $E_A \cap E_G$: elegimos $3$ posiciones para A y $3$ de las $5$ restantes para G ($\binom{8}{3}\binom{5}{3} = 56 \cdot 10 = 560$), y en las $2$ posiciones restantes ponemos $C$ o $T$ ($2^2 = 4$ modos):
+                $$|E_A \cap E_G| = 560 \cdot 4 = 2\,240.$$</li>
+            </ul></li>
+          <li><b>Unión por Inclusión–Exclusión.</b>
+            $$|E_A \cup E_G| = 13\,608 + 13\,608 - 2\,240 = 24\,976.$$
+            <div class="resultado">$$\text{(a) } 58\,975; \qquad \text{(b) } 24\,976.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.68 -->
+    <div class="box ejercicio" id="ej-1-68">
+      <span class="box-title">Ejercicio 1.68</span>
+      <p>En un amigo secreto, decimos que el sorteo es viable si ninguna persona se queda con su propio nombre. ¿Cuántos sorteos viables existen en un amigo secreto con $4$ personas?</p>
+      <p class="tecnica">Técnica: desarreglos (permutaciones sin puntos fijos) por inclusión–exclusión.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Un sorteo viable es una permutación de $\{1, 2, 3, 4\}$ donde ningún elemento queda en su posición original ($D_4$). Aplica inclusión–exclusión sobre los $4$ eventos $A_i = \{\text{la persona } i \text{ saca su propio nombre}\}$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Planteamiento por Inclusión–Exclusión.</b>
+            Sea $A_i$ el conjunto de permutaciones de $\{1, 2, 3, 4\}$ en las que $i$ queda en la posición $i$. Para cualquier elección de $k$ índices distintos, la intersección tiene cardinal $(4 - k)!$. Por inclusión–exclusión, el número de desarreglos $D_4 = |(A_1 \cup A_2 \cup A_3 \cup A_4)^c|$ es:
+            $$D_4 = 4! - \binom{4}{1}3! + \binom{4}{2}2! - \binom{4}{3}1! + \binom{4}{4}0! = 24 - 24 + 12 - 4 + 1 = 9.$$
+            <em>(Equivalentemente, $D_n = n!\sum_{k=0}^n \frac{(-1)^k}{k!}$, que para $n=4$ da $24(\frac{1}{2} - \frac{1}{6} + \frac{1}{24}) = 9$.)</em>
+            <div class="resultado">$$9.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.69 -->
+    <div class="box ejercicio" id="ej-1-69">
+      <span class="box-title">Ejercicio 1.69</span>
+      <p>Obtén el número total de permutaciones de $(1, 2, \dots, 2n)$ en las que ningún número impar ocupa su lugar original.</p>
+      <p class="tecnica">Técnica: Principio de Inclusión–Exclusión aplicado a los $n$ puntos fijos impares.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Hay exactamente $n$ números impares en $\{1, 2, \dots, 2n\}$ (a saber, $1, 3, \dots, 2n-1$). Define $A_i$ como el conjunto de permutaciones en las que el $i$-ésimo número impar ocupa su posición original ($1 \le i \le n$) y calcula la cardinalidad de cualquier intersección de $k$ de estos conjuntos.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Eventos de punto fijo impar.</b>
+            El conjunto $\Omega$ de todas las permutaciones de $(1, 2, \dots, 2n)$ tiene $|\Omega| = (2n)!$. Para cada $i \in \{1, \dots, n\}$, sea $A_i$ el conjunto de permutaciones en las que el impar $2i - 1$ ocupa el lugar $2i - 1$. Buscamos $\big|\Omega \setminus \bigcup_{i=1}^n A_i\big|$.</li>
+          <li><b>Cardinalidad de las intersecciones de orden $k$.</b>
+            Fijados $k$ índices $1 \le i_1 &lt; \cdots &lt; i_k \le n$ ($1 \le k \le n$), esos $k$ números impares quedan fijos en sus posiciones y los restantes $2n - k$ elementos permutan libremente:
+            $$|A_{i_1} \cap \cdots \cap A_{i_k}| = (2n - k)!.$$
+            Como hay $\binom{n}{k}$ elecciones posibles de $k$ índices, la suma de cardinalidades de intersecciones de orden $k$ es $\binom{n}{k}(2n - k)!$.</li>
+          <li><b>Fórmula por Inclusión–Exclusión.</b>
+            $$\left|\bigcap_{i=1}^n A_i^c\right| = (2n)! + \sum_{k=1}^n (-1)^k \binom{n}{k}(2n - k)! = \sum_{k=0}^n (-1)^k \binom{n}{k}(2n - k)!.$$
+            <div class="resultado">$$\sum_{k=0}^n (-1)^k \binom{n}{k}(2n - k)!.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.70 -->
+    <div class="box ejercicio" id="ej-1-70">
+      <span class="box-title">Ejercicio 1.70</span>
+      <p>Si cuatro estadounidenses, tres franceses y tres ingleses son colocados en una fila, determina el número de maneras de disponerlos de forma que ningún grupo de la misma nacionalidad quede todo junto.</p>
+      <p class="tecnica">Técnica: Principio de Inclusión–Exclusión con bloques por nacionalidad ($3$ eventos).</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Las $10$ personas son distintas ($10!$ filas en total). Define $E$, $F$, $I$ como los conjuntos de filas donde los $4$ estadounidenses están todos juntos, los $3$ franceses todos juntos, o los $3$ ingleses todos juntos, respectivamente, y aplica inclusión–exclusión de $3$ conjuntos.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Total e intersecciones simples (un bloque junto).</b>
+            Hay $10! = 3\,628\,800$ disposiciones sin restricciones.
+            <ul>
+              <li>$|E| = 7!\,4! = 5\,040 \cdot 24 = 120\,960$ (un bloque de $4$ estadounidenses + $6$ personas).</li>
+              <li>$|F| = 8!\,3! = 40\,320 \cdot 6 = 241\,920$ (un bloque de $3$ franceses + $7$ personas).</li>
+              <li>$|I| = 8!\,3! = 241\,920$ (análogo para ingleses).</li>
+            </ul>
+            Suma individual: $120\,960 + 241\,920 + 241\,920 = 604\,800$.</li>
+          <li><b>Intersecciones dobles y triple.</b>
+            <ul>
+              <li>$|E \cap F| = 5!\,4!\,3! = 120 \cdot 24 \cdot 6 = 17\,280$ ($2$ bloques + $3$ ingleses $= 5$ objetos).</li>
+              <li>$|E \cap I| = 5!\,4!\,3! = 17\,280$.</li>
+              <li>$|F \cap I| = 6!\,3!\,3! = 720 \cdot 6 \cdot 6 = 25\,920$ ($2$ bloques + $4$ estadounidenses $= 6$ objetos).</li>
+              <li>$|E \cap F \cap I| = 3!\,4!\,3!\,3! = 6 \cdot 24 \cdot 6 \cdot 6 = 5\,184$ ($3$ bloques nacionales).</li>
+            </ul>
+            Suma doble: $17\,280 + 17\,280 + 25\,920 = 60\,480$.</li>
+          <li><b>Cálculo por Inclusión–Exclusión.</b>
+            $$10! - 604\,800 + 60\,480 - 5\,184 = 3\,628\,800 - 604\,800 + 60\,480 - 5\,184 = 3\,079\,296.$$
+            <div class="resultado">$$3\,079\,296.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.71 -->
+    <div class="box ejercicio" id="ej-1-71">
+      <span class="box-title">Ejercicio 1.71</span>
+      <p>Una persona compra $5$ esferas y $5$ cubos de poliestireno (espuma), siendo indistinguibles los objetos de la misma forma. Pretende pintar cada uno de los objetos de un color, y va a usar los colores azul, rojo y negro.</p>
+      <ol type="a">
+        <li>¿De cuántas maneras puede hacerlo?</li>
+        <li>¿De cuántas maneras puede hacerlo usando cada color al menos una vez?</li>
+      </ol>
+      <p class="tecnica">Técnica: producto de combinaciones con repetición en (a) + inclusión–exclusión sobre los $3$ colores en (b).</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En (a), se eligen independientemente cuántas esferas van de cada color ($\binom{5+3-1}{2} = 21$) y cuántos cubos de cada color ($21$). En (b), resta los casos en que algún color no se usa en absoluto (ni en esferas ni en cubos).</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <p class="sol-inciso">(a) Sin exigir los tres colores</p>
+        <ol class="pasos">
+          <li><b>Conteo independiente para esferas y cubos.</b>
+            Como las $5$ esferas son idénticas, pintar cada una de azul, rojo o negro equivale a resolver $b_1 + b_2 + b_3 = 5$ ($b_i \ge 0$), que tiene $\binom{5+3-1}{2} = \binom{7}{2} = 21$ soluciones. Análogamente, para los $5$ cubos hay $c_1 + c_2 + c_3 = 5$ con $21$ soluciones:
+            $$21 \cdot 21 = 441.$$</li>
+        </ol>
+
+        <p class="sol-inciso">(b) Usando cada color al menos una vez entre los $10$ objetos</p>
+        <ol class="pasos">
+          <li><b>Inclusión–Exclusión sobre colores omitidos.</b>
+            Sea $A_i$ el conjunto de coloraciones donde el color $i$ ($i \in \{1, 2, 3\}$) no aparece ni en las esferas ni en los cubos.
+            <ul>
+              <li>Si falta el color $i$, quedan solo $2$ colores disponibles para las $5$ esferas ($\binom{5+2-1}{1} = 6$) y para los $5$ cubos ($6$), luego $|A_i| = 6 \cdot 6 = 36$.</li>
+              <li>Si faltan dos colores ($A_i \cap A_j$), todo se pinta del único color restante: $|A_i \cap A_j| = 1 \cdot 1 = 1$.</li>
+              <li>Faltar los tres colores es imposible ($|A_1 \cap A_2 \cap A_3| = 0$).</li>
+            </ul>
+            Aplicando Inclusión–Exclusión:
+            $$441 - \binom{3}{1}\cdot 36 + \binom{3}{2}\cdot 1 = 441 - 108 + 3 = 336.$$
+            <div class="resultado">$$\text{(a) } 441; \qquad \text{(b) } 336.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.72 -->
+    <div class="box ejercicio" id="ej-1-72">
+      <span class="box-title">Ejercicio 1.72</span>
+      <p>¿Cuántos enteros entre $1$ y $33\,000$ no son divisibles por $3$, por $5$ ni por $11$?</p>
+      <p class="tecnica">Técnica: Principio de Inclusión–Exclusión para múltiplos en $\{1, \dots, 33\,000\}$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Como $3, 5$ y $11$ son primos distintos cuyo producto $3 \cdot 5 \cdot 11 = 165$ divide exactamente a $33\,000$ ($33\,000 / 165 = 200$), todas las divisiones $\lfloor 33\,000 / d \rfloor$ son exactas.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Cardinalidad de múltiplos e intersecciones.</b>
+            Sea $U = \{1, 2, \dots, 33\,000\}$ y definamos $A_d = \{x \in U : d \mid x\}$. Como $3, 5, 11$ son primos entre sí:
+            <ul>
+              <li>$|A_3| = \frac{33\,000}{3} = 11\,000$, $\quad |A_5| = \frac{33\,000}{5} = 6\,600$, $\quad |A_{11}| = \frac{33\,000}{11} = 3\,000$.</li>
+              <li>$|A_3 \cap A_5| = \frac{33\,000}{15} = 2\,200$, $\quad |A_3 \cap A_{11}| = \frac{33\,000}{33} = 1\,000$, $\quad |A_5 \cap A_{11}| = \frac{33\,000}{55} = 600$.</li>
+              <li>$|A_3 \cap A_5 \cap A_{11}| = \frac{33\,000}{165} = 200$.</li>
+            </ul></li>
+          <li><b>Inclusión–Exclusión.</b>
+            $$|A_3 \cup A_5 \cup A_{11}| = (11\,000 + 6\,600 + 3\,000) - (2\,200 + 1\,000 + 600) + 200 = 20\,600 - 3\,800 + 200 = 17\,000.$$
+            Los enteros no divisibles por ninguno de los tres son:
+            $$33\,000 - 17\,000 = 16\,000.$$
+            <em>(Verificación multiplicativa: $33\,000\,(1 - \frac{1}{3})(1 - \frac{1}{5})(1 - \frac{1}{11}) = 33\,000 \cdot \frac{2}{3}\cdot\frac{4}{5}\cdot\frac{10}{11} = 16\,000$.)</em>
+            <div class="resultado">$$16\,000.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.73 -->
+    <div class="box ejercicio" id="ej-1-73">
+      <span class="box-title">Ejercicio 1.73</span>
+      <p>¿Cuántos enteros entre $1$ y $1\,000\,000$ no son cuadrados perfectos, cubos perfectos ni cuartas potencias perfectas?</p>
+      <p class="tecnica">Técnica: Principio de Inclusión–Exclusión (notando que toda cuarta potencia es un cuadrado perfecto).</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Como $k^4 = (k^2)^2$, el conjunto de cuartas potencias perfectas $A_4$ está contenido dentro del conjunto de cuadrados perfectos $A_2$. Así que solo necesitas descontar $A_2 \cup A_3$, o verificar directamente que los términos de $A_4$ se cancelan en la fórmula de $3$ conjuntos.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Identificación de potencias en $\{1, \dots, 10^6\}$.</b>
+            Sean $A_2$, $A_3$ y $A_4$ los subconjuntos de cuadrados, cubos y cuartas potencias perfectas en $\{1, \dots, 1\,000\,000\}$:
+            <ul>
+              <li>$|A_2| = \lfloor 10^{6/2} \rfloor = 1\,000$ (de $1^2$ a $1000^2$).</li>
+              <li>$|A_3| = \lfloor 10^{6/3} \rfloor = 100$ (de $1^3$ a $100^3$).</li>
+              <li>$|A_4| = \lfloor 10^{6/4} \rfloor = \lfloor 31.62\dots \rfloor = 31$ (de $1^4$ a $31^4 = 923\,521$).</li>
+            </ul></li>
+          <li><b>Intersecciones y simplificación $A_4 \subseteq A_2$.</b>
+            <ul>
+              <li>$A_2 \cap A_3 = A_6$ (sextas potencias): $|A_2 \cap A_3| = \lfloor 10^{6/6} \rfloor = 10$ (de $1^6$ a $10^6$).</li>
+              <li>$A_2 \cap A_4 = A_4$, luego $|A_2 \cap A_4| = 31$.</li>
+              <li>$A_3 \cap A_4 = A_{12}$ (duodécimas potencias): $1^{12}=1, 2^{12}=4\,096, 3^{12}=531\,441$, mientras $4^{12} &gt; 10^6$, luego $|A_3 \cap A_4| = 3$ y también $|A_2 \cap A_3 \cap A_4| = 3$.</li>
+            </ul></li>
+          <li><b>Inclusión–Exclusión y resta final.</b>
+            $$|A_2 \cup A_3 \cup A_4| = (1\,000 + 100 + 31) - (10 + 31 + 3) + 3 = 1\,090$$
+            (que coincide con $|A_2 \cup A_3| = 1\,000 + 100 - 10 = 1\,090$). Por tanto, los enteros restantes son:
+            $$1\,000\,000 - 1\,090 = 998\,910.$$
+            <div class="resultado">$$998\,910.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.74 -->
+    <div class="box ejercicio" id="ej-1-74">
+      <span class="box-title">Ejercicio 1.74</span>
+      <p>¿Cuántos números de $n$ dígitos ($n \ge 3$) podemos formar con los dígitos $1$, $2$ y $3$, de forma que en cada número figure cada uno de estos tres dígitos al menos una vez?</p>
+      <p class="tecnica">Técnica: conteo de funciones sobreyectivas de $\{1,\dots,n\}$ en $\{1,2,3\}$ por inclusión–exclusión.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Hay $3^n$ números de $n$ dígitos formados con $\{1,2,3\}$. Define $F_i$ ($i=1,2,3$) como los números donde <em>no</em> aparece el dígito $i$ y aplica inclusión–exclusión sobre $F_1 \cup F_2 \cup F_3$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Definición del universo y conjuntos excluidos.</b>
+            El universo de secuencias de longitud $n$ con dígitos en $\{1, 2, 3\}$ tiene tamaño $3^n$. Para $i \in \{1, 2, 3\}$, sea $F_i$ el conjunto de secuencias donde falta el dígito $i$:
+            <ul>
+              <li>$|F_1| = |F_2| = |F_3| = 2^n$ (solo se usan los otros $2$ dígitos).</li>
+              <li>$|F_1 \cap F_2| = |F_1 \cap F_3| = |F_2 \cap F_3| = 1^n = 1$ (todos los dígitos iguales al único permitido).</li>
+              <li>$|F_1 \cap F_2 \cap F_3| = 0$ (no puede faltar ningún dígito cuando se necesitan $n \ge 3$ dígitos).</li>
+            </ul></li>
+          <li><b>Inclusión–Exclusión.</b>
+            $$|F_1 \cup F_2 \cup F_3| = 3 \cdot 2^n - 3 \cdot 1 + 0 = 3 \cdot 2^n - 3.$$
+            Restando del total $3^n$ obtenemos el número de secuencias que contienen los tres dígitos:
+            $$3^n - (3 \cdot 2^n - 3) = 3^n - 3 \cdot 2^n + 3.$$
+            <div class="resultado">$$3^n - 3 \cdot 2^n + 3.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.75 -->
+    <div class="box ejercicio" id="ej-1-75">
+      <span class="box-title">Ejercicio 1.75</span>
+      <p>¿Cuántos enteros entre $1$ y $10\,000$ tienen la suma de sus dígitos igual a $23$?</p>
+      <p class="tecnica">Técnica: ecuación diofántica con cota superior $0 \le x_i \le 9$ + inclusión–exclusión.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>El número $10\,000$ tiene suma de dígitos $1 \ne 23$. Todo entero entre $1$ y $9\,999$ se representa con $4$ dígitos $(x_1, x_2, x_3, x_4)$ tales que $x_1 + x_2 + x_3 + x_4 = 23$ y $0 \le x_i \le 9$. Aplica inclusión–exclusión descontando las violaciones $x_i \ge 10$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Modelado como ecuación entera acotada.</b>
+            Descartado $10\,000$ (suma $1$), todo entero de $1$ a $9\,999$ puede escribirse como $x_1 x_2 x_3 x_4$ completando con ceros iniciales (ningún dígito suma $23$ con menos de tres cifras no nulas). Así buscamos el número de soluciones enteras de
+            $$x_1 + x_2 + x_3 + x_4 = 23, \qquad 0 \le x_i \le 9 \quad (i = 1,2,3,4).$$</li>
+          <li><b>Inclusión–Exclusión sobre $x_i \ge 10$.</b>
+            Sea $U$ el conjunto de soluciones no negativas sin cota superior, y $A_i = \{x \in U : x_i \ge 10\}$:
+            <ul>
+              <li>$|U| = \binom{23 + 4 - 1}{3} = \binom{26}{3} = \frac{26 \cdot 25 \cdot 24}{6} = 2\,600$.</li>
+              <li>Para cada $i$, sustituyendo $y_i = x_i - 10 \ge 0$ queda suma $23 - 10 = 13$, luego $|A_i| = \binom{13 + 4 - 1}{3} = \binom{16}{3} = 560$.</li>
+              <li>Para cada par $i &lt; j$, al exigir $x_i \ge 10$ y $x_j \ge 10$ queda suma $23 - 20 = 3$, luego $|A_i \cap A_j| = \binom{3 + 4 - 1}{3} = \binom{6}{3} = 20$.</li>
+              <li>Tres o más variables $\ge 10$ es imposible ($30 &gt; 23$).</li>
+            </ul></li>
+          <li><b>Resultado numérico.</b>
+            $$|U| - \binom{4}{1} \cdot 560 + \binom{4}{2} \cdot 20 = 2\,600 - 2\,240 + 120 = 480.$$
+            <div class="resultado">$$480.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.76 -->
+    <div class="box ejercicio" id="ej-1-76">
+      <span class="box-title">Ejercicio 1.76</span>
+      <p>En el ascensor de un edificio entran seis personas. ¿De cuántas maneras estas seis personas pueden bajar en el primer, segundo y tercer piso, de forma que baje al menos una persona en cada uno de esos pisos?</p>
+      <p class="tecnica">Técnica: conteo de funciones sobreyectivas de $6$ personas distinguibles en $3$ pisos ($3^6 - 3\cdot 2^6 + 3$).</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Cada persona elige independientemente uno de los $3$ pisos ($3^6$ formas en total). Resta los casos en que alguno de los $3$ pisos queda vacío usando la misma fórmula de inclusión–exclusión del Ejercicio 1.74 con $n = 6$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Planteamiento como funciones sobreyectivas.</b>
+            Como las $6$ personas son distinguibles, cada descenso corresponde a una función $f : \{1, \dots, 6\} \to \{1, 2, 3\}$ donde $f(p)$ es el piso en que baja la persona $p$. Exigir que baje al menos una persona en cada piso significa que $f$ es sobreyectiva.</li>
+          <li><b>Evaluación por Inclusión–Exclusión ($n = 6$).</b>
+            Aplicando el resultado del <a href="#ej-1-74">Ejercicio 1.74</a> (o restando los $3$ eventos «nadie baja en el piso $i$»):
+            $$3^6 - \binom{3}{1} \cdot 2^6 + \binom{3}{2} \cdot 1^6 = 729 - 3 \cdot 64 + 3 = 729 - 192 + 3 = 540.$$
+            <div class="resultado">$$540.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.77 -->
+    <div class="box ejercicio" id="ej-1-77">
+      <span class="box-title">Ejercicio 1.77</span>
+      <p>¿De cuántos modos podemos distribuir $3$ monedas de $25$ centavos, $5$ monedas de $50$ centavos y $4$ monedas de $1$ real entre dos niños, de manera que cada niño reciba al menos una moneda?</p>
+      <p class="tecnica">Técnica: conteo por tipo de moneda idéntica + exclusión de las $2$ asignaciones extremas (todo a un niño).</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Las monedas de una misma denominación son indistinguibles. Sin restricciones, puedes elegir cuántas monedas de $25$c recibe el primer niño ($0, 1, 2$ o $3$: $4$ opciones), cuántas de $50$c ($6$ opciones) y cuántas de $1$ real ($5$ opciones). Luego descarta los únicos $2$ casos donde un niño se queda sin ninguna moneda.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Repartos sin restricción de mínimo.</b>
+            Una distribución queda completamente determinada especificando la terna $(a, b, c)$ de monedas de $25$ centavos, $50$ centavos y $1$ real que recibe el primer niño (el resto va al segundo):
+            <ul>
+              <li>$a \in \{0, 1, 2, 3\}$: $4$ elecciones.</li>
+              <li>$b \in \{0, 1, 2, 3, 4, 5\}$: $6$ elecciones.</li>
+              <li>$c \in \{0, 1, 2, 3, 4\}$: $5$ elecciones.</li>
+            </ul>
+            Total sin restricciones: $4 \cdot 6 \cdot 5 = 120$.</li>
+          <li><b>Exclusión de repartos con algún niño vacío.</b>
+            El primer niño no recibe ninguna moneda solo en $(0,0,0)$, y el segundo no recibe ninguna solo en $(3,5,4)$. Descartando estos $2$ casos extremos:
+            $$120 - 2 = 118.$$
+            <div class="resultado">$$118.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.78 -->
+    <div class="box ejercicio" id="ej-1-78">
+      <span class="box-title">Ejercicio 1.78</span>
+      <p>¿De cuántas maneras podemos distribuir $8$ manzanas, $10$ peras y $7$ naranjas en cuatro cajas, si cada caja debe recibir al menos una fruta?</p>
+      <p class="tecnica">Técnica: producto de combinaciones con repetición por tipo de fruta + Principio de Inclusión–Exclusión sobre las $4$ cajas.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Las $4$ cajas son distintas y las frutas de un mismo tipo son idénticas. Si restringimos el reparto a $m$ cajas disponibles, hay $\binom{8+m-1}{m-1}\binom{10+m-1}{m-1}\binom{7+m-1}{m-1}$ distribuciones. Aplica inclusión–exclusión sobre las cajas vacías ($m = 4, 3, 2, 1$).</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Conteo para $m$ cajas disponibles.</b>
+            Dado que las frutas de un mismo tipo son idénticas y las $4$ cajas son distinguibles, el número de maneras de repartir $8$ manzanas, $10$ peras y $7$ naranjas en $m$ cajas fijadas (permitiendo cajas vacías entre ellas) es:
+            $$N(m) = \binom{8 + m - 1}{m - 1}\binom{10 + m - 1}{m - 1}\binom{7 + m - 1}{m - 1}.$$
+            Evaluamos para $m = 4, 3, 2, 1$:
+            <ul>
+              <li>$N(4) = \binom{11}{3}\binom{13}{3}\binom{10}{3} = 165 \cdot 286 \cdot 120 = 5\,662\,800$.</li>
+              <li>$N(3) = \binom{10}{2}\binom{12}{2}\binom{9}{2} = 45 \cdot 66 \cdot 36 = 106\,920$.</li>
+              <li>$N(2) = \binom{9}{1}\binom{11}{1}\binom{8}{1} = 9 \cdot 11 \cdot 8 = 792$.</li>
+              <li>$N(1) = \binom{8}{0}\binom{10}{0}\binom{7}{0} = 1$.</li>
+            </ul></li>
+          <li><b>Inclusión–Exclusión sobre cajas vacías.</b>
+            Sea $A_i$ el evento de que la caja $i$ quede vacía ($i = 1, 2, 3, 4$). El número de distribuciones en que ninguna caja queda vacía es:
+            $$N(4) - \binom{4}{1} N(3) + \binom{4}{2} N(2) - \binom{4}{3} N(1) = 5\,662\,800 - 4(106\,920) + 6(792) - 4(1)$$
+            $$= 5\,662\,800 - 427\,680 + 4\,752 - 4 = 5\,239\,868.$$
+            <div class="resultado">$$5\,239\,868.$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.79 -->
+    <div class="box ejercicio" id="ej-1-79">
+      <span class="box-title">Ejercicio 1.79</span>
+      <p>Muestra que el producto de $p$ números naturales consecutivos es divisible por $p!$.</p>
+      <p class="tecnica">Técnica: interpretación combinatoria del cociente como coeficiente binomial $\binom{m+p}{p}$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Si los $p$ números naturales consecutivos son todos positivos, escríbelos como $m+1, m+2, \dots, m+p$ con $m \ge 0$ entero, y observa a qué número combinatorio corresponde la fracción $\frac{(m+1)(m+2)\cdots(m+p)}{p!}$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <ol class="pasos">
+          <li><b>Caso trivial con $0$ y caso positivo $m+1, \dots, m+p$.</b>
+            Si $0$ forma parte de los $p$ naturales consecutivos (cuando se toma $\mathbb{N} = \{0,1,2,\dots\}$), el producto es $0 = 0 \cdot p!$, que es divisible por $p!$. En caso contrario, los $p$ números consecutivos tienen la forma $m+1, m+2, \dots, m+p$ para algún entero $m \ge 0$.</li>
+          <li><b>Identificación como coeficiente binomial.</b>
+            Dividiendo el producto entre $p!$, multiplicamos numerador y denominador por $m!$:
+            $$\frac{(m + 1)(m + 2)\cdots(m + p)}{p!} = \frac{(m + p)!}{m!\,p!} = \binom{m + p}{p}.$$
+            Como $\binom{m+p}{p}$ cuenta el número de subconjuntos de tamaño $p$ de un conjunto con $m + p$ elementos, es necesariamente un número entero. Por tanto, $p!$ divide al producto $(m+1)\cdots(m+p)$.
+            <div class="resultado">$$\frac{(m + 1)(m + 2)\cdots(m + p)}{p!} = \binom{m + p}{p} \in \mathbb{Z} \implies p! \;\Big|\; \prod_{j=1}^p (m + j).$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- Ej. 1.80 -->
+    <div class="box ejercicio" id="ej-1-80">
+      <span class="box-title">Ejercicio 1.80</span>
+      <p>Prueba, usando un argumento combinatorio, que:</p>
+      <ol type="a">
+        <li>$\displaystyle \binom{n}{m}\binom{m}{k} = \binom{n}{k}\binom{n-k}{m-k}$ para $0 &lt; k \le m \le n$.</li>
+        <li>$\displaystyle \binom{n+m}{r} = \binom{n}{0}\binom{m}{r} + \binom{n}{1}\binom{m}{r-1} + \cdots + \binom{n}{r}\binom{m}{0}$ para $r \le n,\ r \le m$.</li>
+        <li>$\displaystyle \sum_{k=1}^n \binom{n}{k} k^3 = 2^{n-3} n^2 (n + 3)$ para $n \ge 3$.</li>
+        <li>$\displaystyle \frac{(3n)!}{2^n 3^n}$ es un número entero ($n \ge 1$).</li>
+        <li>$\displaystyle \frac{(3n)!}{n!\,2^n 3^n}$ es un número entero ($n \ge 1$).</li>
+      </ol>
+      <p><em>Sugerencia del libro:</em> en (c), considera $n$ personas y cuenta de dos formas diferentes el número de modos de elegir un grupo con al menos una persona y seleccionar de ese grupo un presidente, un vice y un secretario, pudiendo ser acumulativos los cargos. En (d) y (e), piensa cuál es el número de maneras de separar $3n$ objetos distintos en $n$ grupos de tamaño $3$.</p>
+      <p class="tecnica">Técnica: doble conteo de comités, identidad de Vandermonde, asignación de cargos acumulativos y particiones multinomiales.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En (a) cuenta los modos de formar un comité de $m$ miembros y dentro de él una mesa directiva de $k$ miembros. En (b) elige $r$ personas de un grupo con $n$ mujeres y $m$ hombres según el número de mujeres elegidas. En (c), para el segundo conteo clasifica los tres cargos $\{P, V, S\}$ según los ocupen $1$, $2$ o $3$ personas distintas, y luego decide cuáles de las personas restantes entran al grupo. En (d) considera grupos ordenados de tamaño $3$ y en (e) grupos no ordenados.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa</summary><div>
+        <p class="sol-inciso">(a) Doble conteo de comité y subcomité</p>
+        <ol class="pasos">
+          <li><b>Interpretación combinatoria común.</b>
+            Queremos contar de cuántas maneras podemos elegir, entre $n$ personas, un comité de $m$ miembros y un subcomité (junta) de $k$ miembros incluido en dicho comité ($0 &lt; k \le m \le n$).
+            <ul>
+              <li><em>Forma 1:</em> elegimos primero los $m$ miembros del comité en $\binom{n}{m}$ modos y luego escogemos los $k$ miembros del subcomité entre esos $m$ en $\binom{m}{k}$ modos: total $\binom{n}{m}\binom{m}{k}$.</li>
+              <li><em>Forma 2:</em> elegimos primero los $k$ miembros del subcomité entre las $n$ personas ($\binom{n}{k}$ modos), y completamos el resto del comité escogiendo $m - k$ personas entre las $n - k$ restantes ($\binom{n-k}{m-k}$ modos): total $\binom{n}{k}\binom{n-k}{m-k}$.</li>
+            </ul>
+            Al contar el mismo conjunto de configuraciones, ambos productos son iguales.</li>
+        </ol>
+
+        <p class="sol-inciso">(b) Identidad de Vandermonde</p>
+        <ol class="pasos">
+          <li><b>Selección desde dos conjuntos disjuntos.</b>
+            Disponemos de $n$ objetos de tipo $A$ y $m$ objetos de tipo $B$ (en total $n + m$ objetos distintos), y deseamos escoger un subconjunto de tamaño $r$ ($r \le n, r \le m$).
+            <ul>
+              <li><em>Lado izquierdo:</em> elegir $r$ de los $n + m$ objetos directamente se hace de $\binom{n+m}{r}$ maneras.</li>
+              <li><em>Lado derecho:</em> particionamos las selecciones según la cantidad exacta $j \in \{0, 1, \dots, r\}$ de objetos de tipo $A$ elegidos; se toman $j$ de tipo $A$ ($\binom{n}{j}$ modos) y los restantes $r - j$ de tipo $B$ ($\binom{m}{r-j}$ modos). Sumando sobre los casos disjuntos $j = 0, \dots, r$:
+                $$\binom{n+m}{r} = \sum_{j=0}^r \binom{n}{j}\binom{m}{r-j}.$$</li>
+            </ul></li>
+        </ol>
+
+        <p class="sol-inciso">(c) Suma cúbica $\sum_{k=1}^n \binom{n}{k}k^3 = 2^{n-3} n^2 (n + 3)$ ($n \ge 3$)</p>
+        <ol class="pasos">
+          <li><b>Primer conteo (por tamaño del grupo $k$).</b>
+            Elegimos un grupo no vacío de $k$ personas ($1 \le k \le n$) de $\binom{n}{k}$ maneras y luego designamos dentro de ese grupo al presidente ($k$ opciones), al vicepresidente ($k$ opciones) y al secretario ($k$ opciones), ya que una misma persona puede acumular varios cargos. Sumando sobre $k = 1, \dots, n$, el número total de configuraciones es:
+            $$\sum_{k=1}^n \binom{n}{k} k^3.$$</li>
+          <li><b>Segundo conteo (eligiendo primero los $3$ cargos).</b>
+            Clasificamos las configuraciones según cuántas personas distintas ocupan los $3$ cargos $\{P, V, S\}$:
+            <ul>
+              <li><em>1 sola persona ocupa los $3$ cargos:</em> $n$ opciones para esa persona; cada una de las $n - 1$ personas restantes puede entrar o no al grupo, dando $n \cdot 2^{n-1}$ configuraciones.</li>
+              <li><em>2 personas distintas ocupan los $3$ cargos:</em> elegimos qué persona asume $2$ cargos ($n$ modos), qué persona asume $1$ cargo ($n - 1$ modos) y cuál de los $3$ cargos va a esa segunda persona ($3$ modos), o sea $3n(n-1)$ asignaciones; las $n - 2$ personas restantes deciden libremente si integran el grupo ($2^{n-2}$ modos), dando $3n(n-1) \cdot 2^{n-2}$.</li>
+              <li><em>3 personas distintas ocupan los $3$ cargos (posible por $n \ge 3$):</em> hay $n(n-1)(n-2)$ asignaciones de $P, V, S$ y $2^{n-3}$ opciones para las restantes $n - 3$ personas, dando $n(n-1)(n-2) \cdot 2^{n-3}$.</li>
+            </ul></li>
+          <li><b>Simplificación algebraica del segundo conteo.</b>
+            Factorizando $2^{n-3}$ (válido para $n \ge 3$):
+            $$2^{n-3}\Big[4n + 6n(n - 1) + n(n - 1)(n - 2)\Big] = 2^{n-3}\Big[4n + 6n^2 - 6n + n^3 - 3n^2 + 2n\Big] = 2^{n-3}\big(n^3 + 3n^2\big) = 2^{n-3} n^2 (n + 3).$$</li>
+        </ol>
+
+        <p class="sol-inciso">(d) Integridad de $\frac{(3n)!}{2^n 3^n}$</p>
+        <ol class="pasos">
+          <li><b>Conteo de particiones en $n$ grupos etiquetados de tamaño $3$.</b>
+            Observemos que $2^n 3^n = 6^n = (3!)^n$. Por la fórmula multinomial, el cociente
+            $$\frac{(3n)!}{(3!)^n} = \frac{(3n)!}{2^n 3^n}$$
+            es exactamente el número de maneras de repartir $3n$ objetos distintos en $n$ grupos ordenados (etiquetados como Grupo $1, \dots$, Grupo $n$) de tamaño $3$ cada uno. Al ser el cardinal de un conjunto finito de particiones, es necesariamente un número entero positivo.</li>
+        </ol>
+
+        <p class="sol-inciso">(e) Integridad de $\frac{(3n)!}{n!\,2^n 3^n}$</p>
+        <ol class="pasos">
+          <li><b>Conteo de particiones en $n$ grupos no etiquetados de tamaño $3$.</b>
+            Si no distinguimos el orden de los $n$ grupos entre sí, cada partición no ordenada en $n$ subconjuntos de tamaño $3$ da lugar a exactamente $n!$ particiones ordenadas del inciso (d). Por tanto, el número de particiones no ordenadas de $3n$ objetos distintos en $n$ bloques de tamaño $3$ es
+            $$\frac{1}{n!}\cdot\frac{(3n)!}{(3!)^n} = \frac{(3n)!}{n!\,2^n 3^n},$$
+            que nuevamente cuenta un conjunto finito y por ello es un número entero positivo.
+            <div class="resultado">$$\text{Identidades (a)–(e) demostradas combinatoriamente mediante doble conteo y particiones de } 3n \text{ objetos.}$$</div>
+          </li>
+        </ol>
+      </div></details>
+    </div>
+
+  </section>
+
+  <!-- ================================================================
+       SECCIÓN 5: SIMULADOR INTERACTIVO
+       ================================================================ -->
+  <section>
+    <h2 id="sim-libro">Verificación interactiva de ejercicios seleccionados</h2>
+    <p>Selecciona uno de los tres experimentos combinatorios del Capítulo 1 para simular $2000$ realizaciones aleatorias independientes, variar el parámetro $n$ (o $k$) y contrastar las frecuencias empíricas frente a la distribución exacta de inclusión–exclusión.</p>
+
+    <div class="sim" id="sim-cap1">
+      <p class="sim-title">Laboratorio Monte Carlo · Capítulo 1 de Lebensztayn</p>
+      <p class="sim-desc" id="sim-cap1-desc">Compara las frecuencias simuladas con las probabilidades exactas por inclusión–exclusión.</p>
+      <div class="controls">
+        <span class="ctl-sel"></span>
+        <span class="ctl-n"></span>
+        <span class="ctl-btn"></span>
+      </div>
+      <div class="plot"></div>
+      <div class="out"></div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       SECCIÓN 6: AUTOEVALUACIÓN — COMPROBADORES NUMÉRICOS
+       ================================================================ -->
+  <section>
+    <h2 id="autoevaluacion">Autoevaluación · Comprobadores numéricos</h2>
+    <p>Comprueba tus resultados numéricos antes de abrir las soluciones completas (usa números enteros exactos).</p>
+
+    <div class="chk" id="nc-1">
+      <p class="chk-title">Ejercicio 1.46 · Anagramas de «ARARAQUARA» sin dos A juntas</p>
+    </div>
+
+    <div class="chk" id="nc-2">
+      <p class="chk-title">Ejercicio 1.72 · Enteros en $\{1, \dots, 33\,000\}$ coprimos con $3$, $5$ y $11$</p>
+    </div>
+
+    <div class="chk" id="nc-3">
+      <p class="chk-title">Ejercicio 1.74 ($n = 5$) · Números de $5$ cifras con $\{1, 2, 3\}$ usando los tres dígitos</p>
+    </div>
+
+    <div class="chk" id="nc-4">
+      <p class="chk-title">Ejercicio 1.76 · Ascensor con $6$ personas y $3$ pisos</p>
+    </div>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../assets/js/stats.js"></script>
+<script src="../assets/js/plot.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+(function () {
+  'use strict';
+  const S = EM.stats;
+  const fmt = S.fmt;
+  const ui = EM.ui;
+
+  /* ==================== SIMULADOR INTERACTIVO #sim-cap1 ==================== */
+  const simRoot = document.getElementById('sim-cap1');
+  const ctlSel = simRoot.querySelector('.ctl-sel');
+  const ctlN = simRoot.querySelector('.ctl-n');
+  const ctlBtn = simRoot.querySelector('.ctl-btn');
+  const descEl = document.getElementById('sim-cap1-desc');
+  const out = ui.readout(simRoot.querySelector('.out'));
+  const plot = EM.plot.create(simRoot.querySelector('.plot'), {
+    xmin: 0.4, xmax: 3.6, ymin: 0, ymax: 1.05, height: 290, xlabel: 'Dígitos distintos'
+  });
+
+  const cfg = {
+    '1.74': {
+      n: 5, min: 3, max: 12, step: 1, paramTex: 'n',
+      desc: '<b>Ej. 1.74 (Dígitos completos):</b> generamos números aleatorios de $n$ dígitos en $\\{1,2,3\\}$ y contamos cuántos dígitos distintos aparecen ($D=3$ corresponde a $3^n - 3\\cdot 2^n + 3$ casos).'
+    },
+    '1.76': {
+      n: 6, min: 3, max: 12, step: 1, paramTex: 'k',
+      desc: '<b>Ej. 1.76 (Ascensor):</b> asignamos al azar $k$ personas (por defecto $k = 6$) entre $3$ pisos y observamos en cuántos pisos distintos baja al menos una persona ($V=3$ da $3^k - 3\\cdot 2^k + 3$).'
+    },
+    'reparto': {
+      n: 6, min: 4, max: 20, step: 1, paramTex: 'n',
+      desc: '<b>Desarreglos y coincidencias (Ej. 1.68):</b> sorteamos permutaciones de $n$ elementos y contamos los puntos fijos $F$; $F = 0$ es un desarreglo con razón $D_n/n! \\to e^{-1} \\approx 0.3679$.'
+    }
+  };
+
+  let mode = '1.74';
+  let nVal = cfg[mode].n;
+
+  const sliderN = ui.slider(ctlN, {
+    tex: cfg[mode].paramTex,
+    min: cfg[mode].min,
+    max: cfg[mode].max,
+    step: cfg[mode].step,
+    value: nVal,
+    fmt: v => String(Math.round(v)),
+    onInput: v => {
+      nVal = Math.max(cfg[mode].min, Math.round(v));
+      cfg[mode].n = nVal;
+      runSim();
+    }
+  });
+  const sliderLabel = ctlN.querySelector('.slider-label');
+
+  function syncControls() {
+    const c = cfg[mode];
+    descEl.innerHTML = c.desc;
+    ui.math(descEl);
+    if (sliderLabel) sliderLabel.innerHTML = ui.tex(c.paramTex);
+    sliderN.input.min = c.min;
+    sliderN.input.max = c.max;
+    sliderN.input.step = c.step;
+    sliderN.set(c.n);
+    nVal = c.n;
+  }
+
+  ui.select(ctlSel, {
+    label: 'Problema',
+    value: mode,
+    options: [
+      { value: '1.74', label: '1.74 · Números con {1, 2, 3}' },
+      { value: '1.76', label: '1.76 · Ascensor (k personas, 3 pisos)' },
+      { value: 'reparto', label: '1.68 / reparto · Coincidencias y desarreglos' }
+    ],
+    onChange: val => {
+      mode = val;
+      syncControls();
+      runSim();
+    }
+  });
+
+  function surjCounts3(len) {
+    const tot = Math.pow(3, len);
+    const c1 = 3;
+    const c2 = 3 * (Math.pow(2, len) - 2);
+    const c3 = tot - 3 * Math.pow(2, len) + 3;
+    return { tot, c1, c2, c3, probs: [c1 / tot, c2 / tot, c3 / tot] };
+  }
+
+  function derangementDist(n, maxK) {
+    const pmf = new Array(maxK + 1).fill(0);
+    let factK = 1;
+    for (let k = 0; k <= maxK; k++) {
+      if (k > 0) factK *= k;
+      if (k > n) { pmf[k] = 0; continue; }
+      let s = 0, term = 1;
+      for (let j = 0; j <= n - k; j++) {
+        if (j > 0) term = -term / j;
+        s += term;
+      }
+      pmf[k] = s / factK;
+    }
+    return pmf;
+  }
+
+  function runSim() {
+    const M = 2000;
+    const vals = new Float64Array(M);
+
+    if (mode === '1.74' || mode === '1.76') {
+      const len = nVal;
+      let hit3 = 0;
+      for (let m = 0; m < M; m++) {
+        let mask = 0;
+        for (let i = 0; i < len; i++) {
+          const d = Math.floor(Math.random() * 3);
+          mask |= (1 << d);
+        }
+        const cnt = (mask & 1) + ((mask >> 1) & 1) + ((mask >> 2) & 1);
+        vals[m] = cnt;
+        if (cnt === 3) hit3++;
+      }
+
+      const th = surjCounts3(len);
+      const pEmp3 = hit3 / M;
+      const pTeo3 = th.probs[2];
+      const estCount = Math.round(th.tot * pEmp3);
+      const xLabel = mode === '1.74' ? 'Dígitos distintos observados' : 'Pisos con descenso (de 3)';
+
+      plot.setRange({ xmin: 0.4, xmax: 3.6, ymin: 0, ymax: 1.05, xlabel: xLabel, xticks: 4 });
+      plot.draw(g => {
+        g.hist(vals, { bins: 3, range: [0.5, 3.5], color: 'c2', alpha: 0.55, label: 'Frecuencia empírica' });
+        g.bars([1, 2, 3], th.probs, { width: 0.34, color: 'c1', alpha: 0.88, label: 'Distribución exacta (IE)' });
+      });
+
+      if (mode === '1.74') {
+        out.set(
+          `<b>Ej. 1.74</b> ($M = ${M}$ réplicas, $n = ${len}$ dígitos, total $3^{${len}} = ${th.tot}$):<br>` +
+          `• Proporción con los $3$ dígitos ($D = 3$) simulada: <b>${fmt(pEmp3, 4)}</b> · exacta $(3^n - 3\\cdot 2^n + 3)/3^n$: <b>${fmt(pTeo3, 4)}</b><br>` +
+          `• Estimación Monte Carlo de números válidos: <b>${estCount}</b> · conteo exacto: <b>${th.c3}</b>`
+        );
+      } else {
+        out.set(
+          `<b>Ej. 1.76</b> ($M = ${M}$ réplicas, $k = ${len}$ personas, total $3^{${len}} = ${th.tot}$):<br>` +
+          `• Proporción con los $3$ pisos ocupados ($V = 3$) simulada: <b>${fmt(pEmp3, 4)}</b> · exacta: <b>${fmt(pTeo3, 4)}</b><br>` +
+          `• Estimación Monte Carlo de repartos válidos: <b>${estCount}</b> · conteo exacto $3^k - 3\\cdot 2^k + 3$: <b>${th.c3}</b>`
+        );
+      }
+      return;
+    }
+
+    // mode === 'reparto' (coincidencias / desarreglos)
+    const n = nVal;
+    const maxK = Math.min(n, 7);
+    const perm = new Int32Array(n);
+    let derCount = 0;
+    let sumFixed = 0;
+
+    for (let m = 0; m < M; m++) {
+      for (let i = 0; i < n; i++) perm[i] = i;
+      for (let i = n - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const tmp = perm[i];
+        perm[i] = perm[j];
+        perm[j] = tmp;
+      }
+      let f = 0;
+      for (let i = 0; i < n; i++) if (perm[i] === i) f++;
+      vals[m] = f;
+      sumFixed += f;
+      if (f === 0) derCount++;
+    }
+
+    const xs = [];
+    for (let k = 0; k <= maxK; k++) xs.push(k);
+    const pmf = derangementDist(n, maxK);
+    const pDerEmp = derCount / M;
+    const pDerTeo = pmf[0];
+    const expInv = Math.exp(-1);
+
+    plot.setRange({ xmin: -0.55, xmax: maxK + 0.55, ymin: 0, ymax: 0.48, xlabel: 'Número de coincidencias (puntos fijos F)', xticks: maxK + 1 });
+    plot.draw(g => {
+      g.hist(vals, { bins: maxK + 1, range: [-0.5, maxK + 0.5], color: 'c2', alpha: 0.55, label: 'Frecuencia empírica' });
+      g.bars(xs, pmf, { width: 0.34, color: 'c1', alpha: 0.88, label: 'PMF exacta P(F = k)' });
+      g.hline(expInv, { color: 'accent', dash: [4, 3], width: 1.5 });
+      g.text('límite 1/e ≈ 0.3679', 1.55, expInv + 0.014, { align: 'left', color: 'accent', size: 12 });
+    });
+
+    const dExact = Math.round(S.factorial(n) * pDerTeo);
+    out.set(
+      `<b>Desarreglos y coincidencias</b> ($M = ${M}$ réplicas, $n = ${n}$ elementos):<br>` +
+      `• Proporción de desarreglos ($F = 0$) simulada: <b>${fmt(pDerEmp, 4)}</b> · exacta $D_{${n}}/${n}!$: <b>${fmt(pDerTeo, 4)}</b> · límite $e^{-1} \\approx$ <b>${fmt(expInv, 4)}</b><br>` +
+      `• Media muestral de coincidencias $\\bar{F}$: <b>${fmt(sumFixed / M, 4)}</b> (teórica exacta $\\E[F] = 1$ para todo $n \\ge 1$)` +
+      (n <= 12 ? `<br>• Conteo exacto de desarreglos: $D_{${n}} = ${dExact}$` : '')
+    );
+  }
+
+  ui.button(ctlBtn, 'Simular (2000 réplicas)', runSim, { primary: true });
+  syncControls();
+  runSim();
+
+  /* ==================== COMPROBADORES NUMÉRICOS #nc-1 .. #nc-4 ==================== */
+  ui.numcheck('#nc-1', {
+    prompt: 'Anagramas de «ARARAQUARA» sin dos A adyacentes:',
+    answer: 120,
+    tol: 0.1,
+    placeholder: 'ej. 120',
+    hint: 'Permuta primero las $5$ letras distintas de A ($3$ R, $1$ Q, $1$ U) en $5!/3! = 20$ modos y elige $5$ de los $6$ huecos disponibles para las $5$ letras A: $20\\cdot\\binom{6}{5}=120$.'
+  });
+
+  ui.numcheck('#nc-2', {
+    prompt: 'Enteros entre $1$ y $33\\,000$ no divisibles por $3$, $5$ ni $11$:',
+    answer: 16000,
+    tol: 0.1,
+    placeholder: 'ej. 16000',
+    hint: 'Por inclusión–exclusión: $33\\,000 - (11\\,000 + 6\\,600 + 3\\,000) + (2\\,200 + 1\\,000 + 600) - 200 = 16\\,000$.'
+  });
+
+  ui.numcheck('#nc-3', {
+    prompt: 'Números de $5$ dígitos con $\\{1,2,3\\}$ donde aparecen los tres dígitos:',
+    answer: 150,
+    tol: 0.1,
+    placeholder: 'ej. 150',
+    hint: 'Evalúa $3^n - 3\\cdot 2^n + 3$ en $n = 5$: $243 - 3\\cdot 32 + 3 = 150$.'
+  });
+
+  ui.numcheck('#nc-4', {
+    prompt: 'Maneras de bajar $6$ personas en $3$ pisos con al menos una por piso:',
+    answer: 540,
+    tol: 0.1,
+    placeholder: 'ej. 540',
+    hint: 'Funciones sobreyectivas de $6$ personas en $3$ pisos: $3^6 - 3\\cdot 2^6 + 3 = 729 - 192 + 3 = 540$.'
+  });
+})();
+</script>
+</body>
+</html>

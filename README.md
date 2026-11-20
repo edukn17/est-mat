@@ -33,7 +33,10 @@ traen pistas graduales, solución completa paso a paso y verificación numérica
 | `deberes/lista-1-1.html` | Lista 1.1 resuelta (transformaciones y estadísticos de orden) |
 | `deberes/lista-1-2.html` | Lista 1.2 resuelta (teorema del límite central) |
 | `deberes/deber-estimacion-puntual.html` | Deber resuelto de estimación puntual (Unidad II, 5 problemas completos) |
-| `deberes/lebensztayn.html` | Solucionario progresivo de Lebensztayn (Cap. 5: 65 de 84 ejercicios resueltos) |
+| `deberes/lebensztayn-cap1.html` | Solucionario completo del Capítulo 1 de Lebensztayn: Análisis Combinatorio (80/80 ejercicios) |
+| `deberes/lebensztayn-cap2.html` | Solucionario completo del Capítulo 2 de Lebensztayn: Probabilidad (80/80 ejercicios) |
+| `deberes/lebensztayn-cap3.html` | Solucionario completo del Capítulo 3 de Lebensztayn: Variables Aleatorias (128/128 ejercicios) |
+| `deberes/lebensztayn.html` | Solucionario completo del Capítulo 5 de Lebensztayn (84 de 84 ejercicios resueltos) |
 
 ## Uso local
 
@@ -91,7 +94,8 @@ est-mat/
 ├── herramientas/           distribuciones.html, tablas.html, formulario.html
 │                           formulario.tex/.pdf y formulario-2p.tex/.pdf
 ├── deberes/                lista-1-1.html, lista-1-2.html, deber-estimacion-puntual.html,
-│                           lebensztayn.html
+│                           lebensztayn-cap1.html, lebensztayn-cap2.html,
+│                           lebensztayn-cap3.html, lebensztayn.html
 ├── scripts/                pipeline de tablas
 └── tests/                  stats.test.js, smoke.js, shot.sh
 ```
