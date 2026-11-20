@@ -11,6 +11,7 @@
    ===================================================================== */
 const fs = require('fs');
 const path = require('path');
+const { spawnSync } = require('child_process');
 const { JSDOM, VirtualConsole, ResourceLoader } = require('jsdom');
 
 const ROOT = path.resolve(__dirname, '..');
@@ -121,17 +122,32 @@ async function check(file) {
 }
 
 const ONLY_CONTENT = process.argv.includes('--solo-contenido'); // ignora enlaces del menú generado
+const IS_SINGLE = process.argv.includes('--single');
 (async () => {
   const files = process.argv.slice(2).filter(a => !a.startsWith('--')).map(f => path.resolve(f));
   const list = files.length ? files : allPages();
   let bad = 0;
-  for (const f of list) {
-    try {
-      const { problems, stats } = await check(f);
-      const rel = path.relative(ROOT, f);
-      if (problems.length) { bad++; console.log(`✗ ${rel}  (${stats})`); problems.slice(0, 40).forEach(p => console.log('   - ' + p)); }
-      else console.log(`✓ ${rel}  (${stats})`);
-    } catch (e) { bad++; console.log(`✗ ${f}: ${e.message}`); }
+  if (IS_SINGLE || list.length <= 1) {
+    for (const f of list) {
+      try {
+        const { problems, stats } = await check(f);
+        const rel = path.relative(ROOT, f);
+        if (problems.length) { bad++; console.log(`✗ ${rel}  (${stats})`); problems.slice(0, 40).forEach(p => console.log('   - ' + p)); }
+        else console.log(`✓ ${rel}  (${stats})`);
+      } catch (e) { bad++; console.log(`✗ ${f}: ${e.message}`); }
+    }
+  } else {
+    for (const f of list) {
+      const args = ['--max-old-space-size=4096', __filename, '--single', ...(ONLY_CONTENT ? ['--solo-contenido'] : []), f];
+      const res = spawnSync(process.execPath, args, { stdio: 'inherit' });
+      if (res.status !== 0) {
+        bad++;
+        if (res.status === null) {
+          const rel = path.relative(ROOT, f);
+          console.log(`✗ ${rel}: proceso terminado (${res.signal || 'error'})`);
+        }
+      }
+    }
   }
   process.exit(bad ? 1 : 0);
 })();

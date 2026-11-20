@@ -9,7 +9,7 @@
 \usepackage[T1]{fontenc}
 \usepackage[spanish,es-noshorthands]{babel}
 \usepackage{amsmath,amssymb,amsfonts}
-\usepackage[a4paper,margin=0.92cm,top=0.8cm,bottom=0.8cm,footskip=10pt]{geometry}
+\usepackage[a4paper,margin=0.76cm,top=0.62cm,bottom=0.65cm,footskip=9pt]{geometry}
 \usepackage{booktabs}
 \usepackage{enumitem}
 \usepackage{xcolor}
@@ -18,15 +18,17 @@
 \usepackage{fancyhdr}
 \usepackage[hidelinks]{hyperref}
 
-\setlength{\columnsep}{12pt}
-\setlength{\parskip}{0.6pt}
-\setlength{\abovedisplayskip}{1.6pt}
-\setlength{\belowdisplayskip}{1.6pt}
-\setlength{\abovedisplayshortskip}{1pt}
-\setlength{\belowdisplayshortskip}{1pt}
+\linespread{0.91}
+\setlength{\columnsep}{9.5pt}
+\setlength{\parskip}{0.15pt}
+\setlength{\jot}{0.3pt}
+\setlength{\abovedisplayskip}{0.5pt}
+\setlength{\belowdisplayskip}{0.5pt}
+\setlength{\abovedisplayshortskip}{0.3pt}
+\setlength{\belowdisplayshortskip}{0.3pt}
 \allowdisplaybreaks
-\setlist[itemize]{leftmargin=1.0em,topsep=0.5pt,itemsep=0.4pt,parsep=0pt,partopsep=0pt}
-\setlist[enumerate]{leftmargin=1.25em,topsep=0.5pt,itemsep=0.4pt,parsep=0pt,partopsep=0pt}
+\setlist[itemize]{leftmargin=0.95em,topsep=0.15pt,itemsep=0.15pt,parsep=0pt,partopsep=0pt}
+\setlist[enumerate]{leftmargin=1.2em,topsep=0.15pt,itemsep=0.15pt,parsep=0pt,partopsep=0pt}
 
 \newcommand{\E}{\mathbb{E}}
 \newcommand{\Prob}{\mathbb{P}}
@@ -42,7 +44,7 @@
 \newcommand{\dcs}{\xrightarrow{\mathrm{c.s.}}}
 
 \definecolor{seccolor}{RGB}{24,54,96}
-\newcommand{\fh}[1]{\par\vspace{1.5pt}\penalty-100{\color{seccolor}\bfseries #1}\par\nobreak\vspace{0.3pt}\hrule height 0.6pt\relax\par\nobreak\vspace{1.0pt}\nobreak}
+\newcommand{\fh}[1]{\par\vspace{0.7pt}\penalty-100{\color{seccolor}\bfseries #1}\par\nobreak\vspace{0.2pt}\hrule height 0.55pt\relax\par\nobreak\vspace{0.45pt}\nobreak}
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -61,7 +63,7 @@
 {\footnotesize \textbf{Parametrizaciones:} el Formulario 2 usa $\beta$ como \textbf{escala} ($=\E$) en Exp/Gamma. La ``exponencial de parámetro $\lambda$'' lleva $\lambda=$ \textbf{tasa}: $\beta=1/\lambda$, media $1/\lambda$. $N(\mu,\sigma^2)$ lleva la \textbf{varianza}; Geo/Bneg cuentan \textbf{ensayos}.}
 \vspace{2pt}
 
-{\footnotesize\setlength{\tabcolsep}{3pt}
+{\footnotesize\setlength{\tabcolsep}{3pt}\renewcommand{\arraystretch}{0.86}
 \hrule height 0.7pt
 \vspace{1.5pt}
 \noindent\textbf{Modelos (parametrización del Formulario 2; si son independientes las FGM se multiplican)}\\[1pt]
@@ -91,7 +93,7 @@ $\text{Beta}(\alpha,\beta)$ & $\frac{x^{\alpha-1}(1-x)^{\beta-1}}{B(\alpha,\beta
 \par\vspace{2pt}
 \textbf{Relaciones (por FGM o definición):} Ber$_n$ i.i.d.\ $\to$ Bin$(n,p)$;\ Geo$=$Bneg$(1,p)$;\ Bneg$=$suma de $r$ Geo i.i.d.;\ Pois$(\lambda_i)$ indep.\ $\to$ Pois$(\sum\lambda_i)$;\ Exp$(\beta)=G(1,\beta)$;\ $n$ Exp$(\beta)$ i.i.d.\ $\to G(n,\beta)$;\ $G(\alpha_i,\beta)$ (mismo $\beta$) $\to G(\sum\alpha_i,\beta)$;\ $N(\mu_i,\sigma_i^2)$ indep.\ $\to N(\sum\mu_i,\sum\sigma_i^2)$;\ $aX+b\sim N(a\mu+b,a^2\sigma^2)$;\ $Z^2\sim\chi^2_{(1)}$;\ $\sum^\nu\chi^2_{(1)}\to\chi^2_{(\nu)}$;\ $\chi^2_{(2)}=$Exp$(2)$;\ Beta$(1,1)=U(0,1)$.
 \par}
-\vspace{3pt}
+\vspace{1.5pt}
 ]
 
 % =====================================================================
@@ -192,11 +194,10 @@ FDA: $F(x)=I_{\nu_1x/(\nu_1x+\nu_2)}\big(\tfrac{\nu_1}2,\tfrac{\nu_2}2\big)$; $I
 % =====================================================================
 \fh{10. Teorema del límite central (Clase 5)}
 $Y_i$ i.i.d., $\E Y_i=\mu$, $\Var=\sigma^2<\infty$; $S_n=\sum Y_i$:
-\begin{gather*}
-W_n=\frac{\bar Y-\mu}{\sigma/\sqrt n}=\frac{S_n-n\mu}{\sigma\sqrt n}\ \dto\ N(0,1);\\
-\bar Y\adist N\!\Big(\mu,\frac{\sigma^2}{n}\Big),\quad S_n\adist N(n\mu,n\sigma^2).
-\end{gather*}
-Bernoulli: Bin$(n,p)\adist N(np,np(1-p))$ si $np\ge5$ y $n(1-p)\ge5$. Sin $\sigma^2$ finita no hay TLC.
+\[
+W_n=\frac{\bar Y-\mu}{\sigma/\sqrt n}=\frac{S_n-n\mu}{\sigma\sqrt n}\dto N(0,1).
+\]
+$\bar Y\adist N(\mu,\sigma^2/n),\ S_n\adist N(n\mu,n\sigma^2)$. Bernoulli: Bin$(n,p)\adist N(np,np(1-p))$ si $np\ge5$ y $n(1-p)\ge5$. Sin $\sigma^2$ finita no hay TLC.
 \begin{itemize}
   \item \textbf{Corrección $\pm\tfrac12$:} $X\le k\Rightarrow\Phi(\frac{k+0.5-\mu_X}{\sigma_X})$;\ $X<k\Rightarrow\Phi(\frac{k-0.5-\mu_X}{\sigma_X})$;\ $X\ge k\Rightarrow1-\Phi(\frac{k-0.5-\mu_X}{\sigma_X})$;\ $X>k\Rightarrow1-\Phi(\frac{k+0.5-\mu_X}{\sigma_X})$.
   \item $X=k\Rightarrow\Phi(\frac{k+0.5-\mu_X}{\sigma_X})-\Phi(\frac{k-0.5-\mu_X}{\sigma_X})$;\ $a\le X\le b\Rightarrow\Phi(\frac{b+0.5-\mu_X}{\sigma_X})-\Phi(\frac{a-0.5-\mu_X}{\sigma_X})$.
@@ -257,7 +258,7 @@ Para el EMV: $\sqrt{n}[g(\hat\theta_{\text{MV}})-g(\theta)]\dto N\big(0,\frac{[g
 \end{itemize}
 
 % =====================================================================
-\fh{16. Convergencia, LGN, TLC no i.d.\ y Valores Extremos (Clases 11--14)}
+\fh{16. Convergencia, LGN, TLC no i.d.\ y TVE (Clases 11--14)}
 \textbf{Modos y Borel--Cantelli (Clase 11):} $X_n\dcs X\implies X_n\pto X\implies X_n\dto X$; si límite constante: $X_n\dto c\iff X_n\pto c$. Si $g$ es continua, $X_n\to X\implies g(X_n)\to g(X)$ en el mismo modo.
 \begin{itemize}
   \item \textbf{BC1:} $\sum_{n=1}^\infty\Prob(A_n)<\infty\implies\Prob(\limsup A_n)=0$ ($\sum\Prob(|X_n-X|>\varepsilon)<\infty\implies X_n\dcs X$). \textbf{BC2 (indep.):} $\sum\Prob(A_n)=\infty\implies\Prob(\limsup A_n)=1$.
@@ -279,9 +280,16 @@ Para el EMV: $\sqrt{n}[g(\hat\theta_{\text{MV}})-g(\theta)]\dto N\big(0,\frac{[g
 \end{itemize}
 
 % =====================================================================
-\fh{17. Suficiencia y Fisher--Neyman (Clase 15)}
-\textbf{Suficiencia:} $\Prob(\mathbf{X}=\mathbf{x}\mid T=t)$ no depende de $\theta$ ($T=\psi(U)$ sufic.\ $\Rightarrow U$ sufic.). \textbf{Fisher--Neyman:} $T$ sufic.\ $\iff L(\theta\mid\mathbf{x}) = g(T(\mathbf{x}),\theta)\,h(\mathbf{x})$ ($h\ge 0$ libre de $\theta$; indicadoras con $\theta$ en $g$; todo EMV único es función de $T$).
-\textbf{Casos:} Ber/Pois/Exp/Gamma($\alpha$ con.)/Normal($\sigma^2$ con.): $\sum X_i$ o $\bar X$;\ $N(0,\sigma^2)$ ($\mu=0$): $\sum X_i^2$;\ $U(0,\theta)$: $X_{(n)}$.
+\fh{17. Suficiencia, Familia Exponencial y MVUE (Clases 15--17)}
+\textbf{Suficiencia y Factorización:} $\Prob(\mathbf{X}=\mathbf{x}\mid T=t)$ libre de $\theta$ ($T=\psi(U)$ sufic.\ $\Rightarrow U$ sufic.). Multiparamétrica: $\mathbf{T}=(T_1,\dots,T_r)$ conj.\ sufic.\ para $\boldsymbol{\theta}\iff L(\boldsymbol{\theta}\mid\mathbf{x})=g(T_1(\mathbf{x}),\dots,T_r(\mathbf{x}),\boldsymbol{\theta})\,h(\mathbf{x})$ ($h\ge0$ libre de $\boldsymbol{\theta}$; indicadoras con $\boldsymbol{\theta}$ en $g$). Casos: Ber/Pois/Exp/Gamma($\alpha$ con.)/Normal($\sigma^2$ con.): $\sum X_i$;\ $N(0,\sigma^2)$ ($\mu=0$): $\sum X_i^2$;\ $N(\mu,\sigma^2)$: $(\sum X_i,\sum X_i^2)\iff(\bar X,S^2)$;\ Gamma: $(\sum\ln X_i,\sum X_i)$;\ $U(0,\theta)$: $X_{(n)}$;\ $U(\theta_1,\theta_2)$: $(X_{(1)},X_{(n)})$.
+
+\textbf{Familia Exponencial (1D y $k$D):} $f(x\mid\boldsymbol{\theta})=\exp\{\sum_{j=1}^k c_j(\boldsymbol{\theta})T_j(x)+d(\boldsymbol{\theta})+S(x)\}$ ($x\in A$ \textbf{fijo}, libre de $\boldsymbol{\theta}$). En 1D ($c'\ne0$): $\E[T]=-d'/c'$, $\Var(T)=\frac{d'c''-c'd''}{(c')^3}$. Cerradura i.i.d.: $\mathbf{T}(\mathbf{X})=(\sum_{i=1}^n T_1(X_i),\dots,\sum_{i=1}^n T_k(X_i))$ conj.\ sufic.\ \textbf{Ec.\ EMV (FE regular):} $\E_{\boldsymbol{\theta}}[T_j(\mathbf{X})]=T_j(\mathbf{X})$ ($j=1,\dots,k$).\\
+\textbf{Resumen FE:} Ber($\theta$): $c=\ln\frac{\theta}{1-\theta},T=x,d=\ln(1-\theta)$;\ Pois($\lambda$): $c=\ln\lambda,T=x,d=-\lambda,S=-\ln x!$;\ Exp($\beta$): $c=-\frac1\beta,T=x,d=-\ln\beta$;\ Geo($p$): $c=\ln(1-p),T=x,d=\ln\frac{p}{1-p}$;\ $N(\mu,\sigma^2)$: $c=(\frac{\mu}{\sigma^2},-\frac{1}{2\sigma^2}),T=(x,x^2)$;\ Gamma($\alpha,\beta$): $c=(\alpha-1,-\frac1\beta),T=(\ln x,x)$;\ Beta($\alpha,\beta$): $c=(\alpha-1,\beta-1),T=(\ln x,\ln(1-x))$ ($\text{Beta}(k,k)$: $\ln[x(1-x)]$).
+
+\textbf{Rao--Blackwell y MVUE:} $\hat\theta^*$ \textbf{MVUE} si $\E_\theta\hat\theta^*=\theta$ y $\Var_\theta\hat\theta^*\le\Var_\theta\hat\theta$ $\forall$ insesgado $\hat\theta$. Si $\hat\theta$ insesgado ($\Var<\infty$) y $T$ sufic.\ $\Rightarrow\hat\theta^*=\E[\hat\theta\mid T]$ insesgado, libre de $\theta$, $\Var(\hat\theta^*)=\Var(\hat\theta)-\E[\Var(\hat\theta\mid T)]\le\Var(\hat\theta)$. \textbf{Lehmann--Scheffé:} $T$ sufic.\ \textbf{completo} ($\E_\theta[h(T)]=0\,\forall\theta\Rightarrow h(T)=0$ c.s.) $\Rightarrow\hat\theta^*$ único y \textbf{MVUE} (igual para $\tau(\theta)$).
+
+\textbf{EMV y grandes muestras:} todo EMV único $\hat\theta$ es función de $T$. Regularidad: $\sqrt{n}(\hat\theta-\theta)\dto N(0,\frac{1}{I_F(\theta)})$ y $\sqrt{n}[g(\hat\theta)-g(\theta)]\dto N(0,\frac{[g'(\theta)]^2}{I_F(\theta)})$ (asint.\ insesgado y eficiente; vale con $\tilde\theta\pto\theta$).\\
+\textbf{MVUEs clásicos:} Ber/Pois/Exp/Norm($\mu$): $\bar X$;\ Weibull($\theta$, $f=\frac{2y}{\theta}e^{-y^2/\theta}$): $\frac1n\sum X_i^2$;\ Exp($\beta$, $\beta^2$): $\frac{n}{n+1}\bar X^2$;\ $U(0,\theta)$: $\frac{n+1}{n}X_{(n)}$;\ Norm($\sigma^2$): $S^2$;\ Pois($e^{-\lambda}$): $(1-\frac1n)^{\sum X_i}$;\ Ber($p(1-p)$): $\frac{n}{n-1}\bar X(1-\bar X)$;\ Geo($p$): $\frac{n-1}{\sum X_i-1}$.
 
 % =====================================================================
 \fh{18. Tablas y valores críticos}

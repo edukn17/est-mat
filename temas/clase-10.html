@@ -663,9 +663,7 @@
           const color = EM.plot.resolveColor(colToken);
           ctx.save();
           ctx.beginPath();
-          ctx.rect(g.state.margin.l, g.state.margin.t,
-                   g.canvas.width / (window.devicePixelRatio || 1) - g.state.margin.l - g.state.margin.r,
-                   g.canvas.height / (window.devicePixelRatio || 1) - g.state.margin.t - g.state.margin.b);
+          ctx.rect(g.X(1), g.Y(ymax), g.X(N) - g.X(1), g.Y(ymin) - g.Y(ymax));
           ctx.clip();
 
           ctx.strokeStyle = color;

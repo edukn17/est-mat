@@ -1,0 +1,1176 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clase 16 · Suficiencia Conjunta y Familia Exponencial</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/theme.js"></script>
+<style>
+  .sim .plot-cap {
+    font: 600 12.5px var(--font-ui);
+    color: var(--muted);
+    margin: 6px 0 -4px;
+  }
+  .sim .grid-2 {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  }
+  .sim .grid-2 > * {
+    min-width: 0;
+  }
+  .tabla-fe {
+    min-width: 740px;
+  }
+</style>
+</head>
+<body data-page="clase-16" data-root="../">
+<main id="contenido">
+
+  <header class="page-head">
+    <p class="kicker">Clase 16 · Unidad 4 — Suficiencia e Inferencia</p>
+    <h1>Suficiencia Conjunta y Familia Exponencial</h1>
+    <p class="lead">Cómo extender el criterio de factorización de Fisher–Neyman al caso multiparamétrico, cómo reconocer si una distribución pertenece a la familia exponencial unidimensional o $k$-dimensional, cómo leer los estadísticos suficientes por simple inspección de su estructura exponencial y cómo deducir el EMV resolviendo la ecuación $\E[T(\mathbf{X})] = T(\mathbf{X})$.</p>
+  </header>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="suficiencia-conjunta">1. Suficiencia conjunta y Factorización multiparamétrica</h2>
+    <p>En la Clase 15 aprendimos a resumir una muestra $X_1, \dots, X_n$ en un único estadístico suficiente $T(\mathbf{X})$ cuando el modelo probabilístico tenía un solo parámetro desconocido $\theta$. Sin embargo, en la mayoría de aplicaciones reales las distribuciones dependen de varios parámetros desconocidos a la vez, como la media y la varianza en una población Normal o la forma y la escala en una Gamma.</p>
+
+    <div class="box idea">
+      <span class="box-title">Intuición clave · Un vector de parámetros exige un vector de estadísticos</span>
+      <p>Cuando un modelo depende de un vector de parámetros $\boldsymbol{\theta} = (\theta_1, \dots, \theta_m)$, un solo número rara vez basta para capturar toda la información de la muestra. Si conoces únicamente $\bar X$ en una muestra normal, sabes dónde se centra la nube de datos, pero pierdes por completo la información sobre su dispersión $\sigma^2$.</p>
+      <p>Por eso necesitamos un <strong>vector de estadísticos</strong> $\mathbf{T} = \big(T_1(\mathbf{X}), \dots, T_r(\mathbf{X})\big)$ que actúe en conjunto: una vez conocidos sus $r$ valores, los datos individuales $(X_1, \dots, X_n)$ no aportan información adicional sobre ningún componente de $\boldsymbol{\theta}$.</p>
+    </div>
+
+    <div class="box teorema" id="thm-factorizacion-multi">
+      <span class="box-title">Teorema · Criterio de Factorización (caso multiparamétrico)</span>
+      <p>Sean $X_1, X_2, \dots, X_n$ una muestra aleatoria de la v.a. $X$, con función de densidad (o de probabilidad) $f(x \mid \boldsymbol{\theta})$, donde $\boldsymbol{\theta} = (\theta_1, \dots, \theta_m)$ es un vector de parámetros desconocidos. Entonces el estadístico $r$-dimensional $\mathbf{T} = (T_1, \dots, T_r)$, con $T_j = T_j(\mathbf{X})$, es <strong>conjuntamente suficiente para $\boldsymbol{\theta}$</strong> si y solo si la función de verosimilitud puede escribirse como:</p>
+      $$L(\boldsymbol{\theta} \mid \mathbf{x}) = \prod_{i=1}^n f(x_i \mid \boldsymbol{\theta}) = g\big(T_1(\mathbf{x}), \dots, T_r(\mathbf{x}),\, \boldsymbol{\theta}\big) \times h(\mathbf{x}),$$
+      <p>donde $g(\mathbf{T}(\mathbf{x}), \boldsymbol{\theta}) \ge 0$ es una función solo de $\mathbf{T}(\mathbf{x})$ y $\boldsymbol{\theta}$, y $h(\mathbf{x}) \ge 0$ no depende de $\boldsymbol{\theta}$.</p>
+    </div>
+
+    <div class="box nota" id="obs-equivalencia-vec">
+      <span class="box-title">Equivalencia bajo transformaciones biyectivas vectoriales</span>
+      <p>Al igual que en el caso unidimensional, un estadístico conjuntamente suficiente no es único. Si $\mathbf{T} = (T_1, \dots, T_r)$ es conjuntamente suficiente para $\boldsymbol{\theta}$ y definimos un nuevo vector $\mathbf{U} = \boldsymbol{\phi}(\mathbf{T})$ mediante una transformación <strong>invertible (biyectiva)</strong> —o más en general, siempre que $\mathbf{T}$ pueda recuperarse como función de $\mathbf{U}$—, entonces $\mathbf{U}$ también es conjuntamente suficiente para $\boldsymbol{\theta}$.</p>
+      <ul>
+        <li><strong>Normal ($n \ge 2$):</strong> Como $\sum_{i=1}^n X_i = n\bar X$ y $\sum_{i=1}^n X_i^2 = (n-1)S^2 + n\bar X^2$, se tiene la equivalencia:
+          $$\left(\sum_{i=1}^n X_i,\; \sum_{i=1}^n X_i^2\right) \iff \big(\bar X,\; S^2\big).$$</li>
+        <li><strong>Positivos ($X_i &gt; 0$):</strong> Como $\ln\left(\prod_{i=1}^n X_i\right) = \sum_{i=1}^n \ln X_i$ es biyectiva sobre $(0, \infty)$, resulta equivalente dar el producto $\prod_{i=1}^n X_i$ o la suma de logaritmos $\sum_{i=1}^n \ln X_i$.</li>
+        <li><strong>Dimensión $r$ frente a $m$:</strong> Aunque en muchos modelos regulares $r = m$ (tienes tantos estadísticos suficientes como parámetros), no es obligatorio que $r$ coincida con el número de parámetros.</li>
+      </ul>
+    </div>
+
+    <!-- EJEMPLO 1 -->
+    <div class="box ejercicio" id="ej-1">
+      <span class="box-title">Ejemplo 1 · Normal $N(\mu, \sigma^2)$ con ambos parámetros desconocidos</span>
+      <p>Sean $X_1, X_2, \dots, X_n$ variables aleatorias $\iid N(\mu, \sigma^2)$, donde tanto $\mu \in \R$ como $\sigma^2 &gt; 0$ son desconocidos. Encuentre un estadístico conjuntamente suficiente para $(\mu, \sigma^2)$.</p>
+
+      <details class="pista"><summary>Pista 1 · Expande el cuadrado en la exponencial</summary><div>
+        <p>Escribe $L(\mu, \sigma^2 \mid \mathbf{x})$ y desarrolla $(x_i - \mu)^2 = x_i^2 - 2\mu x_i + \mu^2$ dentro de la suma $\sum_{i=1}^n (x_i - \mu)^2$ para ver qué expresiones de la muestra quedan multiplicadas por los parámetros.</p>
+      </div></details>
+
+      <details class="pista"><summary>Pista 2 · Forma alternativa con $(\bar x, s^2)$</summary><div>
+        <p>También puedes usar la identidad $\sum_{i=1}^n (x_i - \mu)^2 = \sum_{i=1}^n (x_i - \bar x)^2 + n(\bar x - \mu)^2$ para factorizar directamente en función de la media $\bar x$ y la varianza muestral $s^2$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><strong>Verosimilitud conjunta de la muestra:</strong> Para $\mathbf{x} = (x_1, \dots, x_n) \in \R^n$,
+            $$L(\mu, \sigma^2 \mid \mathbf{x}) = \prod_{i=1}^n \frac{1}{\sqrt{2\pi\sigma^2}}\exp\left\{-\frac{(x_i - \mu)^2}{2\sigma^2}\right\} = (2\pi\sigma^2)^{-n/2}\exp\left\{-\frac{1}{2\sigma^2}\sum_{i=1}^n (x_i - \mu)^2\right\}.$$</li>
+          <li><strong>Desarrollo de la suma de cuadrados:</strong> Expandiendo cada binomio $(x_i - \mu)^2 = x_i^2 - 2\mu x_i + \mu^2$ y sumando desde $i = 1$ hasta $n$:
+            $$\sum_{i=1}^n (x_i - \mu)^2 = \sum_{i=1}^n x_i^2 - 2\mu\sum_{i=1}^n x_i + n\mu^2.$$
+            Al sustituir en la verosimilitud obtenemos una factorización inmediata con $h(\mathbf{x}) = 1$:
+            $$L(\mu, \sigma^2 \mid \mathbf{x}) = \underbrace{(2\pi\sigma^2)^{-n/2}\exp\left\{-\frac{1}{2\sigma^2}\left(\sum_{i=1}^n x_i^2 - 2\mu\sum_{i=1}^n x_i + n\mu^2\right)\right\}}_{g\big(\sum x_i,\; \sum x_i^2,\; \mu,\; \sigma^2\big)} \times \underbrace{1}_{h(\mathbf{x})}.$$</li>
+          <li><strong>Forma alternativa mediante $(\bar x, s^2)$:</strong> Sumando y restando $\bar x$ dentro del cuadrado, $\sum_{i=1}^n (x_i - \mu)^2 = \sum_{i=1}^n (x_i - \bar x)^2 + n(\bar x - \mu)^2 = (n-1)s^2 + n(\bar x - \mu)^2$ (para $n \ge 2$). Así:
+            $$L(\mu, \sigma^2 \mid \mathbf{x}) = \underbrace{(2\pi\sigma^2)^{-n/2}\exp\left\{-\frac{(n-1)s^2 + n(\bar x - \mu)^2}{2\sigma^2}\right\}}_{g^*(\bar x,\; s^2,\; \mu,\; \sigma^2)} \times \underbrace{1}_{h(\mathbf{x})}.$$</li>
+          <li><strong>Conclusión:</strong> Por el criterio de factorización multiparamétrico, el par
+            $$\mathbf{T}(\mathbf{X}) = \left(\sum_{i=1}^n X_i,\; \sum_{i=1}^n X_i^2\right)$$
+            —y equivalentemente el par $(\bar X, S^2)$ para $n \ge 2$— es un estadístico <strong>conjuntamente suficiente</strong> para $(\mu, \sigma^2)$.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJEMPLO 2 -->
+    <div class="box ejercicio" id="ej-2">
+      <span class="box-title">Ejemplo 2 · Gamma $\Gamma(\alpha, \beta)$ con $(\alpha, \beta)$ desconocidos</span>
+      <p>Sean $X_1, X_2, \dots, X_n$ variables aleatorias $\iid \Gamma(\alpha, \beta)$, cuya función de densidad (en parametrización de escala $\beta$, con media $\alpha\beta$) es $f(x \mid \alpha, \beta) = \frac{1}{\Gamma(\alpha)\beta^\alpha}x^{\alpha - 1}e^{-x/\beta}\1_{\{x &gt; 0\}}$, donde $\alpha &gt; 0$ y $\beta &gt; 0$ son ambos desconocidos. Encuentre un estadístico conjuntamente suficiente para $(\alpha, \beta)$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Multiplica las $n$ densidades y agrupa por un lado las potencias $x_i^{\alpha - 1}$ como $(\prod_{i=1}^n x_i)^{\alpha - 1}$, por otro las exponenciales como $\exp\big(-\frac{1}{\beta}\sum_{i=1}^n x_i\big)$, y reúne el soporte en $\1_{\{x_{(1)} &gt; 0\}}$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><strong>Verosimilitud conjunta:</strong> Multiplicando las $n$ densidades individuales:
+            $$L(\alpha, \beta \mid \mathbf{x}) = \prod_{i=1}^n \left[\frac{1}{\Gamma(\alpha)\beta^\alpha}x_i^{\alpha - 1}e^{-x_i/\beta}\1_{\{x_i &gt; 0\}}\right] = [\Gamma(\alpha)]^{-n}\beta^{-n\alpha}\left(\prod_{i=1}^n x_i\right)^{\alpha - 1}\exp\left(-\frac{1}{\beta}\sum_{i=1}^n x_i\right)\1_{\{x_{(1)} &gt; 0\}}.$$</li>
+          <li><strong>Identificación de $g$ y $h$:</strong> Dado que tanto $\alpha$ como $\beta$ son desconocidos, ninguno de los dos bloques que contienen datos junto a los parámetros puede enviarse a $h(\mathbf{x})$. En cambio, la indicadora de positividad $\1_{\{x_{(1)} &gt; 0\}}$ no depende de $(\alpha, \beta)$:
+            $$L(\alpha, \beta \mid \mathbf{x}) = \underbrace{[\Gamma(\alpha)]^{-n}\beta^{-n\alpha}\left(\prod_{i=1}^n x_i\right)^{\alpha - 1}\exp\left(-\frac{1}{\beta}\sum_{i=1}^n x_i\right)}_{g\big(\prod x_i,\; \sum x_i,\; \alpha,\; \beta\big)} \times \underbrace{\1_{\{x_{(1)} &gt; 0\}}}_{h(\mathbf{x})}.$$</li>
+          <li><strong>Conclusión:</strong> Por el criterio de factorización multiparamétrico, el vector
+            $$\mathbf{T}(\mathbf{X}) = \left(\prod_{i=1}^n X_i,\; \sum_{i=1}^n X_i\right)$$
+            —o de manera biyectivamente equivalente $\mathbf{U}(\mathbf{X}) = \big(\sum_{i=1}^n \ln X_i,\; \sum_{i=1}^n X_i\big)$— es <strong>conjuntamente suficiente</strong> para $(\alpha, \beta)$.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJEMPLO 3 -->
+    <div class="box ejercicio" id="ej-3">
+      <span class="box-title">Ejemplo 3 · Uniforme $U(\theta_1, \theta_2)$ con ambos extremos desconocidos</span>
+      <p>Sean $X_1, X_2, \dots, X_n$ variables aleatorias $\iid U(\theta_1, \theta_2)$, con $\theta_1 &lt; \theta_2$ ambos desconocidos. Encuentre un estadístico conjuntamente suficiente para $(\theta_1, \theta_2)$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>No olvides escribir la función indicadora del soporte en cada densidad: $f(x_i \mid \theta_1, \theta_2) = \frac{1}{\theta_2 - \theta_1}\1_{\{\theta_1 \le x_i \le \theta_2\}}$. Recuerda que todas las observaciones cumplen $\theta_1 \le x_i \le \theta_2$ si y solo si el mínimo cumple $\theta_1 \le x_{(1)}$ y el máximo cumple $x_{(n)} \le \theta_2$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><strong>Verosimilitud completa con soporte explícito:</strong>
+            $$L(\theta_1, \theta_2 \mid \mathbf{x}) = \prod_{i=1}^n \left(\frac{1}{\theta_2 - \theta_1}\1_{\{\theta_1 \le x_i \le \theta_2\}}\right) = (\theta_2 - \theta_1)^{-n}\prod_{i=1}^n \1_{\{\theta_1 \le x_i \le \theta_2\}}.$$</li>
+          <li><strong>Reducción del producto de indicadoras mediante estadísticos de orden:</strong> Sea $x_{(1)} = \min_{1 \le i \le n} x_i$ y $x_{(n)} = \max_{1 \le i \le n} x_i$. La condición $\theta_1 \le x_i \le \theta_2$ se cumple para todo $i = 1, \dots, n$ si y solo si:
+            $$\prod_{i=1}^n \1_{\{\theta_1 \le x_i \le \theta_2\}} = \1_{\{\theta_1 \le x_{(1)}\}}\,\1_{\{x_{(n)} \le \theta_2\}}\,\1_{\{x_{(1)} \le x_{(n)}\}}.$$</li>
+          <li><strong>Factorización de Fisher–Neyman:</strong> Separamos los términos ligados a $(\theta_1, \theta_2)$ de la restricción estructural de la muestra:
+            $$L(\theta_1, \theta_2 \mid \mathbf{x}) = \underbrace{\frac{1}{(\theta_2 - \theta_1)^n}\,\1_{\{\theta_1 \le x_{(1)}\}}\,\1_{\{x_{(n)} \le \theta_2\}}}_{g\big(x_{(1)},\; x_{(n)},\; \theta_1,\; \theta_2\big)} \times \underbrace{\1_{\{x_{(1)} \le x_{(n)}\}}}_{h(\mathbf{x})}.$$</li>
+          <li><strong>Conclusión:</strong> Tanto $g \ge 0$ como $h \ge 0$ cumplen el teorema, y $h(\mathbf{x})$ no depende de $(\theta_1, \theta_2)$. Por consiguiente,
+            $$\mathbf{T}(\mathbf{X}) = \big(X_{(1)},\; X_{(n)}\big) = \big(\min_i X_i,\; \max_i X_i\big)$$
+            es un estadístico <strong>conjuntamente suficiente</strong> para $(\theta_1, \theta_2)$. Todos los puntos intermedios entre $X_{(1)}$ y $X_{(n)}$ pueden descartarse sin perder información sobre los extremos del intervalo.</li>
+        </ol>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="familia-exponencial-1d">2. Familia exponencial unidimensional</h2>
+    <p>Si observas con atención los Ejemplos 1 y 2 de la sección anterior (así como Bernoulli, Poisson, Exponencial y Normal de la Clase 15), notarás un patrón algebraico notable: en todos ellos, al escribir la densidad como una sola exponencial, la muestra interactúa con el parámetro únicamente mediante productos del tipo $c(\theta)T(x)$, y el soporte $A$ no cambia con $\theta$. La <strong>familia exponencial</strong> abstrae exactamente esa estructura.</p>
+
+    <div class="box definicion" id="def-fe-1d">
+      <span class="box-title">Definición · Familia exponencial (FE) unidimensional</span>
+      <p>Decimos que la distribución de la variable aleatoria $X$ pertenece a la <strong>familia exponencial (FE) unidimensional</strong> de distribuciones si su función de densidad (en el caso continuo) o función de probabilidad (en el caso discreto) puede escribirse de la forma:</p>
+      $$f(x \mid \theta) = \exp\big\{c(\theta)T(x) + d(\theta) + S(x)\big\}, \qquad x \in A,$$
+      <p>donde $c$ y $d$ son funciones reales de $\theta$; $T$ y $S$ son funciones reales de $x$; y el soporte $A$ <strong>no depende de $\theta$</strong> (entendiendo $f(x \mid \theta) = 0$ para $x \notin A$).</p>
+    </div>
+
+    <div class="box nota" id="obs-fe-norm">
+      <span class="box-title">Observación 1 · Constante de normalización, $\E[T(X)]$ y $\Var(T(X))$</span>
+      <p>Cuando $X$ es continua, para que $f(x \mid \theta)$ sea una densidad válida es necesario que integre $1$ sobre $A$:</p>
+      $$\int_A \exp\big\{c(\theta)T(x) + d(\theta) + S(x)\big\}\,dx = 1 \iff \int_A \exp\big\{c(\theta)T(x) + S(x)\big\}\,dx = \exp\big\{-d(\theta)\big\}.$$
+      <p>De manera análoga, si $X$ es discreta, $\sum_{x \in A} \exp\{c(\theta)T(x) + S(x)\} = \exp\{-d(\theta)\}$. Así, <strong>$d(\theta)$ está directamente asociado a la constante de normalización</strong> de la distribución.</p>
+      <p>Más aún, como el soporte $A$ es fijo (no depende de $\theta$), podemos derivar la identidad $\int_A f(x \mid \theta)\,dx = 1$ respecto a $\theta$ bajo el signo integral (bajo las condiciones de regularidad habituales de la FE):</p>
+      $$\int_A \big[c'(\theta)T(x) + d'(\theta)\big]f(x \mid \theta)\,dx = 0 \implies c'(\theta)\,\E[T(X)] + d'(\theta) = 0 \implies \E\big[T(X)\big] = -\frac{d'(\theta)}{c'(\theta)},$$
+      <p>siempre que $c'(\theta) \ne 0$. Derivando una segunda vez respecto a $\theta$:</p>
+      $$\int_A \Big\{c''(\theta)T(x) + d''(\theta) + \big[c'(\theta)T(x) + d'(\theta)\big]^2\Big\}f(x \mid \theta)\,dx = 0 \implies c''(\theta)\E[T(X)] + d''(\theta) + [c'(\theta)]^2\Var\big(T(X)\big) = 0,$$
+      <p>de donde al sustituir $\E[T(X)] = -d'(\theta)/c'(\theta)$ se obtiene inmediatamente la varianza de $T(X)$:</p>
+      $$\Var\big(T(X)\big) = \frac{d'(\theta)c''(\theta) - c'(\theta)d''(\theta)}{[c'(\theta)]^3}.$$
+    </div>
+
+    <div class="box cuidado" id="cuidado-no-fe">
+      <span class="box-title">¡Cuidado! ¿Cuándo un modelo NO pertenece a la familia exponencial?</span>
+      <p>Para pertenecer a la FE, la distribución debe cumplir simultáneamente dos requisitos estrictos. Basta que falle uno para quedar fuera:</p>
+      <ol>
+        <li><strong>El soporte $A(\theta)$ depende del parámetro $\theta$:</strong> Como $\exp(\cdot)$ es estrictamente positiva en todo $\R$, la única forma de anular $f(x \mid \theta)$ fuera del soporte es multiplicar por $\1_{\{x \in A\}}$, donde $A$ debe ser fijo. Modelos como $U(0, \theta)$ ($0 \le x \le \theta$), $U(\theta_1, \theta_2)$ ($\theta_1 \le x \le \theta_2$) o la Exponencial desplazada $f(x \mid \theta) = e^{-(x-\theta)}\1_{\{x \ge \theta\}}$ <strong>no</strong> pertenecen a la FE.</li>
+        <li><strong>No es posible separar $\theta$ y $x$ en productos $c(\theta)T(x)$:</strong> Aunque el soporte sea fijo ($A = \R$), el logaritmo $\ln f(x \mid \theta)$ debe descomponerse en una suma finita $\sum_{j=1}^k c_j(\theta)T_j(x) + d(\theta) + S(x)$. Por ejemplo, la distribución de Cauchy $f(x \mid \theta) = \frac{1}{\pi[1 + (x-\theta)^2]}$ ($x \in \R$) tiene $\ln f(x \mid \theta) = -\ln\pi - \ln[1+(x-\theta)^2]$, donde $x$ y $\theta$ quedan inextricablemente mezclados; por eso <strong>no</strong> pertenece a la FE.</li>
+      </ol>
+    </div>
+
+    <!-- EJEMPLO 4 -->
+    <div class="box ejercicio" id="ej-4">
+      <span class="box-title">Ejemplo 4 · $\text{Bernoulli}(\theta)$ como familia exponencial unidimensional</span>
+      <p>Sea $X \sim \text{Bernoulli}(\theta)$, con $\theta \in (0, 1)$. Demuestre que pertenece a la FE unidimensional, identifique $c(\theta)$, $d(\theta)$, $T(x)$, $S(x)$ y $A$, y verifique el valor de $\E[X]$ mediante la Observación 1.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Escribe $f(x \mid \theta) = \theta^x(1-\theta)^{1-x} = \big(\frac{\theta}{1-\theta}\big)^x(1-\theta)$ y aplica $\exp\{\ln(\cdot)\}$ usando las leyes de los logaritmos.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><strong>Reescritura en forma exponencial:</strong> Para $x \in A = \{0, 1\}$,
+            $$f(x \mid \theta) = \theta^x(1-\theta)^{1-x} = \left(\frac{\theta}{1-\theta}\right)^x (1-\theta) = \exp\left\{x\ln\left(\frac{\theta}{1-\theta}\right) + \ln(1-\theta)\right\}.$$</li>
+          <li><strong>Identificación de los componentes:</strong> Comparando término a término con $\exp\{c(\theta)T(x) + d(\theta) + S(x)\}$, la distribución de $X$ pertenece a la FE unidimensional con:
+            $$c(\theta) = \ln\left(\frac{\theta}{1-\theta}\right), \qquad d(\theta) = \ln(1-\theta), \qquad T(x) = x, \qquad S(x) = 0, \qquad A = \{0, 1\}.$$</li>
+          <li><strong>Verificación de la esperanza y la varianza:</strong> Derivando $c(\theta) = \ln\theta - \ln(1-\theta)$ y $d(\theta) = \ln(1-\theta)$:
+            $$c'(\theta) = \frac{1}{\theta} + \frac{1}{1-\theta} = \frac{1}{\theta(1-\theta)}, \qquad d'(\theta) = -\frac{1}{1-\theta}.$$
+            Aplicando la Observación 1:
+            $$\E[X] = \E[T(X)] = -\frac{d'(\theta)}{c'(\theta)} = -\frac{-1/(1-\theta)}{1/[\theta(1-\theta)]} = \theta.$$
+            De forma similar, $c''(\theta) = -\frac{1-2\theta}{\theta^2(1-\theta)^2}$ y $d''(\theta) = -\frac{1}{(1-\theta)^2}$, por lo que la fórmula de la varianza reproduce exactamente $\Var(X) = \theta(1-\theta)$.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJEMPLO 5 -->
+    <div class="box ejercicio" id="ej-5">
+      <span class="box-title">Ejemplo 5 · $N(\mu, 1)$ como familia exponencial unidimensional</span>
+      <p>Sea $X \sim N(\mu, 1)$, con $\mu \in \R$ desconocido. Demuestre que pertenece a la FE unidimensional e identifique todos sus elementos.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Expande $-\frac{(x-\mu)^2}{2} = \mu x - \frac{\mu^2}{2} - \frac{x^2}{2}$ e introduce la constante $\frac{1}{\sqrt{2\pi}}$ dentro de la exponencial como $-\ln\sqrt{2\pi}$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><strong>Reescritura exponencial de la densidad normal estándar desplazada:</strong> Para $x \in \R$,
+            $$f(x \mid \mu) = \frac{1}{\sqrt{2\pi}}\exp\left\{-\frac{(x-\mu)^2}{2}\right\} = \exp\left\{\mu x - \frac{\mu^2}{2} - \frac{x^2}{2} - \ln\sqrt{2\pi}\right\}.$$</li>
+          <li><strong>Identificación de los componentes:</strong> El soporte $A = \R$ no depende de $\mu$, luego $X$ pertenece a la FE unidimensional con:
+            $$c(\mu) = \mu, \qquad d(\mu) = -\frac{\mu^2}{2}, \qquad T(x) = x, \qquad S(x) = -\frac{x^2}{2} - \ln\sqrt{2\pi}, \qquad A = \R.$$</li>
+          <li><strong>Comprobación rápida de momentos:</strong> Aquí $c'(\mu) = 1$, $c''(\mu) = 0$, $d'(\mu) = -\mu$ y $d''(\mu) = -1$, por lo que $\E[X] = -(-\mu)/1 = \mu$ y $\Var(X) = [0 - 1(-1)]/1^3 = 1$.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <div class="box nota">
+      <span class="box-title">Observación 2 · Otros modelos clásicos en la FE unidimensional</span>
+      <p>Otras distribuciones muy frecuentes que pueden escribirse en la forma de la familia exponencial unidimensional son, por ejemplo, la <strong>Binomial</strong> (con número de ensayos $m$ fijo), la <strong>Poisson</strong> y la <strong>Exponencial</strong> (así como la Geométrica, la Gamma con un parámetro conocido o la Normal con $\sigma^2$ conocido o $\mu$ conocido).</p>
+    </div>
+
+    <!-- EJEMPLO 6 -->
+    <div class="box ejercicio" id="ej-6">
+      <span class="box-title">Ejemplo 6 · $\text{Beta}(\alpha, \beta)$ general frente al caso simétrico $\alpha = \beta = k$</span>
+      <p>Demuestre que la distribución $\text{Beta}(\alpha, \beta)$ general no pertenece a la familia exponencial unidimensional; sin embargo, el caso particular cuando $\alpha = \beta = k &gt; 0$, sí.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Escribe la densidad $f(x \mid \alpha, \beta) = \frac{1}{B(\alpha, \beta)}x^{\alpha - 1}(1-x)^{\beta - 1}$ dentro de $\exp\{\cdot\}$ para $x \in (0, 1)$. Observa cuántos términos distintos con funciones de $x$ multiplicadas por parámetros aparecen, y qué ocurre cuando impones $\alpha = \beta = k$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><strong>Forma exponencial de $\text{Beta}(\alpha, \beta)$:</strong> Para $x \in A = (0, 1)$, la función beta cumple $B(\alpha, \beta) = \frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}$, así que:
+            $$f(x \mid \alpha, \beta) = \frac{1}{B(\alpha, \beta)}x^{\alpha - 1}(1-x)^{\beta - 1} = \exp\Big\{(\alpha - 1)\ln x + (\beta - 1)\ln(1 - x) - \ln B(\alpha, \beta)\Big\}.$$</li>
+          <li><strong>Por qué la $\text{Beta}(\alpha, \beta)$ general NO pertenece a la FE unidimensional:</strong> En el exponente aparecen <strong>dos</strong> funciones de $x$ linealmente independientes en $(0, 1)$ —a saber, $\ln x$ y $\ln(1 - x)$— multiplicadas por dos coeficientes independientes $(\alpha - 1)$ y $(\beta - 1)$. No existe una descomposición de la forma $c(\alpha, \beta)T(x) + d(\alpha, \beta) + S(x)$ con un único término $c(\cdot)T(x)$ cuando ambos parámetros varían libremente (como veremos en la Sección 3, pertenece a la FE <em>bidimensional</em>).</li>
+          <li><strong>Caso particular $\alpha = \beta = k &gt; 0$:</strong> Al igualar ambos parámetros a $k$, los dos coeficientes coinciden en $(k - 1)$, lo que permite factorizar un único término común:
+            $$(k - 1)\ln x + (k - 1)\ln(1 - x) = (k - 1)\big[\ln x + \ln(1 - x)\big] = (k - 1)\ln\big[x(1 - x)\big].$$
+            Por lo tanto,
+            $$f(x \mid k) = \exp\Big\{(k - 1)\ln\big[x(1 - x)\big] - \ln B(k, k)\Big\}, \qquad x \in (0, 1),$$
+            que <strong>sí pertenece a la FE unidimensional</strong> con:
+            $$c(k) = k - 1, \quad T(x) = \ln\big[x(1 - x)\big], \quad d(k) = -\ln B(k, k) = \ln\Gamma(2k) - 2\ln\Gamma(k), \quad S(x) = 0, \quad A = (0, 1).$$</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <p><strong>Pregunta natural:</strong> Si tomamos $n$ observaciones independientes de una distribución en la FE unidimensional, ¿será la distribución conjunta de toda la muestra también miembro de la familia exponencial?</p>
+
+    <div class="box teorema" id="thm-muestra-fe">
+      <span class="box-title">Teorema 1 · Cerradura bajo muestras aleatorias i.i.d.</span>
+      <p>Sean $X_1, \dots, X_n$ una muestra aleatoria de tamaño $n$ de $X$, cuya distribución pertenece a la FE unidimensional con f.d.p. conocida $f(x \mid \theta) = \exp\{c(\theta)T(x) + d(\theta) + S(x)\}$ ($x \in A$). Entonces la distribución conjunta de $\mathbf{X} = (X_1, \dots, X_n)$ está dada por:</p>
+      $$f(\mathbf{x} \mid \theta) = \prod_{i=1}^n \exp\big\{c(\theta)T(x_i) + d(\theta) + S(x_i)\big\} = \exp\left\{c(\theta)\sum_{i=1}^n T(x_i) + n\,d(\theta) + \sum_{i=1}^n S(x_i)\right\}, \qquad \mathbf{x} \in A^n.$$
+      <p>Así, la distribución conjunta también pertenece a la FE unidimensional con:</p>
+      $$T(\mathbf{X}) = \sum_{i=1}^n T(X_i), \qquad c^*(\theta) = c(\theta), \qquad d^*(\theta) = n\,d(\theta), \qquad S(\mathbf{x}) = \sum_{i=1}^n S(x_i).$$
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="fe-suficiencia-multidimensional">3. Suficiencia en la FE, caso k-dimensional y ecuación del EMV</h2>
+    <p>El Teorema 1 nos entrega un atajo extraordinario para la suficiencia. Observando la distribución conjunta de la muestra $f(\mathbf{x} \mid \theta)$ e incluyendo la indicadora del soporte fijo $A^n$, podemos definir:</p>
+    $$g(T, \theta) = \exp\left\{c(\theta)\sum_{i=1}^n T(x_i) + n\,d(\theta)\right\} \qquad \text{y} \qquad h(\mathbf{x}) = \exp\left\{\sum_{i=1}^n S(x_i)\right\}\prod_{i=1}^n \1_{\{x_i \in A\}}.$$
+    <p>Como $h(\mathbf{x}) \ge 0$ no depende de $\theta$ y $g \ge 0$ depende de la muestra únicamente a través de $T(\mathbf{x}) = \sum_{i=1}^n T(x_i)$, el criterio de factorización de Fisher–Neyman garantiza de forma automática que <strong>$T(\mathbf{X}) = \sum_{i=1}^n T(X_i)$ es un estadístico suficiente para $\theta$</strong>.</p>
+
+    <div class="box definicion" id="def-fe-kd">
+      <span class="box-title">Definición · Familia exponencial de dimensión $k$ (caso multidimensional)</span>
+      <p>Decimos que la distribución de la v.a. (o vector aleatorio) $X$ pertenece a la <strong>familia exponencial (FE) de dimensión $k$</strong> si su función de densidad (o de probabilidad) puede escribirse como:</p>
+      $$f(x \mid \boldsymbol{\theta}) = \exp\left\{\sum_{j=1}^k c_j(\boldsymbol{\theta})T_j(x) + d(\boldsymbol{\theta}) + S(x)\right\}, \qquad x \in A,$$
+      <p>donde $c_j$, $T_j$, $d$ y $S$ son funciones reales ($j = 1, \dots, k$), $d(\boldsymbol{\theta})$ está asociado a la constante de normalización y el soporte $A$ no depende de $\boldsymbol{\theta}$.</p>
+    </div>
+
+    <div class="box nota" id="obs-fe-kd">
+      <span class="box-title">Observaciones 3 y 4 · Lectura directa de la suficiencia conjunta en $k$ dimensiones</span>
+      <ul>
+        <li><strong>Observación 3:</strong> En la FE de dimensión $k$ hay $k$ estadísticos individuales $T_j(X)$ y $k$ funciones de parámetros respectivos $c_j(\boldsymbol{\theta})$, para $j = 1, \dots, k$.</li>
+        <li><strong>Observación 4:</strong> Por el criterio de factorización, cada $T_j(X)$ es el estadístico ligado a $c_j(\boldsymbol{\theta})$ (y es suficiente para $c_j(\boldsymbol{\theta})$ cuando los demás se mantienen fijos o en la parametrización natural). Al tomar una muestra aleatoria $X_1, \dots, X_n$, la densidad conjunta factoriza como:
+          $$f(\mathbf{x} \mid \boldsymbol{\theta}) = \underbrace{\exp\left\{\sum_{j=1}^k c_j(\boldsymbol{\theta})\left(\sum_{i=1}^n T_j(x_i)\right) + n\,d(\boldsymbol{\theta})\right\}}_{g\big(\mathbf{T}(\mathbf{x}),\, \boldsymbol{\theta}\big)} \times \underbrace{\exp\left\{\sum_{i=1}^n S(x_i)\right\}\prod_{i=1}^n \1_{\{x_i \in A\}}}_{h(\mathbf{x})},$$
+          por lo que el vector $\mathbf{T}(\mathbf{X}) = \left(\sum_{i=1}^n T_1(X_i),\; \dots,\; \sum_{i=1}^n T_k(X_i)\right)$ es <strong>conjuntamente suficiente para $\boldsymbol{\theta}$</strong>.</li>
+      </ul>
+    </div>
+
+    <!-- EJEMPLO 7 -->
+    <div class="box ejercicio" id="ej-7">
+      <span class="box-title">Ejemplo 7 · Normal $N(\mu, \sigma^2)$ como FE bidimensional</span>
+      <p>Considere el caso general $X \sim N(\mu, \sigma^2)$ con vector de parámetros desconocido $\boldsymbol{\theta} = (\mu, \sigma^2)$. Demuestre que pertenece a la familia exponencial bidimensional ($k = 2$) e identifique sus componentes y estadísticos conjuntamente suficientes para una muestra de tamaño $n$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Desarrolla el exponente $-\frac{(x-\mu)^2}{2\sigma^2} = -\frac{1}{2\sigma^2}x^2 + \frac{\mu}{\sigma^2}x - \frac{\mu^2}{2\sigma^2}$ y reescribe $\frac{1}{\sqrt{2\pi}\sigma} = \exp\big(-\frac{1}{2}\ln\sigma^2 - \ln\sqrt{2\pi}\big)$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><strong>Escritura exponencial de la densidad:</strong> Para $x \in \R$,
+            $$f(x \mid \mu, \sigma^2) = \frac{1}{\sqrt{2\pi}\sigma}\exp\left\{-\frac{(x-\mu)^2}{2\sigma^2}\right\} = \exp\left\{-\frac{1}{2\sigma^2}x^2 + \frac{\mu}{\sigma^2}x - \frac{\mu^2}{2\sigma^2} - \frac{1}{2}\ln\sigma^2 - \ln\sqrt{2\pi}\right\}.$$</li>
+          <li><strong>Identificación en la FE bidimensional ($k = 2$):</strong>
+            $$T_1(x) = x, \qquad T_2(x) = x^2, \qquad c_1(\boldsymbol{\theta}) = \frac{\mu}{\sigma^2}, \qquad c_2(\boldsymbol{\theta}) = -\frac{1}{2\sigma^2},$$
+            $$d(\boldsymbol{\theta}) = -\frac{\mu^2}{2\sigma^2} - \frac{1}{2}\ln\sigma^2, \qquad S(x) = -\ln\sqrt{2\pi}, \qquad A = \R.$$</li>
+          <li><strong>Observación 5 (una observación):</strong> $T_1(X) = X$ y $T_2(X) = X^2$ son estadísticos conjuntamente suficientes para $\boldsymbol{\theta} = (\mu, \sigma^2) = g\big(c_1(\boldsymbol{\theta}), c_2(\boldsymbol{\theta})\big)$, puesto que la correspondencia $(c_1, c_2) \mapsto \big(-\frac{c_1}{2c_2},\, -\frac{1}{2c_2}\big) = (\mu, \sigma^2)$ es biyectiva.</li>
+          <li><strong>Observación 6 (muestra aleatoria de tamaño $n$):</strong> Al tomar $X_1, \dots, X_n \iid N(\mu, \sigma^2)$, sumamos cada $T_j(X_i)$ y concluimos sin ninguna cuenta adicional que
+            $$T_1(\mathbf{X}) = \sum_{i=1}^n X_i \qquad \text{y} \qquad T_2(\mathbf{X}) = \sum_{i=1}^n X_i^2$$
+            son estadísticos <strong>conjuntamente suficientes</strong> para $\boldsymbol{\theta} = (\mu, \sigma^2)$.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <div class="box teorema" id="thm-emv-fe">
+      <span class="box-title">Teorema · Ecuación del EMV en la familia exponencial</span>
+      <p>En una familia exponencial regular (cuando $c(\theta)$ es diferenciable con $c'(\theta) \ne 0$, o en el caso $k$-dimensional cuando el jacobiano $\big[\frac{\partial c_j}{\partial \theta_m}\big]$ es invertible y el máximo está en el interior del espacio paramétrico), el <strong>estimador de máxima verosimilitud (EMV)</strong> basado en la muestra $\mathbf{X}$ es la solución a la ecuación:</p>
+      $$\E_{\theta}\big[T(\mathbf{X})\big] = T(\mathbf{X}),$$
+      <p>y en el caso multiparamétrico es la solución al sistema de $k$ ecuaciones:</p>
+      $$\E_{\boldsymbol{\theta}}\big[T_j(\mathbf{X})\big] = T_j(\mathbf{X}), \qquad j = 1, \dots, k.$$
+    </div>
+
+    <details class="prueba"><summary>Demostración en 3 pasos (¿por qué igualar la esperanza al estadístico suficiente da el EMV?)</summary><div>
+      <ol class="pasos">
+        <li><strong>Log-verosimilitud de la muestra:</strong> Por el Teorema 1, para una muestra $\mathbf{X} = (X_1, \dots, X_n)$ de una FE unidimensional con $T(\mathbf{X}) = \sum_{i=1}^n T(X_i)$,
+          $$\ell(\theta) = \ln L(\theta \mid \mathbf{X}) = c(\theta)\,T(\mathbf{X}) + n\,d(\theta) + \sum_{i=1}^n S(X_i).$$</li>
+        <li><strong>Ecuación de verosimilitud (score igualado a cero):</strong> Derivando $\ell(\theta)$ respecto a $\theta$ e igualando a cero:
+          $$\frac{\partial\ell(\theta)}{\partial\theta} = c'(\theta)\,T(\mathbf{X}) + n\,d'(\theta) = 0 \implies T(\mathbf{X}) = -n\,\frac{d'(\theta)}{c'(\theta)}.$$</li>
+        <li><strong>Identificación con la esperanza:</strong> Por la Observación 1, $\E_\theta[T(X_i)] = -\frac{d'(\theta)}{c'(\theta)}$ para cada $i$, luego por linealidad $\E_\theta[T(\mathbf{X})] = \sum_{i=1}^n \E_\theta[T(X_i)] = -n\,\frac{d'(\theta)}{c'(\theta)}$. En consecuencia, todo punto crítico $\hat\theta$ satisface exactamente:
+          $$\E_{\hat\theta}\big[T(\mathbf{X})\big] = T(\mathbf{X}).$$
+          <em>Caso $k$-dimensional:</em> Derivando $\int_A f(x \mid \boldsymbol{\theta})\,dx = 1$ respecto a cada coordenada $\theta_m$ se obtiene $\sum_{j=1}^k \frac{\partial c_j}{\partial\theta_m}\E_{\boldsymbol{\theta}}[T_j(X)] + \frac{\partial d}{\partial\theta_m} = 0$. Al compararlo con $\frac{\partial\ell}{\partial\theta_m} = \sum_{j=1}^k \frac{\partial c_j}{\partial\theta_m}T_j(\mathbf{X}) + n\frac{\partial d}{\partial\theta_m} = 0$, resulta $\sum_{j=1}^k \frac{\partial c_j}{\partial\theta_m}\big(T_j(\mathbf{X}) - \E_{\boldsymbol{\theta}}[T_j(\mathbf{X})]\big) = 0$. Cuando la matriz jacobiana $[\partial c_j/\partial\theta_m]$ es invertible, esto equivale exactamente a $\E_{\boldsymbol{\theta}}[T_j(\mathbf{X})] = T_j(\mathbf{X})$ para $j = 1, \dots, k$.</li>
+      </ol>
+    </div></details>
+
+    <!-- EJEMPLO 8 -->
+    <div class="box ejercicio" id="ej-8">
+      <span class="box-title">Ejemplo 8 · EMV de $(\mu, \sigma^2)$ en $N(\mu, \sigma^2)$ vía la ecuación de la FE</span>
+      <p>Aplique la ecuación del EMV $\E_{\boldsymbol{\theta}}[T_j(\mathbf{X})] = T_j(\mathbf{X})$ a los estadísticos conjuntamente suficientes obtenidos en el Ejemplo 7 para $X_1, \dots, X_n \iid N(\mu, \sigma^2)$ y deduzca $(\hat\mu, \hat\sigma^2)$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Usa $T_1(\mathbf{X}) = \sum_{i=1}^n X_i$ y $T_2(\mathbf{X}) = \sum_{i=1}^n X_i^2$. Calcula $\E[X_i] = \mu$ y $\E[X_i^2] = \Var(X_i) + (\E[X_i])^2 = \sigma^2 + \mu^2$, suma hasta $n$ y despeja $\hat\mu$ y $\hat\sigma^2$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><strong>Cálculo de $\E[T_1(\mathbf{X})]$ y $\E[T_2(\mathbf{X})]$:</strong> Para cada $X_i \sim N(\mu, \sigma^2)$, $\E[X_i] = \mu$ y $\E[X_i^2] = \Var(X_i) + (\E[X_i])^2 = \sigma^2 + \mu^2$. Por linealidad:
+            $$\E[T_1(\mathbf{X})] = \sum_{i=1}^n \E[X_i] = n\mu, \qquad \E[T_2(\mathbf{X})] = \sum_{i=1}^n \E[X_i^2] = n(\sigma^2 + \mu^2).$$</li>
+          <li><strong>Planteamiento de la ecuación $\E_{\hat{\boldsymbol{\theta}}}[T_j(\mathbf{X})] = T_j(\mathbf{X})$:</strong>
+            $$n\hat\mu = \sum_{i=1}^n X_i \qquad \text{y} \qquad n(\hat\sigma^2 + \hat\mu^2) = \sum_{i=1}^n X_i^2.$$</li>
+          <li><strong>Resolución del sistema:</strong> De la primera ecuación obtenemos $\hat\mu = \frac{1}{n}\sum_{i=1}^n X_i = \bar X$. Sustituyendo $\hat\mu = \bar X$ en la segunda ecuación:
+            $$\hat\sigma^2 = \frac{1}{n}\sum_{i=1}^n X_i^2 - \bar X^2 = \frac{1}{n}\left(\sum_{i=1}^n X_i^2 - n\bar X^2\right) = \frac{1}{n}\sum_{i=1}^n (X_i - \bar X)^2.$$</li>
+          <li><strong>Conclusión:</strong> Recuperamos de forma directa el par de estimadores de máxima verosimilitud conocidos:
+            $$\hat\mu = \frac{1}{n}\sum_{i=1}^n X_i = \bar X \qquad \text{y} \qquad \hat\sigma^2 = \frac{1}{n}\sum_{i=1}^n (X_i - \bar X)^2.$$</li>
+        </ol>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="ejercicios-clase-16">4. Ejercicios resueltos de la Clase 16</h2>
+    <p>Resolvemos ahora todos los ejercicios propuestos al final de la Clase 16: verificación de pertenencia a la familia exponencial, identificación de estadísticos suficientes y cálculo del EMV en cinco familias clásicas, junto con los ejercicios 9.54 y 9.55 de Wackerly.</p>
+
+    <!-- EJERCICIO GEO -->
+    <div class="box ejercicio" id="ej-fe-geo">
+      <span class="box-title">Ejercicio 1 · Distribución Geométrica $X \sim \text{Geo}(p)$</span>
+      <p>Verifique que la distribución geométrica $X \sim \text{Geo}(p)$ ($p \in (0, 1)$) pertenece a la familia exponencial, identifique un estadístico suficiente para una muestra $X_1, \dots, X_n \iid \text{Geo}(p)$ y halle el EMV $\hat p$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En la convención estándar de ensayos hasta el primer éxito, $f(x \mid p) = p(1-p)^{x-1}$ para $x \in \{1, 2, \dots\}$. Reescribe $(1-p)^{x-1} = \frac{(1-p)^x}{1-p}$ y aplica $\exp\{\ln(\cdot)\}$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><strong>Forma exponencial (convención de ensayos $x \in \{1, 2, \dots\}$):</strong> La función de probabilidad es $f(x \mid p) = p(1-p)^{x-1}$ para $x \in A = \{1, 2, 3, \dots\}$ (soporte independiente de $p$). Reescribiendo:
+            $$f(x \mid p) = \frac{p}{1-p}(1-p)^x = \exp\left\{x\ln(1-p) + \ln\left(\frac{p}{1-p}\right)\right\}, \qquad x \in A = \{1, 2, \dots\}.$$
+            Pertenece a la FE unidimensional con:
+            $$c(p) = \ln(1-p), \qquad T(x) = x, \qquad d(p) = \ln\left(\frac{p}{1-p}\right), \qquad S(x) = 0, \qquad A = \{1, 2, \dots\}.$$</li>
+          <li><strong>Estadístico suficiente muestral:</strong> Para una muestra $X_1, \dots, X_n \iid \text{Geo}(p)$, el estadístico suficiente para $p$ es $T(\mathbf{X}) = \sum_{i=1}^n X_i$ (o equivalentemente $\bar X$).</li>
+          <li><strong>EMV mediante $\E_p[T(\mathbf{X})] = T(\mathbf{X})$:</strong> Como $\E_p[X_i] = \frac{1}{p}$ (también verificable con $-d'(p)/c'(p) = -\frac{1/[p(1-p)]}{-1/(1-p)} = \frac{1}{p}$), la ecuación del EMV es:
+            $$\frac{n}{\hat p} = \sum_{i=1}^n X_i \implies \hat p = \frac{n}{\sum_{i=1}^n X_i} = \frac{1}{\bar X}.$$</li>
+        </ol>
+        <p><em>Nota sobre la convención alternativa (número de fracasos antes del primer éxito, $x \in \{0, 1, 2, \dots\}$):</em> En esa convención $f(x \mid p) = p(1-p)^x = \exp\{x\ln(1-p) + \ln p\}$, por lo que sigue en la FE con $c(p) = \ln(1-p)$, $T(x) = x$, $d(p) = \ln p$, $S(x) = 0$ y $A = \{0, 1, \dots\}$. El estadístico suficiente sigue siendo $\sum_{i=1}^n X_i$, y como $\E_p[X_i] = \frac{1-p}{p}$, la ecuación $\frac{n(1-\hat p)}{\hat p} = \sum_{i=1}^n X_i$ produce $\hat p = \frac{1}{1 + \bar X}$.</p>
+      </div></details>
+    </div>
+
+    <!-- EJERCICIO POISSON -->
+    <div class="box ejercicio" id="ej-fe-pois">
+      <span class="box-title">Ejercicio 2 · Distribución de Poisson $X \sim \text{Poisson}(\lambda)$</span>
+      <p>Verifique que $X \sim \text{Poisson}(\lambda)$ ($\lambda &gt; 0$) pertenece a la familia exponencial, identifique un estadístico suficiente para una muestra $X_1, \dots, X_n$ y obtenga el EMV $\hat\lambda$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Escribe $\lambda^x = \exp(x\ln\lambda)$ y $1/x! = \exp(-\ln(x!))$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><strong>Forma exponencial:</strong> Para $x \in A = \{0, 1, 2, \dots\}$ (soporte fijo libre de $\lambda$):
+            $$f(x \mid \lambda) = \frac{e^{-\lambda}\lambda^x}{x!} = \exp\big\{x\ln\lambda - \lambda - \ln(x!)\big\}.$$
+            Luego $X \sim \text{Poisson}(\lambda)$ pertenece a la FE unidimensional con:
+            $$c(\lambda) = \ln\lambda, \qquad T(x) = x, \qquad d(\lambda) = -\lambda, \qquad S(x) = -\ln(x!), \qquad A = \{0, 1, 2, \dots\}.$$</li>
+          <li><strong>Estadístico suficiente muestral:</strong> Para una muestra i.i.d. de tamaño $n$, $T(\mathbf{X}) = \sum_{i=1}^n X_i$ (equivalentemente $\bar X$) es suficiente para $\lambda$.</li>
+          <li><strong>EMV:</strong> Como $\E_\lambda[X_i] = -d'(\lambda)/c'(\lambda) = -(-1)/(1/\lambda) = \lambda$, se tiene $\E_\lambda[T(\mathbf{X})] = n\lambda$. Igualando a $T(\mathbf{X})$:
+            $$n\hat\lambda = \sum_{i=1}^n X_i \implies \hat\lambda = \frac{1}{n}\sum_{i=1}^n X_i = \bar X.$$</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJERCICIO EXP -->
+    <div class="box ejercicio" id="ej-fe-exp">
+      <span class="box-title">Ejercicio 3 · Distribución Exponencial $X \sim \text{Exp}(\beta)$ (media $\beta$)</span>
+      <p>Verifique que $X \sim \text{Exp}(\beta)$ (con parámetro de escala/media $\beta &gt; 0$, es decir $f(x \mid \beta) = \frac{1}{\beta}e^{-x/\beta}\1_{\{x &gt; 0\}}$) pertenece a la familia exponencial, identifique el estadístico suficiente muestral y deduzca el EMV $\hat\beta$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Coloca $\frac{1}{\beta} = \exp(-\ln\beta)$ dentro de la exponencial. Recuerda que si en otro ejercicio te dan la parametrización por tasa $\lambda = 1/\beta$, basta sustituir $1/\beta$ por $\lambda$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><strong>Forma exponencial:</strong> Para $x \in A = (0, \infty)$ (soporte independiente de $\beta$):
+            $$f(x \mid \beta) = \frac{1}{\beta}e^{-x/\beta} = \exp\left\{-\frac{1}{\beta}x - \ln\beta\right\}.$$
+            Pertenece a la FE unidimensional con:
+            $$c(\beta) = -\frac{1}{\beta}, \qquad T(x) = x, \qquad d(\beta) = -\ln\beta, \qquad S(x) = 0, \qquad A = (0, \infty).$$</li>
+          <li><strong>Estadístico suficiente muestral:</strong> Para una muestra $X_1, \dots, X_n \iid \text{Exp}(\beta)$, $T(\mathbf{X}) = \sum_{i=1}^n X_i$ (o $\bar X$) es suficiente para $\beta$.</li>
+          <li><strong>EMV:</strong> Calculando $\E_\beta[X_i] = -d'(\beta)/c'(\beta) = -\frac{-1/\beta}{1/\beta^2} = \beta$, la ecuación $\E_{\hat\beta}[T(\mathbf{X})] = T(\mathbf{X})$ da:
+            $$n\hat\beta = \sum_{i=1}^n X_i \implies \hat\beta = \bar X.$$
+            <em>(Si se trabajara con tasa $\lambda = 1/\beta$, tendrías $c(\lambda) = -\lambda$, $d(\lambda) = \ln\lambda$, el mismo suficiente $\sum_{i=1}^n X_i$, y $\hat\lambda = 1/\bar X$).</em></li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJERCICIO GAMMA -->
+    <div class="box ejercicio" id="ej-fe-gamma">
+      <span class="box-title">Ejercicio 4 · Distribución Gamma $X \sim \text{Gamma}(\alpha, \beta)$ con $(\alpha, \beta)$ desconocidos</span>
+      <p>Verifique que $X \sim \text{Gamma}(\alpha, \beta)$ (escala $\beta &gt; 0$, forma $\alpha &gt; 0$, media $\alpha\beta$) pertenece a la familia exponencial bidimensional e identifique estadísticos conjuntamente suficientes para $(\alpha, \beta)$ en una muestra de tamaño $n$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Escribe $x^{\alpha - 1} = \exp\{(\alpha - 1)\ln x\}$ y lleva tanto $\Gamma(\alpha)$ como $\beta^\alpha$ al exponente como $-\ln\Gamma(\alpha) - \alpha\ln\beta$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><strong>Forma exponencial:</strong> Para $x \in A = (0, \infty)$ (soporte libre de $(\alpha, \beta)$):
+            $$f(x \mid \alpha, \beta) = \frac{1}{\Gamma(\alpha)\beta^\alpha}x^{\alpha - 1}e^{-x/\beta} = \exp\left\{(\alpha - 1)\ln x - \frac{1}{\beta}x - \ln\Gamma(\alpha) - \alpha\ln\beta\right\}.$$</li>
+          <li><strong>Identificación en la FE bidimensional ($k = 2$):</strong>
+            $$c_1(\alpha, \beta) = \alpha - 1, \quad T_1(x) = \ln x, \qquad c_2(\alpha, \beta) = -\frac{1}{\beta}, \quad T_2(x) = x,$$
+            $$d(\alpha, \beta) = -\ln\Gamma(\alpha) - \alpha\ln\beta, \qquad S(x) = 0, \qquad A = (0, \infty).$$</li>
+          <li><strong>Estadísticos conjuntamente suficientes muestrales:</strong> Para $X_1, \dots, X_n \iid \text{Gamma}(\alpha, \beta)$, la observación 4 nos da directamente:
+            $$T_1(\mathbf{X}) = \sum_{i=1}^n \ln X_i \qquad \text{y} \qquad T_2(\mathbf{X}) = \sum_{i=1}^n X_i$$
+            (equivalentemente $\prod_{i=1}^n X_i$ y $\sum_{i=1}^n X_i$, confirmando el Ejemplo 2 sin realizar producto alguno).</li>
+          <li><strong>Ecuaciones del EMV (complemento):</strong> Con $\psi(\alpha) = \frac{d}{d\alpha}\ln\Gamma(\alpha)$ (función digamma), $\E[\ln X_i] = \psi(\alpha) + \ln\beta$ y $\E[X_i] = \alpha\beta$. El sistema $\E[T_j(\mathbf{X})] = T_j(\mathbf{X})$ produce $\hat\beta = \bar X / \hat\alpha$ y la ecuación implícita $\ln\hat\alpha - \psi(\hat\alpha) = \ln\bar X - \frac{1}{n}\sum_{i=1}^n \ln X_i$.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJERCICIO BETA -->
+    <div class="box ejercicio" id="ej-fe-beta">
+      <span class="box-title">Ejercicio 5 · Distribución Beta $X \sim \text{Beta}(\alpha, \beta)$ con $(\alpha, \beta)$ desconocidos</span>
+      <p>Verifique que $X \sim \text{Beta}(\alpha, \beta)$ ($\alpha &gt; 0, \beta &gt; 0$) pertenece a la familia exponencial bidimensional e identifique estadísticos conjuntamente suficientes para $(\alpha, \beta)$ en una muestra de tamaño $n$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Toma el logaritmo de $x^{\alpha - 1}(1-x)^{\beta - 1}$ y sepáralo en dos términos: uno con $\ln x$ y otro con $\ln(1-x)$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><strong>Forma exponencial:</strong> Para $x \in A = (0, 1)$ (soporte fijo):
+            $$f(x \mid \alpha, \beta) = \frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}x^{\alpha-1}(1-x)^{\beta-1} = \exp\Big\{(\alpha - 1)\ln x + (\beta - 1)\ln(1-x) + \ln\Gamma(\alpha+\beta) - \ln\Gamma(\alpha) - \ln\Gamma(\beta)\Big\}.$$</li>
+          <li><strong>Identificación en la FE bidimensional ($k = 2$):</strong>
+            $$c_1(\alpha, \beta) = \alpha - 1, \quad T_1(x) = \ln x, \qquad c_2(\alpha, \beta) = \beta - 1, \quad T_2(x) = \ln(1-x),$$
+            $$d(\alpha, \beta) = -\ln B(\alpha, \beta) = \ln\Gamma(\alpha+\beta) - \ln\Gamma(\alpha) - \ln\Gamma(\beta), \qquad S(x) = 0, \qquad A = (0, 1).$$</li>
+          <li><strong>Estadísticos conjuntamente suficientes muestrales:</strong> Para una muestra i.i.d. de tamaño $n$, el par
+            $$T_1(\mathbf{X}) = \sum_{i=1}^n \ln X_i \qquad \text{y} \qquad T_2(\mathbf{X}) = \sum_{i=1}^n \ln(1 - X_i)$$
+            (o de manera biyectivamente equivalente $\big(\prod_{i=1}^n X_i,\; \prod_{i=1}^n (1 - X_i)\big)$) es conjuntamente suficiente para $(\alpha, \beta)$.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJERCICIO WACKERLY 9.54 y 9.55 -->
+    <div class="box ejercicio" id="ej-w954">
+      <span class="box-title">Ejercicio 6 · Wackerly 9.54 y 9.55 (Familia potencia y distribución de Pareto)</span>
+      <p>Resuelve ambos problemas clásicos de suficiencia en modelos con soporte dependiente del parámetro:</p>
+      <ol>
+        <li><strong>Wackerly 9.54 (Familia potencia):</strong> Sean $Y_1, \dots, Y_n$ variables aleatorias $\iid$ con densidad
+          $$f(y \mid \theta) = \frac{3y^2}{\theta^3}\,\1_{\{0 \le y \le \theta\}}, \qquad \theta &gt; 0.$$
+          Encuentre un estadístico suficiente para $\theta$, determine el EMV $\hat\theta$ y construya un estimador insesgado basado en dicho estadístico suficiente.</li>
+        <li><strong>Wackerly 9.55 (Distribución de Pareto):</strong> Sean $Y_1, \dots, Y_n$ variables aleatorias $\iid$ con densidad de Pareto
+          $$f(y \mid \alpha, \beta) = \alpha\beta^\alpha y^{-(\alpha+1)}\,\1_{\{y \ge \beta\}}, \qquad \alpha &gt; 0,\; \beta &gt; 0.$$
+          Analice la suficiencia (y pertenencia o no a la FE) en los tres escenarios: (a) $\alpha$ conocido y $\beta$ desconocido; (b) $\beta$ conocido y $\alpha$ desconocido; (c) $\alpha$ y $\beta$ ambos desconocidos.</li>
+      </ol>
+
+      <details class="pista"><summary>Pista 1 · Para Wackerly 9.54</summary><div>
+        <p>En la familia potencia, el soporte $0 \le y_i \le \theta$ para todo $i$ se traduce a $\1_{\{y_{(1)} \ge 0\}}\1_{\{y_{(n)} \le \theta\}}$. Para hallar el estimador insesgado, obtén la f.d.a. de $Y_{(n)}$ mediante $F_{Y_{(n)}}(y) = [F(y)]^n$ y calcula $\E_\theta[Y_{(n)}]$.</p>
+      </div></details>
+
+      <details class="pista"><summary>Pista 2 · Para Wackerly 9.55 (Pareto)</summary><div>
+        <p>La condición $y_i \ge \beta$ para todo $i$ equivale a $y_{(1)} = \min_i y_i \ge \beta$. Observa que cuando $\beta$ es conocido, el soporte $[\beta, \infty)$ deja de depender del parámetro desconocido $\alpha$ y el modelo sí encaja en la FE unidimensional.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <h4>Parte 1 · Wackerly 9.54: Familia potencia $f(y \mid \theta) = \frac{3y^2}{\theta^3}\1_{\{0 \le y \le \theta\}}$</h4>
+        <ol class="pasos">
+          <li><strong>Suficiencia mediante Fisher–Neyman:</strong> Multiplicando las $n$ densidades:
+            $$L(\theta \mid \mathbf{y}) = \prod_{i=1}^n \left(\frac{3y_i^2}{\theta^3}\1_{\{0 \le y_i \le \theta\}}\right) = \underbrace{\frac{3^n}{\theta^{3n}}\,\1_{\{y_{(n)} \le \theta\}}}_{g(y_{(n)},\, \theta)} \times \underbrace{\left(\prod_{i=1}^n y_i^2\right)\1_{\{y_{(1)} \ge 0\}}}_{h(\mathbf{y})}.$$
+            Como $h(\mathbf{y}) \ge 0$ no depende de $\theta$, el estadístico $T = Y_{(n)} = \max_i Y_i$ es <strong>suficiente para $\theta$</strong>. <em>(No pertenece a la FE porque el soporte $[0, \theta]$ depende de $\theta$).</em></li>
+          <li><strong>Estimador de máxima verosimilitud (EMV):</strong> La verosimilitud vale $0$ si $\theta &lt; y_{(n)}$, y para $\theta \ge y_{(n)}$ la función $\theta \mapsto 3^n\theta^{-3n}\prod y_i^2$ es estrictamente decreciente. Por tanto, alcanza su máximo en el extremo izquierdo permitido:
+            $$\hat\theta_{\text{EMV}} = Y_{(n)}.$$</li>
+          <li><strong>Corrección insesgada de $Y_{(n)}$:</strong> La f.d.a. poblacional para $y \in [0, \theta]$ es $F(y) = \int_0^y \frac{3u^2}{\theta^3}\,du = \big(\frac{y}{\theta}\big)^3$. Luego la f.d.a. del máximo es $F_{Y_{(n)}}(y) = [F(y)]^n = \big(\frac{y}{\theta}\big)^{3n}$ para $0 \le y \le \theta$, y su densidad es $f_{Y_{(n)}}(y) = \frac{3n\,y^{3n-1}}{\theta^{3n}}\1_{\{0 \le y \le \theta\}}$. Calculando su esperanza:
+            $$\E_\theta\big[Y_{(n)}\big] = \int_0^\theta y \cdot \frac{3n\,y^{3n-1}}{\theta^{3n}}\,dy = \frac{3n}{\theta^{3n}}\left[\frac{y^{3n+1}}{3n+1}\right]_0^\theta = \frac{3n}{3n+1}\,\theta.$$
+            Por linealidad de la esperanza, al multiplicar por el inverso de la constante de sesgo obtenemos el estimador insesgado basado en el estadístico suficiente $Y_{(n)}$:
+            $$\tilde\theta = \frac{3n+1}{3n}\,Y_{(n)}, \qquad \text{ya que } \E_\theta[\tilde\theta] = \theta.$$</li>
+        </ol>
+
+        <h4>Parte 2 · Wackerly 9.55: Distribución de Pareto $f(y \mid \alpha, \beta) = \alpha\beta^\alpha y^{-(\alpha+1)}\1_{\{y \ge \beta\}}$</h4>
+        <p>Escribimos primero la verosimilitud conjunta general recordando que $\prod_{i=1}^n \1_{\{y_i \ge \beta\}} = \1_{\{y_{(1)} \ge \beta\}}$:</p>
+        $$L(\alpha, \beta \mid \mathbf{y}) = \alpha^n \beta^{n\alpha} \left(\prod_{i=1}^n y_i\right)^{-(\alpha+1)} \1_{\{y_{(1)} \ge \beta\}}.$$
+        <ol class="pasos">
+          <li><strong>Escenario (a): $\alpha$ conocido y $\beta$ desconocido.</strong>
+            Reagrupamos colocando todo lo que depende de $\beta$ en $g$:
+            $$L(\beta \mid \mathbf{y}) = \underbrace{\alpha^n \beta^{n\alpha}\,\1_{\{y_{(1)} \ge \beta\}}}_{g(y_{(1)},\, \beta)} \times \underbrace{\left(\prod_{i=1}^n y_i\right)^{-(\alpha+1)}}_{h(\mathbf{y})}.$$
+            Como $\alpha$ es conocido, $h(\mathbf{y})$ no depende de $\beta$. Por Fisher–Neyman, <strong>$T = Y_{(1)} = \min_i Y_i$ es suficiente para $\beta$</strong>. El modelo <strong>no pertenece a la FE</strong> porque el soporte $A(\beta) = [\beta, \infty)$ depende del parámetro desconocido $\beta$. <em>(Además, como $\beta^{n\alpha}$ crece con $\beta$ sobre $(0, y_{(1)}]$, el EMV es $\hat\beta_{\text{EMV}} = Y_{(1)}$).</em></li>
+          <li><strong>Escenario (b): $\beta$ conocido y $\alpha$ desconocido.</strong>
+            Ahora $\beta$ es fijo, así que el soporte $A = [\beta, \infty)$ <strong>no depende de $\alpha$</strong>. Reescribimos la densidad individual en forma exponencial para $y \in [\beta, \infty)$:
+            $$f(y \mid \alpha) = \exp\Big\{-\alpha\ln y + \big(\ln\alpha + \alpha\ln\beta\big) - \ln y\Big\}, \qquad y \in A = [\beta, \infty).$$
+            Por tanto, <strong>sí pertenece a la FE unidimensional</strong> con $c(\alpha) = -\alpha$, $T(y) = \ln y$, $d(\alpha) = \ln\alpha + \alpha\ln\beta$ y $S(y) = -\ln y$. Para una muestra i.i.d. de tamaño $n$, el estadístico suficiente para $\alpha$ es:
+            $$T(\mathbf{Y}) = \sum_{i=1}^n \ln Y_i \qquad \text{(equivalentemente } \prod_{i=1}^n Y_i \text{ o } \sum_{i=1}^n \ln(Y_i/\beta)\text{)}.$$
+            <em>(De hecho, como $\E_\alpha[\ln Y] = -d'(\alpha)/c'(\alpha) = \frac{1}{\alpha} + \ln\beta$, la ecuación del EMV $\frac{n}{\hat\alpha} + n\ln\beta = \sum_{i=1}^n \ln Y_i$ entrega de inmediato $\hat\alpha_{\text{EMV}} = \frac{n}{\sum_{i=1}^n \ln(Y_i/\beta)}$).</em></li>
+          <li><strong>Escenario (c): $\alpha$ y $\beta$ ambos desconocidos.</strong>
+            En la verosimilitud conjunta $L(\alpha, \beta \mid \mathbf{y}) = \alpha^n\beta^{n\alpha}\big(\prod_{i=1}^n y_i\big)^{-(\alpha+1)}\1_{\{y_{(1)} \ge \beta\}}$, tanto $y_{(1)}$ (unido a $\beta$) como $\prod_{i=1}^n y_i$ (unido a $\alpha$) son indispensables dentro de $g$, con $h(\mathbf{y}) = 1$. En consecuencia, el vector
+            $$\mathbf{T}(\mathbf{Y}) = \left(Y_{(1)},\; \prod_{i=1}^n Y_i\right) \qquad \text{o equivalentemente} \qquad \left(Y_{(1)},\; \sum_{i=1}^n \ln Y_i\right)$$
+            es <strong>conjuntamente suficiente para $(\alpha, \beta)$</strong>. El modelo completo no pertenece a la FE porque el soporte depende de $\beta$.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <h3>Tabla resumen de la Familia Exponencial (modelos de la Clase 16)</h3>
+    <div class="table-wrap">
+      <table class="tabla text-left tabla-fe">
+        <thead>
+          <tr>
+            <th>Modelo</th>
+            <th>$c_j(\boldsymbol{\theta})$</th>
+            <th>$T_j(x)$</th>
+            <th>$d(\boldsymbol{\theta})$</th>
+            <th>$S(x)$</th>
+            <th>Soporte $A$</th>
+            <th>Suficiente muestral</th>
+            <th>EMV</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>$\text{Ber}(\theta)$</td>
+            <td>$\ln\!\big(\frac{\theta}{1-\theta}\big)$</td>
+            <td>$x$</td>
+            <td>$\ln(1-\theta)$</td>
+            <td>$0$</td>
+            <td>$\{0, 1\}$</td>
+            <td>$\sum_{i=1}^n X_i$</td>
+            <td>$\hat\theta = \bar X$</td>
+          </tr>
+          <tr>
+            <td>$\text{Bin}(m, \theta)$ ($m$ fijo)</td>
+            <td>$\ln\!\big(\frac{\theta}{1-\theta}\big)$</td>
+            <td>$x$</td>
+            <td>$m\ln(1-\theta)$</td>
+            <td>$\ln\binom{m}{x}$</td>
+            <td>$\{0, \dots, m\}$</td>
+            <td>$\sum_{i=1}^n X_i$</td>
+            <td>$\hat\theta = \frac{\bar X}{m}$</td>
+          </tr>
+          <tr>
+            <td>$\text{Geo}(p)$ (ensayos)</td>
+            <td>$\ln(1-p)$</td>
+            <td>$x$</td>
+            <td>$\ln\!\big(\frac{p}{1-p}\big)$</td>
+            <td>$0$</td>
+            <td>$\{1, 2, \dots\}$</td>
+            <td>$\sum_{i=1}^n X_i$</td>
+            <td>$\hat p = \frac{1}{\bar X}$</td>
+          </tr>
+          <tr>
+            <td>$\text{Pois}(\lambda)$</td>
+            <td>$\ln\lambda$</td>
+            <td>$x$</td>
+            <td>$-\lambda$</td>
+            <td>$-\ln(x!)$</td>
+            <td>$\{0, 1, 2, \dots\}$</td>
+            <td>$\sum_{i=1}^n X_i$</td>
+            <td>$\hat\lambda = \bar X$</td>
+          </tr>
+          <tr>
+            <td>$\text{Exp}(\beta)$ (media $\beta$)</td>
+            <td>$-\frac{1}{\beta}$</td>
+            <td>$x$</td>
+            <td>$-\ln\beta$</td>
+            <td>$0$</td>
+            <td>$(0, \infty)$</td>
+            <td>$\sum_{i=1}^n X_i$</td>
+            <td>$\hat\beta = \bar X$</td>
+          </tr>
+          <tr>
+            <td>$N(\mu, 1)$</td>
+            <td>$\mu$</td>
+            <td>$x$</td>
+            <td>$-\frac{\mu^2}{2}$</td>
+            <td>$-\frac{x^2}{2}-\ln\sqrt{2\pi}$</td>
+            <td>$\R$</td>
+            <td>$\sum_{i=1}^n X_i$</td>
+            <td>$\hat\mu = \bar X$</td>
+          </tr>
+          <tr>
+            <td>$N(\mu, \sigma^2)$</td>
+            <td>$\frac{\mu}{\sigma^2},\; -\frac{1}{2\sigma^2}$</td>
+            <td>$x,\; x^2$</td>
+            <td>$-\frac{\mu^2}{2\sigma^2} - \frac{1}{2}\ln\sigma^2$</td>
+            <td>$-\ln\sqrt{2\pi}$</td>
+            <td>$\R$</td>
+            <td>$\big(\sum X_i,\; \sum X_i^2\big)$</td>
+            <td>$\big(\bar X,\; \frac{1}{n}\sum (X_i-\bar X)^2\big)$</td>
+          </tr>
+          <tr>
+            <td>$\text{Gamma}(\alpha, \beta)$ (escala $\beta$)</td>
+            <td>$\alpha - 1,\; -\frac{1}{\beta}$</td>
+            <td>$\ln x,\; x$</td>
+            <td>$-\ln\Gamma(\alpha) - \alpha\ln\beta$</td>
+            <td>$0$</td>
+            <td>$(0, \infty)$</td>
+            <td>$\big(\sum \ln X_i,\; \sum X_i\big)$</td>
+            <td>$\hat\beta = \frac{\bar X}{\hat\alpha}$ (implícito en $\hat\alpha$)</td>
+          </tr>
+          <tr>
+            <td>$\text{Beta}(\alpha, \beta)$</td>
+            <td>$\alpha - 1,\; \beta - 1$</td>
+            <td>$\ln x,\; \ln(1-x)$</td>
+            <td>$-\ln B(\alpha, \beta)$</td>
+            <td>$0$</td>
+            <td>$(0, 1)$</td>
+            <td>$\big(\sum \ln X_i,\; \sum \ln(1-X_i)\big)$</td>
+            <td>Sistema digamma $\psi$</td>
+          </tr>
+          <tr>
+            <td>$\text{Beta}(k, k)$</td>
+            <td>$k - 1$</td>
+            <td>$\ln[x(1-x)]$</td>
+            <td>$-\ln B(k, k)$</td>
+            <td>$0$</td>
+            <td>$(0, 1)$</td>
+            <td>$\sum \ln[X_i(1-X_i)]$</td>
+            <td>$\psi(\hat k)-\psi(2\hat k)=\frac{1}{2n}\sum T(X_i)$</td>
+          </tr>
+          <tr>
+            <td>$\text{Pareto}(\alpha, \beta_0)$ ($\beta_0$ fijo)</td>
+            <td>$-\alpha$</td>
+            <td>$\ln x$</td>
+            <td>$\ln\alpha + \alpha\ln\beta_0$</td>
+            <td>$-\ln x$</td>
+            <td>$[\beta_0, \infty)$</td>
+            <td>$\sum_{i=1}^n \ln X_i$</td>
+            <td>$\hat\alpha = \frac{n}{\sum \ln(X_i/\beta_0)}$</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="simulaciones">5. Laboratorios interactivos</h2>
+    <p>Experimenta directamente con los dos resultados principales de la clase: la coincidencia geométrica entre la ecuación $\E_\theta[T(\mathbf{X})] = T(\mathbf{X})$ y el máximo de la log-verosimilitud en la familia exponencial, y la compresión 2D por suficiencia conjunta en modelos multiparamétricos.</p>
+
+    <div class="sim" id="sim-fe-momentos">
+      <p class="sim-title">Laboratorio 1 · Geometría de la Familia Exponencial y ecuación $\E_\theta[T(\mathbf{X})] = T(\mathbf{X})$</p>
+      <p class="sim-desc">Elige un modelo de la FE unidimensional, fija el parámetro verdadero y el tamaño de muestra $n$, y genera una muestra simulada. A la izquierda verás cómo el cruce entre la función teórica $\mu_T(\theta) = \E_\theta[T(X)] = -d'(\theta)/c'(\theta)$ y el promedio observado $\bar T_{\text{obs}} = \frac{1}{n}T(\mathbf{X})$ determina $\hat\theta_{\text{EMV}}$; a la derecha comprobarás que ese mismo punto maximiza la log-verosimilitud relativa $\ell(\theta) - \max\ell$.</p>
+      <div class="controls"></div>
+      <div class="grid-2">
+        <div>
+          <p class="plot-cap">Ecuación del EMV: $\mu_T(\theta) = \E_\theta[T(X)]$ frente a $\bar T_{\text{obs}}$</p>
+          <div class="plot plot-tmean"></div>
+        </div>
+        <div>
+          <p class="plot-cap">Log-verosimilitud relativa $\ell(\theta) - \max_\theta \ell(\theta)$</p>
+          <div class="plot plot-ll"></div>
+        </div>
+      </div>
+      <div class="out"></div>
+    </div>
+
+    <div class="sim" id="sim-suficiencia-conjunta">
+      <p class="sim-title">Laboratorio 2 · Compresión 2D por suficiencia conjunta en $N(\mu, \sigma^2)$ y $U(\theta_1, \theta_2)$</p>
+      <p class="sim-desc">Simula 40 muestras aleatorias independientes de tamaño $n$. A la izquierda observas la nube 2D de los pares suficientes $(T_1, T_2)$ respecto al vector verdadero de parámetros; a la derecha comprobamos la factorización tomando la muestra #1 $\mathbf{x}^{(a)}$ y generando una segunda muestra distinta $\mathbf{x}^{(b)}$ con exactamente el mismo par $(T_1, T_2)$: sus perfiles de verosimilitud normalizados colapsan por completo, a diferencia de una muestra de contraste $\mathbf{x}^{(c)}$ que comparte solo un resumen unidimensional.</p>
+      <div class="controls"></div>
+      <div class="grid-2">
+        <div>
+          <p class="plot-cap">Nube 2D de $(T_1, T_2)$ en 40 muestras simuladas</p>
+          <div class="plot plot-cloud"></div>
+        </div>
+        <div>
+          <p class="plot-cap">Verosimilitud normalizada: dos muestras con igual $(T_1, T_2)$ frente a contraste</p>
+          <div class="plot plot-sameT"></div>
+        </div>
+      </div>
+      <div class="out"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="autoevaluacion">6. Autoevaluación</h2>
+    <div id="quiz-1"></div>
+    <div id="quiz-2"></div>
+    <div id="quiz-3"></div>
+
+    <h3>Comprueba tus cálculos numéricos</h3>
+    <div id="nc-1"></div>
+    <div id="nc-2"></div>
+
+    <details class="solucion"><summary>Desarrollo de los dos cálculos numéricos</summary><div>
+      <ol class="pasos">
+        <li>Para $X_1, \dots, X_5 \iid \text{Geo}(p)$ (convención de ensayos $x \in \{1, 2, \dots\}$), la muestra observada $\mathbf{x} = (3, 1, 4, 2, 2)$ tiene estadístico suficiente $T(\mathbf{x}) = \sum_{i=1}^5 x_i = 3 + 1 + 4 + 2 + 2 = 12$ y media muestral $\bar x = 12/5 = 2.4$. Por la ecuación de la familia exponencial $\E_p[T(\mathbf{X})] = T(\mathbf{X})$ con $\E_p[X_i] = 1/p$:
+          $$\frac{5}{\hat p} = 12 \implies \hat p = \frac{5}{12} \approx 0.4167.$$</li>
+        <li>Para $n = 6$ observaciones de $f(y \mid \theta) = \frac{3y^2}{\theta^3}\1_{\{0 \le y \le \theta\}}$ con $Y_{(6)} = 4.5$, por el Ejercicio 6 (Wackerly 9.54) se cumple $\E_\theta[Y_{(n)}] = \frac{3n}{3n+1}\theta$, luego el estimador insesgado basado en el estadístico suficiente $Y_{(n)}$ es:
+          $$\tilde\theta = \frac{3n + 1}{3n}\,Y_{(n)} = \frac{3(6) + 1}{3(6)} \times 4.5 = \frac{19}{18} \times \frac{9}{2} = \frac{19}{4} = 4.75.$$</li>
+      </ol>
+    </div></details>
+
+    <div class="box nota">
+      <span class="box-title">Resumen esencial de la Clase 16</span>
+      <ul>
+        <li><strong>Suficiencia conjunta:</strong> Por Fisher–Neyman multiparamétrico, $\mathbf{T}(\mathbf{X}) = (T_1, \dots, T_r)$ es conjuntamente suficiente para $\boldsymbol{\theta}$ si $L(\boldsymbol{\theta} \mid \mathbf{x}) = g(\mathbf{T}(\mathbf{x}), \boldsymbol{\theta})h(\mathbf{x})$ con $h(\mathbf{x}) \ge 0$ libre de $\boldsymbol{\theta}$. Toda transformación biyectiva de $\mathbf{T}$ preserva la suficiencia conjunta.</li>
+        <li><strong>Familia exponencial (1D y $k$D):</strong> Si $f(x \mid \boldsymbol{\theta}) = \exp\{\sum_{j=1}^k c_j(\boldsymbol{\theta})T_j(x) + d(\boldsymbol{\theta}) + S(x)\}$ sobre un soporte $A$ independiente de $\boldsymbol{\theta}$, entonces $\big(\sum_{i=1}^n T_1(X_i), \dots, \sum_{i=1}^n T_k(X_i)\big)$ es automáticamente conjuntamente suficiente para $\boldsymbol{\theta}$.</li>
+        <li><strong>Momentos y EMV en la FE:</strong> En la FE 1D regular, $\E[T(X)] = -d'(\theta)/c'(\theta)$ y $\Var(T(X)) = \frac{d'c'' - c'd''}{(c')^3}$. Además, el EMV satisface $\E_{\boldsymbol{\theta}}[T_j(\mathbf{X})] = T_j(\mathbf{X})$ para $j = 1, \dots, k$.</li>
+        <li><strong>Modelos fuera de la FE:</strong> Cuando el soporte depende del parámetro —como $U(\theta_1, \theta_2)$, $\text{Pareto}(\alpha, \beta)$ con $\beta$ desconocido o la familia potencia—, la densidad no pertenece a la FE y la suficiencia recae típicamente en estadísticos de orden extremos ($X_{(1)}$ o $X_{(n)}$).</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../assets/js/stats.js"></script>
+<script src="../assets/js/plot.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+(function () {
+  'use strict';
+  const S = EM.stats, fmt = S.fmt, ui = EM.ui;
+
+  /* ============================================================
+     SIMULACIÓN 1: Geometría de la FE y ecuación E[T(X)] = T(X)
+     ============================================================ */
+  (function () {
+    const root = document.getElementById('sim-fe-momentos');
+    if (!root) return;
+
+    const MODELS = {
+      ber: {
+        label: 'Ber(θ) · T(x) = x',
+        paramLabel: 'θ',
+        paramTex: '\\theta',
+        min: 0.10, max: 0.90, step: 0.05, def: 0.35,
+        dom: [-0.04, 1.04],
+        muT: th => th,
+        drawSample: (th, n, rng) => {
+          const x = new Array(n);
+          for (let i = 0; i < n; i++) x[i] = rng() < th ? 1 : 0;
+          return x;
+        },
+        llRel: (th, tbar, n) => {
+          if (th <= 0 || th >= 1) return -Infinity;
+          if (tbar <= 0) return n * Math.log(1 - th);
+          if (tbar >= 1) return n * Math.log(th);
+          const lmax = n * (tbar * Math.log(tbar) + (1 - tbar) * Math.log(1 - tbar));
+          return n * (tbar * Math.log(th) + (1 - tbar) * Math.log(1 - th)) - lmax;
+        },
+        eqTex: 'c\'(\\theta)\\E[X]+d\'(\\theta)=0 \\implies -\\frac{d\'(\\theta)}{c\'(\\theta)} = \\theta',
+        mleTex: '\\hat\\theta_{\\text{EMV}} = \\bar X'
+      },
+      pois: {
+        label: 'Pois(θ) · T(x) = x',
+        paramLabel: 'θ',
+        paramTex: '\\theta',
+        min: 0.50, max: 4.50, step: 0.10, def: 2.00,
+        dom: [-0.20, 6.20],
+        muT: th => th,
+        drawSample: (th, n, rng) => S.dist.poisson(th).sample(n, rng),
+        llRel: (th, tbar, n) => {
+          if (th <= 0) return -Infinity;
+          if (tbar <= 0) return -n * th;
+          return n * (tbar * Math.log(th / tbar) - (th - tbar));
+        },
+        eqTex: '-\\frac{d\'(\\theta)}{c\'(\\theta)} = -\\frac{-1}{1/\\theta} = \\theta',
+        mleTex: '\\hat\\theta_{\\text{EMV}} = \\bar X'
+      },
+      exp: {
+        label: 'Exp(θ) (media θ) · T(x) = x',
+        paramLabel: 'θ',
+        paramTex: '\\theta',
+        min: 0.50, max: 4.50, step: 0.10, def: 2.00,
+        dom: [-0.20, 6.50],
+        muT: th => th,
+        drawSample: (th, n, rng) => S.dist.exp(th).sample(n, rng),
+        llRel: (th, tbar, n) => {
+          if (th <= 0) return -Infinity;
+          const tSafe = Math.max(tbar, 1e-6);
+          return n * (Math.log(tSafe / th) + 1 - tSafe / th);
+        },
+        eqTex: '-\\frac{d\'(\\theta)}{c\'(\\theta)} = -\\frac{-1/\\theta}{1/\\theta^2} = \\theta',
+        mleTex: '\\hat\\theta_{\\text{EMV}} = \\bar X'
+      },
+      norm1: {
+        label: 'N(μ, 1) · T(x) = x',
+        paramLabel: 'μ',
+        paramTex: '\\mu',
+        min: -2.20, max: 2.20, step: 0.10, def: 0.80,
+        dom: [-3.50, 3.50],
+        muT: th => th,
+        drawSample: (th, n, rng) => S.dist.normal(th, 1).sample(n, rng),
+        llRel: (th, tbar, n) => -0.5 * n * (th - tbar) * (th - tbar),
+        eqTex: '-\\frac{d\'(\\mu)}{c\'(\\mu)} = -\\frac{-\\mu}{1} = \\mu',
+        mleTex: '\\hat\\mu_{\\text{EMV}} = \\bar X'
+      }
+    };
+
+    let modelKey = 'ber';
+    let thetaTrue = MODELS[modelKey].def;
+    let n = 25;
+    let seed = 1601;
+    let sample = [];
+
+    const ctr = root.querySelector('.controls');
+    ui.select(ctr, {
+      label: 'Modelo',
+      value: modelKey,
+      options: Object.entries(MODELS).map(([k, m]) => ({ value: k, label: m.label })),
+      onChange: v => {
+        modelKey = v;
+        const m = MODELS[modelKey];
+        slTheta.input.min = m.min;
+        slTheta.input.max = m.max;
+        slTheta.input.step = m.step;
+        thetaTrue = m.def;
+        slTheta.set(thetaTrue);
+        const lbl = slTheta.input.closest('.slider')?.querySelector('.slider-label');
+        if (lbl) lbl.innerHTML = ui.tex(m.paramTex);
+        resample();
+      }
+    });
+
+    const slTheta = ui.slider(ctr, {
+      tex: '\\theta',
+      min: MODELS[modelKey].min,
+      max: MODELS[modelKey].max,
+      step: MODELS[modelKey].step,
+      value: thetaTrue,
+      fmt: v => v.toFixed(2),
+      onInput: v => { thetaTrue = v; resample(); }
+    });
+
+    ui.slider(ctr, {
+      tex: 'n', min: 5, max: 80, step: 1, value: n,
+      onInput: v => { n = Math.round(v); resample(); }
+    });
+
+    ui.button(ctr, 'Simular muestra', () => {
+      seed = (seed + 104729) >>> 0;
+      resample();
+    }, { primary: true });
+
+    const plotMean = EM.plot.create(root.querySelector('.plot-tmean'), {
+      xmin: 0, xmax: 1, ymin: 0, ymax: 1,
+      height: 270, xlabel: 'θ', ylabel: 'E_θ[T(X)]', legendPos: 'tl'
+    });
+    const plotLL = EM.plot.create(root.querySelector('.plot-ll'), {
+      xmin: 0, xmax: 1, ymin: -8, ymax: 3.4,
+      height: 270, xlabel: 'θ', ylabel: 'ℓ(θ) - máx ℓ', legendPos: 'tl'
+    });
+    const out = ui.readout(root.querySelector('.out'));
+
+    function resample() {
+      const m = MODELS[modelKey];
+      const rng = S.mulberry32(seed);
+      sample = m.drawSample(thetaTrue, n, rng);
+      draw();
+    }
+
+    function draw() {
+      const m = MODELS[modelKey];
+      const Tsum = S.sum(sample);
+      const tObs = Tsum / n;
+      const mle = tObs;
+
+      let xmin = m.dom[0], xmax = m.dom[1];
+      if (modelKey === 'pois' || modelKey === 'exp') {
+        xmax = Math.max(m.dom[1], tObs + 1.5, thetaTrue + 1.5);
+      } else if (modelKey === 'norm1') {
+        const span = Math.max(2.6, Math.abs(tObs - thetaTrue) + 1.6);
+        xmin = Math.min(-3.0, thetaTrue - span, tObs - 1.2);
+        xmax = Math.max(3.0, thetaTrue + span, tObs + 1.2);
+      }
+      const yminM = modelKey === 'norm1' ? xmin : (modelKey === 'ber' ? -0.05 : -0.20);
+      const ymaxM = modelKey === 'ber' ? 1.05 : xmax;
+
+      plotMean.setRange({ xmin, xmax, ymin: yminM, ymax: ymaxM, xlabel: m.paramLabel });
+      plotMean.draw(g => {
+        g.curve(m.muT, { color: 'c1', width: 2.6, label: 'μ_T(θ) = E_θ[T(X)]' });
+        g.curve(() => tObs, { color: 'c2', width: 2.0, dash: [6, 4], label: 'T̄_obs = ' + fmt(tObs, 3) });
+        g.vline(thetaTrue, { color: 'c3', dash: [3, 4] });
+        g.curve(() => NaN, { color: 'c3', dash: [3, 4], label: m.paramLabel + ' real = ' + fmt(thetaTrue, 2) });
+        g.vline(mle, { color: 'c2', dash: [4, 4] });
+        g.points([mle], [tObs], { color: 'c2', r: 5.2, label: 'Cruce = EMV (' + fmt(mle, 3) + ')' });
+      });
+
+      plotLL.setRange({ xmin, xmax, ymin: -8, ymax: 3.4, xlabel: m.paramLabel });
+      plotLL.draw(g => {
+        g.hline(0, { color: 'muted', dash: [3, 3] });
+        g.curve(th => m.llRel(th, tObs, n), { from: Math.max(xmin, modelKey === 'norm1' ? xmin : 1e-4), to: modelKey === 'ber' ? Math.min(xmax, 1 - 1e-4) : xmax, color: 'c1', width: 2.6, label: 'ℓ(θ) - máx ℓ' });
+        g.vline(thetaTrue, { color: 'c3', dash: [3, 4] });
+        g.curve(() => NaN, { color: 'c3', dash: [3, 4], label: m.paramLabel + ' real' });
+        g.vline(mle, { color: 'c2', dash: [4, 4] });
+        g.points([mle], [0], { color: 'c2', r: 5.2, label: 'Máximo en ' + fmt(mle, 3) });
+      });
+
+      const llReal = m.llRel(thetaTrue, tObs, n);
+      out.set(`
+        <b>Modelo ${m.label} ($n = ${n}$):</b> $${m.eqTex}$ $\\implies$ $${m.mleTex}$.<br>
+        • Estadístico suficiente muestral: $T(\\mathbf{X}) = \\sum_{i=1}^{${n}} T(X_i) =$ <b>${fmt(Tsum, 3)}</b>, luego el promedio observado es $\\bar T_{\\text{obs}} = T(\\mathbf{X})/n =$ <b>${fmt(tObs, 4)}</b>.<br>
+        • Parámetro verdadero $${m.paramTex}_{\\text{real}} =$ <b>${fmt(thetaTrue, 2)}</b> frente al EMV obtenido en el cruce $\\hat ${m.paramTex}_{\\text{EMV}} =$ <b>${fmt(mle, 4)}</b> (log-verosimilitud relativa en el verdadero: <b>${fmt(llReal, 3)}</b>).
+      `);
+    }
+
+    resample();
+  })();
+
+  /* ============================================================
+     SIMULACIÓN 2: Suficiencia conjunta 2D en N(μ,σ²) y U(θ₁,θ₂)
+     ============================================================ */
+  (function () {
+    const root = document.getElementById('sim-suficiencia-conjunta');
+    if (!root) return;
+
+    let modelKey = 'norm2';
+    let n = 20;
+    let seed = 1602;
+
+    const TRUE_NORM = { mu: 2.0, sigma: 1.0, sig2: 1.0 };
+    const TRUE_UNIF = { th1: 1.0, th2: 5.0 };
+
+    const ctr = root.querySelector('.controls');
+    ui.select(ctr, {
+      label: 'Modelo',
+      value: modelKey,
+      options: [
+        { value: 'norm2', label: 'N(μ, σ²) · T = (X̄, Sₙ²)' },
+        { value: 'unif2', label: 'U(θ₁, θ₂) · T = (X₍₁₎, X₍ₙ₎)' }
+      ],
+      onChange: v => { modelKey = v; runSim(); }
+    });
+    ui.slider(ctr, {
+      tex: 'n', min: 6, max: 60, step: 2, value: n,
+      onInput: v => { n = Math.round(v); runSim(); }
+    });
+    ui.button(ctr, 'Generar 40 muestras y comparar', () => {
+      seed = (seed + 7919) >>> 0;
+      runSim();
+    }, { primary: true });
+
+    const plotCloud = EM.plot.create(root.querySelector('.plot-cloud'), {
+      xmin: 0, xmax: 4, ymin: 0, ymax: 2.5,
+      height: 270, xlabel: 'T₁', ylabel: 'T₂', legendPos: 'tr'
+    });
+    const plotSameT = EM.plot.create(root.querySelector('.plot-sameT'), {
+      xmin: 0, xmax: 4, ymin: 0, ymax: 1.18,
+      height: 270, xlabel: 'θ', ylabel: 'L / máx L', legendPos: 'tr'
+    });
+    const out = ui.readout(root.querySelector('.out'));
+
+    function runSim() {
+      const rng = S.mulberry32(seed);
+      const M = 40;
+      const pairs = [];
+      let xa = [];
+
+      if (modelKey === 'norm2') {
+        const d = S.dist.normal(TRUE_NORM.mu, TRUE_NORM.sigma);
+        for (let k = 0; k < M; k++) {
+          const s = d.sample(n, rng);
+          const mean = S.mean(s);
+          let ss = 0;
+          for (let i = 0; i < n; i++) ss += (s[i] - mean) * (s[i] - mean);
+          const s2n = ss / n;
+          pairs.push([mean, s2n]);
+          if (k === 0) xa = s;
+        }
+        const t1 = pairs[0][0], t2 = pairs[0][1];
+
+        // Segunda muestra x^(b) distinta pero con exactamente el mismo (X̄, Sₙ²)
+        const rawB = S.dist.normal(0, 1).sample(n, rng);
+        const mB = S.mean(rawB);
+        let ssB = 0;
+        for (let i = 0; i < n; i++) ssB += (rawB[i] - mB) * (rawB[i] - mB);
+        const sdB = Math.sqrt(ssB / n) || 1;
+        const xb = rawB.map(z => t1 + Math.sqrt(t2) * (z - mB) / sdB);
+
+        // Tercera muestra x^(c) de contraste: misma media X̄ = t1, pero distinta Sₙ² = 2.4 * t2
+        const t2c = t2 * 2.4;
+        const xc = rawB.map(z => t1 + Math.sqrt(t2c) * (z - mB) / sdB);
+
+        // Evaluación directa producto a producto sobre los n datos para confirmar el colapso
+        function profNorm(data, mu) {
+          let ss = 0;
+          for (let i = 0; i < data.length; i++) ss += (data[i] - mu) * (data[i] - mu);
+          const sig2HatMu = ss / data.length;
+          const mData = S.mean(data);
+          let ssMin = 0;
+          for (let i = 0; i < data.length; i++) ssMin += (data[i] - mData) * (data[i] - mData);
+          const sig2Min = ssMin / data.length;
+          return Math.pow(sig2Min / sig2HatMu, 0.5 * data.length);
+        }
+
+        const xs = pairs.map(p => p[0]);
+        const ys = pairs.map(p => p[1]);
+        const minX = Math.min(0.6, ...xs) - 0.25;
+        const maxX = Math.max(3.4, ...xs) + 0.25;
+        const maxY = Math.max(2.0, ...ys) * 1.18;
+
+        plotCloud.setRange({ xmin: minX, xmax: maxX, ymin: 0, ymax: maxY, xlabel: 'T₁ = X̄', ylabel: 'T₂ = Sₙ²', legendPos: 'tr' });
+        plotCloud.draw(g => {
+          g.vline(TRUE_NORM.mu, { color: 'c3', dash: [4, 4] });
+          g.hline(TRUE_NORM.sig2, { color: 'c3', dash: [4, 4] });
+          g.points(xs, ys, { color: 'c1', r: 3.4, alpha: 0.72, label: '40 pares (X̄, Sₙ²)' });
+          g.points([t1], [t2], { color: 'c2', r: 5.5, label: 'Muestra #1 (a)' });
+          g.points([TRUE_NORM.mu], [TRUE_NORM.sig2], { color: 'c3', r: 5.5, label: 'Verdadero (μ, σ²)' });
+        });
+
+        const muMin = t1 - 2.2 * Math.sqrt(Math.max(t2, 0.15));
+        const muMax = t1 + 2.2 * Math.sqrt(Math.max(t2, 0.15));
+        plotSameT.setRange({ xmin: muMin, xmax: muMax, ymin: 0, ymax: 1.40, xlabel: 'μ', ylabel: 'L_prof(μ) / máx', legendPos: 'tr' });
+        plotSameT.draw(g => {
+          g.curve(mu => profNorm(xa, mu), { color: 'c1', width: 3.4, label: 'x⁽ᵃ⁾ (T₁, T₂)' });
+          g.curve(mu => profNorm(xb, mu), { color: 'c2', width: 2.2, dash: [6, 4], label: 'x⁽ᵇ⁾ mismo (T₁, T₂)' });
+          g.curve(mu => profNorm(xc, mu), { color: 'c4', width: 1.9, dash: [3, 3], label: 'x⁽ᶜ⁾ solo igual X̄' });
+          g.vline(t1, { color: 'c2', dash: [4, 4] });
+        });
+
+        const t1b = S.mean(xb);
+        let ssBb = 0;
+        for (let i = 0; i < n; i++) ssBb += (xb[i] - t1b) * (xb[i] - t1b);
+        const t2b = ssBb / n;
+        const maxDiff = Math.max(
+          Math.abs(profNorm(xa, t1 - 0.5) - profNorm(xb, t1 - 0.5)),
+          Math.abs(profNorm(xa, t1 + 0.5) - profNorm(xb, t1 + 0.5))
+        );
+
+        out.set(`
+          <b>Modelo $N(\\mu=2.0,\\; \\sigma^2=1.0)$ ($n = ${n}$):</b> Suficiente conjunto $(T_1, T_2) = (\\bar X, S_n^2)$, cuyo EMV es $(\\hat\\mu, \\hat\\sigma^2) = (T_1, T_2)$.<br>
+          • Muestra #1 $\\mathbf{x}^{(a)}$: $(\\bar x, s_n^2) = ($<b>${fmt(t1, 4)}</b>, <b>${fmt(t2, 4)}</b>$)$; muestra distinta $\\mathbf{x}^{(b)}$ con igual par: $($<b>${fmt(t1b, 4)}</b>, <b>${fmt(t2b, 4)}</b>$)$ (diferencia máx. en perfil: <b>${fmt(maxDiff, 6)}</b>).<br>
+          • En cambio, $\\mathbf{x}^{(c)}$ comparte la misma media $\\bar x =$ <b>${fmt(t1, 4)}</b> pero tiene $s_n^2 =$ <b>${fmt(t2c, 4)}</b>, lo que ensancha su perfil: $\\bar X$ por sí sola no es suficiente cuando $\\sigma^2$ es desconocida.
+        `);
+      } else {
+        const d = S.dist.uniform(TRUE_UNIF.th1, TRUE_UNIF.th2);
+        for (let k = 0; k < M; k++) {
+          const s = d.sample(n, rng);
+          pairs.push([S.min(s), S.max(s)]);
+          if (k === 0) xa = s;
+        }
+        const t1 = pairs[0][0], t2 = pairs[0][1];
+
+        // Segunda muestra x^(b) distinta con exactamente el mismo (X₍₁₎, X₍ₙ₎)
+        const xb = [t1, t2];
+        for (let i = 2; i < n; i++) xb.push(t1 + (t2 - t1) * (0.08 + 0.84 * rng()));
+
+        // Tercera muestra x^(c) de contraste: misma media X̄ que x^(a), pero extremos más estrechos
+        const meanA = S.mean(xa);
+        const halfR = 0.52 * Math.min(meanA - t1, t2 - meanA);
+        const t1c = meanA - halfR, t2c = meanA + halfR;
+
+        const xs = pairs.map(p => p[0]);
+        const ys = pairs.map(p => p[1]);
+        plotCloud.setRange({ xmin: 0.7, xmax: 5.3, ymin: 0.7, ymax: 5.3, xlabel: 'T₁ = X₍₁₎', ylabel: 'T₂ = X₍ₙ₎', legendPos: 'tr' });
+        plotCloud.draw(g => {
+          g.line(0.7, 0.7, 5.3, 5.3, { color: 'muted', dash: [3, 3], width: 1.1 });
+          g.vline(TRUE_UNIF.th1, { color: 'c3', dash: [4, 4] });
+          g.hline(TRUE_UNIF.th2, { color: 'c3', dash: [4, 4] });
+          g.points(xs, ys, { color: 'c1', r: 3.4, alpha: 0.72, label: '40 pares (X₍₁₎, X₍ₙ₎)' });
+          g.points([t1], [t2], { color: 'c2', r: 5.5, label: 'Muestra #1 (a)' });
+          g.points([TRUE_UNIF.th1], [TRUE_UNIF.th2], { color: 'c3', r: 5.5, label: 'Verdadero (θ₁, θ₂)' });
+        });
+
+        const rangeA = Math.max(t2 - t1, 1e-4);
+        const rangeC = Math.max(t2c - t1c, 1e-4);
+        const leftProf = (minV, maxV, th1) => th1 <= minV ? Math.pow(Math.max(maxV - minV, 1e-9) / Math.max(maxV - th1, 1e-9), n) : 0;
+        const rightProf = (minV, maxV, th2) => th2 >= maxV ? Math.pow(Math.max(maxV - minV, 1e-9) / Math.max(th2 - minV, 1e-9), n) : 0;
+
+        plotSameT.setRange({ xmin: 0.4, xmax: 5.6, ymin: 0, ymax: 1.40, xlabel: 'θ₁ (izq.) / θ₂ (der.)', ylabel: 'L_prof / máx', legendPos: 'tr' });
+        plotSameT.draw(g => {
+          // Perfil izquierdo (θ₁ ≤ T₁) y derecho (θ₂ ≥ T₂) para x^(a) y x^(b)
+          g.curve(th => leftProf(t1, t2, th), { from: 0.4, to: t1, color: 'c1', width: 3.4, label: 'x⁽ᵃ⁾ (X₍₁₎, X₍ₙ₎)' });
+          g.line(t1, 0, t1, 1, { color: 'c1', width: 1.4, dash: [3, 3] });
+          g.curve(th => rightProf(t1, t2, th), { from: t2, to: 5.6, color: 'c1', width: 3.4 });
+          g.line(t2, 0, t2, 1, { color: 'c1', width: 1.4, dash: [3, 3] });
+
+          g.curve(th => leftProf(t1, t2, th), { from: 0.4, to: t1, color: 'c2', width: 2.2, dash: [6, 4], label: 'x⁽ᵇ⁾ mismo (X₍₁₎, X₍ₙ₎)' });
+          g.curve(th => rightProf(t1, t2, th), { from: t2, to: 5.6, color: 'c2', width: 2.2, dash: [6, 4] });
+
+          // Contraste x^(c) misma media X̄ pero distintos extremos
+          g.curve(th => leftProf(t1c, t2c, th), { from: 0.4, to: t1c, color: 'c4', width: 1.9, dash: [3, 3], label: 'x⁽ᶜ⁾ igual X̄, otro rango' });
+          g.line(t1c, 0, t1c, 1, { color: 'c4', width: 1.2, dash: [3, 3] });
+          g.curve(th => rightProf(t1c, t2c, th), { from: t2c, to: 5.6, color: 'c4', width: 1.9, dash: [3, 3] });
+          g.line(t2c, 0, t2c, 1, { color: 'c4', width: 1.2, dash: [3, 3] });
+        });
+
+        out.set(`
+          <b>Modelo $U(\\theta_1=1.0,\\; \\theta_2=5.0)$ ($n = ${n}$):</b> Todos los pares simulados quedan arriba de la diagonal $T_2 = T_1$ y dentro de $[1, 5]^2$, agrupándose cerca de la esquina verdadera $(1, 5)$ conforme crece $n$.<br>
+          • Muestra #1 $\\mathbf{x}^{(a)}$ y la muestra distinta $\\mathbf{x}^{(b)}$ comparten los mismos extremos $(X_{(1)}, X_{(n)}) = ($<b>${fmt(t1, 4)}</b>, <b>${fmt(t2, 4)}</b>$)$, por lo que sus perfiles de verosimilitud colapsan exactamente y dan el mismo EMV $(\\hat\\theta_1, \\hat\\theta_2) = (X_{(1)}, X_{(n)})$ (amplitud <b>${fmt(rangeA, 4)}</b>).<br>
+          • En cambio, $\\mathbf{x}^{(c)}$ tiene la misma media $\\bar x =$ <b>${fmt(meanA, 3)}</b> pero extremos $($<b>${fmt(t1c, 3)}</b>, <b>${fmt(t2c, 3)}</b>$)$ (amplitud <b>${fmt(rangeC, 3)}</b>): su verosimilitud se desplaza por completo.
+        `);
+      }
+    }
+
+    runSim();
+  })();
+
+  /* ============================================================
+     AUTOEVALUACIÓN: 3 Quizzes y 2 Comprobadores Numéricos
+     ============================================================ */
+  ui.quiz('#quiz-1', {
+    question: '1. Para una muestra $X_1, \\dots, X_n \\iid U(\\theta_1, \\theta_2)$ con $\\theta_1 &lt; \\theta_2$ ambos desconocidos, ¿cuál es un estadístico conjuntamente suficiente para $(\\theta_1, \\theta_2)$ y por qué el modelo NO pertenece a la familia exponencial?',
+    options: [
+      '$(\\bar X, S^2)$, y no pertenece a la FE porque la varianza depende de $(\\theta_2 - \\theta_1)^2$.',
+      '$(X_{(1)}, X_{(n)}) = (\\min_i X_i, \\max_i X_i)$, y no pertenece a la FE porque el soporte $A(\\theta_1, \\theta_2) = [\\theta_1, \\theta_2]$ depende de los parámetros desconocidos.',
+      'Solo el rango muestral $X_{(n)} - X_{(1)}$, porque el factor $(\\theta_2 - \\theta_1)^{-n}$ solo depende de la longitud del intervalo.',
+      '$(X_{(1)}, X_{(n)})$, y sí pertenece a la FE bidimensional eligiendo $T_1(x) = \\1_{\\{x \\ge \\theta_1\\}}$ y $T_2(x) = \\1_{\\{x \\le \\theta_2\\}}$.'
+    ],
+    answer: 1,
+    explain: 'Al factorizar $L(\\theta_1, \\theta_2 \\mid \\mathbf{x}) = (\\theta_2 - \\theta_1)^{-n}\\1_{\\{\\theta_1 \\le x_{(1)}\\}}\\1_{\\{x_{(n)} \\le \\theta_2\\}}\\1_{\\{x_{(1)} \\le x_{(n)}\\}}$, se ve que $(X_{(1)}, X_{(n)})$ es conjuntamente suficiente. No pertenece a la FE porque el soporte $[\\theta_1, \\theta_2]$ depende de los parámetros (y en la FE las funciones $T_j(x)$ no pueden depender de $\\boldsymbol{\\theta}$).'
+  });
+
+  ui.quiz('#quiz-2', {
+    question: '2. ¿Cuál de las siguientes afirmaciones sobre la pertenencia a la familia exponencial (FE) es correcta?',
+    options: [
+      'La distribución $\\text{Beta}(\\alpha, \\beta)$ general pertenece a la FE unidimensional porque su soporte $(0, 1)$ es independiente de los parámetros.',
+      'La distribución de Cauchy $f(x\\mid\\theta) = \\frac{1}{\\pi[1+(x-\\theta)^2]}$ pertenece a la FE unidimensional con $T(x) = \\ln[1+(x-\\theta)^2]$.',
+      'La $\\text{Beta}(\\alpha, \\beta)$ pertenece a la FE bidimensional con $T_1(x) = \\ln x$ y $T_2(x) = \\ln(1-x)$; no pertenece a la FE unidimensional en general, aunque el caso $\\alpha = \\beta = k$ sí lo hace con $T(x) = \\ln[x(1-x)]$.',
+      'En $N(\\mu, \\sigma^2)$ con ambos parámetros desconocidos, el par $(\\sum X_i, \\sum X_i^2)$ es suficiente pero no puede obtenerse desde la FE bidimensional.'
+    ],
+    answer: 2,
+    explain: 'Por el Ejemplo 6 y el Ejercicio 5, $\\text{Beta}(\\alpha, \\beta)$ tiene dos términos linealmente independientes ($\\ln x$ y $\\ln(1-x)$), de modo que es una FE bidimensional; solo colapsa a una FE unidimensional cuando ambos coeficientes se ligan en un término único, como ocurre en $\\alpha = \\beta = k$.'
+  });
+
+  ui.quiz('#quiz-3', {
+    question: '3. En una familia exponencial unidimensional regular $f(x\\mid\\theta) = \\exp\\{c(\\theta)T(x) + d(\\theta) + S(x)\\}$ con $c\'(\\theta) \\ne 0$, ¿cómo se halla el EMV $\\hat\\theta$ a partir de una muestra i.i.d. de tamaño $n$?',
+    options: [
+      'Resolviendo $\\E_{\\hat\\theta}[T(\\mathbf{X})] = T(\\mathbf{X})$, lo cual equivale a $-\\frac{d\'(\\hat\\theta)}{c\'(\\hat\\theta)} = \\frac{1}{n}\\sum_{i=1}^n T(X_i)$.',
+      'Igualando directamente $c(\\hat\\theta) = d(\\hat\\theta)$ para cancelar la constante de normalización.',
+      'La ecuación $\\E_{\\hat\\theta}[T(\\mathbf{X})] = T(\\mathbf{X})$ solo es válida para variables aleatorias continuas, no para modelos discretos como $\\text{Geo}(p)$ o $\\text{Pois}(\\lambda)$.',
+      'El EMV en toda FE unidimensional es siempre igual a la media muestral $\\bar X$, sin importar quién sea $T(x)$.'
+    ],
+    answer: 0,
+    explain: 'Derivando la log-verosimilitud $\\ell(\\theta) = c(\\theta)T(\\mathbf{X}) + n\\,d(\\theta) + \\sum S(X_i)$ e igualando a cero resulta $T(\\mathbf{X}) = -n\\,d\'(\\theta)/c\'(\\theta) = \\E_\\theta[T(\\mathbf{X})]$, lo que aplica tanto en modelos discretos como continuos.'
+  });
+
+  ui.numcheck('#nc-1', {
+    prompt: '1) Se observa una muestra de tamaño $n = 5$ de $X \\sim \\text{Geo}(p)$ (ensayos hasta el primer éxito, $f(x\\mid p) = p(1-p)^{x-1}$ para $x \\in \\{1, 2, \\dots\\}$): $\\mathbf{x} = (3, 1, 4, 2, 2)$. Calcula el EMV $\\hat p$ usando $\\E_p[T(\\mathbf{X})] = T(\\mathbf{X})$:',
+    answer: 5 / 12,
+    tol: 0.002,
+    placeholder: 'ej. 0.4167',
+    hint: 'Como $T(\\mathbf{x}) = \\sum_{i=1}^5 x_i = 12$ y $\\E_p[T(\\mathbf{X})] = 5/p$, se tiene $5/\\hat p = 12 \\implies \\hat p = 5/12 \\approx 0.4167$.'
+  });
+
+  ui.numcheck('#nc-2', {
+    prompt: '2) En una muestra de tamaño $n = 6$ de la familia potencia $f(y\\mid\\theta) = \\frac{3y^2}{\\theta^3}\\1_{\\{0 \\le y \\le \\theta\\}}$ (Wackerly 9.54) se observa el máximo $Y_{(6)} = 4.5$. Calcula el estimador insesgado basado en el estadístico suficiente $\\tilde\\theta = \\frac{3n+1}{3n}Y_{(n)}$:',
+    answer: 4.75,
+    tol: 0.01,
+    placeholder: 'ej. 4.75',
+    hint: 'Para $n = 6$, $\\frac{3(6)+1}{3(6)} \\times 4.5 = \\frac{19}{18} \\times 4.5 = 4.75$.'
+  });
+
+})();
+</script>
+</body>
+</html>

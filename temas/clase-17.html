@@ -1,0 +1,1150 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clase 17 · Estimadores Insesgados de Varianza Mínima (MVUE) y Teorema de Rao–Blackwell</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/theme.js"></script>
+<style>
+  .sim .plot-cap {
+    font: 600 12.5px var(--font-ui);
+    color: var(--muted);
+    margin: 6px 0 -4px;
+  }
+  .sim .grid-2 {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  }
+  .sim .grid-2 > * {
+    min-width: 0;
+  }
+  .slider.is-dim {
+    opacity: 0.45;
+  }
+</style>
+</head>
+<body data-page="clase-17" data-root="../">
+<main id="contenido">
+
+  <header class="page-head">
+    <p class="kicker">Clase 17 · Unidad 4 — Suficiencia e Inferencia</p>
+    <h1>Estimadores Insesgados de Varianza Mínima (MVUE) y Teorema de Rao–Blackwell</h1>
+    <p class="lead">Cómo combinar insesgamiento y suficiencia mediante el Teorema de Rao–Blackwell para obtener estimadores insesgados de varianza mínima uniforme (MVUE), la demostración de que todo EMV depende del estadístico suficiente y las propiedades asintóticas del EMV en grandes muestras.</p>
+  </header>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="rao-blackwell">1. Estimadores MVUE y Teorema de Rao–Blackwell</h2>
+    <p>En la unidad de estimación puntual (Clases 6 a 9) vimos que, entre los estimadores insesgados de un parámetro $\theta$, preferimos aquel cuya dispersión alrededor del verdadero valor sea la menor posible. También conocimos la Cota Inferior de Cramér–Rao ($\text{LI}(\theta)$), pero esa cota presenta dos limitaciones importantes: no te dice cómo construir un estimador y, en muchos modelos (como la uniforme $\text{Unif}(0, \theta)$ o al estimar $\sigma^2$ en una normal), ningún estimador insesgado alcanza la cota en muestras finitas.</p>
+    <p>La Clase 15 nos dio la pieza que faltaba: un <strong>estadístico suficiente</strong> $T = T(X_1, \dots, X_n)$ resume toda la información que la muestra contiene sobre $\theta$. A continuación uniremos ambos mundos —insesgamiento y suficiencia— mediante uno de los teoremas centrales de la inferencia estadística.</p>
+
+    <div class="box idea">
+      <span class="box-title">Intuición clave · Eliminar el ruido innecesario promediando sobre $T$</span>
+      <p>Supón que tienes un estimador insesgado sencillo $\hat\theta$ (por ejemplo, usar solo la primera observación $X_1$, o el estimador $2\bar X$ en una uniforme) que <strong>no</strong> es función exclusiva del estadístico suficiente $T$.</p>
+      <p>Como $T$ ya contiene toda la información sobre $\theta$, cualquier variación adicional que $\hat\theta$ tenga una vez fijado $T = t$ proviene exclusivamente de cómo se distribuyen los datos individuales dentro del conjunto $\{\mathbf{x} : T(\mathbf{x}) = t\}$ —un azar puramente estructural que no aporta nada sobre $\theta$ y solo infla la varianza.</p>
+      <p>Si promedias $\hat\theta$ sobre todas las muestras compatibles con el mismo $T$, es decir, si calculas $\hat\theta^* = \E[\hat\theta \mid T]$, conservas intacta la esperanza ($\theta$), eliminas esa variabilidad inútil y obtienes un estimador que solo depende de $T$ y cuya varianza es menor o igual que la de $\hat\theta$.</p>
+    </div>
+
+    <div class="box definicion" id="def-mvue">
+      <span class="box-title">Definición · Estimador insesgado de varianza mínima uniforme (MVUE)</span>
+      <p>Sea $X_1, X_2, \dots, X_n$ una muestra aleatoria de una distribución con parámetro desconocido $\theta \in \Omega$. Se dice que $\hat\theta^* = \hat\theta^*(X_1, \dots, X_n)$ es un <strong>estimador insesgado de varianza mínima uniforme (MVUE / UMVUE)</strong> para $\theta$ (o de forma análoga para una función $\tau(\theta)$) si cumple dos condiciones:</p>
+      <ol>
+        <li><strong>Insesgamiento:</strong> $\E_\theta[\hat\theta^*] = \theta$ para todo $\theta \in \Omega$.</li>
+        <li><strong>Varianza mínima uniforme:</strong> Para cualquier otro estimador insesgado $\hat\theta$ de $\theta$,
+          $$\Var_\theta[\hat\theta^*] \le \Var_\theta[\hat\theta] \qquad \text{para todo } \theta \in \Omega.$$</li>
+      </ol>
+      <p>El término <em>uniforme</em> subraya que ningún otro estimador insesgado logra una varianza menor en <em>ningún</em> valor posible del parámetro $\theta$.</p>
+    </div>
+
+    <div class="box teorema" id="thm-rao-blackwell">
+      <span class="box-title">Teorema de Rao–Blackwell</span>
+      <p>Sea $\hat\theta$ un estimador insesgado para $\theta$ tal que $\Var[\hat\theta] &lt; \infty$, y sea $T = T(X_1, \dots, X_n)$ un estadístico suficiente para $\theta$. Definimos el nuevo estimador:</p>
+      $$\hat\theta^* = \E[\hat\theta \mid T].$$
+      <p>Entonces, para todo $\theta$:</p>
+      <ol>
+        <li>$\hat\theta^*$ es un estadístico válido (libre de $\theta$) y es un <strong>estimador insesgado</strong> para $\theta$.</li>
+        <li>La varianza de $\hat\theta^*$ no es mayor que la varianza de $\hat\theta$, es decir:
+          $$\Var[\hat\theta^*] \le \Var[\hat\theta].$$</li>
+      </ol>
+      <p><em>Extensión inmediata:</em> El mismo enunciado y la misma demostración valen sin cambiar una coma si estimas una función paramétrica $\tau(\theta)$ a partir de un estimador insesgado $\hat\tau$ ($\E[\hat\tau] = \tau(\theta)$, $\Var[\hat\tau] &lt; \infty$) definiendo $\hat\tau^* = \E[\hat\tau \mid T]$.</p>
+    </div>
+
+    <details class="prueba"><summary>Demostración completa del Teorema de Rao–Blackwell</summary><div>
+      <ol class="pasos">
+        <li><strong>$\hat\theta^*$ es un estadístico válido (no depende de $\theta$):</strong> Por definición de estadístico suficiente, la distribución condicional de la muestra $\mathbf{X} = (X_1, \dots, X_n)$ dado $T = t$ es independiente de $\theta$. Como $\hat\theta = \hat\theta(\mathbf{X})$ depende únicamente de los datos, al calcular su esperanza condicional $\varphi(t) = \E[\hat\theta(\mathbf{X}) \mid T = t]$ integramos o sumamos respecto a dicha distribución condicional libre de $\theta$. En consecuencia, $\hat\theta^* = \varphi(T)$ no involucra al parámetro desconocido $\theta$ y es un estadístico genuino.</li>
+        <li><strong>Insesgamiento (Ley de la Esperanza Total):</strong> Aplicando la propiedad de la torre para la esperanza condicional y usando que $\hat\theta$ es insesgado ($\E_\theta[\hat\theta] = \theta$), obtenemos para todo $\theta$:
+          $$\E_\theta[\hat\theta^*] = \E_\theta\big[\E[\hat\theta \mid T]\big] = \E_\theta[\hat\theta] = \theta.$$
+          Por lo tanto, $\hat\theta^*$ es un estimador insesgado de $\theta$.</li>
+        <li><strong>Reducción de varianza (Ley de la Varianza Total):</strong> Dado que $\Var_\theta[\hat\theta] &lt; \infty$, descomponemos la varianza de $\hat\theta$ condicionando en $T$ mediante la identidad de la varianza total:
+          $$\Var_\theta[\hat\theta] = \Var_\theta\big(\E[\hat\theta \mid T]\big) + \E_\theta\big[\Var(\hat\theta \mid T)\big] = \Var_\theta[\hat\theta^*] + \E_\theta\big[\Var(\hat\theta \mid T)\big].$$
+          Puesto que toda varianza condicional es no negativa ($\Var(\hat\theta \mid T) \ge 0$), su esperanza también lo es: $\E_\theta\big[\Var(\hat\theta \mid T)\big] \ge 0$. Despejando, concluimos que para todo $\theta$:
+          $$\Var_\theta[\hat\theta^*] = \Var_\theta[\hat\theta] - \E_\theta\big[\Var(\hat\theta \mid T)\big] \le \Var_\theta[\hat\theta].$$
+          Además, la igualdad $\Var_\theta[\hat\theta^*] = \Var_\theta[\hat\theta]$ ocurre si y solo si $\Var(\hat\theta \mid T) = 0$ casi seguramente, es decir, cuando $\hat\theta$ ya era función de $T$ (c.s.). En cualquier otro caso la varianza se reduce estrictamente. $\blacksquare$</li>
+      </ol>
+    </div></details>
+
+    <div class="box nota" id="obs-lehmann-scheffe">
+      <span class="box-title">Observación · De Rao–Blackwell al MVUE (completitud y las dos recetas prácticas)</span>
+      <p>El Teorema de Rao–Blackwell garantiza que condicionar un estimador insesgado en un estadístico suficiente $T$ nunca empeora la varianza, y que el mejor estimador insesgado debe ser función de $T$. ¿Por qué en los ejemplos de esta clase obtenemos directamente el <strong>MVUE</strong>?</p>
+      <p>El complemento clave es el <strong>Teorema de Lehmann–Scheffé</strong>: si el estadístico suficiente $T$ es además <strong>completo</strong> (es decir, ninguna función no nula de $T$ puede tener esperanza idénticamente cero para todo $\theta$: $\E_\theta[h(T)] = 0\;\forall\theta \implies h(T) = 0$ c.s.), entonces <strong>existe un único estimador insesgado que es función de $T$</strong> (salvo en conjuntos de probabilidad cero). En ese caso, cualquier función de $T$ con esperanza igual a $\tau(\theta)$ —en particular la obtenida por $\E[\hat\tau \mid T]$— es automáticamente el <strong>único MVUE</strong> de $\tau(\theta)$.</p>
+      <p>Todas las familias exponenciales de rango completo (Bernoulli, Poisson, Exponencial, Gamma, Normal, Weibull) y el modelo $\text{Unif}(0, \theta)$ poseen estadísticos suficientes completos. En la práctica, esto nos da <strong>dos recetas</strong> para hallar el MVUE:</p>
+      <ul>
+        <li><strong>Receta 1 (vía directa sobre $T$):</strong> Encuentra un estadístico suficiente completo $T$ por Fisher–Neyman y busca una función $\phi(T)$ (ajustando constantes o combinando momentos de $T$) tal que $\E_\theta[\phi(T)] = \tau(\theta)$. Por Lehmann–Scheffé, $\phi(T)$ es el MVUE sin necesidad de calcular distribuciones condicionales.</li>
+        <li><strong>Receta 2 (condicionamiento explícito):</strong> Cuando no sea obvio qué función de $T$ tiene esperanza $\tau(\theta)$ (como ocurre con $e^{-\lambda}$ en Poisson o $p(1-p)$ en Bernoulli), elige el estimador insesgado más sencillo posible $\hat\tau$ (por ejemplo $\1_{\{X_1 = 0\}}$ o $2X_1$) y calcula explícitamente $\hat\tau^* = \E[\hat\tau \mid T = t]$.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="ejemplos-mvue">2. Los 8 ejemplos de la Clase 17 resueltos paso a paso</h2>
+    <p>Ponemos en marcha ambas recetas en los ocho modelos clásicos de la Clase 17. Intenta plantear primero qué estadístico suficiente entrega Fisher–Neyman antes de desplegar la solución.</p>
+
+    <!-- EJEMPLO 1 -->
+    <div class="box ejercicio" id="ej-1">
+      <span class="box-title">Ejemplo 1 · Bernoulli $\text{Ber}(p)$: MVUE para $p$</span>
+      <p>Sean $X_1, X_2, \dots, X_n$ v.a. $\iid \text{Ber}(p)$, donde $p \in (0, 1)$ es desconocido. Determina un MVUE para $p$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Por la Clase 15, $T = \sum_{i=1}^n X_i \sim \text{Bin}(n, p)$ es suficiente (y completo) para $p$. Puedes usar la Receta 1 ajustando $\E[T] = np$, o la Receta 2 condicionando $\hat p = X_1$ dado $T = t$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><strong>Vía directa (Receta 1):</strong> De la Clase 15 sabemos que $T = \sum_{i=1}^n X_i \sim \text{Bin}(n, p)$ es un estadístico suficiente completo para $p$. Como $\E[T] = np$, basta dividir por $n$ para construir un estimador insesgado basado en $T$:
+            $$\hat p^* = \frac{T}{n} = \bar X, \qquad \E_p[\bar X] = \frac{np}{n} = p.$$
+            Por el teorema de Lehmann–Scheffé, $\hat p^* = \bar X$ es el único MVUE de $p$, con varianza $\Var_p(\bar X) = \frac{p(1-p)}{n}$ (que coincide además con $\text{LI}(p)$).</li>
+          <li><strong>Vía condicionamiento de Rao–Blackwell (Receta 2):</strong> Partimos del estimador insesgado elemental $\hat p = X_1$, que satisface $\E_p[X_1] = p$ pero desperdicia las $n-1$ observaciones restantes. Calculamos $\E[X_1 \mid T = t] = \P(X_1 = 1 \mid T = t)$ para $t \in \{0, 1, \dots, n\}$:
+            <ul>
+              <li>Si $t = 0$, todas las $X_i$ valen $0$, luego $\E[X_1 \mid T = 0] = 0 = \frac{0}{n}$.</li>
+              <li>Si $t \ge 1$, el suceso $\{X_1 = 1,\, \sum_{i=1}^n X_i = t\}$ equivale a $\{X_1 = 1,\, \sum_{i=2}^n X_i = t - 1\}$. Como $X_1$ y $\sum_{i=2}^n X_i \sim \text{Bin}(n-1, p)$ son independientes:
+                $$\E[X_1 \mid T = t] = \frac{\P(X_1 = 1)\,\P\left(\sum_{i=2}^n X_i = t-1\right)}{\P\left(\sum_{i=1}^n X_i = t\right)} = \frac{p \cdot \binom{n-1}{t-1}p^{t-1}(1-p)^{n-t}}{\binom{n}{t}p^t(1-p)^{n-t}} = \frac{\binom{n-1}{t-1}}{\binom{n}{t}} = \frac{t}{n}.$$</li>
+            </ul>
+            Evaluando en $T$, resulta nuevamente $\hat p^* = \E[X_1 \mid T] = \frac{T}{n} = \bar X$.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJEMPLO 2 -->
+    <div class="box ejercicio" id="ej-2">
+      <span class="box-title">Ejemplo 2 · Weibull $\text{Weibull}(\theta)$: MVUE para $\theta$</span>
+      <p>Sean $X_1, X_2, \dots, X_n$ v.a. $\iid \text{Weibull}(\theta)$, $\theta &gt; 0$, cuya fdp está dada por</p>
+      $$f(y \mid \theta) = \left(\frac{2y}{\theta}\right)\exp\{-y^2/\theta\}\cdot \1\{y &gt; 0\}.$$
+      <p>Determina un MVUE para $\theta$.</p>
+
+      <details class="pista"><summary>Pista 1 · Estadístico suficiente por factorización</summary><div>
+        <p>Escribe la verosimilitud $L(\theta \mid \mathbf{x}) = \prod_{i=1}^n f(x_i \mid \theta)$ y separa los factores que contienen a $\theta$. Verás aparecer $\sum_{i=1}^n x_i^2$.</p>
+      </div></details>
+
+      <details class="pista"><summary>Pista 2 · Transformación $W_i = X_i^2$</summary><div>
+        <p>Calcula la distribución de $W_i = X_i^2$ mediante la función acumulada (o el método del Jacobiano). Descubrirás que $W_i \iid \text{Exp}(\theta)$ con media $\theta$, luego $T = \sum_{i=1}^n W_i \sim \text{Gamma}(n, \theta)$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><strong>Búsqueda del estadístico suficiente:</strong> Construimos la función de verosimilitud de la muestra $\mathbf{x} = (x_1, \dots, x_n)$:
+            $$L(\theta \mid \mathbf{x}) = \prod_{i=1}^n \left[\frac{2x_i}{\theta}\exp\!\left(-\frac{x_i^2}{\theta}\right)\1_{\{x_i &gt; 0\}}\right] = \underbrace{\frac{1}{\theta^n}\exp\!\left(-\frac{1}{\theta}\sum_{i=1}^n x_i^2\right)}_{g\big(T(\mathbf{x}),\,\theta\big)} \times \underbrace{2^n\left(\prod_{i=1}^n x_i\right)\1_{\{x_{(1)} &gt; 0\}}}_{h(\mathbf{x})}.$$
+            Por el Criterio de Factorización de Fisher–Neyman, $T = \sum_{i=1}^n X_i^2$ es un estadístico suficiente (y completo, por pertenecer a una familia exponencial uniparamétrica) para $\theta$.</li>
+          <li><strong>Distribución de $W_i = X_i^2$ y de la suma $T$:</strong> Para $w &gt; 0$, hallamos la función de distribución acumulada de $W_i = X_i^2$:
+            $$F_{W_i}(w) = \P(X_i^2 \le w) = \P(0 &lt; X_i \le \sqrt{w}) = \int_0^{\sqrt{w}} \frac{2y}{\theta}e^{-y^2/\theta}\,dy.$$
+            Con la sustitución $u = y^2/\theta$ ($du = \frac{2y}{\theta}\,dy$), resulta:
+            $$F_{W_i}(w) = \int_0^{w/\theta} e^{-u}\,du = 1 - e^{-w/\theta}, \qquad w &gt; 0.$$
+            Esta es la acumulada de una distribución $\text{Exp}(\theta)$ (con media $\theta$, i.e., $\text{Gamma}(1, \theta)$). Como $W_1, \dots, W_n \iid \text{Exp}(\theta)$, su suma sigue una distribución Gamma con parámetro de escala $\theta$:
+            $$T = \sum_{i=1}^n X_i^2 = \sum_{i=1}^n W_i \sim \text{Gamma}(n, \theta),$$
+            con $\E[T] = n\theta$ y $\Var(T) = n\theta^2$.</li>
+          <li><strong>MVUE para $\theta$ y su varianza:</strong> Ajustamos dividiendo entre $n$:
+            $$\hat\theta^* = \frac{T}{n} = \frac{1}{n}\sum_{i=1}^n X_i^2.$$
+            Como $\E_\theta[\hat\theta^*] = \frac{1}{n}(n\theta) = \theta$ y $\hat\theta^*$ es función del estadístico suficiente completo $T$, es el <strong>MVUE</strong> de $\theta$. Su varianza es:
+            $$\Var_\theta(\hat\theta^*) = \frac{1}{n^2}\Var_\theta(T) = \frac{n\theta^2}{n^2} = \frac{\theta^2}{n}.$$</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJEMPLO 3 -->
+    <div class="box ejercicio" id="ej-3">
+      <span class="box-title">Ejemplo 3 · Poisson $\text{Pois}(\lambda)$: MVUE para $\lambda$</span>
+      <p>Sean $X_1, X_2, \dots, X_n$ v.a. $\iid \text{Pois}(\lambda)$, $\lambda &gt; 0$. Determina un MVUE para $\lambda$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En la Clase 15 probamos que $T = \sum_{i=1}^n X_i$ es suficiente (y completo) para $\lambda$, con $T \sim \text{Pois}(n\lambda)$. ¿Qué múltiplo de $T$ tiene esperanza $\lambda$?</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><strong>Suficiencia y distribución de $T$:</strong> Por la Clase 15, $T = \sum_{i=1}^n X_i$ es un estadístico suficiente completo para $\lambda$, y por la propiedad aditiva de la Poisson, $T \sim \text{Pois}(n\lambda)$.</li>
+          <li><strong>Construcción del MVUE:</strong> Como $\E_\lambda[T] = n\lambda$, el estimador
+            $$\hat\lambda^* = \frac{T}{n} = \bar X$$
+            es insesgado ($\E_\lambda[\bar X] = \lambda$) y depende únicamente de $T$. Por tanto, $\hat\lambda^* = \bar X$ es el <strong>MVUE</strong> para $\lambda$, con varianza $\Var_\lambda(\bar X) = \frac{\lambda}{n}$.</li>
+          <li><strong>Verificación alternativa vía Rao–Blackwell:</strong> Si tomamos el estimador insesgado crudo $\hat\lambda = X_1$, sabemos de la Clase 15 que $X_1 \mid T = t \sim \text{Bin}(t, 1/n)$, cuya esperanza es $t \cdot \frac{1}{n} = \frac{t}{n}$. Así también se obtiene $\E[X_1 \mid T] = \frac{T}{n} = \bar X$.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJEMPLO 4 -->
+    <div class="box ejercicio" id="ej-4">
+      <span class="box-title">Ejemplo 4 · Exponencial $\text{Exp}(\beta)$: MVUE para $\Var[X] = \beta^2$</span>
+      <p>Sean $X_1, X_2, \dots, X_n$ v.a. $\iid \text{Exp}(\beta)$, $\beta &gt; 0$ (convención de media $\beta$, es decir $f(x \mid \beta) = \frac{1}{\beta}e^{-x/\beta}\1_{\{x &gt; 0\}}$). Determina un MVUE para $\Var[X]$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En $\text{Exp}(\beta)$ de media $\beta$, la varianza poblacional es $\Var[X] = \beta^2$. El estadístico suficiente completo es $T = \sum_{i=1}^n X_i \sim \text{Gamma}(n, \beta)$. Calcula $\E[T^2] = \Var(T) + (\E[T])^2$ y ajusta el factor numérico.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><strong>Parámetro objetivo y estadístico suficiente:</strong> Bajo la parametrización del formulario ($\E[X] = \beta$), la varianza poblacional es $\tau(\beta) = \Var[X] = \beta^2$. Por la Clase 15, $T = \sum_{i=1}^n X_i$ es suficiente completo para $\beta$, y como suma de $n$ exponenciales independientes, $T \sim \text{Gamma}(n, \beta)$, con:
+            $$\E[T] = n\beta, \qquad \Var(T) = n\beta^2.$$</li>
+          <li><strong>Segundo momento de $T$:</strong> Buscamos una constante $c$ tal que $c\,T^2$ sea insesgado para $\beta^2$. Calculamos $\E[T^2]$:
+            $$\E[T^2] = \Var(T) + (\E[T])^2 = n\beta^2 + (n\beta)^2 = n(n+1)\beta^2.$$</li>
+          <li><strong>MVUE para $\Var[X] = \beta^2$:</strong> Dividiendo entre $n(n+1)$ resulta:
+            $$\widehat{\beta^2}_{\text{MVUE}} = \frac{T^2}{n(n+1)} = \frac{(n\bar X)^2}{n(n+1)} = \frac{n}{n+1}\,\bar X^2.$$
+            Como $\E[\widehat{\beta^2}_{\text{MVUE}}] = \beta^2$ y es función de $T$, es el <strong>MVUE</strong> de $\Var[X]$.</li>
+          <li><strong>Comparación reveladora con el EMV $\bar X^2$ y con $S^2$:</strong>
+            <ul>
+              <li>El EMV de $\beta^2$ es $\bar X^2$, que tiene un sesgo positivo de $\E[\bar X^2] - \beta^2 = \frac{n+1}{n}\beta^2 - \beta^2 = \frac{\beta^2}{n}$. Multiplicarlo por $\frac{n}{n+1}$ corrige ese sesgo y produce el MVUE.</li>
+              <li>La varianza muestral $S^2 = \frac{1}{n-1}\sum_{i=1}^n (X_i - \bar X)^2$ también estima $\Var[X] = \beta^2$ de manera insesgada en cualquier distribución, pero <strong>no</strong> es función exclusiva de $T = \sum X_i$, así que pierde eficiencia frente al MVUE: usando el cuarto momento de $\text{Gamma}(n,\beta)$, $\E[T^4] = n(n+1)(n+2)(n+3)\beta^4$, se obtiene
+                $$\Var\!\left(\frac{n}{n+1}\bar X^2\right) = \frac{4n+6}{n(n+1)}\beta^4 \quad \text{frente a} \quad \Var(S^2) = \frac{8n-6}{n(n-1)}\beta^4,$$
+                prácticamente la mitad de varianza para muestras moderadas o grandes.</li>
+            </ul></li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJEMPLO 5 -->
+    <div class="box ejercicio" id="ej-5">
+      <span class="box-title">Ejemplo 5 · Uniforme $U(0, \theta)$: MVUE para $\theta$</span>
+      <p>Sean $X_1, X_2, \dots, X_n$ v.a. $\iid U(0, \theta)$, $\theta &gt; 0$. Determina un MVUE para $\theta$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>El estadístico suficiente completo es $T = X_{(n)} = \max\{X_1, \dots, X_n\}$, con densidad $f_{X_{(n)}}(t) = \frac{nt^{n-1}}{\theta^n}\1_{\{0 \le t \le \theta\}}$. Calcula $\E[X_{(n)}]$ (o aplica Rao–Blackwell a $\hat\theta = 2X_1$ dado $X_{(n)} = t$).</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><strong>Vía directa (Receta 1):</strong> De la Clase 15 sabemos que $T = X_{(n)} = \max\{X_1, \dots, X_n\}$ es suficiente (y completo) para $\theta$ en $(0, \theta)$. Su función de distribución acumulada es $F_{X_{(n)}}(t) = (t/\theta)^n$ para $0 \le t \le \theta$, y su fdp es $f_{X_{(n)}}(t) = \frac{nt^{n-1}}{\theta^n}\1_{\{0 \le t \le \theta\}}$. Calculamos su esperanza:
+            $$\E[X_{(n)}] = \int_0^\theta t \cdot \frac{n t^{n-1}}{\theta^n}\,dt = \frac{n}{\theta^n}\left[\frac{t^{n+1}}{n+1}\right]_0^\theta = \frac{n}{n+1}\theta.$$
+            Multiplicando por $\frac{n+1}{n}$ obtenemos un estimador insesgado que solo depende de $X_{(n)}$:
+            $$\hat\theta^* = \frac{n+1}{n}\,X_{(n)}.$$
+            Por completitud de $X_{(n)}$, $\hat\theta^* = \frac{n+1}{n}X_{(n)}$ es el <strong>MVUE</strong> para $\theta$.</li>
+          <li><strong>Vía condicionamiento explícito de Rao–Blackwell (Receta 2):</strong> Partamos del estimador insesgado $\hat\theta = 2X_1$ ($\E[2X_1] = 2(\theta/2) = \theta$). Condicionemos dado el máximo $X_{(n)} = t$:
+            <ul>
+              <li>Por simetría, con probabilidad $\frac{1}{n}$ es justamente $X_1$ quien alcanza el máximo ($X_1 = t$).</li>
+              <li>Con probabilidad $\frac{n-1}{n}$, el máximo lo alcanza otra observación $X_j$ ($j \ne 1$), en cuyo caso $X_1$ puede tomar cualquier valor en $(0, t)$ de manera uniforme ($X_1 \mid \{X_{(n)} = t,\, X_1 &lt; t\} \sim U(0, t)$), con esperanza condicional $\frac{t}{2}$.</li>
+            </ul>
+            Aplicando la esperanza condicional:
+            $$\hat\theta^* = \E[2X_1 \mid X_{(n)} = t] = 2\left[\frac{1}{n}\cdot t + \frac{n-1}{n}\cdot \frac{t}{2}\right] = 2\cdot \frac{2t + (n-1)t}{2n} = \frac{n+1}{n}\,t \implies \hat\theta^* = \frac{n+1}{n}X_{(n)}.$$</li>
+          <li><strong>Varianza del MVUE:</strong> Como $\E[X_{(n)}^2] = \frac{n}{\theta^n}\int_0^\theta t^{n+1}\,dt = \frac{n}{n+2}\theta^2$, tenemos
+            $$\Var(X_{(n)}) = \frac{n\theta^2}{n+2} - \left(\frac{n\theta}{n+1}\right)^2 = \frac{n\theta^2}{(n+1)^2(n+2)},$$
+            y multiplicando por $\left(\frac{n+1}{n}\right)^2$ resulta:
+            $$\Var(\hat\theta^*) = \left(\frac{n+1}{n}\right)^2\frac{n\theta^2}{(n+1)^2(n+2)} = \frac{\theta^2}{n(n+2)}.$$
+            Observa que esta varianza cae como $O(1/n^2)$, drásticamente menor que la de $\hat\theta_{\text{crudo}} = 2\bar X$, cuya varianza es $\frac{\theta^2}{3n} = O(1/n)$.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJEMPLO 6 -->
+    <div class="box ejercicio" id="ej-6">
+      <span class="box-title">Ejemplo 6 · Normal $N(\mu, \sigma^2)$ con ambos parámetros desconocidos: MVUEs para $\mu$ y $\sigma^2$</span>
+      <p>Sean $X_1, X_2, \dots, X_n$ v.a. $\iid N(\mu, \sigma^2)$, donde $\mu \in \R$ y $\sigma^2 &gt; 0$ son ambos desconocidos ($n \ge 2$). Determina MVUEs para $\mu$ y $\sigma^2$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Factoriza la verosimilitud conjunta $L(\mu, \sigma^2 \mid \mathbf{x})$ para hallar el vector suficiente $(\sum X_i, \sum X_i^2)$ y exprésalo en términos de $(\bar X, S^2)$, que también es conjuntamente suficiente completo.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><strong>Suficiencia conjunta:</strong> La verosimilitud de la muestra normal con $\mu$ y $\sigma^2$ desconocidos es:
+            $$L(\mu, \sigma^2 \mid \mathbf{x}) = (2\pi\sigma^2)^{-n/2}\exp\left(-\frac{1}{2\sigma^2}\sum_{i=1}^n (x_i - \mu)^2\right) = (2\pi\sigma^2)^{-n/2}\exp\left(-\frac{1}{2\sigma^2}\sum_{i=1}^n x_i^2 + \frac{\mu}{\sigma^2}\sum_{i=1}^n x_i - \frac{n\mu^2}{2\sigma^2}\right).$$
+            Por Fisher–Neyman (con $h(\mathbf{x}) = 1$), el par $\mathbf{T} = \big(\sum_{i=1}^n X_i,\, \sum_{i=1}^n X_i^2\big)$ es conjuntamente suficiente para $(\mu, \sigma^2)$. Al tratarse de la familia exponencial normal biparamétrica de rango completo, $\mathbf{T}$ es además <strong>completo</strong>.</li>
+          <li><strong>Equivalencia biyectiva con $(\bar X, S^2)$:</strong> Como $\sum_{i=1}^n X_i = n\bar X$ y $\sum_{i=1}^n X_i^2 = (n-1)S^2 + n\bar X^2$ (con inversa $\bar X = \frac{1}{n}\sum X_i$ y $S^2 = \frac{1}{n-1}\big[\sum X_i^2 - \frac{1}{n}(\sum X_i)^2\big]$), existe una correspondencia biyectiva entre $\mathbf{T}$ y $(\bar X, S^2)$. Luego $(\bar X, S^2)$ también es un estadístico suficiente completo para $(\mu, \sigma^2)$.</li>
+          <li><strong>Identificación de los MVUEs:</strong> De la Clase 3 y la Clase 6 sabemos que $\E[\bar X] = \mu$ y $\E[S^2] = \sigma^2$ para todo $(\mu, \sigma^2)$. Como tanto $\bar X$ como $S^2$ son funciones del estadístico suficiente completo $(\bar X, S^2)$, por Lehmann–Scheffé:
+            $$\hat\mu^* = \bar X \quad \text{es el MVUE para }\mu, \qquad \widehat{\sigma^2}^* = S^2 = \frac{1}{n-1}\sum_{i=1}^n (X_i - \bar X)^2 \quad \text{es el MVUE para }\sigma^2.$$</li>
+          <li><strong>Dato importante (Cramér–Rao frente a MVUE):</strong> Aunque la cota inferior de Cramér–Rao para estimar $\sigma^2$ es $\text{LI}(\sigma^2) = \text{CRLB}(\sigma^2) = \frac{2\sigma^4}{n}$ y la varianza de $S^2$ es estrictamente mayor ($\Var(S^2) = \frac{2\sigma^4}{n-1} &gt; \frac{2\sigma^4}{n}$ porque $\frac{(n-1)S^2}{\sigma^2} \sim \chi^2_{(n-1)}$), <strong>$S^2$ sí es el MVUE de $\sigma^2$</strong>: ningún estimador insesgado en muestras finitas puede bajar de $\frac{2\sigma^4}{n-1}$.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJEMPLO 7 -->
+    <div class="box ejercicio" id="ej-7">
+      <span class="box-title">Ejemplo 7 · Poisson $\text{Pois}(\lambda)$: MVUE para $\P(X = 0) = e^{-\lambda}$</span>
+      <p>Sean $X_1, X_2, \dots, X_n$ v.a. $\iid \text{Pois}(\lambda)$, $\lambda &gt; 0$. Determina un MVUE para $\tau(\lambda) = \P(X = 0) = e^{-\lambda}$.</p>
+
+      <details class="pista"><summary>Pista 1 · Estimador insesgado crudo</summary><div>
+        <p>Aquí adivinar directamente una función de $T = \sum_{i=1}^n X_i$ con esperanza $e^{-\lambda}$ no es inmediato. Usa la Receta 2: define $\hat\tau = \1_{\{X_1 = 0\}}$ y verifica que $\E[\hat\tau] = \P(X_1 = 0) = e^{-\lambda}$.</p>
+      </div></details>
+
+      <details class="pista"><summary>Pista 2 · Distribución condicional $X_1 \mid T = t$</summary><div>
+        <p>Recuerda de la Clase 15 que, si $T = \sum_{i=1}^n X_i = t$, entonces $X_1 \mid T = t \sim \text{Bin}(t, 1/n)$. Calcula $\P(X_1 = 0 \mid T = t)$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><strong>Estimador insesgado inicial y estadístico suficiente:</strong> Tomamos $\hat\tau = \1_{\{X_1 = 0\}}$, que solo mira la primera observación pero es exactamente insesgado para $e^{-\lambda}$:
+            $$\E_\lambda[\hat\tau] = \P_\lambda(X_1 = 0) = \frac{e^{-\lambda}\lambda^0}{0!} = e^{-\lambda}.$$
+            Por el Ejemplo 3 y la Clase 15, $T = \sum_{i=1}^n X_i \sim \text{Pois}(n\lambda)$ es suficiente completo para $\lambda$.</li>
+          <li><strong>Aplicación de Rao–Blackwell ($\hat\tau^* = \E[\hat\tau \mid T]$):</strong> Calculamos $\E[\1_{\{X_1 = 0\}} \mid T = t] = \P(X_1 = 0 \mid T = t)$ para todo entero $t \ge 0$. Como $X_1$ y $\sum_{i=2}^n X_i \sim \text{Pois}((n-1)\lambda)$ son independientes:
+            $$\P(X_1 = 0 \mid T = t) = \frac{\P_\lambda(X_1 = 0)\,\P_\lambda\left(\sum_{i=2}^n X_i = t\right)}{\P_\lambda(T = t)} = \frac{e^{-\lambda} \cdot \dfrac{e^{-(n-1)\lambda}[(n-1)\lambda]^t}{t!}}{\dfrac{e^{-n\lambda}(n\lambda)^t}{t!}} = \left(\frac{n-1}{n}\right)^t = \left(1 - \frac{1}{n}\right)^t.$$
+            (También sale directo recordando que $X_1 \mid T = t \sim \text{Bin}(t, 1/n)$, de modo que $\P(X_1 = 0 \mid T = t) = (1 - 1/n)^t$). Sustituyendo $t$ por $T = n\bar X$, obtenemos el <strong>MVUE</strong> para $e^{-\lambda}$:
+            $$\widehat{e^{-\lambda}}_{\text{MVUE}} = \left(1 - \frac{1}{n}\right)^T = \left(1 - \frac{1}{n}\right)^{n\bar X}.$$</li>
+          <li><strong>Comprobación directa del insesgamiento con la serie de Poisson:</strong> Usando la función de probabilidad de $T \sim \text{Pois}(n\lambda)$:
+            $$\E_\lambda\left[\left(1 - \frac{1}{n}\right)^T\right] = \sum_{t=0}^\infty \left(\frac{n-1}{n}\right)^t \frac{e^{-n\lambda}(n\lambda)^t}{t!} = e^{-n\lambda}\sum_{t=0}^\infty \frac{[(n-1)\lambda]^t}{t!} = e^{-n\lambda}\,e^{(n-1)\lambda} = e^{-\lambda}.$$</li>
+          <li><strong>Comparación con el EMV $e^{-\bar X}$:</strong> Por invarianza, el EMV de $e^{-\lambda}$ es $e^{-\bar X}$. Por la desigualdad de Jensen (pues $x \mapsto e^{-x}$ es estrictamente convexa), $\E[e^{-\bar X}] &gt; e^{-\E[\bar X]} = e^{-\lambda}$, así que el EMV tiene un ligero sesgo positivo en muestras finitas. Sin embargo, cuando $n \to \infty$, $\left(1 - \frac{1}{n}\right)^n \to e^{-1}$, por lo que el MVUE y el EMV se aproximan asintóticamente.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJEMPLO 8 -->
+    <div class="box ejercicio" id="ej-8">
+      <span class="box-title">Ejemplo 8 · Bernoulli $\text{Ber}(p)$ ($n \ge 2$): MVUE para $p(1-p)$</span>
+      <p>Sean $X_1, X_2, \dots, X_n$ v.a. $\iid \text{Ber}(p)$ ($n \ge 2$). Determina un MVUE para $\tau(p) = p(1-p)$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Puedes resolverlo de dos maneras: (a) calcula $\E[T(n-T)]$ sabiendo que $T = \sum_{i=1}^n X_i \sim \text{Bin}(n, p)$; o (b) aplica Rao–Blackwell al estimador insesgado crudo $\hat\tau = \1_{\{X_1 = 1,\, X_2 = 0\}}$ condicionando en $T = t$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <p><em>Nota previa:</em> Se requiere $n \ge 2$, ya que para $n = 1$ cualquier función $h(X_1)$ tiene esperanza lineal $(1-p)h(0) + p\,h(1)$ y no puede ser insesgada para el término cuadrático $p(1-p)$.</p>
+        <ol class="pasos">
+          <li><strong>Método 1 · Vía directa con momentos de $T \sim \text{Bin}(n, p)$:</strong> Sabemos que $T = \sum_{i=1}^n X_i \sim \text{Bin}(n, p)$ es suficiente completo para $p$, con $\E[T] = np$ y $\Var(T) = np(1-p)$. Calculemos la esperanza de $T(n - T) = nT - T^2$:
+            $$\E[T(n - T)] = n\E[T] - \big(\Var(T) + (\E[T])^2\big) = n^2 p - np(1-p) - n^2 p^2 = n^2 p(1-p) - np(1-p) = n(n-1)p(1-p).$$
+            Dividiendo por $n(n-1)$ (válido para $n \ge 2$), obtenemos el <strong>MVUE</strong> para $p(1-p)$:
+            $$\widehat{p(1-p)}_{\text{MVUE}} = \frac{T(n - T)}{n(n-1)} = \frac{n}{n-1}\,\bar X(1 - \bar X).$$</li>
+          <li><strong>Método 2 · Vía Rao–Blackwell explícito sobre $\hat\tau = \1_{\{X_1 = 1,\, X_2 = 0\}}$:</strong> Por independencia de $X_1$ y $X_2$, el estimador $\hat\tau = \1_{\{X_1 = 1,\, X_2 = 0\}} = X_1(1 - X_2)$ es insesgado: $\E[\hat\tau] = \P(X_1 = 1)\P(X_2 = 0) = p(1-p)$. Condicionemos dado $T = t$:
+            <ul>
+              <li>Si $t = 0$ o $t = n$, el evento $\{X_1 = 1, X_2 = 0\}$ es imposible y la esperanza condicional vale $0 = \frac{t(n-t)}{n(n-1)}$.</li>
+              <li>Si $1 \le t \le n - 1$, usando que $X_1, X_2$ y $\sum_{i=3}^n X_i \sim \text{Bin}(n-2, p)$ son independientes:
+                $$\E\big[\1_{\{X_1 = 1,\, X_2 = 0\}} \mid T = t\big] = \frac{\P(X_1 = 1)\,\P(X_2 = 0)\,\P\left(\sum_{i=3}^n X_i = t - 1\right)}{\P\left(\sum_{i=1}^n X_i = t\right)} = \frac{p(1-p)\binom{n-2}{t-1}p^{t-1}(1-p)^{n-t-1}}{\binom{n}{t}p^t(1-p)^{n-t}} = \frac{\binom{n-2}{t-1}}{\binom{n}{t}}.$$
+                Simplificando los coeficientes binomiales:
+                $$\frac{\binom{n-2}{t-1}}{\binom{n}{t}} = \frac{(n-2)!}{(t-1)!\,(n-t-1)!}\cdot \frac{t!\,(n-t)!}{n!} = \frac{t(n-t)}{n(n-1)}.$$</li>
+            </ul>
+            Evaluando en $T = n\bar X$, recuperamos exactamente $\widehat{p(1-p)}_{\text{MVUE}} = \frac{T(n-T)}{n(n-1)} = \frac{n}{n-1}\bar X(1 - \bar X)$.
+            <br><em>Curiosidad algebraica:</em> Como en $\text{Ber}(p)$ cada $X_i \in \{0, 1\}$ cumple $X_i^2 = X_i$, se tiene $\sum_{i=1}^n (X_i - \bar X)^2 = n\bar X(1 - \bar X)$, de modo que $\frac{n}{n-1}\bar X(1 - \bar X)$ coincide exactamente con la varianza muestral $S^2$!</li>
+        </ol>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="emv-suficiencia-asintotica">3. EMV, estadístico suficiente y grandes muestras</h2>
+    <p>En los ocho ejemplos anteriores quizás notaste un patrón sorprendente: el MVUE casi siempre se parece mucho al Estimador de Máxima Verosimilitud (EMV) —ya sea idéntico a él ($\bar X$, $\frac{1}{n}\sum X_i^2$) o una versión corregida de él ($\frac{n+1}{n}X_{(n)}$, $\frac{n}{n+1}\bar X^2$, $\frac{n}{n-1}\bar X(1-\bar X)$)—. Esto no es casualidad, sino consecuencia de una propiedad estructural profunda.</p>
+
+    <div class="box teorema" id="thm-emv-suficiente">
+      <span class="box-title">Teorema · EMV y estadístico suficiente</span>
+      <p>Sea $T = T(X_1, \dots, X_n)$ un estadístico suficiente para $\theta$. Entonces el estimador de máxima verosimilitud (EMV) $\hat\theta$ (si existe y es único) es <strong>función del estadístico suficiente $T$</strong>.</p>
+    </div>
+
+    <details class="prueba"><summary>Demostración completa (mediante el Criterio de Factorización)</summary><div>
+      <ol class="pasos">
+        <li><strong>Factorización de la verosimilitud:</strong> Puesto que $T = T(\mathbf{X})$ es un estadístico suficiente para $\theta$, el Teorema de Factorización de Fisher–Neyman (Clase 15) garantiza la existencia de funciones no negativas $g$ y $h$ tales que:
+          $$L(\theta \mid \mathbf{x}) = g\big(T(\mathbf{x}),\, \theta\big)\,h(\mathbf{x}),$$
+          donde $h(\mathbf{x})$ no depende de $\theta$.</li>
+        <li><strong>Simplificación del problema de maximización:</strong> Para cualquier muestra observada $\mathbf{x}$ en el soporte del modelo (donde $L(\theta \mid \mathbf{x}) &gt; 0$ para algún $\theta$, lo cual implica $h(\mathbf{x}) &gt; 0$), el factor $h(\mathbf{x})$ actúa como una constante estrictamente positiva con respecto a $\theta$. Por consiguiente, maximizar $L(\theta \mid \mathbf{x})$ respecto a $\theta$ es completamente equivalente a maximizar $g\big(T(\mathbf{x}), \theta\big)$ respecto a $\theta$:
+          $$\hat\theta(\mathbf{x}) = \arg\max_{\theta \in \Omega} L(\theta \mid \mathbf{x}) = \arg\max_{\theta \in \Omega} \Big[g\big(T(\mathbf{x}),\, \theta\big)\,h(\mathbf{x})\Big] = \arg\max_{\theta \in \Omega} g\big(T(\mathbf{x}),\, \theta\big).$$
+          (Equivalentemente, si $L$ es derivable y positiva, $\ln L(\theta \mid \mathbf{x}) = \ln g(T(\mathbf{x}), \theta) + \ln h(\mathbf{x})$, por lo que $\frac{\partial \ln L}{\partial \theta} = \frac{\partial \ln g}{\partial \theta}$ queda completamente libre de $\mathbf{x}$ fuera de $T(\mathbf{x})$).</li>
+        <li><strong>Dependencia exclusiva de $T$:</strong> Dado que la función objetivo $g\big(T(\mathbf{x}), \theta\big)$ depende de los datos $\mathbf{x}$ únicamente a través de $T(\mathbf{x})$, si el maximizador $\hat\theta$ existe y es único, necesariamente existe una función $\psi$ tal que $\hat\theta(\mathbf{X}) = \psi\big(T(\mathbf{X})\big)$. <em>(Si el máximo no fuera único, el conjunto entero de maximizadores depende solo de $T(\mathbf{x})$, de modo que siempre puede elegirse un EMV que sea función de $T$).</em> $\blacksquare$</li>
+      </ol>
+    </div></details>
+
+    <div class="box idea">
+      <span class="box-title">Atajo práctico · Del EMV al MVUE en un solo paso</span>
+      <p>Dado que todo EMV único ya es función de cualquier estadístico suficiente $T$ (y en la mayoría de modelos regulares $T$ es completo), ¡el EMV ya se encuentra sobre la “familia correcta” de estimadores!</p>
+      <ul>
+        <li>Si calculas el EMV $\hat\theta$ y verificas que es <strong>insesgado</strong> ($\E[\hat\theta] = \theta$), entonces automáticamente es el <strong>MVUE</strong> (así ocurre con $\bar X$ en Bernoulli, Poisson, Normal y Exponencial, o con $\frac{1}{n}\sum X_i^2$ en Weibull).</li>
+        <li>Si el EMV resulta <strong>sesgado</strong> por un factor o desplazamiento simple, a menudo basta <strong>corregir su sesgo manteniendo la dependencia exclusiva en $T$</strong>: multiplicar $X_{(n)}$ por $\frac{n+1}{n}$ en $U(0, \theta)$, $\bar X^2$ por $\frac{n}{n+1}$ en $\text{Exp}(\beta)$, $\bar X(1-\bar X)$ por $\frac{n}{n-1}$ en $\text{Ber}(p)$, o $\hat\sigma^2_{\text{EMV}}$ por $\frac{n}{n-1}$ en $N(\mu,\sigma^2)$ produce directamente el MVUE.</li>
+      </ul>
+    </div>
+
+    <h3>Comportamiento del EMV en grandes muestras</h3>
+    <p>¿Y qué pasa si la función $g(\theta)$ es no lineal (como $e^{-\lambda}$ en Poisson) o corregir el sesgo del EMV en muestras pequeñas resulta complicado? Cuando el tamaño muestral $n$ es grande, los resultados asintóticos vistos en las Clases 9, 10 y 12 garantizan que el EMV se vuelve automáticamente insesgado y óptimo.</p>
+
+    <div class="box teorema" id="thm-emv-asintotico">
+      <span class="box-title">Teorema · Normalidad y eficiencia asintótica del EMV en grandes muestras</span>
+      <p>En el caso de tamaños de muestra grande, y bajo las condiciones de regularidad especificadas en la Clase 9 (soporte independiente de $\theta$, diferenciabilidad bajo el signo de integral/suma e Información de Fisher $0 &lt; I_F(\theta) &lt; \infty$), se tiene que:</p>
+      $$\sqrt{n}(\hat\theta - \theta) \dto N\!\left(0,\, \frac{1}{I_F(\theta)}\right),$$
+      <p>y por la <strong>invarianza de los EMV</strong> (Clase 10) junto con el Método Delta (Clase 12), para toda función $g$ diferenciable en $\theta$ con $g'(\theta) \ne 0$:</p>
+      $$\sqrt{n}\big(g(\hat\theta) - g(\theta)\big) \dto N\!\left(0,\, \frac{[g'(\theta)]^2}{I_F(\theta)}\right).$$
+    </div>
+
+    <div class="box nota" id="obs-emv-asintotico">
+      <span class="box-title">Observaciones esenciales sobre grandes muestras</span>
+      <ol>
+        <li><strong>Insesgadez y eficiencia asintótica (alcanzan la cota de Cramér–Rao):</strong> El resultado anterior implica que los EMV son <strong>asintóticamente insesgados</strong> y que sus varianzas asintóticas $\frac{1}{nI_F(\theta)}$ y $\frac{[g'(\theta)]^2}{nI_F(\theta)}$ coinciden exactamente con los correspondientes límites inferiores de Cramér–Rao ($\text{LI}$) de los estimadores insesgados de $\theta$ y $g(\theta)$, respectivamente.
+          <br>Compara esto con lo ocurrido en muestras finitas en los Ejemplos 4, 7 y 8: el MVUE y el EMV diferían en una corrección de orden $O(1/n)$ (por ejemplo $\frac{n}{n+1}\bar X^2$ vs. $\bar X^2$, $\big(1-\frac{1}{n}\big)^{n\bar X}$ vs. $e^{-\bar X}$, o $\frac{n}{n-1}\bar X(1-\bar X)$ vs. $\bar X(1-\bar X)$). Cuando $n \to \infty$, esa diferencia desaparece y ambos comparten exactamente la misma distribución límite normal centrada con varianza mínima de Cramér–Rao.</li>
+        <li><strong>Sustitución por cualquier estimador consistente ($\tilde\theta \pto \theta$):</strong> En aplicaciones reales desconocemos el parámetro verdadero $\theta$ dentro de $I_F(\theta)$ y $g'(\theta)$. Sin embargo, para cualquier estimador consistente (es decir, $\hat\theta \pto \theta$ o más generalmente $\tilde\theta \pto \theta$), si $I_F$ y $g'$ son continuas y no nulas en $\theta$, el Teorema del Mapeo Continuo y el Teorema de Slutsky (Clases 11–12) garantizan que se preservan ambas convergencias al estandarizar:
+          $$\sqrt{n\,I_F(\tilde\theta)}(\hat\theta - \theta) \dto N(0, 1), \qquad \frac{\sqrt{n\,I_F(\tilde\theta)}}{|g'(\tilde\theta)|}\big(g(\hat\theta) - g(\theta)\big) \dto N(0, 1).$$</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="ejercicios-wackerly-17">4. Ejercicios resueltos del libro de Wackerly (9.57, 9.59, 9.61, 9.63, 9.65)</h2>
+    <p>Resolvemos por completo los cinco ejercicios recomendados en el PDF de la Clase 17 (Wackerly, Mendenhall &amp; Scheaffer, Capítulo 9).</p>
+
+    <!-- EJERCICIO 9.57 -->
+    <div class="box ejercicio" id="ej-w957">
+      <span class="box-title">Ejercicio 9.57 (Wackerly) · Suficiencia, sesgo, MVUE y eficiencia en $U(0, \theta)$</span>
+      <p>Sean $Y_1, Y_2, \dots, Y_n$ una muestra aleatoria de una distribución uniforme en el intervalo $(0, \theta)$, con $\theta &gt; 0$ desconocido.</p>
+      <ol>
+        <li>Demuestra que $Y_{(n)} = \max(Y_1, \dots, Y_n)$ es un estadístico suficiente para $\theta$.</li>
+        <li>Demuestra que $Y_{(n)}$ es un estimador sesgado de $\theta$ y calcula su sesgo.</li>
+        <li>Encuentra un MVUE para $\theta$, calcula su varianza y compárala con la del estimador insesgado $2\bar Y$ hallando la eficiencia relativa $\text{Eff}(2\bar Y,\, \hat\theta_{\text{MVUE}})$.</li>
+      </ol>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En (a), incluye las indicadoras $\1_{\{0 \le y_i \le \theta\}}$ en $L(\theta \mid \mathbf{y})$ y reescríbelas usando $y_{(1)}$ y $y_{(n)}$. En (b), usa $f_{Y_{(n)}}(y) = \frac{n y^{n-1}}{\theta^n}\1_{\{0 \le y \le \theta\}}$. En (c), recuerda que $\Var(Y_i) = \theta^2/12$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><strong>Parte (a) · Suficiencia de $Y_{(n)}$:</strong> La densidad individual es $f(y_i \mid \theta) = \frac{1}{\theta}\1_{\{0 \le y_i \le \theta\}}$. Como $0 \le y_i \le \theta$ para todo $i = 1, \dots, n$ equivale a $y_{(1)} \ge 0$ y $y_{(n)} \le \theta$:
+            $$L(\theta \mid \mathbf{y}) = \frac{1}{\theta^n}\prod_{i=1}^n \1_{\{0 \le y_i \le \theta\}} = \underbrace{\frac{1}{\theta^n}\1_{\{y_{(n)} \le \theta\}}}_{g(y_{(n)},\,\theta)} \times \underbrace{\1_{\{y_{(1)} \ge 0\}}}_{h(\mathbf{y})}.$$
+            Por el Criterio de Factorización de Fisher–Neyman, $Y_{(n)}$ es un estadístico suficiente para $\theta$ (y también completo).</li>
+          <li><strong>Parte (b) · Sesgo de $Y_{(n)}$:</strong> La función acumulada de $Y_{(n)}$ es $F_{Y_{(n)}}(y) = (y/\theta)^n$ en $[0, \theta]$, por lo que su fdp es $f_{Y_{(n)}}(y) = \frac{ny^{n-1}}{\theta^n}\1_{\{0 \le y \le \theta\}}$. Su esperanza es:
+            $$\E[Y_{(n)}] = \int_0^\theta y\cdot \frac{n y^{n-1}}{\theta^n}\,dy = \frac{n}{n+1}\,\theta.$$
+            Como $\E[Y_{(n)}] \ne \theta$, el estadístico $Y_{(n)}$ es sesgado para $\theta$, con sesgo:
+            $$B(Y_{(n)}) = \E[Y_{(n)}] - \theta = \frac{n}{n+1}\theta - \theta = -\frac{\theta}{n+1}.$$</li>
+          <li><strong>Parte (c) · MVUE, varianza y eficiencia relativa frente a $2\bar Y$:</strong> Multiplicando $Y_{(n)}$ por $\frac{n+1}{n}$ eliminamos el sesgo y conservamos la dependencia exclusiva del estadístico suficiente completo $Y_{(n)}$, obteniendo el MVUE:
+            $$\hat\theta_{\text{MVUE}} = \frac{n+1}{n}\,Y_{(n)}.$$
+            Como vimos en el Ejemplo 5, $\E[Y_{(n)}^2] = \frac{n}{n+2}\theta^2$ y $\Var(Y_{(n)}) = \frac{n\theta^2}{(n+1)^2(n+2)}$, de modo que:
+            $$\Var(\hat\theta_{\text{MVUE}}) = \left(\frac{n+1}{n}\right)^2\Var(Y_{(n)}) = \frac{\theta^2}{n(n+2)}.$$
+            Por otra parte, para el estimador insesgado $2\bar Y$, como $\E[Y_i] = \theta/2$ y $\Var(Y_i) = \theta^2/12$:
+            $$\Var(2\bar Y) = \frac{4}{n}\Var(Y_1) = \frac{4}{n}\cdot \frac{\theta^2}{12} = \frac{\theta^2}{3n}.$$
+            La eficiencia relativa es:
+            $$\text{Eff}(2\bar Y,\, \hat\theta_{\text{MVUE}}) = \frac{\Var(\hat\theta_{\text{MVUE}})}{\Var(2\bar Y)} = \frac{\theta^2 / [n(n+2)]}{\theta^2 / (3n)} = \frac{3}{n+2}.$$
+            Para $n \ge 2$ este cociente es estrictamente menor que $1$ y decae rápidamente a $0$: por ejemplo, con $n = 28$, $\hat\theta_{\text{MVUE}}$ es $10$ veces más eficiente en varianza que $2\bar Y$.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJERCICIO 9.59 -->
+    <div class="box ejercicio" id="ej-w959">
+      <span class="box-title">Ejercicio 9.59 (Wackerly) · MVUE en dos modelos clásicos (Exponencial y Distribución Potencia)</span>
+      <p>Dependiendo de la edición del texto de Wackerly, este ejercicio aparece planteado en uno de los dos modelos siguientes; resolvemos ambos por completo:</p>
+      <ul>
+        <li><strong>Caso A (Exponencial $\text{Exp}(\theta)$, $\theta &gt; 0$):</strong> Sea $Y_1, \dots, Y_n \iid$ con fdp $f(y \mid \theta) = \frac{1}{\theta}e^{-y/\theta}\1_{\{y &gt; 0\}}$. Halla un MVUE para $\theta$ y un MVUE para $\theta^2$.</li>
+        <li><strong>Caso B (Distribución potencia en $(0, 1)$, $\theta &gt; -1$, $n \ge 2$):</strong> Sea $Y_1, \dots, Y_n \iid$ con fdp $f(y \mid \theta) = (\theta + 1)y^\theta\1_{\{0 \le y \le 1\}}$. Halla un estadístico suficiente para $\theta$, su EMV y el MVUE para $\theta$.</li>
+      </ul>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En el <strong>Caso A</strong>, $T = \sum_{i=1}^n Y_i \sim \text{Gamma}(n, \theta)$, con $\E[T] = n\theta$ y $\E[T^2] = n(n+1)\theta^2$. En el <strong>Caso B</strong>, escribe $y_i^\theta = e^{\theta \ln y_i}$ y haz la transformación $W_i = -\ln Y_i$: comprobarás que $W_i \iid \text{Exp}\big(\text{media } \frac{1}{\theta+1}\big)$, luego $T = -\sum_{i=1}^n \ln Y_i \sim \text{Gamma}\big(n, \frac{1}{\theta+1}\big)$, y calcula $\E[1/T]$ integrando la densidad Gamma.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso (Casos A y B)</summary><div>
+        <h4>Caso A: Modelo Exponencial $f(y \mid \theta) = \frac{1}{\theta}e^{-y/\theta}\1_{\{y &gt; 0\}}$</h4>
+        <ol class="pasos">
+          <li><strong>Suficiencia y distribución de $T$:</strong> La verosimilitud es $L(\theta \mid \mathbf{y}) = \theta^{-n}\exp\!\big(-\frac{1}{\theta}\sum_{i=1}^n y_i\big)\1_{\{y_{(1)} &gt; 0\}}$, por lo que $T = \sum_{i=1}^n Y_i$ es suficiente completo para $\theta$ y $T \sim \text{Gamma}(n, \theta)$ (media $n\theta$, varianza $n\theta^2$).</li>
+          <li><strong>MVUE para $\theta$ y para $\theta^2$:</strong>
+            <ul>
+              <li>Como $\E[T] = n\theta$, el MVUE de $\theta$ es $\hat\theta_{\text{MVUE}} = \frac{T}{n} = \bar Y$.</li>
+              <li>Como $\E[T^2] = \Var(T) + (\E[T])^2 = n\theta^2 + n^2\theta^2 = n(n+1)\theta^2$, el MVUE de $\theta^2$ es $\widehat{\theta^2}_{\text{MVUE}} = \frac{T^2}{n(n+1)} = \frac{n}{n+1}\bar Y^2$ (como en el Ejemplo 4).</li>
+            </ul></li>
+        </ol>
+
+        <h4>Caso B: Distribución potencia $f(y \mid \theta) = (\theta + 1)y^\theta\1_{\{0 \le y \le 1\}}$ ($\theta &gt; -1$, $n \ge 2$)</h4>
+        <ol class="pasos">
+          <li><strong>Suficiencia y EMV:</strong> Multiplicando las $n$ densidades:
+            $$L(\theta \mid \mathbf{y}) = (\theta+1)^n \left(\prod_{i=1}^n y_i\right)^\theta \prod_{i=1}^n \1_{\{0 \le y_i \le 1\}} = \underbrace{(\theta+1)^n \exp\!\big(-\theta\,T(\mathbf{y})\big)}_{g(T(\mathbf{y}),\,\theta)} \times \underbrace{\1_{\{0 \le y_{(1)},\; y_{(n)} \le 1\}}}_{h(\mathbf{y})},$$
+            donde $T = -\sum_{i=1}^n \ln Y_i = -\ln\!\left(\prod_{i=1}^n Y_i\right) &gt; 0$. Por Fisher–Neyman (familia exponencial de rango completo), $T$ es suficiente completo para $\theta$.
+            <br>Maximizando $\ln L(\theta \mid \mathbf{y}) = n\ln(\theta + 1) - \theta T$, igualamos la derivada a cero: $\frac{n}{\theta+1} - T = 0 \implies \hat\theta_{\text{EMV}} = \frac{n}{T} - 1$.</li>
+          <li><strong>Distribución exacta de $T$:</strong> Definamos $W_i = -\ln Y_i &gt; 0$. Para $w &gt; 0$:
+            $$\P(W_i &gt; w) = \P(-\ln Y_i &gt; w) = \P(Y_i &lt; e^{-w}) = \int_0^{e^{-w}}(\theta + 1)y^\theta\,dy = \left[y^{\theta+1}\right]_0^{e^{-w}} = e^{-(\theta+1)w}.$$
+            Por tanto $W_i \iid \text{Exp}\big(\beta = \frac{1}{\theta+1}\big)$ (tasa $\theta+1$). Sumando las $n$ exponenciales independientes, obtenemos:
+            $$T = \sum_{i=1}^n W_i \sim \text{Gamma}\!\left(n,\, \frac{1}{\theta+1}\right), \qquad f_T(t) = \frac{(\theta+1)^n}{\Gamma(n)}\,t^{n-1}e^{-(\theta+1)t}\,\1_{\{t &gt; 0\}}.$$</li>
+          <li><strong>Cálculo de $\E[1/T]$ y MVUE para $\theta$:</strong> Para $n \ge 2$ podemos absorber el factor $1/t$ dentro de la potencia $t^{n-1}$ de la densidad Gamma:
+            $$\E\!\left[\frac{1}{T}\right] = \int_0^\infty \frac{1}{t}\cdot \frac{(\theta+1)^n}{(n-1)!}\,t^{n-1}e^{-(\theta+1)t}\,dt = \frac{\theta+1}{n-1}\int_0^\infty \frac{(\theta+1)^{n-1}}{(n-2)!}\,t^{(n-1)-1}e^{-(\theta+1)t}\,dt = \frac{\theta+1}{n-1},$$
+            pues la última integral es la integral total de una densidad $\text{Gamma}\big(n-1, \frac{1}{\theta+1}\big)$, igual a $1$.
+            <br>En consecuencia, $\E\!\left[\frac{n-1}{T}\right] = \theta + 1$, y restando $1$ obtenemos un estimador insesgado basado únicamente en $T$:
+            $$\hat\theta_{\text{MVUE}} = \frac{n-1}{T} - 1 = \frac{n-1}{-\sum_{i=1}^n \ln Y_i} - 1.$$
+            Observa de nuevo el vínculo con el EMV: $\hat\theta_{\text{EMV}} = \frac{n}{T} - 1$, y basta reemplazar $n$ por $n-1$ para corregir el sesgo y obtener el MVUE!</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJERCICIO 9.61 -->
+    <div class="box ejercicio" id="ej-w961">
+      <span class="box-title">Ejercicio 9.61 (Wackerly) · Distribución Geométrica $\text{Geom}(p)$: Rao–Blackwell desde $\1_{\{Y_1 = 1\}}$</span>
+      <p>Sean $Y_1, Y_2, \dots, Y_n$ una muestra aleatoria de tamaño $n \ge 2$ de una distribución geométrica con función de probabilidad $p(y \mid p) = p(1-p)^{y-1}$ para $y = 1, 2, 3, \dots$ (donde $0 &lt; p &lt; 1$).</p>
+      <ol>
+        <li>Encuentra un estadístico suficiente $T$ para $p$ y determina su distribución de probabilidad.</li>
+        <li>Comprueba que $\hat p = \1_{\{Y_1 = 1\}}$ es un estimador insesgado para $p$ y aplica el Teorema de Rao–Blackwell condicionando en $T$ para hallar el MVUE de $p$.</li>
+      </ol>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>En (a), $T = \sum_{i=1}^n Y_i$ sigue una distribución Binomial Negativa: $\P(T = t) = \binom{t-1}{n-1}p^n(1-p)^{t-n}$ para $t = n, n+1, \dots$. En (b), usa $\{Y_1 = 1,\, \sum_{i=1}^n Y_i = t\} = \{Y_1 = 1,\, \sum_{i=2}^n Y_i = t-1\}$ junto con la independencia de $Y_1$ y $\sum_{i=2}^n Y_i \sim \text{BinNeg}(n-1, p)$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><strong>Suficiencia y distribución de $T$:</strong> La verosimilitud conjunta es:
+            $$L(p \mid \mathbf{y}) = \prod_{i=1}^n p(1-p)^{y_i - 1}\1_{\{y_i \in \{1,2,\dots\}\}} = \underbrace{p^n(1-p)^{\sum_{i=1}^n y_i - n}}_{g(T(\mathbf{y}),\,p)} \times \underbrace{\prod_{i=1}^n \1_{\{y_i \in \{1,2,\dots\}\}}}_{h(\mathbf{y})}.$$
+            Por Fisher–Neyman, $T = \sum_{i=1}^n Y_i$ es suficiente (y completo) para $p$. Como cada $Y_i$ representa el número de ensayos independientes hasta obtener un éxito, $T$ representa el número total de ensayos necesarios para acumular $n$ éxitos, es decir, $T \sim \text{BinNeg}(n, p)$ con función de probabilidad:
+            $$\P_p(T = t) = \binom{t-1}{n-1}p^n(1-p)^{t-n}, \qquad t = n, n+1, n+2, \dots$$</li>
+          <li><strong>Insesgamiento del estimador inicial y Rao–Blackwell:</strong> Definimos $\hat p = \1_{\{Y_1 = 1\}}$. Su esperanza es $\E_p[\hat p] = \P_p(Y_1 = 1) = p(1-p)^0 = p$, luego es insesgado.
+            <br>Calculamos $\hat p^* = \E[\1_{\{Y_1 = 1\}} \mid T = t] = \P(Y_1 = 1 \mid T = t)$ para todo $t \ge n$:
+            <ul>
+              <li>Si $t = n$, como cada $Y_i \ge 1$, necesariamente $Y_1 = \dots = Y_n = 1$, luego $\P(Y_1 = 1 \mid T = n) = 1 = \frac{n-1}{n-1}$ (pues $n \ge 2$).</li>
+              <li>Para todo entero $t \ge n$: como $Y_1$ es independiente de $U = \sum_{i=2}^n Y_i \sim \text{BinNeg}(n-1, p)$ (cuyo soporte empieza en $n-1 \le t-1$), se tiene:
+                $$\P(Y_1 = 1 \mid T = t) = \frac{\P_p(Y_1 = 1)\,\P_p(U = t-1)}{\P_p(T = t)} = \frac{p \cdot \binom{t-2}{n-2}p^{n-1}(1-p)^{(t-1)-(n-1)}}{\binom{t-1}{n-1}p^n(1-p)^{t-n}} = \frac{\binom{t-2}{n-2}}{\binom{t-1}{n-1}}.$$
+                Simplificando los factoriales:
+                $$\frac{\binom{t-2}{n-2}}{\binom{t-1}{n-1}} = \frac{(t-2)!}{(n-2)!\,(t-n)!} \cdot \frac{(n-1)!\,(t-n)!}{(t-1)!} = \frac{n-1}{t-1}.$$</li>
+            </ul>
+            En conclusión, el <strong>MVUE</strong> para $p$ ($n \ge 2$) es:
+            $$\hat p^* = \frac{n-1}{\sum_{i=1}^n Y_i - 1}.$$
+            Observa de nuevo cómo corrige al EMV $\hat p_{\text{EMV}} = \frac{n}{\sum_{i=1}^n Y_i}$ restando $1$ tanto al numerador como al denominador.</li>
+          <li><strong>Nota adicional sobre eficiencia relativa en modelos normales (ejercicios afines):</strong> En una población normal $N(\mu, \sigma^2)$, comparar el MVUE $S^2$ frente al estimador insesgado simple de dos puntos $\hat\sigma^2_0 = \frac{1}{2}(Y_1 - Y_2)^2$ da un ejemplo paralelo del mismo fenómeno: como $Y_1 - Y_2 \sim N(0, 2\sigma^2)$, $\frac{(Y_1 - Y_2)^2}{2\sigma^2} \sim \chi^2_{(1)}$ tiene varianza $2$, luego $\Var(\hat\sigma^2_0) = 2\sigma^4$, mientras $\Var(S^2) = \frac{2\sigma^4}{n-1}$, por lo que la eficiencia relativa a favor de $S^2$ es $\frac{\Var(\hat\sigma^2_0)}{\Var(S^2)} = n - 1$.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJERCICIO 9.63 -->
+    <div class="box ejercicio" id="ej-w963">
+      <span class="box-title">Ejercicio 9.63 (Wackerly) · Densidad potencia en $(0, \theta)$: MVUE mediante $Y_{(n)}$</span>
+      <p>Sean $Y_1, Y_2, \dots, Y_n$ una muestra aleatoria de una distribución con función de densidad:</p>
+      $$f(y \mid \theta) = \frac{3y^2}{\theta^3}\,\1_{\{0 \le y \le \theta\}}, \qquad \theta &gt; 0.$$
+      <p>Encuentra un estadístico suficiente para $\theta$ y utilízalo para hallar el MVUE de $\theta$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Como en $\text{Unif}(0, \theta)$, el soporte $[0, \theta]$ depende de $\theta$, así que la indicadora conjunta da $Y_{(n)} \le \theta$. Calcula $F_Y(y) = (y/\theta)^3$, luego $F_{Y_{(n)}}(y) = \big[F_Y(y)\big]^n$, deriva para hallar $f_{Y_{(n)}}(y)$ y obtén $\E[Y_{(n)}]$.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><strong>Suficiencia de $Y_{(n)}$:</strong> Escribimos la verosimilitud incluyendo el soporte completo:
+            $$L(\theta \mid \mathbf{y}) = \prod_{i=1}^n \left(\frac{3y_i^2}{\theta^3}\,\1_{\{0 \le y_i \le \theta\}}\right) = \underbrace{\frac{1}{\theta^{3n}}\,\1_{\{y_{(n)} \le \theta\}}}_{g(y_{(n)},\,\theta)} \times \underbrace{3^n\left(\prod_{i=1}^n y_i^2\right)\1_{\{y_{(1)} \ge 0\}}}_{h(\mathbf{y})}.$$
+            Por el Criterio de Factorización de Fisher–Neyman, $T = Y_{(n)} = \max\{Y_1, \dots, Y_n\}$ es suficiente (y completo) para $\theta$.</li>
+          <li><strong>Densidad de $Y_{(n)}$:</strong> Para $0 \le y \le \theta$, la función acumulada de cada observación es:
+            $$F_Y(y) = \int_0^y \frac{3u^2}{\theta^3}\,du = \left(\frac{y}{\theta}\right)^3.$$
+            Por independencia, la acumulada del máximo es $F_{Y_{(n)}}(y) = \big[F_Y(y)\big]^n = \left(\frac{y}{\theta}\right)^{3n}$ para $0 \le y \le \theta$. Derivando respecto a $y$, obtenemos su fdp:
+            $$f_{Y_{(n)}}(y) = \frac{3n\,y^{3n-1}}{\theta^{3n}}\,\1_{\{0 \le y \le \theta\}}.$$</li>
+          <li><strong>Esperanza de $Y_{(n)}$ y MVUE:</strong>
+            $$\E[Y_{(n)}] = \int_0^\theta y\cdot \frac{3n\,y^{3n-1}}{\theta^{3n}}\,dy = \frac{3n}{\theta^{3n}}\left[\frac{y^{3n+1}}{3n+1}\right]_0^\theta = \frac{3n}{3n+1}\,\theta.$$
+            Despejando $\theta$, el estimador insesgado basado únicamente en el estadístico suficiente completo $Y_{(n)}$ es el <strong>MVUE</strong>:
+            $$\hat\theta^* = \frac{3n+1}{3n}\,Y_{(n)}.$$</li>
+          <li><strong>Nota para el caso cuadrático ($f(y \mid \theta) = \frac{2y}{\theta^2}\1_{\{0 \le y \le \theta\}}$):</strong> Si la densidad tuviera exponente $k - 1$ (es decir, $f(y \mid \theta) = \frac{ky^{k-1}}{\theta^k}\1_{\{0 \le y \le \theta\}}$), el mismo cálculo da $F_{Y_{(n)}}(y) = (y/\theta)^{kn}$, $f_{Y_{(n)}}(y) = \frac{kn\,y^{kn-1}}{\theta^{kn}}\1_{\{0 \le y \le \theta\}}$ y $\E[Y_{(n)}] = \frac{kn}{kn+1}\theta$, por lo que el MVUE es $\frac{kn+1}{kn}Y_{(n)}$; en particular, para $k = 2$ ($\frac{2y}{\theta^2}$) el MVUE es $\frac{2n+1}{2n}Y_{(n)}$.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <!-- EJERCICIO 9.65 -->
+    <div class="box ejercicio" id="ej-w965">
+      <span class="box-title">Ejercicio 9.65 (Wackerly) · Rao–Blackwell explícito en la Exponencial $\text{Exp}(\theta)$</span>
+      <p>Sean $Y_1, Y_2, \dots, Y_n$ variables aleatorias $\iid \text{Exp}(\theta)$ ($n \ge 2$) con densidad $f(y \mid \theta) = \frac{1}{\theta}e^{-y/\theta}\1_{\{y &gt; 0\}}$, $\theta &gt; 0$. Aplica el Teorema de Rao–Blackwell directamente al estimador insesgado $\hat\theta = Y_1$, condicionando respecto al estadístico suficiente $T = \sum_{i=1}^n Y_i$, para demostrar que el MVUE de $\theta$ es $\bar Y$.</p>
+
+      <details class="pista"><summary>Pista</summary><div>
+        <p>Puedes resolverlo de dos modos: por simetría usando $\sum_{i=1}^n \E[Y_i \mid T] = \E[T \mid T] = T$, o calculando directamente la densidad condicional $f_{Y_1 \mid T}(y_1 \mid t) = f_{Y_1, T}(y_1, t) / f_T(t)$ a partir de $Y_1 \sim \text{Exp}(\theta)$ y $U = \sum_{i=2}^n Y_i \sim \text{Gamma}(n-1, \theta)$ independientes.</p>
+      </div></details>
+
+      <details class="solucion"><summary>Solución completa paso a paso</summary><div>
+        <ol class="pasos">
+          <li><strong>Comprobación previa:</strong> Claramente $\E_\theta[Y_1] = \theta$, así que $\hat\theta = Y_1$ es insesgado, y por la Clase 15 $T = \sum_{i=1}^n Y_i$ es suficiente completo para $\theta$.</li>
+          <li><strong>Vía 1 · Argumento rápido por simetría:</strong> Como $Y_1, \dots, Y_n$ son $\iid$, para cada $i \in \{1, \dots, n\}$ el par $(Y_i, T)$ tiene exactamente la misma distribución conjunta que $(Y_1, T)$, por lo que $\E[Y_i \mid T] = \E[Y_1 \mid T]$ para todo $i$. Sumando desde $i = 1$ hasta $n$ y usando la linealidad de la esperanza condicional:
+            $$n\,\E[Y_1 \mid T] = \sum_{i=1}^n \E[Y_i \mid T] = \E\!\left[\sum_{i=1}^n Y_i \,\Big|\, T\right] = \E[T \mid T] = T \implies \E[Y_1 \mid T] = \frac{T}{n} = \bar Y.$$</li>
+          <li><strong>Vía 2 · Cálculo explícito mediante la densidad condicional $f_{Y_1 \mid T}(y_1 \mid t)$:</strong> Sea $U = \sum_{i=2}^n Y_i$. Como $Y_1 \sim \text{Exp}(\theta)$ es independiente de $U \sim \text{Gamma}(n-1, \theta)$ y $T = Y_1 + U \sim \text{Gamma}(n, \theta)$, aplicamos la transformación $(Y_1, U) \mapsto (Y_1, T)$ con $u = t - y_1$ (Jacobiano $|J| = 1$) para obtener la densidad conjunta de $(Y_1, T)$:
+            $$f_{Y_1, T}(y_1, t) = f_{Y_1}(y_1)\,f_U(t - y_1) = \left(\frac{1}{\theta}e^{-y_1/\theta}\right)\left(\frac{(t - y_1)^{n-2}e^{-(t-y_1)/\theta}}{(n-2)!\,\theta^{n-1}}\right)\1_{\{0 &lt; y_1 &lt; t\}} = \frac{(t - y_1)^{n-2}e^{-t/\theta}}{(n-2)!\,\theta^n}\,\1_{\{0 &lt; y_1 &lt; t\}}.$$
+            Dividiendo por la densidad marginal $f_T(t) = \frac{t^{n-1}e^{-t/\theta}}{(n-1)!\,\theta^n}\1_{\{t &gt; 0\}}$, todos los términos con $\theta$ se cancelan (verificando además la suficiencia de $T$) y resulta:
+            $$f_{Y_1 \mid T}(y_1 \mid t) = \frac{(n-1)!}{(n-2)!}\cdot \frac{(t - y_1)^{n-2}}{t^{n-1}}\,\1_{\{0 &lt; y_1 &lt; t\}} = \frac{n-1}{t}\left(1 - \frac{y_1}{t}\right)^{n-2}\1_{\{0 &lt; y_1 &lt; t\}}.$$
+            (Es decir, $Y_1 / t \mid T = t \sim \text{Beta}(1, n-1)$). Integramos ahora para hallar $\E[Y_1 \mid T = t]$ haciendo el cambio $u = 1 - y_1/t$ ($y_1 = t(1-u)$, $dy_1 = -t\,du$):
+            $$\E[Y_1 \mid T = t] = \int_0^t y_1 \cdot \frac{n-1}{t}\left(1 - \frac{y_1}{t}\right)^{n-2}dy_1 = (n-1)t \int_0^1 (1 - u)u^{n-2}\,du = (n-1)t\left(\frac{1}{n-1} - \frac{1}{n}\right) = \frac{t}{n}.$$
+            Evaluando en $T$, obtenemos $\hat\theta^* = \E[Y_1 \mid T] = \frac{T}{n} = \bar Y$, que es el MVUE de $\theta$.</li>
+          <li><strong>Nota adicional · Suficiencia minimal en $\text{Ber}(p)$ vía razón de verosimilitudes:</strong> En ejercicios paralelos del mismo bloque se comprueba que $T = \sum_{i=1}^n X_i$ es también un <em>estadístico suficiente minimal</em> para $\text{Ber}(p)$: para dos muestras $\mathbf{x}, \mathbf{y} \in \{0, 1\}^n$, el cociente de verosimilitudes es
+            $$\frac{L(p \mid \mathbf{x})}{L(p \mid \mathbf{y})} = \frac{p^{\sum x_i}(1-p)^{n - \sum x_i}}{p^{\sum y_i}(1-p)^{n - \sum y_i}} = \left(\frac{p}{1-p}\right)^{\sum x_i - \sum y_i},$$
+            que es constante respecto a $p$ si y solo si $\sum_{i=1}^n x_i = \sum_{i=1}^n y_i$. Esto confirma que $T$ comprime los datos al máximo sin pérdida de información.</li>
+        </ol>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="simulaciones">5. Laboratorios interactivos</h2>
+    <p>Observa mediante simulación Monte Carlo las dos grandes ideas de la Clase 17: el <strong>colapso de la varianza</strong> que produce el Teorema de Rao–Blackwell frente a estimadores que ignoran la suficiencia, y la <strong>convergencia normal óptima</strong> del EMV y del MVUE en muestras grandes.</p>
+
+    <div class="sim" id="sim-rao-blackwell">
+      <p class="sim-title">Laboratorio 1 · Efecto Rao–Blackwell en vivo: Estimador crudo vs. MVUE vs. EMV</p>
+      <p class="sim-desc">Elige uno de los tres escenarios clave de la clase ($\text{Pois}(\lambda) \to e^{-\lambda}$, $\text{Unif}(0, \theta) \to \theta$, o $\text{Exp}(\beta) \to \beta^2$). Simula $M = 2000$ muestras de tamaño $n$ y compara a la izquierda las distribuciones muestrales alrededor del valor verdadero, y a la derecha el error cuadrático medio (ECM) empírico frente a las curvas teóricas conforme crece $n$.</p>
+      <div class="controls"></div>
+      <div class="grid-2">
+        <div>
+          <p class="plot-cap">Distribución muestral (crudo / $S^2$ vs. MVUE vs. EMV)</p>
+          <div class="plot plot-dist"></div>
+        </div>
+        <div>
+          <p class="plot-cap">ECM teórico (curvas) y simulado (puntos) según $n$</p>
+          <div class="plot plot-var"></div>
+        </div>
+      </div>
+      <div class="out"></div>
+    </div>
+
+    <div class="sim" id="sim-emv-asintotico">
+      <p class="sim-title">Laboratorio 2 · Convergencia asintótica del EMV y MVUE a la normal de Cramér–Rao</p>
+      <p class="sim-desc">Comprueba el Teorema de grandes muestras para $g(\theta)$ en $\text{Pois}(\lambda) \to e^{-\lambda}$ y $\text{Ber}(p) \to p(1-p)$. Sube $n$ desde muestras pequeñas hasta $n = 120$ y observa cómo tanto $\sqrt{n}\big(g(\hat\theta_{\text{EMV}}) - g(\theta)\big)$ como $\sqrt{n}\big(\hat\tau_{\text{MVUE}} - g(\theta)\big)$ pierden su sesgo de orden $O(1/n)$ y colapsan sobre la campana teórica $N\big(0,\, [g'(\theta)]^2 / I_F(\theta)\big)$.</p>
+      <div class="controls"></div>
+      <div class="plot plot-asym"></div>
+      <div class="out"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2 id="autoevaluacion">6. Autoevaluación</h2>
+    <div id="quiz-1"></div>
+    <div id="quiz-2"></div>
+    <div id="quiz-3"></div>
+
+    <h3>Comprueba tus cálculos numéricos</h3>
+    <div id="nc-1"></div>
+    <div id="nc-2"></div>
+
+    <details class="solucion"><summary>Desarrollo de los dos cálculos numéricos</summary><div>
+      <ol class="pasos">
+        <li>Por el Ejemplo 7, para $X_1, \dots, X_n \iid \text{Pois}(\lambda)$ con $n = 10$ y $T = \sum_{i=1}^{10} X_i = 8$, el MVUE de $\P(X = 0) = e^{-\lambda}$ es:
+          $$\widehat{e^{-\lambda}}_{\text{MVUE}} = \left(1 - \frac{1}{n}\right)^T = \left(1 - \frac{1}{10}\right)^8 = (0.9)^8 \approx 0.4305.$$</li>
+        <li>Por el Ejercicio 9.61, para $Y_1, \dots, Y_n \iid \text{Geom}(p)$ ($y \in \{1, 2, \dots\}$) con $n = 6$ y $T = \sum_{i=1}^6 Y_i = 21$, el MVUE de $p$ es:
+          $$\hat p_{\text{MVUE}} = \frac{n - 1}{\sum_{i=1}^n Y_i - 1} = \frac{6 - 1}{21 - 1} = \frac{5}{20} = 0.25.$$</li>
+      </ol>
+    </div></details>
+
+    <div class="box nota">
+      <span class="box-title">Resumen esencial de la Clase 17</span>
+      <ul>
+        <li><strong>Teorema de Rao–Blackwell:</strong> Si $\hat\theta$ es insesgado ($\Var[\hat\theta] &lt; \infty$) y $T$ es suficiente para $\theta$, entonces $\hat\theta^* = \E[\hat\theta \mid T]$ es un estadístico válido, insesgado y con varianza $\Var[\hat\theta^*] \le \Var[\hat\theta]$ para todo $\theta$. Cuando $T$ es además completo (Lehmann–Scheffé), $\hat\theta^*$ es el <strong>único MVUE</strong>.</li>
+        <li><strong>Dos recetas prácticas para el MVUE:</strong> (1) ajustar directamente una función $\phi(T)$ del estadístico suficiente completo $T$ hasta lograr $\E[\phi(T)] = \tau(\theta)$; o (2) condicionar un estimador insesgado elemental $\hat\tau$ dado $T$.</li>
+        <li><strong>EMV y suficiencia:</strong> Por el Criterio de Factorización $L(\theta \mid \mathbf{x}) = g(T(\mathbf{x}), \theta)h(\mathbf{x})$, si el EMV $\hat\theta$ existe y es único, depende de la muestra únicamente a través de $T$. Si además el EMV (o una corrección simple suya) es insesgado y $T$ es completo, ya tienes el MVUE.</li>
+        <li><strong>EMV en grandes muestras:</strong> Bajo regularidad, $\sqrt{n}(\hat\theta - \theta) \dto N\!\big(0, 1/I_F(\theta)\big)$ y $\sqrt{n}(g(\hat\theta) - g(\theta)) \dto N\!\big(0, [g'(\theta)]^2 / I_F(\theta)\big)$; los EMV son asintóticamente insesgados, alcanzan la cota de Cramér–Rao y las convergencias estandarizadas siguen valiendo al sustituir $\theta$ por cualquier estimador consistente $\tilde\theta \pto \theta$.</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="../assets/js/stats.js"></script>
+<script src="../assets/js/plot.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+(function () {
+  'use strict';
+  const S = EM.stats, fmt = S.fmt, ui = EM.ui;
+
+  function sampleStats(arr, truth) {
+    const m = arr.length;
+    let sum = 0;
+    for (let i = 0; i < m; i++) sum += arr[i];
+    const mean = sum / m;
+    let ss = 0, mse = 0;
+    for (let i = 0; i < m; i++) {
+      const dm = arr[i] - mean;
+      const dt = arr[i] - truth;
+      ss += dm * dm;
+      mse += dt * dt;
+    }
+    return { mean, bias: mean - truth, var: ss / (m - 1), mse: mse / m };
+  }
+
+  function maxDensityHeight(data, lo, hi, bins) {
+    const w = (hi - lo) / bins;
+    const counts = new Array(bins).fill(0);
+    for (let i = 0; i < data.length; i++) {
+      const k = Math.floor((data[i] - lo) / w);
+      if (k >= 0 && k < bins) counts[k]++;
+      else if (data[i] === hi) counts[bins - 1]++;
+    }
+    let mx = 0;
+    for (let k = 0; k < bins; k++) {
+      const h = counts[k] / (data.length * w);
+      if (h > mx) mx = h;
+    }
+    return mx;
+  }
+
+  /* ============================================================
+     LABORATORIO 1: Efecto Rao-Blackwell (Crudo vs MVUE vs EMV)
+     ============================================================ */
+  (function () {
+    const root = document.getElementById('sim-rao-blackwell');
+    if (!root) return;
+
+    const M = 2000;
+    let scenario = 'pois';
+    let lam = 1.0;
+    let theta = 4.0;
+    let beta = 2.0;
+    let n = 6;
+    let seed = 170017;
+
+    const ctr = root.querySelector('.controls');
+    ui.select(ctr, {
+      label: 'Escenario',
+      value: scenario,
+      options: [
+        { value: 'pois', label: 'Pois(λ) → e⁻λ' },
+        { value: 'unif', label: 'U(0, θ) → θ' },
+        { value: 'exp', label: 'Exp(β) → β²' }
+      ],
+      onChange: v => {
+        scenario = v;
+        if (v === 'pois') slN.set(Math.max(2, n));
+        syncSliders();
+        run();
+      }
+    });
+
+    const slLam = ui.slider(ctr, {
+      tex: '\\lambda', min: 0.3, max: 2.5, step: 0.1, value: lam,
+      fmt: v => v.toFixed(1),
+      onInput: v => { lam = v; run(); }
+    });
+    const slTheta = ui.slider(ctr, {
+      tex: '\\theta', min: 1.0, max: 8.0, step: 0.5, value: theta,
+      fmt: v => v.toFixed(1),
+      onInput: v => { theta = v; run(); }
+    });
+    const slBeta = ui.slider(ctr, {
+      tex: '\\beta', min: 0.5, max: 4.0, step: 0.25, value: beta,
+      fmt: v => v.toFixed(2),
+      onInput: v => { beta = v; run(); }
+    });
+    const slN = ui.slider(ctr, {
+      tex: 'n', min: 2, max: 30, step: 1, value: n,
+      onInput: v => { n = Math.round(v); run(); }
+    });
+    ui.button(ctr, 'Simular 2000 muestras', () => {
+      seed = (seed + 9173) >>> 0;
+      run();
+    }, { primary: true });
+
+    const lamWrap = slLam.input.closest('.slider');
+    const thWrap = slTheta.input.closest('.slider');
+    const betaWrap = slBeta.input.closest('.slider');
+
+    function syncSliders() {
+      lamWrap.classList.toggle('is-dim', scenario !== 'pois');
+      thWrap.classList.toggle('is-dim', scenario !== 'unif');
+      betaWrap.classList.toggle('is-dim', scenario !== 'exp');
+    }
+
+    const plotDist = EM.plot.create(root.querySelector('.plot-dist'), {
+      xmin: 0, xmax: 1, ymin: 0, ymax: 1,
+      height: 280, xlabel: 'estimación', ylabel: 'densidad', legendPos: 'tr'
+    });
+    const plotVar = EM.plot.create(root.querySelector('.plot-var'), {
+      xmin: 2, xmax: 30, ymin: 0, ymax: 0.3,
+      height: 280, xlabel: 'tamaño muestral n', ylabel: 'ECM', legendPos: 'tr'
+    });
+    const out = ui.readout(root.querySelector('.out'));
+
+    function theoCurve(sc, nVal) {
+      if (sc === 'pois') {
+        const truth = Math.exp(-lam);
+        const varCrude = truth * (1 - truth);
+        const varMvue = Math.exp(-2 * lam) * (Math.exp(lam / nVal) - 1);
+        const meanMle = Math.exp(nVal * lam * (Math.exp(-1 / nVal) - 1));
+        const biasMle = meanMle - truth;
+        const e2Mle = Math.exp(nVal * lam * (Math.exp(-2 / nVal) - 1));
+        const varMle = e2Mle - meanMle * meanMle;
+        return {
+          truth,
+          crude: { bias: 0, var: varCrude, mse: varCrude },
+          mvue: { bias: 0, var: varMvue, mse: varMvue },
+          mle: { bias: biasMle, var: varMle, mse: varMle + biasMle * biasMle }
+        };
+      }
+      if (sc === 'unif') {
+        const truth = theta;
+        const varCrude = (theta * theta) / (3 * nVal);
+        const varMvue = (theta * theta) / (nVal * (nVal + 2));
+        const biasMle = -theta / (nVal + 1);
+        const varMle = (nVal * theta * theta) / ((nVal + 1) * (nVal + 1) * (nVal + 2));
+        const mseMle = (2 * theta * theta) / ((nVal + 1) * (nVal + 2));
+        return {
+          truth,
+          crude: { bias: 0, var: varCrude, mse: varCrude },
+          mvue: { bias: 0, var: varMvue, mse: varMvue },
+          mle: { bias: biasMle, var: varMle, mse: mseMle }
+        };
+      }
+      const truth = beta * beta;
+      const b4 = truth * truth;
+      const varS2 = ((8 * nVal - 6) / (nVal * (nVal - 1))) * b4;
+      const varMvue = ((4 * nVal + 6) / (nVal * (nVal + 1))) * b4;
+      const biasMle = truth / nVal;
+      const varMle = (((nVal + 1) * (4 * nVal + 6)) / (nVal * nVal * nVal)) * b4;
+      const mseMle = ((4 * nVal * nVal + 11 * nVal + 6) / (nVal * nVal * nVal)) * b4;
+      return {
+        truth,
+        crude: { bias: 0, var: varS2, mse: varS2 },
+        mvue: { bias: 0, var: varMvue, mse: varMvue },
+        mle: { bias: biasMle, var: varMle, mse: mseMle }
+      };
+    }
+
+    function run() {
+      const rng = S.mulberry32(seed);
+      const arrCrude = new Array(M);
+      const arrMvue = new Array(M);
+      const arrMle = new Array(M);
+
+      if (scenario === 'pois') {
+        for (let m = 0; m < M; m++) {
+          const x1 = S.rpois(lam, rng);
+          const rem = S.rpois((n - 1) * lam, rng);
+          const t = x1 + rem;
+          arrCrude[m] = x1 === 0 ? 1 : 0;
+          arrMvue[m] = Math.pow(1 - 1 / n, t);
+          arrMle[m] = Math.exp(-t / n);
+        }
+      } else if (scenario === 'unif') {
+        for (let m = 0; m < M; m++) {
+          let sum = 0, xmax = 0;
+          for (let i = 0; i < n; i++) {
+            const x = theta * rng();
+            sum += x;
+            if (x > xmax) xmax = x;
+          }
+          arrCrude[m] = 2 * (sum / n);
+          arrMvue[m] = ((n + 1) / n) * xmax;
+          arrMle[m] = xmax;
+        }
+      } else {
+        for (let m = 0; m < M; m++) {
+          let sum = 0, sum2 = 0;
+          for (let i = 0; i < n; i++) {
+            const x = -beta * Math.log(rng());
+            sum += x;
+            sum2 += x * x;
+          }
+          const xbar = sum / n;
+          const s2 = (sum2 - n * xbar * xbar) / (n - 1);
+          arrCrude[m] = s2;
+          arrMvue[m] = (n / (n + 1)) * xbar * xbar;
+          arrMle[m] = xbar * xbar;
+        }
+      }
+
+      const th = theoCurve(scenario, n);
+      const empCrude = sampleStats(arrCrude, th.truth);
+      const empMvue = sampleStats(arrMvue, th.truth);
+      const empMle = sampleStats(arrMle, th.truth);
+
+      // Configurar grafico 1: distribuciones muestrales
+      if (scenario === 'pois') {
+        const xmin = -0.08, xmax = 1.08;
+        const bins = 28;
+        const hMvue = maxDensityHeight(arrMvue, xmin, xmax, bins);
+        const hMle = maxDensityHeight(arrMle, xmin, xmax, bins);
+        const ymax = Math.max(2.2, hMvue, hMle) * 1.35;
+        const p0Emp = empCrude.mean; // proporcion de 1s
+        const p1Emp = 1 - p0Emp;
+
+        plotDist.setRange({ xmin, xmax, ymin: 0, ymax, xlabel: 'estimador de e⁻λ', ylabel: 'densidad' });
+        plotDist.draw(g => {
+          // Crudo 1{X1=0} en {0, 1}: barras discretas escaladas al rango del eje para comparar dispersion
+          g.bars([0, 1], [p1Emp * ymax * 0.65, p0Emp * ymax * 0.65], {
+            width: 0.045, color: 'c2', alpha: 0.45, label: 'Crudo 1{X₁=0} ∈ {0,1}'
+          });
+          g.hist(arrMle, { bins, range: [xmin, xmax], color: 'c3', alpha: 0.35, label: 'EMV exp(−X̄)' });
+          g.hist(arrMvue, { bins, range: [xmin, xmax], color: 'c1', alpha: 0.55, label: 'MVUE (1−1/n)ᵀ' });
+          g.vline(th.truth, { color: 'ink', dash: [5, 4], width: 1.8 });
+          g.curve(() => NaN, { color: 'ink', dash: [5, 4], label: 'e⁻λ = ' + fmt(th.truth, 3) });
+        });
+      } else if (scenario === 'unif') {
+        const xmin = 0;
+        const xmax = Math.max(theta * 1.65, S.quantile(arrCrude, 0.995) * 1.05, S.quantile(arrMvue, 0.995) * 1.05);
+        const bins = 34;
+        const ymax = Math.max(
+          maxDensityHeight(arrCrude, xmin, xmax, bins),
+          maxDensityHeight(arrMvue, xmin, xmax, bins),
+          maxDensityHeight(arrMle, xmin, xmax, bins)
+        ) * 1.32;
+        plotDist.setRange({ xmin, xmax, ymin: 0, ymax, xlabel: 'estimador de θ', ylabel: 'densidad' });
+        plotDist.draw(g => {
+          g.hist(arrCrude, { bins, range: [xmin, xmax], color: 'c2', alpha: 0.35, label: 'Crudo 2X̄' });
+          g.hist(arrMle, { bins, range: [xmin, xmax], color: 'c3', alpha: 0.38, label: 'EMV X₍ₙ₎' });
+          g.hist(arrMvue, { bins, range: [xmin, xmax], color: 'c1', alpha: 0.52, label: 'MVUE ((n+1)/n)X₍ₙ₎' });
+          g.vline(th.truth, { color: 'ink', dash: [5, 4], width: 1.8 });
+          g.curve(() => NaN, { color: 'ink', dash: [5, 4], label: 'θ = ' + fmt(th.truth, 2) });
+        });
+      } else {
+        const xmin = 0;
+        const qHi = Math.max(S.quantile(arrCrude, 0.985), S.quantile(arrMle, 0.985), th.truth * 2.5);
+        const xmax = Math.max(th.truth * 2.2, qHi * 1.08);
+        const bins = 34;
+        const ymax = Math.max(
+          maxDensityHeight(arrCrude, xmin, xmax, bins),
+          maxDensityHeight(arrMvue, xmin, xmax, bins),
+          maxDensityHeight(arrMle, xmin, xmax, bins)
+        ) * 1.32;
+        plotDist.setRange({ xmin, xmax, ymin: 0, ymax, xlabel: 'estimador de β²', ylabel: 'densidad' });
+        plotDist.draw(g => {
+          g.hist(arrCrude, { bins, range: [xmin, xmax], color: 'c2', alpha: 0.35, label: 'Clásico S²' });
+          g.hist(arrMle, { bins, range: [xmin, xmax], color: 'c3', alpha: 0.36, label: 'EMV X̄²' });
+          g.hist(arrMvue, { bins, range: [xmin, xmax], color: 'c1', alpha: 0.52, label: 'MVUE (n/(n+1))X̄²' });
+          g.vline(th.truth, { color: 'ink', dash: [5, 4], width: 1.8 });
+          g.curve(() => NaN, { color: 'ink', dash: [5, 4], label: 'β² = ' + fmt(th.truth, 2) });
+        });
+      }
+
+      // Configurar grafico 2: curvas de ECM vs n
+      const nGrid = [];
+      for (let k = 2; k <= 30; k++) nGrid.push(k);
+      const yCrude = nGrid.map(k => theoCurve(scenario, k).crude.mse);
+      const yMvue = nGrid.map(k => theoCurve(scenario, k).mvue.mse);
+      const yMle = nGrid.map(k => theoCurve(scenario, k).mle.mse);
+      const yMaxVar = Math.max(yCrude[0], yMle[0], empCrude.mse, empMle.mse) * 1.15;
+
+      const lblCrude = scenario === 'pois' ? 'Crudo 1{X₁=0}' : (scenario === 'unif' ? 'Crudo 2X̄' : 'Clásico S²');
+      plotVar.setRange({ xmin: 2, xmax: 30, ymin: 0, ymax: Math.max(1e-4, yMaxVar), xlabel: 'tamaño muestral n', ylabel: 'ECM' });
+      plotVar.draw(g => {
+        g.curve(x => theoCurve(scenario, Math.max(2, x)).crude.mse, { color: 'c2', width: 2.3, dash: [5, 4], label: lblCrude + ' (teor.)' });
+        g.curve(x => theoCurve(scenario, Math.max(2, x)).mle.mse, { color: 'c3', width: 2.2, label: 'EMV (teor.)' });
+        g.curve(x => theoCurve(scenario, Math.max(2, x)).mvue.mse, { color: 'c1', width: 2.6, label: 'MVUE (teor.)' });
+        g.points([n], [empCrude.mse], { color: 'c2', r: 4.5, alpha: 0.95 });
+        g.points([n], [empMle.mse], { color: 'c3', r: 4.5, alpha: 0.95 });
+        g.points([n], [empMvue.mse], { color: 'c1', r: 4.5, alpha: 0.95 });
+        g.vline(n, { color: 'muted', dash: [3, 3], width: 1 });
+      });
+
+      const titleTex = scenario === 'pois'
+        ? `e^{-\\lambda} = ${fmt(th.truth, 4)}`
+        : (scenario === 'unif' ? `\\theta = ${fmt(th.truth, 3)}` : `\\beta^2 = ${fmt(th.truth, 3)}`);
+      const row = (name, emp, theo) =>
+        `<b>${name}:</b> sesgo emp. <b>${fmt(emp.bias, 4)}</b> (teór. ${fmt(theo.bias, 4)}) · var emp. <b>${fmt(emp.var, 4)}</b> (teór. ${fmt(theo.var, 4)}) · ECM emp. <b>${fmt(emp.mse, 4)}</b> (teór. ${fmt(theo.mse, 4)})`;
+      const nameCrude = scenario === 'pois' ? 'Crudo $\\1_{\\{X_1=0\\}}$' : (scenario === 'unif' ? 'Crudo $2\\bar X$' : 'Clásico $S^2$');
+      const nameMvue = scenario === 'pois' ? 'MVUE $(1-1/n)^T$' : (scenario === 'unif' ? 'MVUE $\\frac{n+1}{n}X_{(n)}$' : 'MVUE $\\frac{n}{n+1}\\bar X^2$');
+      const nameMle = scenario === 'pois' ? 'EMV $e^{-\\bar X}$' : (scenario === 'unif' ? 'EMV $X_{(n)}$' : 'EMV $\\bar X^2$');
+
+      out.set(`
+        <b>Valor verdadero:</b> $${titleTex}$ &nbsp;($M = ${M}$, $n = ${n}$)<br>
+        • ${row(nameCrude, empCrude, th.crude)}<br>
+        • ${row(nameMle, empMle, th.mle)}<br>
+        • ${row(nameMvue, empMvue, th.mvue)}
+      `);
+    }
+
+    syncSliders();
+    run();
+  })();
+
+  /* ============================================================
+     LABORATORIO 2: Convergencia asintotica del EMV y MVUE
+     ============================================================ */
+  (function () {
+    const root = document.getElementById('sim-emv-asintotico');
+    if (!root) return;
+
+    const M = 1800;
+    let model = 'pois';
+    let lam = 1.2;
+    let p = 0.25;
+    let n = 25;
+    let seed = 170999;
+
+    const ctr = root.querySelector('.controls');
+    ui.select(ctr, {
+      label: 'Modelo',
+      value: model,
+      options: [
+        { value: 'pois', label: 'Pois(λ) → g(λ) = e⁻λ' },
+        { value: 'ber', label: 'Ber(p) → g(p) = p(1−p)' }
+      ],
+      onChange: v => { model = v; syncSliders(); run(); }
+    });
+    const slLam = ui.slider(ctr, {
+      tex: '\\lambda', min: 0.4, max: 3.0, step: 0.1, value: lam,
+      fmt: v => v.toFixed(1),
+      onInput: v => { lam = v; run(); }
+    });
+    const slP = ui.slider(ctr, {
+      tex: 'p', min: 0.10, max: 0.90, step: 0.05, value: p,
+      fmt: v => v.toFixed(2),
+      onInput: v => { p = v; run(); }
+    });
+    ui.slider(ctr, {
+      tex: 'n', min: 5, max: 120, step: 5, value: n,
+      onInput: v => { n = Math.round(v); run(); }
+    });
+    ui.button(ctr, 'Re-muestrear', () => {
+      seed = (seed + 5113) >>> 0;
+      run();
+    }, { primary: true });
+
+    const lamWrap = slLam.input.closest('.slider');
+    const pWrap = slP.input.closest('.slider');
+    function syncSliders() {
+      lamWrap.classList.toggle('is-dim', model !== 'pois');
+      pWrap.classList.toggle('is-dim', model !== 'ber');
+    }
+
+    const plot = EM.plot.create(root.querySelector('.plot-asym'), {
+      xmin: -2, xmax: 2, ymin: 0, ymax: 1,
+      height: 300, xlabel: '√n · (τ̂ − g(θ))', ylabel: 'densidad', legendPos: 'tr'
+    });
+    const out = ui.readout(root.querySelector('.out'));
+
+    function run() {
+      const rng = S.mulberry32(seed);
+      const zMle = new Array(M);
+      const zMvue = new Array(M);
+      const sqrtN = Math.sqrt(n);
+
+      let truth = 0, asymVar = 0;
+      if (model === 'pois') {
+        truth = Math.exp(-lam);
+        asymVar = lam * Math.exp(-2 * lam); // [g'(lam)]^2 / I_F(lam) = e^{-2lam} / (1/lam)
+        for (let m = 0; m < M; m++) {
+          const t = S.rpois(n * lam, rng);
+          const xbar = t / n;
+          const mle = Math.exp(-xbar);
+          const mvue = Math.pow(1 - 1 / n, t);
+          zMle[m] = sqrtN * (mle - truth);
+          zMvue[m] = sqrtN * (mvue - truth);
+        }
+      } else {
+        truth = p * (1 - p);
+        const gp = 1 - 2 * p;
+        // I_F(p) = 1 / (p(1-p)) => [g'(p)]^2 / I_F(p) = p(1-p)(1-2p)^2
+        asymVar = p * (1 - p) * gp * gp;
+        for (let m = 0; m < M; m++) {
+          const t = S.rbinom(n, p, rng);
+          const xbar = t / n;
+          const mle = xbar * (1 - xbar);
+          const mvue = (n / (n - 1)) * mle;
+          zMle[m] = sqrtN * (mle - truth);
+          zMvue[m] = sqrtN * (mvue - truth);
+        }
+      }
+
+      const stMle = sampleStats(zMle, 0);
+      const stMvue = sampleStats(zMvue, 0);
+      const sigma = Math.sqrt(asymVar);
+      const degenerate = model === 'ber' && Math.abs(1 - 2 * p) < 1e-6;
+
+      if (degenerate) {
+        const qLo = Math.min(S.quantile(zMle, 0.005), S.quantile(zMvue, 0.005));
+        const qHi = Math.max(S.quantile(zMle, 0.995), S.quantile(zMvue, 0.995));
+        const pad = Math.max(0.05, 0.15 * (qHi - qLo));
+        const lo = Math.min(qLo - pad, -0.05);
+        const hi = Math.max(qHi + pad, 0.05);
+        const bins = 24;
+        const w = (hi - lo) / bins;
+        const cntMle = new Array(bins).fill(0);
+        const cntMvue = new Array(bins).fill(0);
+        for (let i = 0; i < M; i++) {
+          const k1 = Math.floor((zMle[i] - lo) / w);
+          if (k1 >= 0 && k1 < bins) cntMle[k1]++;
+          const k2 = Math.floor((zMvue[i] - lo) / w);
+          if (k2 >= 0 && k2 < bins) cntMvue[k2]++;
+        }
+        const ymax = Math.max(Math.max(...cntMle), Math.max(...cntMvue)) / (M * w) * 1.32;
+        plot.setRange({ xmin: lo, xmax: hi, ymin: 0, ymax: Math.max(1, ymax), xlabel: '√n · (τ̂ − 0.25)', ylabel: 'densidad', legendPos: 'tl' });
+        plot.draw(g => {
+          g.hist(zMle, { bins, range: [lo, hi], color: 'c3', alpha: 0.38, label: '√n(EMV − 0.25)' });
+          g.hist(zMvue, { bins, range: [lo, hi], color: 'c1', alpha: 0.50, label: '√n(MVUE − 0.25)' });
+          g.vline(0, { color: 'ink', dash: [5, 4] });
+          g.curve(() => NaN, { color: 'ink', dash: [5, 4], label: 'Límite degenerado = 0' });
+        });
+        out.set(`
+          <b>Caso crítico en $p = 0.50$:</b> Aquí $g'(0.5) = 1 - 2(0.5) = 0$, por lo que la varianza asintótica de primer orden $[g'(p)]^2/I_F(p) = 0$ y $\\sqrt{n}(\\hat\\tau - 0.25) \\dto 0$ (colapsa a una masa en $0$, orden $O(1/n)$).<br>
+          • <b>EMV $\\bar X(1-\\bar X)$:</b> $\\widehat{\\Var}[\\sqrt{n}(\\text{EMV}-0.25)] = ${fmt(stMle.var, 5)}$, sesgo escalado $= ${fmt(stMle.mean, 4)}$.<br>
+          • <b>MVUE $\\frac{n}{n-1}\\bar X(1-\\bar X)$:</b> $\\widehat{\\Var}[\\sqrt{n}(\\text{MVUE}-0.25)] = ${fmt(stMvue.var, 5)}$, sesgo escalado $= ${fmt(stMvue.mean, 4)}$.
+        `);
+        return;
+      }
+
+      const normDist = S.dist.normal(0, sigma);
+      const halfSpan = Math.max(3.6 * sigma, Math.abs(S.quantile(zMle, 0.005)), Math.abs(S.quantile(zMle, 0.995)), Math.abs(S.quantile(zMvue, 0.005)), Math.abs(S.quantile(zMvue, 0.995))) * 1.06;
+      const xmin = -halfSpan, xmax = halfSpan;
+      const bins = 28;
+      const peakN = normDist.pdf(0);
+      const maxHistZ = Math.max(
+        maxDensityHeight(zMle, xmin, xmax, bins),
+        maxDensityHeight(zMvue, xmin, xmax, bins)
+      );
+      const ymax = Math.max(peakN * 1.42, maxHistZ * 1.25);
+
+      plot.setRange({ xmin, xmax, ymin: 0, ymax, xlabel: '√n · (τ̂ − g(θ))', ylabel: 'densidad', legendPos: 'tr' });
+      plot.draw(g => {
+        g.hist(zMle, { bins, range: [xmin, xmax], color: 'c3', alpha: 0.36, label: '√n(EMV − g(θ))' });
+        g.hist(zMvue, { bins, range: [xmin, xmax], color: 'c1', alpha: 0.50, label: '√n(MVUE − g(θ))' });
+        g.curve(x => normDist.pdf(x), { color: 'c2', width: 2.6, label: 'N(0, [g\'(θ)]²/I_F(θ))' });
+        g.vline(0, { color: 'ink', dash: [4, 4], width: 1.2 });
+      });
+
+      const paramDesc = model === 'pois'
+        ? `\\text{Pois}(\\lambda = ${lam.toFixed(1)}),\\; g(\\lambda) = e^{-\\lambda} = ${fmt(truth, 4)},\\; \\frac{[g'(\\lambda)]^2}{I_F(\\lambda)} = \\lambda e^{-2\\lambda}`
+        : `\\text{Ber}(p = ${p.toFixed(2)}),\\; g(p) = p(1-p) = ${fmt(truth, 4)},\\; \\frac{[g'(p)]^2}{I_F(p)} = p(1-p)(1-2p)^2`;
+
+      out.set(`
+        <b>Modelo:</b> $${paramDesc} =$ <b>${fmt(asymVar, 5)}</b> &nbsp;($n = ${n}$, $M = ${M}$)<br>
+        • <b>EMV escalado $\\sqrt{n}(\\hat\\tau_{\\text{EMV}} - g(\\theta))$:</b> varianza simulada $=$ <b>${fmt(stMle.var, 5)}</b> (asim. <b>${fmt(asymVar, 5)}</b>), media simulada $=$ <b>${fmt(stMle.mean, 4)}</b><br>
+        • <b>MVUE escalado $\\sqrt{n}(\\hat\\tau_{\\text{MVUE}} - g(\\theta))$:</b> varianza simulada $=$ <b>${fmt(stMvue.var, 5)}</b> (asim. <b>${fmt(asymVar, 5)}</b>), media simulada $=$ <b>${fmt(stMvue.mean, 4)}</b>
+      `);
+    }
+
+    syncSliders();
+    run();
+  })();
+
+  /* ============================================================
+     AUTOEVALUACIÓN: 3 Quizzes y 2 Comprobadores Numéricos
+     ============================================================ */
+  ui.quiz('#quiz-1', {
+    question: '1. Según el Teorema de Rao–Blackwell, si $\\hat\\theta$ es un estimador insesgado de $\\theta$ con varianza finita, $T$ es un estadístico suficiente para $\\theta$ y definimos $\\hat\\theta^* = \\E[\\hat\\theta \\mid T]$, ¿qué se garantiza para todo $\\theta$?',
+    options: [
+      '$\\hat\\theta^*$ depende de $\\theta$ explícitamente, por lo que no puede evaluarse con los datos.',
+      '$\\hat\\theta^*$ es un estadístico válido (libre de $\\theta$), es insesgado para $\\theta$ y cumple $\\Var[\\hat\\theta^*] \\le \\Var[\\hat\\theta]$.',
+      '$\\hat\\theta^*$ tiene siempre sesgo distinto de cero, aunque con menor varianza que $\\hat\\theta$.',
+      'Siempre se cumple la igualdad $\\Var[\\hat\\theta^*] = \\Var[\\hat\\theta]$ sin importar quién sea $\\hat\\theta$.'
+    ],
+    answer: 1,
+    explain: 'Como $T$ es suficiente, la distribución condicional dado $T$ es libre de $\\theta$ y $\\hat\\theta^*$ es un estadístico válido. Por la Ley de la Esperanza Total, $\\E[\\hat\\theta^*] = \\E[\\hat\\theta] = \\theta$; y por la Ley de la Varianza Total, $\\Var[\\hat\\theta^*] = \\Var[\\hat\\theta] - \\E[\\Var(\\hat\\theta\\mid T)] \\le \\Var[\\hat\\theta]$ (con igualdad solo si $\\hat\\theta$ ya era función de $T$ c.s.).'
+  });
+
+  ui.quiz('#quiz-2', {
+    question: '2. Sea $X_1, \\dots, X_n \\iid N(\\mu, \\sigma^2)$ con $\\mu$ y $\\sigma^2$ ambos desconocidos ($n \\ge 2$). ¿Cuál de las siguientes afirmaciones sobre el MVUE de $\\sigma^2$ es correcta?',
+    options: [
+      'El MVUE de $\\sigma^2$ es $\\hat\\sigma^2_{\\text{EMV}} = \\frac{1}{n}\\sum_{i=1}^n (X_i - \\bar X)^2$ porque coincide con el EMV.',
+      'No existe MVUE para $\\sigma^2$ porque la varianza de $S^2$ supera la cota inferior de Cramér–Rao $\\frac{2\\sigma^4}{n}$.',
+      'El MVUE de $\\sigma^2$ es $S^2 = \\frac{1}{n-1}\\sum_{i=1}^n (X_i - \\bar X)^2$, aunque $\\Var(S^2) = \\frac{2\\sigma^4}{n-1} &gt; \\frac{2\\sigma^4}{n}$.',
+      'El MVUE de $\\sigma^2$ es $\\frac{1}{n}\\sum_{i=1}^n X_i^2$.'
+    ],
+    answer: 2,
+    explain: 'Como $(\\bar X, S^2)$ es conjuntamente suficiente y completo para $(\\mu, \\sigma^2)$ y $\\E[S^2] = \\sigma^2$, Lehmann–Scheffé garantiza que $S^2$ es el único MVUE de $\\sigma^2$, aun cuando la cota de Cramér–Rao $\\frac{2\\sigma^4}{n}$ no sea alcanzable en muestras finitas.'
+  });
+
+  ui.quiz('#quiz-3', {
+    question: '3. ¿Cuál de las siguientes afirmaciones describe correctamente la relación del EMV $\\hat\\theta$ con la suficiencia y con las muestras grandes?',
+    options: [
+      'Si el EMV $\\hat\\theta$ existe y es único, depende de la muestra únicamente a través de cualquier estadístico suficiente $T$; además, bajo regularidad, $\\sqrt{n}(g(\\hat\\theta) - g(\\theta)) \\dto N(0, [g\'(\\theta)]^2 / I_F(\\theta))$.',
+      'El EMV solo depende del estadístico suficiente cuando la población es discreta.',
+      'En muestras grandes, el EMV es asintóticamente insesgado, pero su varianza asintótica es siempre estrictamente mayor que la cota de Cramér–Rao.',
+      'Si reemplazamos $\\theta$ por un estimador consistente $\\tilde\\theta \\pto \\theta$ dentro de $I_F(\\theta)$, se destruye la convergencia a $N(0, 1)$.'
+    ],
+    answer: 0,
+    explain: 'Por el Criterio de Factorización $L(\\theta\\mid\\mathbf{x}) = g(T(\\mathbf{x}),\\theta)h(\\mathbf{x})$, maximizar $L$ equivale a maximizar $g(T(\\mathbf{x}),\\theta)$, así que el EMV único solo depende de $T$. En muestras grandes es asintóticamente normal y eficiente (alcanza la cota de Cramér–Rao), y por Slutsky conserva la normalidad al sustituir $\\theta$ por cualquier estimador consistente.'
+  });
+
+  ui.numcheck('#nc-1', {
+    prompt: '1) Sea $X_1, \\dots, X_{10} \\iid \\text{Pois}(\\lambda)$ ($n = 10$) y observas $T = \\sum_{i=1}^{10} X_i = 8$. Calcula el valor numérico del MVUE para $\\P(X = 0) = e^{-\\lambda}$:',
+    answer: Math.pow(0.9, 8),
+    tol: 0.002,
+    placeholder: 'ej. 0.4305',
+    hint: 'Por el Ejemplo 7, el MVUE de $e^{-\\lambda}$ es $(1 - 1/n)^T = (0.9)^8 \\approx 0.4305$.'
+  });
+
+  ui.numcheck('#nc-2', {
+    prompt: '2) Sea $Y_1, \\dots, Y_6 \\iid \\text{Geom}(p)$ ($y \\in \\{1, 2, \\dots\\}$, $n = 6$) con suma observada $\\sum_{i=1}^6 Y_i = 21$. Calcula el MVUE para $p$:',
+    answer: 0.25,
+    tol: 0.002,
+    placeholder: 'ej. 0.25',
+    hint: 'Por el Ejercicio 9.61, el MVUE de $p$ es $\\frac{n-1}{\\sum_{i=1}^n Y_i - 1} = \\frac{6-1}{21-1} = \\frac{5}{20} = 0.25$.'
+  });
+
+})();
+</script>
+</body>
+</html>

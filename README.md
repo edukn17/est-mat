@@ -27,6 +27,8 @@ traen pistas graduales, solución completa paso a paso y verificación numérica
 | `temas/clase-13.html` | Leyes Débiles y Fuertes de los Grandes Números (LDGN y LFGN) |
 | `temas/clase-14.html` | TLC generalizado, pivotes asintóticos y Teoría del Valor Extremo |
 | `temas/clase-15.html` | Suficiencia, definición condicional y Criterio de Factorización de Fisher–Neyman |
+| `temas/clase-16.html` | Suficiencia conjunta, Familia Exponencial (1D y k-dimensional) y ecuación del EMV |
+| `temas/clase-17.html` | Estimadores insesgados de varianza mínima (MVUE), Teorema de Rao–Blackwell y grandes muestras |
 | `herramientas/formulario.html` | Formulario (Est. I + Est Mat): versión completa y de examen (2 págs.), en PDF/LaTeX |
 | `herramientas/distribuciones.html` | Laboratorio de distribuciones |
 | `herramientas/tablas.html` | Tablas χ², t, F, normal estándar y K-S, transcritas e interactivas |
@@ -36,7 +38,8 @@ traen pistas graduales, solución completa paso a paso y verificación numérica
 | `deberes/lebensztayn-cap1.html` | Solucionario completo del Capítulo 1 de Lebensztayn: Análisis Combinatorio (80/80 ejercicios) |
 | `deberes/lebensztayn-cap2.html` | Solucionario completo del Capítulo 2 de Lebensztayn: Probabilidad (80/80 ejercicios) |
 | `deberes/lebensztayn-cap3.html` | Solucionario completo del Capítulo 3 de Lebensztayn: Variables Aleatorias (128/128 ejercicios) |
-| `deberes/lebensztayn.html` | Solucionario completo del Capítulo 5 de Lebensztayn (84 de 84 ejercicios resueltos) |
+| `deberes/lebensztayn-cap4.html` | Solucionario completo del Capítulo 4 de Lebensztayn: Esperanza, FGM y Desigualdades (132/132 ejercicios) |
+| `deberes/lebensztayn.html` | Mapa del libro completo (Capítulos 1–5 · 504/504 ejercicios resueltos) y solucionario del Capítulo 5 de Lebensztayn (84/84 ejercicios) |
 
 ## Uso local
 
@@ -65,10 +68,10 @@ intermedios quedan en `scripts/build/` (no versionado).
 
 ## Formulario
 
-`herramientas/formulario.html` resume Estadística I y las clases 01–15, y se ofrece
+`herramientas/formulario.html` resume Estadística I y las clases 01–17, y se ofrece
 en dos versiones descargables, cada una con su fuente LaTeX:
 
-- **Completa** (20 págs.): `herramientas/formulario.pdf` / `formulario.tex`.
+- **Completa** (23 págs.): `herramientas/formulario.pdf` / `formulario.tex`.
 - **De examen** (2 págs., a dos columnas): `herramientas/formulario-2p.pdf` /
   `formulario-2p.tex`.
 
@@ -90,12 +93,13 @@ est-mat/
 ├── assets/
 │   ├── css/style.css
 │   └── js/{theme,stats,plot,site,ui}.js
-├── temas/                  repaso + clases 01–15
+├── temas/                  repaso + clases 01–17
 ├── herramientas/           distribuciones.html, tablas.html, formulario.html
 │                           formulario.tex/.pdf y formulario-2p.tex/.pdf
 ├── deberes/                lista-1-1.html, lista-1-2.html, deber-estimacion-puntual.html,
 │                           lebensztayn-cap1.html, lebensztayn-cap2.html,
-│                           lebensztayn-cap3.html, lebensztayn.html
+│                           lebensztayn-cap3.html, lebensztayn-cap4.html,
+│                           lebensztayn.html
 ├── scripts/                pipeline de tablas
 └── tests/                  stats.test.js, smoke.js, shot.sh
 ```

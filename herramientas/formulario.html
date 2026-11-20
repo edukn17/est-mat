@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Formulario completo · Estadística I + Est Mat</title>
-<meta name="description" content="Formulario de la guía: definiciones, modelos, FGM, transformaciones, estadísticos de orden, χ², t, F, TLC, estimación, suficiencia, modos de convergencia, Borel–Cantelli, leyes de los grandes números, Método Delta ampliado y valores extremos, con la notación de Estadística I y de Estadística Matemática.">
+<meta name="description" content="Formulario de la guía: definiciones, modelos, FGM, transformaciones, estadísticos de orden, χ², t, F, TLC, estimación, suficiencia, familia exponencial, Rao–Blackwell y MVUE, modos de convergencia, Borel–Cantelli, leyes de los grandes números, Método Delta ampliado y valores extremos, con la notación de Estadística I y de Estadística Matemática.">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <link rel="stylesheet" href="../assets/css/style.css">
 <script src="../assets/js/theme.js"></script>
@@ -883,7 +883,111 @@
 
   <!-- ================================================================ -->
   <section>
-    <h2 id="tablas">23. Cómo leer las tablas y los valores críticos</h2>
+    <h2 id="familia-exponencial">23. Suficiencia conjunta y Familia Exponencial <span class="formula-tag">(Clase 16)</span></h2>
+
+    <div class="box teorema"><span class="box-title">Suficiencia conjunta y Criterio de Factorización multiparamétrico</span>
+      <p>Cuando el modelo depende de un vector de parámetros $\boldsymbol{\theta} = (\theta_1, \dots, \theta_m)$, el estadístico $r$-dimensional $\mathbf{T}(\mathbf{X}) = \big(T_1(\mathbf{X}), \dots, T_r(\mathbf{X})\big)$ es <b>conjuntamente suficiente para $\boldsymbol{\theta}$</b> si y solo si la verosimilitud puede escribirse como:</p>
+      $$L(\boldsymbol{\theta} \mid \mathbf{x}) = \prod_{i=1}^n f(x_i \mid \boldsymbol{\theta}) = g\big(T_1(\mathbf{x}), \dots, T_r(\mathbf{x}),\,\boldsymbol{\theta}\big)\,h(\mathbf{x}),$$
+      <p>donde $g(\mathbf{T}(\mathbf{x}), \boldsymbol{\theta}) \ge 0$ depende de $\mathbf{x}$ únicamente a través de $\mathbf{T}(\mathbf{x})$ y $h(\mathbf{x}) \ge 0$ no depende de $\boldsymbol{\theta}$.</p>
+      <ul>
+        <li><b>Equivalencia biyectiva vectorial:</b> si $\mathbf{T}$ es conjuntamente suficiente y puede recuperarse como función de $\mathbf{U} = \boldsymbol{\phi}(\mathbf{T})$, entonces $\mathbf{U}$ también lo es (ej. $\big(\sum X_i, \sum X_i^2\big) \iff (\bar X, S^2)$ para $n \ge 2$; $\big(\prod X_i, \sum X_i\big) \iff \big(\sum \ln X_i, \sum X_i\big)$ si $X_i &gt; 0$).</li>
+        <li><b>Soporte dependiente multiparamétrico:</b> en $U(\theta_1, \theta_2)$ ($\theta_1 &lt; \theta_2$) es conjuntamente suficiente $\mathbf{T}(\mathbf{X}) = (X_{(1)}, X_{(n)})$; en $\text{Pareto}(\alpha, \beta)$ con ambos desconocidos, $\big(X_{(1)}, \sum \ln X_i\big)$.</li>
+      </ul>
+    </div>
+
+    <div class="box definicion"><span class="box-title">Familia Exponencial (FE) 1D y $k$-dimensional</span>
+      <p>Una distribución pertenece a la <b>familia exponencial (FE) unidimensional</b> si su fdp (o fp) puede escribirse como:</p>
+      $$f(x \mid \theta) = \exp\big\{c(\theta)T(x) + d(\theta) + S(x)\big\}, \qquad x \in A \;\;(\text{soporte } A \text{ independiente de }\theta),$$
+      <p>y a la <b>FE $k$-dimensional</b> para el vector de parámetros $\boldsymbol{\theta} = (\theta_1, \dots, \theta_m)$ si:</p>
+      $$f(x \mid \boldsymbol{\theta}) = \exp\left\{\sum_{j=1}^k c_j(\boldsymbol{\theta})T_j(x) + d(\boldsymbol{\theta}) + S(x)\right\}, \qquad x \in A \;\;(\text{fijo, libre de }\boldsymbol{\theta}).$$
+      <ul>
+        <li><b>Identidades de momentos (1D, $c'(\theta) \ne 0$):</b> derivando $\int_A f(x \mid \theta)\,dx = 1$ (o $\sum_{x \in A}$) respecto a $\theta$ se obtiene:
+          $$\E\big[T(X)\big] = -\frac{d'(\theta)}{c'(\theta)}, \qquad \Var\big(T(X)\big) = \frac{d'(\theta)c''(\theta) - c'(\theta)d''(\theta)}{[c'(\theta)]^3}.$$</li>
+        <li><b>Cerradura bajo muestras i.i.d. y suficiencia directa:</b> para $X_1, \dots, X_n \iid$ de una FE $k$-dimensional,
+          $$f(\mathbf{x} \mid \boldsymbol{\theta}) = \exp\left\{\sum_{j=1}^k c_j(\boldsymbol{\theta})\sum_{i=1}^n T_j(x_i) + n\,d(\boldsymbol{\theta}) + \sum_{i=1}^n S(x_i)\right\}, \qquad \mathbf{x} \in A^n,$$
+          que permanece en la FE, y por Fisher–Neyman el vector $\mathbf{T}(\mathbf{X}) = \big(\sum_{i=1}^n T_1(X_i), \dots, \sum_{i=1}^n T_k(X_i)\big)$ es <b>conjuntamente suficiente para $\boldsymbol{\theta}$</b> (en 1D, $T(\mathbf{X}) = \sum_{i=1}^n T(X_i)$).</li>
+        <li><b>Modelos fuera de la FE:</b> aquellos cuyo soporte depende del parámetro ($U(0,\theta)$, $U(\theta_1,\theta_2)$, Exp desplazada) o donde $\ln f(x\mid\theta)$ no separa $x$ y $\theta$ en suma finita $\sum c_j(\theta)T_j(x)$ (como Cauchy).</li>
+      </ul>
+    </div>
+
+    <div class="box teorema"><span class="box-title">Ecuación general del EMV en la Familia Exponencial</span>
+      <p>En una familia exponencial regular (con jacobiano $[\partial c_j / \partial \theta_m]$ invertible y máximo en el interior del espacio paramétrico), igualar el gradiente de la log-verosimilitud a cero equivale al sistema:</p>
+      $$\E_{\boldsymbol{\theta}}\big[T_j(\mathbf{X})\big] = T_j(\mathbf{X}), \qquad j = 1, \dots, k \qquad\Big(\text{en 1D con } c'(\theta) \ne 0:\; \E_\theta\big[T(\mathbf{X})\big] = T(\mathbf{X})\Big).$$
+    </div>
+
+    <div class="table-wrap"><table class="tabla compact">
+      <thead><tr><th class="f">Modelo</th><th class="f">$c_j(\boldsymbol{\theta})$</th><th class="f">$T_j(x)$</th><th class="f">$d(\boldsymbol{\theta})$</th><th class="f">$S(x)$</th><th class="f">Soporte $A$</th><th class="f">Suficiente (EMV)</th></tr></thead>
+      <tbody>
+        <tr><td class="f">$\text{Ber}(\theta)$</td><td class="f">$\ln\frac{\theta}{1-\theta}$</td><td class="f">$x$</td><td class="f">$\ln(1-\theta)$</td><td class="f">$0$</td><td class="f">$\{0, 1\}$</td><td class="f">$\sum X_i$ ($\hat\theta = \bar X$)</td></tr>
+        <tr><td class="f">$\text{Pois}(\lambda)$</td><td class="f">$\ln\lambda$</td><td class="f">$x$</td><td class="f">$-\lambda$</td><td class="f">$-\ln(x!)$</td><td class="f">$\{0, 1, 2, \dots\}$</td><td class="f">$\sum X_i$ ($\hat\lambda = \bar X$)</td></tr>
+        <tr><td class="f">$\text{Exp}(\beta)$ (escala/media)</td><td class="f">$-\frac{1}{\beta}$</td><td class="f">$x$</td><td class="f">$-\ln\beta$</td><td class="f">$0$</td><td class="f">$(0, \infty)$</td><td class="f">$\sum X_i$ ($\hat\beta = \bar X$)</td></tr>
+        <tr><td class="f">$\text{Geo}(p)$ (ensayos)</td><td class="f">$\ln(1-p)$</td><td class="f">$x$</td><td class="f">$\ln\frac{p}{1-p}$</td><td class="f">$0$</td><td class="f">$\{1, 2, \dots\}$</td><td class="f">$\sum X_i$ ($\hat p = 1/\bar X$)</td></tr>
+        <tr><td class="f">$N(\mu, 1)$</td><td class="f">$\mu$</td><td class="f">$x$</td><td class="f">$-\frac{\mu^2}{2}$</td><td class="f">$-\frac{x^2}{2}-\ln\sqrt{2\pi}$</td><td class="f">$\R$</td><td class="f">$\sum X_i$ ($\hat\mu = \bar X$)</td></tr>
+        <tr><td class="f">$N(\mu, \sigma^2)$ (2D)</td><td class="f">$\frac{\mu}{\sigma^2},\ -\frac{1}{2\sigma^2}$</td><td class="f">$x,\ x^2$</td><td class="f">$-\frac{\mu^2}{2\sigma^2}-\frac{1}{2}\ln\sigma^2$</td><td class="f">$-\ln\sqrt{2\pi}$</td><td class="f">$\R$</td><td class="f">$(\sum X_i, \sum X_i^2)$ ($\bar X, S_n^2$)</td></tr>
+        <tr><td class="f">$\text{Gamma}(\alpha, \beta)$ (2D)</td><td class="f">$\alpha-1,\ -\frac{1}{\beta}$</td><td class="f">$\ln x,\ x$</td><td class="f">$-\ln\Gamma(\alpha)-\alpha\ln\beta$</td><td class="f">$0$</td><td class="f">$(0, \infty)$</td><td class="f">$(\sum\ln X_i, \sum X_i)$ ($\hat\beta = \bar X/\hat\alpha$)</td></tr>
+        <tr><td class="f">$\text{Beta}(\alpha, \beta)$ (2D)</td><td class="f">$\alpha-1,\ \beta-1$</td><td class="f">$\ln x,\ \ln(1-x)$</td><td class="f">$-\ln B(\alpha, \beta)$</td><td class="f">$0$</td><td class="f">$(0, 1)$</td><td class="f">$(\sum\ln X_i, \sum\ln(1-X_i))$</td></tr>
+        <tr><td class="f">$\text{Beta}(k, k)$ (1D)</td><td class="f">$k - 1$</td><td class="f">$\ln[x(1-x)]$</td><td class="f">$-\ln B(k, k)$</td><td class="f">$0$</td><td class="f">$(0, 1)$</td><td class="f">$\sum\ln[X_i(1-X_i)]$</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="rao-blackwell">24. Estimadores MVUE y Teorema de Rao–Blackwell <span class="formula-tag">(Clase 17)</span></h2>
+
+    <div class="box definicion"><span class="box-title">Definición · Estimador MVUE / UMVUE</span>
+      <p>Un estadístico $\hat\theta^* = \hat\theta^*(X_1, \dots, X_n)$ es un <b>estimador insesgado de varianza mínima uniforme (MVUE / UMVUE)</b> para $\theta$ (análogamente para $\tau(\theta)$) si:</p>
+      <ol>
+        <li><b>Insesgamiento:</b> $\E_\theta[\hat\theta^*] = \theta$ para todo $\theta \in \Omega$.</li>
+        <li><b>Varianza mínima uniforme:</b> $\Var_\theta(\hat\theta^*) \le \Var_\theta(\hat\theta)$ para todo $\theta \in \Omega$ y cualquier otro estimador insesgado $\hat\theta$ de $\theta$.</li>
+      </ol>
+    </div>
+
+    <div class="box teorema"><span class="box-title">Teorema de Rao–Blackwell</span>
+      <p>Sea $\hat\theta$ un estimador insesgado para $\theta$ con $\Var(\hat\theta) &lt; \infty$, y sea $T = T(X_1, \dots, X_n)$ un estadístico suficiente para $\theta$. Definimos el nuevo estimador:</p>
+      $$\hat\theta^* = \E[\hat\theta \mid T].$$
+      <p>Entonces $\hat\theta^*$ es un estadístico válido (libre de $\theta$), es <b>insesgado</b> ($\E_\theta[\hat\theta^*] = \E_\theta[\E[\hat\theta \mid T]] = \theta$) y satisface:</p>
+      $$\Var(\hat\theta^*) = \Var(\hat\theta) - \E\big[\Var(\hat\theta \mid T)\big] \le \Var(\hat\theta)$$
+      <p>(con igualdad s.s. cuando $\hat\theta$ ya es función de $T$ c.s.; el mismo teorema aplica a $\tau(\theta)$ tomando $\hat\tau^* = \E[\hat\tau \mid T]$).</p>
+    </div>
+
+    <div class="box nota"><span class="box-title">Teorema de Lehmann–Scheffé (completitud y dos recetas prácticas)</span>
+      <p>Si el estadístico suficiente $T$ es además <b>completo</b> ($\E_\theta[h(T)] = 0\;\forall\theta \implies h(T) = 0$ c.s., como ocurre en las FE de rango completo y en $U(0,\theta)$), existe un <b>único</b> estimador insesgado función de $T$. Por tanto, $\hat\theta^* = \E[\hat\theta \mid T]$ es único y es el <b>MVUE</b>.</p>
+      <ul>
+        <li><b>Receta 1 (vía directa):</b> hallar $T$ suficiente completo y ajustar una función $\phi(T)$ tal que $\E_\theta[\phi(T)] = \tau(\theta)$.</li>
+        <li><b>Receta 2 (condicionamiento):</b> partir de un insesgado elemental $\hat\tau$ y calcular explícitamente $\E[\hat\tau \mid T]$.</li>
+      </ul>
+    </div>
+
+    <div class="box teorema"><span class="box-title">EMV, suficiencia y comportamiento en grandes muestras</span>
+      <ul>
+        <li><b>Relación EMV–suficiencia:</b> si $T$ es suficiente para $\theta$ y el EMV $\hat\theta$ existe y es único, entonces $\hat\theta$ es necesariamente <b>función de $T$</b> (maximizar $L(\theta \mid \mathbf{x}) = g(T(\mathbf{x}),\theta)\,h(\mathbf{x})$ equivale a maximizar $g(T(\mathbf{x}),\theta)$).</li>
+        <li><b>Grandes muestras (normalidad y eficiencia asintótica):</b> bajo regularidad ($0 &lt; I_F(\theta) &lt; \infty$) y para $g$ derivable con $g'(\theta) \ne 0$:
+          $$\sqrt{n}(\hat\theta - \theta) \dto N\!\left(0,\, \frac{1}{I_F(\theta)}\right), \qquad \sqrt{n}\big(g(\hat\theta) - g(\theta)\big) \dto N\!\left(0,\, \frac{[g'(\theta)]^2}{I_F(\theta)}\right).$$
+          Los EMV son <b>asintóticamente insesgados y eficientes</b> (alcanzan la cota de Cramér–Rao $\frac{1}{nI_F(\theta)}$ y $\frac{[g'(\theta)]^2}{nI_F(\theta)}$).</li>
+        <li><b>Sustitución consistente:</b> la convergencia estandarizada se conserva al reemplazar $\theta$ por cualquier estimador consistente $\tilde\theta \pto \theta$ (si $I_F, g'$ son continuas y no nulas):
+          $$\sqrt{n\,I_F(\tilde\theta)}(\hat\theta - \theta) \dto N(0, 1), \qquad \frac{\sqrt{n\,I_F(\tilde\theta)}}{|g'(\tilde\theta)|}\big(g(\hat\theta) - g(\theta)\big) \dto N(0, 1).$$</li>
+      </ul>
+    </div>
+
+    <div class="table-wrap"><table class="tabla compact">
+      <thead><tr><th class="f">Modelo</th><th class="f">Objetivo</th><th class="f">Suficiente completo $T$</th><th class="f">MVUE</th><th class="f">Varianza / nota</th></tr></thead>
+      <tbody>
+        <tr><td class="f">$\text{Ber}(p),\ \text{Pois}(\lambda),\ \text{Exp}(\beta),\ N(\mu,\sigma^2)$</td><td class="f">$p,\ \lambda,\ \beta,\ \mu$</td><td class="f">$\sum_{i=1}^n X_i$</td><td class="f">$\bar X$</td><td class="f">Coincide con el EMV</td></tr>
+        <tr><td class="f">$\text{Weibull}(\theta)$ ($f = \frac{2y}{\theta}e^{-y^2/\theta},\ y &gt; 0$)</td><td class="f">$\theta$</td><td class="f">$\sum_{i=1}^n X_i^2 \sim \text{Gamma}(n,\theta)$</td><td class="f">$\dfrac{1}{n}\sum_{i=1}^n X_i^2$</td><td class="f">$\Var = \dfrac{\theta^2}{n}$ ($X_i^2 \sim \text{Exp}(\theta)$)</td></tr>
+        <tr><td class="f">$\text{Exp}(\beta)$ (media $\beta$)</td><td class="f">$\beta^2 = \Var(X)$</td><td class="f">$\sum_{i=1}^n X_i \sim \text{Gamma}(n,\beta)$</td><td class="f">$\dfrac{n}{n+1}\bar X^2$</td><td class="f">Corrige al EMV $\bar X^2$; $\Var = \frac{4n+6}{n(n+1)}\beta^4$</td></tr>
+        <tr><td class="f">$U(0, \theta)$</td><td class="f">$\theta$</td><td class="f">$X_{(n)} = \max_i X_i$</td><td class="f">$\dfrac{n+1}{n}X_{(n)}$</td><td class="f">$\Var = \dfrac{\theta^2}{n(n+2)}$ (no regular)</td></tr>
+        <tr><td class="f">$N(\mu, \sigma^2)$ ($n \ge 2$)</td><td class="f">$\sigma^2$</td><td class="f">$(\bar X, S^2)$</td><td class="f">$S^2 = \dfrac{1}{n-1}\sum_{i=1}^n (X_i - \bar X)^2$</td><td class="f">$\Var = \dfrac{2\sigma^4}{n-1} &gt; \text{CRLB}$</td></tr>
+        <tr><td class="f">$\text{Pois}(\lambda)$</td><td class="f">$e^{-\lambda} = \P(X=0)$</td><td class="f">$T = \sum_{i=1}^n X_i$</td><td class="f">$\left(1 - \dfrac{1}{n}\right)^{\sum X_i}$</td><td class="f">RB desde $\1_{\{X_1=0\}}$ ($X_1\mid T=t \sim \text{Bin}(t, 1/n)$)</td></tr>
+        <tr><td class="f">$\text{Ber}(p)$ ($n \ge 2$)</td><td class="f">$p(1-p)$</td><td class="f">$T = \sum_{i=1}^n X_i$</td><td class="f">$\dfrac{n}{n-1}\bar X(1 - \bar X)$</td><td class="f">RB desde $\1_{\{X_1=1, X_2=0\}}$; igual a $S^2$</td></tr>
+        <tr><td class="f">$\text{Geo}(p)$ (ensayos, $n \ge 2$)</td><td class="f">$p$</td><td class="f">$T = \sum_{i=1}^n X_i \sim \text{Bneg}(n, p)$</td><td class="f">$\dfrac{n-1}{\sum_{i=1}^n X_i - 1}$</td><td class="f">RB desde $\1_{\{X_1=1\}}$; corrige EMV $\frac{n}{\sum X_i}$</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <!-- ================================================================ -->
+  <section>
+    <h2 id="tablas">25. Cómo leer las tablas y los valores críticos</h2>
     <div class="box idea"><span class="box-title">La regla que evita todos los líos de colas</span>
       <p>Las tablas ESPOL dan el valor con <b>área a la IZQUIERDA</b> $q$: $\P(X\le x)=q$. En clase se escribe el valor crítico con <b>área $\alpha$ a la DERECHA</b>. Entonces:</p>
       $$\text{valor crítico con cola derecha }\alpha \;=\; \text{valor de la tabla en la columna } q=1-\alpha .$$
@@ -908,7 +1012,7 @@
 
   <!-- ================================================================ -->
   <section>
-    <h2 id="mapa">24. Mapa rápido: qué usar en cada caso</h2>
+    <h2 id="mapa">26. Mapa rápido: qué usar en cada caso</h2>
     <div class="table-wrap"><table class="tabla compact text-left">
       <thead><tr><th>Si te piden…</th><th>Usa</th><th>Fórmula clave</th></tr></thead>
       <tbody>
@@ -953,6 +1057,10 @@
         <tr><td>Distribución límite del máximo normalizado $(X_{(n)} - a_n)/b_n$</td><td>Valor Extremo (TVE) (§21)</td><td>Gumbel $e^{-e^{-(z-a)/b}}$, Fréchet, Weibull</td></tr>
         <tr><td>Verificar suficiencia de un candidato $T$ por ley condicional</td><td>Definición de suficiencia (§22)</td><td>$\P(\mathbf{X}=\mathbf{x}\mid T=t)$ no depende de $\theta$</td></tr>
         <tr><td>Hallar un estadístico suficiente $T$ a partir de la muestra</td><td>Factorización de Fisher–Neyman (§22)</td><td>$L(\theta\mid\mathbf{x}) = g(T(\mathbf{x}),\theta)\,h(\mathbf{x})$</td></tr>
+        <tr><td>Hallar estadísticos conjuntamente suficientes</td><td>Factorización multiparamétrica (§23)</td><td>$L(\boldsymbol{\theta}\mid\mathbf{x}) = g(T_1(\mathbf{x}),\dots,T_r(\mathbf{x}),\boldsymbol{\theta})\,h(\mathbf{x})$</td></tr>
+        <tr><td>Identificar suficiencia y EMV en modelos regulares</td><td>Familia Exponencial y ec. EMV (§23)</td><td>$f=\exp\{\sum c_j(\boldsymbol{\theta})T_j(x)+d(\boldsymbol{\theta})+S(x)\}$; $\E_{\boldsymbol{\theta}}[T_j(\mathbf{X})]=T_j(\mathbf{X})$</td></tr>
+        <tr><td>Mejorar un estimador insesgado o hallar el MVUE</td><td>Rao–Blackwell + Lehmann–Scheffé (§24)</td><td>$\hat\theta^* = \E[\hat\theta\mid T]$; $\Var(\hat\theta^*) \le \Var(\hat\theta)$ (único si $T$ completo)</td></tr>
+        <tr><td>Distribución asintótica y estandarización del EMV de $g(\theta)$</td><td>EMV en grandes muestras (§24)</td><td>$\sqrt{n}(g(\hat\theta)-g(\theta)) \dto N(0, [g'(\theta)]^2/I_F(\theta))$ (vale con $\tilde\theta\pto\theta$)</td></tr>
       </tbody>
     </table></div>
     <p class="small muted">¿Falta algún resultado? Aparecerá aquí a medida que avancen las clases. Los temas en detalle están en el <a href="distribuciones.html">laboratorio de distribuciones</a>, en <a href="tablas.html">cómo leer las tablas</a> y en el <a href="../temas/repaso.html">repaso de Estadística I</a>.</p>

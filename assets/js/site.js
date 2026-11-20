@@ -29,9 +29,11 @@ EM.SITE = [
     { id: 'clase-13', title: 'Clase 13 · Leyes Débiles y Fuertes de los Grandes Números', href: 'temas/clase-13.html', desc: 'LDGN de Bernoulli, Khintchine y Chebyshev; LFGN de Borel y Kolmogorov (i.i.d. y no i.d.); medias geométrica y armónica y variables dependientes.' },
     { id: 'clase-14', title: 'Clase 14 · TLC generalizado y Teoría del Valor Extremo', href: 'temas/clase-14.html', desc: 'TLC de De Moivre–Laplace y Liapunov–Lindeberg, pivotes asintóticos, consistencia universal de S² y leyes extremas (Gumbel, Fréchet, Weibull).' },
     { id: 'clase-15', title: 'Clase 15 · Suficiencia y Factorización de Fisher–Neyman', href: 'temas/clase-15.html', desc: 'Estadísticos suficientes por definición condicional, teorema de factorización de Fisher–Neyman y ejemplos clásicos y no regulares.' },
+    { id: 'clase-16', title: 'Clase 16 · Suficiencia conjunta y Familia Exponencial', href: 'temas/clase-16.html', desc: 'Criterio de factorización multiparamétrico, familia exponencial 1D y k-dimensional, suficiencia natural y ecuación del EMV E[T(X)] = T(X).' },
+    { id: 'clase-17', title: 'Clase 17 · Estimadores MVUE y Teorema de Rao–Blackwell', href: 'temas/clase-17.html', desc: 'Estimadores insesgados de varianza mínima (MVUE), teorema de Rao–Blackwell, relación entre EMV y suficiencia y normalidad asintótica.' },
   ]},
   { group: 'Herramientas', items: [
-    { id: 'formulario', title: 'Formulario completo (Est. I + Est Mat)', href: 'herramientas/formulario.html', desc: 'Todas las fórmulas esenciales en una página: modelos, FGM, transformaciones, estadísticos de orden, χ², t, F, estimación puntual, modos de convergencia, LGN, TLC y teoría del valor extremo, suficiencia.' },
+    { id: 'formulario', title: 'Formulario completo (Est. I + Est Mat)', href: 'herramientas/formulario.html', desc: 'Todas las fórmulas esenciales en una página: modelos, FGM, transformaciones, estadísticos de orden, χ², t, F, estimación puntual, modos de convergencia, LGN, TLC y teoría del valor extremo, suficiencia, familia exponencial, Rao–Blackwell y MVUE.' },
     { id: 'distribuciones', title: 'Laboratorio de distribuciones', href: 'herramientas/distribuciones.html', desc: 'Explora Normal, χ², t, F, Gamma, Beta… con deslizadores y simulaciones.' },
     { id: 'tablas', title: 'Cómo leer las tablas (χ², t, F, K-S)', href: 'herramientas/tablas.html', desc: 'Percentil vs. valor crítico, colas, tablas interactivas y calculadora.' },
   ]},
@@ -44,6 +46,7 @@ EM.SITE = [
     { id: 'lebensztayn', title: 'Lebensztayn · Mapa del Libro y Cap. 5 (Convergencia y Límites)', href: 'deberes/lebensztayn.html', desc: 'Mapa de Exercícios de Probabilidade y solucionario completo del Capítulo 5 (84 de 84 ejercicios resueltos).' },
     { id: 'lebensztayn-cap1', title: 'Lebensztayn · Cap. 1: Análisis Combinatorio', href: 'deberes/lebensztayn-cap1.html', desc: 'Solucionario completo del Capítulo 1 de Élcio Lebensztayn: principios de conteo, permutaciones, combinaciones, inclusión–exclusión e identidades (80/80).' },
     { id: 'lebensztayn-cap2', title: 'Lebensztayn · Cap. 2: Probabilidad', href: 'deberes/lebensztayn-cap2.html', desc: 'Solucionario completo del Capítulo 2 de Élcio Lebensztayn: axiomas, probabilidad condicional, Bayes, independencia y continuidad (80/80).' },
-    { id: 'lebensztayn-cap3', title: 'Cap. 3 · Variables Aleatorias', href: 'deberes/lebensztayn-cap3.html' },
+    { id: 'lebensztayn-cap3', title: 'Lebensztayn · Cap. 3: Variables Aleatorias', href: 'deberes/lebensztayn-cap3.html', desc: 'Solucionario completo del Capítulo 3 de Élcio Lebensztayn: modelos discretos y continuos, distribuciones conjuntas, Jacobiano, convoluciones y estadísticos de orden (128/128).' },
+    { id: 'lebensztayn-cap4', title: 'Lebensztayn · Cap. 4: Esperanza, FGM y Desigualdades', href: 'deberes/lebensztayn-cap4.html', desc: 'Solucionario completo del Capítulo 4 de Élcio Lebensztayn: esperanza, covarianza, esperanza condicional, FGM/FGP y desigualdades (132/132).' },
   ]},
 ];

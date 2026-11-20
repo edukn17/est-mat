@@ -1309,6 +1309,137 @@ $N(0, \sigma^2)$ ($\mu=0$ con.) & $\sigma^2$ & \rr $T = \sum_{i=1}^n X_i^2$ & \r
 \endgroup
 
 % =====================================================================
+\section{Suficiencia conjunta y Familia Exponencial \textmd{(Clase 16)}}
+
+\begin{thmbox}[frametitle={Suficiencia conjunta y Criterio de Factorización multiparamétrico}]
+Cuando el modelo depende de un vector de parámetros $\boldsymbol{\theta} = (\theta_1, \dots, \theta_m)$, el estadístico $r$-dimensional $\mathbf{T}(\mathbf{X}) = \big(T_1(\mathbf{X}), \dots, T_r(\mathbf{X})\big)$ es \textbf{conjuntamente suficiente para $\boldsymbol{\theta}$} si y solo si la verosimilitud puede escribirse como:
+\[
+L(\boldsymbol{\theta} \mid \mathbf{x}) = \prod_{i=1}^n f(x_i \mid \boldsymbol{\theta}) = g\big(T_1(\mathbf{x}), \dots, T_r(\mathbf{x}),\,\boldsymbol{\theta}\big)\,h(\mathbf{x}),
+\]
+donde $g(\mathbf{T}(\mathbf{x}), \boldsymbol{\theta}) \ge 0$ depende de $\mathbf{x}$ únicamente a través de $\mathbf{T}(\mathbf{x})$ y $h(\mathbf{x}) \ge 0$ no depende de $\boldsymbol{\theta}$.
+\begin{itemize}
+  \item \textbf{Equivalencia biyectiva vectorial:} si $\mathbf{T}$ es conjuntamente suficiente y puede recuperarse como función de $\mathbf{U} = \boldsymbol{\phi}(\mathbf{T})$, entonces $\mathbf{U}$ también lo es (ej.\ $\big(\sum X_i, \sum X_i^2\big) \iff (\bar X, S^2)$ para $n \ge 2$; $\big(\prod X_i, \sum X_i\big) \iff \big(\sum \ln X_i, \sum X_i\big)$ si $X_i > 0$).
+  \item \textbf{Soporte dependiente multiparamétrico:} en $U(\theta_1, \theta_2)$ ($\theta_1 < \theta_2$) es conjuntamente suficiente $\mathbf{T}(\mathbf{X}) = (X_{(1)}, X_{(n)})$; en $\text{Pareto}(\alpha, \beta)$ con ambos desconocidos, $\big(X_{(1)}, \sum \ln X_i\big)$.
+\end{itemize}
+\end{thmbox}
+
+\begin{defbox}[frametitle={Familia Exponencial (FE) 1D y $k$-dimensional}]
+Una distribución pertenece a la \textbf{familia exponencial (FE) unidimensional} si su fdp (o fp) puede escribirse como:
+\[
+f(x \mid \theta) = \exp\big\{c(\theta)T(x) + d(\theta) + S(x)\big\}, \qquad x \in A \;\;(\text{soporte } A \text{ independiente de }\theta),
+\]
+y a la \textbf{FE $k$-dimensional} para el vector de parámetros $\boldsymbol{\theta} = (\theta_1, \dots, \theta_m)$ si:
+\[
+f(x \mid \boldsymbol{\theta}) = \exp\left\{\sum_{j=1}^k c_j(\boldsymbol{\theta})T_j(x) + d(\boldsymbol{\theta}) + S(x)\right\}, \qquad x \in A \;\;(\text{fijo, libre de }\boldsymbol{\theta}).
+\]
+\begin{itemize}
+  \item \textbf{Identidades de momentos (1D, $c'(\theta) \ne 0$):} derivando $\int_A f(x \mid \theta)\,dx = 1$ (o $\sum_{x \in A}$) respecto a $\theta$ se obtiene:
+  \[
+  \E\big[T(X)\big] = -\frac{d'(\theta)}{c'(\theta)}, \qquad \Var\big(T(X)\big) = \frac{d'(\theta)c''(\theta) - c'(\theta)d''(\theta)}{[c'(\theta)]^3}.
+  \]
+  \item \textbf{Cerradura bajo muestras i.i.d.\ y suficiencia directa:} para $X_1, \dots, X_n \iid$ de una FE $k$-dimensional,
+  \[
+  f(\mathbf{x} \mid \boldsymbol{\theta}) = \exp\left\{\sum_{j=1}^k c_j(\boldsymbol{\theta})\sum_{i=1}^n T_j(x_i) + n\,d(\boldsymbol{\theta}) + \sum_{i=1}^n S(x_i)\right\}, \qquad \mathbf{x} \in A^n,
+  \]
+  que permanece en la FE, y por Fisher--Neyman el vector $\mathbf{T}(\mathbf{X}) = \big(\sum_{i=1}^n T_1(X_i), \dots, \sum_{i=1}^n T_k(X_i)\big)$ es \textbf{conjuntamente suficiente para $\boldsymbol{\theta}$} (en 1D, $T(\mathbf{X}) = \sum_{i=1}^n T(X_i)$).
+  \item \textbf{Modelos fuera de la FE:} aquellos cuyo soporte depende del parámetro ($U(0,\theta)$, $U(\theta_1,\theta_2)$, Exp desplazada) o donde $\ln f(x\mid\theta)$ no separa $x$ y $\theta$ en suma finita $\sum c_j(\theta)T_j(x)$ (como Cauchy).
+\end{itemize}
+\end{defbox}
+
+\begin{thmbox}[frametitle={Ecuación general del EMV en la Familia Exponencial}]
+En una familia exponencial regular (con jacobiano $[\partial c_j / \partial \theta_m]$ invertible y máximo en el interior del espacio paramétrico), igualar el gradiente de la log-verosimilitud a cero equivale al sistema:
+\[
+\E_{\boldsymbol{\theta}}\big[T_j(\mathbf{X})\big] = T_j(\mathbf{X}), \qquad j = 1, \dots, k \qquad\Big(\text{en 1D con } c'(\theta) \ne 0:\; \E_\theta\big[T(\mathbf{X})\big] = T(\mathbf{X})\Big).
+\]
+\end{thmbox}
+
+\begingroup\footnotesize
+\setlength{\tabcolsep}{3.2pt}
+\noindent
+\begin{tabular}{@{}p{2.15cm} p{2.30cm} p{1.65cm} p{2.60cm} p{2.05cm} p{1.65cm} p{3.65cm}@{}}
+\toprule
+\textbf{Modelo} & \textbf{$c_j(\boldsymbol{\theta})$} & \textbf{$T_j(x)$} & \textbf{$d(\boldsymbol{\theta})$} & \textbf{$S(x)$} & \textbf{Soporte $A$} & \textbf{Suficiente (EMV)}\\
+\midrule
+\rr $\text{Ber}(\theta)$ & \rr $\ln\frac{\theta}{1-\theta}$ & \rr $x$ & \rr $\ln(1-\theta)$ & \rr $0$ & \rr $\{0, 1\}$ & \rr $\sum X_i$ ($\hat\theta = \bar X$)\\[2pt]
+\rr $\text{Pois}(\lambda)$ & \rr $\ln\lambda$ & \rr $x$ & \rr $-\lambda$ & \rr $-\ln(x!)$ & \rr $\{0, 1, 2, \dots\}$ & \rr $\sum X_i$ ($\hat\lambda = \bar X$)\\[2pt]
+\rr $\text{Exp}(\beta)$ (esc./med.) & \rr $-\frac{1}{\beta}$ & \rr $x$ & \rr $-\ln\beta$ & \rr $0$ & \rr $(0, \infty)$ & \rr $\sum X_i$ ($\hat\beta = \bar X$)\\[2pt]
+\rr $\text{Geo}(p)$ (ensayos) & \rr $\ln(1-p)$ & \rr $x$ & \rr $\ln\frac{p}{1-p}$ & \rr $0$ & \rr $\{1, 2, \dots\}$ & \rr $\sum X_i$ ($\hat p = 1/\bar X$)\\[2pt]
+\rr $N(\mu, 1)$ & \rr $\mu$ & \rr $x$ & \rr $-\frac{\mu^2}{2}$ & \rr $-\frac{x^2}{2}-\ln\sqrt{2\pi}$ & \rr $\R$ & \rr $\sum X_i$ ($\hat\mu = \bar X$)\\[2pt]
+\rr $N(\mu, \sigma^2)$ (2D) & \rr $\frac{\mu}{\sigma^2},\ -\frac{1}{2\sigma^2}$ & \rr $x,\ x^2$ & \rr $-\frac{\mu^2}{2\sigma^2}-\frac{1}{2}\ln\sigma^2$ & \rr $-\ln\sqrt{2\pi}$ & \rr $\R$ & \rr $(\sum X_i, \sum X_i^2)$ ($\bar X, S_n^2$)\\[2pt]
+\rr $\text{Gamma}(\alpha, \beta)$ (2D) & \rr $\alpha-1,\ -\frac{1}{\beta}$ & \rr $\ln x,\ x$ & \rr $-\ln\Gamma(\alpha)-\alpha\ln\beta$ & \rr $0$ & \rr $(0, \infty)$ & \rr $(\sum\ln X_i, \sum X_i)$ ($\hat\beta = \bar X/\hat\alpha$)\\[2pt]
+\rr $\text{Beta}(\alpha, \beta)$ (2D) & \rr $\alpha-1,\ \beta-1$ & \rr $\ln x,\ \ln(1-x)$ & \rr $-\ln B(\alpha, \beta)$ & \rr $0$ & \rr $(0, 1)$ & \rr $(\sum\ln X_i, \sum\ln(1-X_i))$\\[2pt]
+\rr $\text{Beta}(k, k)$ (1D) & \rr $k - 1$ & \rr $\ln[x(1-x)]$ & \rr $-\ln B(k, k)$ & \rr $0$ & \rr $(0, 1)$ & \rr $\sum\ln[X_i(1-X_i)]$\\
+\bottomrule
+\end{tabular}
+\endgroup
+
+% =====================================================================
+\section{Estimadores MVUE y Teorema de Rao--Blackwell \textmd{(Clase 17)}}
+
+\begin{defbox}[frametitle={Definición · Estimador MVUE / UMVUE}]
+Un estadístico $\hat\theta^* = \hat\theta^*(X_1, \dots, X_n)$ es un \textbf{estimador insesgado de varianza mínima uniforme (MVUE / UMVUE)} para $\theta$ (análogamente para $\tau(\theta)$) si:
+\begin{enumerate}
+  \item \textbf{Insesgamiento:} $\E_\theta[\hat\theta^*] = \theta$ para todo $\theta \in \Omega$.
+  \item \textbf{Varianza mínima uniforme:} $\Var_\theta(\hat\theta^*) \le \Var_\theta(\hat\theta)$ para todo $\theta \in \Omega$ y cualquier otro estimador insesgado $\hat\theta$ de $\theta$.
+\end{enumerate}
+\end{defbox}
+
+\begin{thmbox}[frametitle={Teorema de Rao--Blackwell}]
+Sea $\hat\theta$ un estimador insesgado para $\theta$ con $\Var(\hat\theta) < \infty$, y sea $T = T(X_1, \dots, X_n)$ un estadístico suficiente para $\theta$. Definimos el nuevo estimador:
+\[
+\hat\theta^* = \E[\hat\theta \mid T].
+\]
+Entonces $\hat\theta^*$ es un estadístico válido (libre de $\theta$), es \textbf{insesgado} ($\E_\theta[\hat\theta^*] = \E_\theta[\E[\hat\theta \mid T]] = \theta$) y satisface:
+\[
+\Var(\hat\theta^*) = \Var(\hat\theta) - \E\big[\Var(\hat\theta \mid T)\big] \le \Var(\hat\theta)
+\]
+(con igualdad s.s.\ cuando $\hat\theta$ ya es función de $T$ c.s.; el mismo teorema aplica a $\tau(\theta)$ tomando $\hat\tau^* = \E[\hat\tau \mid T]$).
+\end{thmbox}
+
+\begin{notebox}[frametitle={Teorema de Lehmann--Scheffé (completitud y dos recetas prácticas)}]
+Si el estadístico suficiente $T$ es además \textbf{completo} ($\E_\theta[h(T)] = 0\;\forall\theta \implies h(T) = 0$ c.s., como ocurre en las FE de rango completo y en $U(0,\theta)$), existe un \textbf{único} estimador insesgado función de $T$. Por tanto, $\hat\theta^* = \E[\hat\theta \mid T]$ es único y es el \textbf{MVUE}.
+\begin{itemize}
+  \item \textbf{Receta 1 (vía directa):} hallar $T$ suficiente completo y ajustar una función $\phi(T)$ tal que $\E_\theta[\phi(T)] = \tau(\theta)$.
+  \item \textbf{Receta 2 (condicionamiento):} partir de un insesgado elemental $\hat\tau$ y calcular explícitamente $\E[\hat\tau \mid T]$.
+\end{itemize}
+\end{notebox}
+
+\begin{thmbox}[frametitle={EMV, suficiencia y comportamiento en grandes muestras}]
+\begin{itemize}
+  \item \textbf{Relación EMV--suficiencia:} si $T$ es suficiente para $\theta$ y el EMV $\hat\theta$ existe y es único, entonces $\hat\theta$ es necesariamente \textbf{función de $T$} (maximizar $L(\theta \mid \mathbf{x}) = g(T(\mathbf{x}),\theta)\,h(\mathbf{x})$ equivale a maximizar $g(T(\mathbf{x}),\theta)$).
+  \item \textbf{Grandes muestras (normalidad y eficiencia asintótica):} bajo regularidad ($0 < I_F(\theta) < \infty$) y para $g$ derivable con $g'(\theta) \ne 0$:
+  \[
+  \sqrt{n}(\hat\theta - \theta) \dto N\!\left(0,\, \frac{1}{I_F(\theta)}\right), \qquad \sqrt{n}\big(g(\hat\theta) - g(\theta)\big) \dto N\!\left(0,\, \frac{[g'(\theta)]^2}{I_F(\theta)}\right).
+  \]
+  Los EMV son \textbf{asintóticamente insesgados y eficientes} (alcanzan la cota de Cramér--Rao $\frac{1}{nI_F(\theta)}$ y $\frac{[g'(\theta)]^2}{nI_F(\theta)}$).
+  \item \textbf{Sustitución consistente:} la convergencia estandarizada se conserva al reemplazar $\theta$ por cualquier estimador consistente $\tilde\theta \pto \theta$ (si $I_F, g'$ son continuas y no nulas):
+  \[
+  \sqrt{n\,I_F(\tilde\theta)}(\hat\theta - \theta) \dto N(0, 1), \qquad \frac{\sqrt{n\,I_F(\tilde\theta)}}{|g'(\tilde\theta)|}\big(g(\hat\theta) - g(\theta)\big) \dto N(0, 1).
+  \]
+\end{itemize}
+\end{thmbox}
+
+\begingroup\footnotesize
+\setlength{\tabcolsep}{4pt}
+\noindent
+\begin{tabular}{@{}p{3.4cm} p{1.9cm} p{3.3cm} p{3.1cm} p{4.7cm}@{}}
+\toprule
+\textbf{Modelo} & \textbf{Objetivo} & \textbf{Suficiente completo $T$} & \textbf{MVUE} & \textbf{Varianza / nota}\\
+\midrule
+\rr $\text{Ber}(p)$, $\text{Pois}(\lambda)$, $\text{Exp}(\beta)$, $N(\mu,\sigma^2)$ & \rr $p$, $\lambda$, $\beta$, $\mu$ & \rr $\sum_{i=1}^n X_i$ & \rr $\bar X$ & \rr Coincide con el EMV\\[2pt]
+\rr $\text{Weibull}(\theta)$ ($f = \frac{2y}{\theta}e^{-y^2/\theta},\ y > 0$) & \rr $\theta$ & \rr $\sum_{i=1}^n X_i^2 \sim \text{Gamma}(n,\theta)$ & \rr $\dfrac{1}{n}\sum_{i=1}^n X_i^2$ & \rr $\Var = \dfrac{\theta^2}{n}$ ($X_i^2 \sim \text{Exp}(\theta)$)\\[4pt]
+\rr $\text{Exp}(\beta)$ (media $\beta$) & \rr $\beta^2 = \Var(X)$ & \rr $\sum_{i=1}^n X_i \sim \text{Gamma}(n,\beta)$ & \rr $\dfrac{n}{n+1}\bar X^2$ & \rr Corrige al EMV $\bar X^2$; $\Var = \frac{4n+6}{n(n+1)}\beta^4$\\[4pt]
+\rr $U(0, \theta)$ & \rr $\theta$ & \rr $X_{(n)} = \max_i X_i$ & \rr $\dfrac{n+1}{n}X_{(n)}$ & \rr $\Var = \dfrac{\theta^2}{n(n+2)}$ (no regular)\\[4pt]
+\rr $N(\mu, \sigma^2)$ ($n \ge 2$) & \rr $\sigma^2$ & \rr $(\bar X, S^2)$ & \rr $S^2 = \dfrac{1}{n-1}\sum_{i=1}^n (X_i - \bar X)^2$ & \rr $\Var = \dfrac{2\sigma^4}{n-1} > \text{CRLB}$\\[4pt]
+\rr $\text{Pois}(\lambda)$ & \rr $e^{-\lambda} = \Prob(X=0)$ & \rr $T = \sum_{i=1}^n X_i$ & \rr $\left(1 - \dfrac{1}{n}\right)^{\sum X_i}$ & \rr RB desde $\mathbf{1}_{\{X_1=0\}}$ ($X_1\mid T=t \sim \text{Bin}(t, 1/n)$)\\[4pt]
+\rr $\text{Ber}(p)$ ($n \ge 2$) & \rr $p(1-p)$ & \rr $T = \sum_{i=1}^n X_i$ & \rr $\dfrac{n}{n-1}\bar X(1 - \bar X)$ & \rr RB desde $\mathbf{1}_{\{X_1=1, X_2=0\}}$; igual a $S^2$\\[4pt]
+\rr $\text{Geo}(p)$ (ensayos, $n \ge 2$) & \rr $p$ & \rr $T = \sum_{i=1}^n X_i \sim \text{Bneg}(n, p)$ & \rr $\dfrac{n-1}{\sum_{i=1}^n X_i - 1}$ & \rr RB desde $\mathbf{1}_{\{X_1=1\}}$; corrige EMV $\frac{n}{\sum X_i}$\\
+\bottomrule
+\end{tabular}
+\endgroup
+
+\newpage
+% =====================================================================
 \section{Cómo leer las tablas y los valores críticos}
 
 \begin{notebox}[frametitle={La regla que evita todos los líos de colas}]
@@ -1407,7 +1538,11 @@ $F$ & \rr bloque $\nu_2$ (denominador), fila $q$, columna $\nu_1$ (numerador) & 
 \rr Suma estandarizada de indep.\ no i.d.\ acotadas & \rr TLC Liapunov--Lindeberg (sección 21) & \rr $|X_i|\le M$ y $s_n^2\to\infty \Rightarrow (S_n-\E[S_n])/s_n \dto N(0,1)$\\[3pt]
 \rr Distribución límite de $(X_{(n)} - a_n)/b_n$ & \rr Valor Extremo TVE (sección 21) & \rr Gumbel $e^{-e^{-(z-a)/b}}$, Fréchet, Weibull\\[3pt]
 \rr Verificar suficiencia de $T$ por ley condicional & \rr Definición suficiencia (sección 22) & \rr $\Prob(\mathbf{X}=\mathbf{x}\mid T=t)$ no depende de $\theta$\\[3pt]
-\rr Hallar estadístico suficiente $T$ de la muestra & \rr Fisher--Neyman (sección 22) & \rr $L(\theta\mid\mathbf{x}) = g(T(\mathbf{x}),\theta)\,h(\mathbf{x})$\\
+\rr Hallar estadístico suficiente $T$ de la muestra & \rr Fisher--Neyman (sección 22) & \rr $L(\theta\mid\mathbf{x}) = g(T(\mathbf{x}),\theta)\,h(\mathbf{x})$\\[3pt]
+\rr Hallar estadísticos conjuntamente suficientes & \rr Factorización multiparamétrica (sección 23) & \rr $L(\boldsymbol{\theta}\mid\mathbf{x}) = g(T_1(\mathbf{x}),\dots,T_r(\mathbf{x}),\boldsymbol{\theta})\,h(\mathbf{x})$\\[3pt]
+\rr Identificar suficiencia y EMV en modelos regulares & \rr Familia Exponencial y ec.\ EMV (sección 23) & \rr $f=\exp\{\sum c_j(\boldsymbol{\theta})T_j(x)+d(\boldsymbol{\theta})+S(x)\}$;\ $\E_{\boldsymbol{\theta}}[T_j(\mathbf{X})]=T_j(\mathbf{X})$\\[3pt]
+\rr Mejorar un estimador insesgado o hallar el MVUE & \rr Rao--Blackwell + Lehmann--Scheffé (sección 24) & \rr $\hat\theta^* = \E[\hat\theta\mid T]$;\ $\Var(\hat\theta^*) \le \Var(\hat\theta)$ (único si $T$ completo)\\[3pt]
+\rr Distribución asintótica y estandarización del EMV de $g(\theta)$ & \rr EMV en grandes muestras (sección 24) & \rr $\sqrt{n}(g(\hat\theta)-g(\theta)) \dto N(0, [g'(\theta)]^2/I_F(\theta))$ (vale con $\tilde\theta\pto\theta$)\\
 \end{longtable}
 \endgroup
 
