@@ -43,10 +43,10 @@ EM.SITE = [
     { id: 'deber-estimacion-puntual', title: 'Deber · Estimación puntual (Unidad II)', href: 'deberes/deber-estimacion-puntual.html', desc: '5 ejercicios completos: familias afines y MSE, modelo geométrico, densidad de Rayleigh, familia potencia no regular y exponencial desplazada.' },
   ]},
   { group: 'Libro de Lebensztayn', items: [
-    { id: 'lebensztayn', title: 'Lebensztayn · Mapa del Libro y Cap. 5 (Convergencia y Límites)', href: 'deberes/lebensztayn.html', desc: 'Mapa de Exercícios de Probabilidade y solucionario completo del Capítulo 5 (84 de 84 ejercicios resueltos).' },
     { id: 'lebensztayn-cap1', title: 'Lebensztayn · Cap. 1: Análisis Combinatorio', href: 'deberes/lebensztayn-cap1.html', desc: 'Solucionario completo del Capítulo 1 de Élcio Lebensztayn: principios de conteo, permutaciones, combinaciones, inclusión–exclusión e identidades (80/80).' },
     { id: 'lebensztayn-cap2', title: 'Lebensztayn · Cap. 2: Probabilidad', href: 'deberes/lebensztayn-cap2.html', desc: 'Solucionario completo del Capítulo 2 de Élcio Lebensztayn: axiomas, probabilidad condicional, Bayes, independencia y continuidad (80/80).' },
     { id: 'lebensztayn-cap3', title: 'Lebensztayn · Cap. 3: Variables Aleatorias', href: 'deberes/lebensztayn-cap3.html', desc: 'Solucionario completo del Capítulo 3 de Élcio Lebensztayn: modelos discretos y continuos, distribuciones conjuntas, Jacobiano, convoluciones y estadísticos de orden (128/128).' },
     { id: 'lebensztayn-cap4', title: 'Lebensztayn · Cap. 4: Esperanza, FGM y Desigualdades', href: 'deberes/lebensztayn-cap4.html', desc: 'Solucionario completo del Capítulo 4 de Élcio Lebensztayn: esperanza, covarianza, esperanza condicional, FGM/FGP y desigualdades (132/132).' },
+    { id: 'lebensztayn', title: 'Lebensztayn · Mapa del Libro y Cap. 5 (Convergencia y Límites)', href: 'deberes/lebensztayn.html', desc: 'Mapa de Exercícios de Probabilidade y solucionario completo del Capítulo 5 (84 de 84 ejercicios resueltos).' },
   ]},
 ];
